@@ -1,0 +1,1501 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.file_save &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.file_save</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.file_save</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_open</span><span class="w"> </span><span class="kn">import</span> <span class="n">determine_file_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_create_instances</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_cgmes_headers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.veragrid_to_cgmes</span><span class="w"> </span><span class="kn">import</span> <span class="n">veragrid_to_cgmes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_export</span><span class="w"> </span><span class="kn">import</span> <span class="n">CimExporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_data_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesDataParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.json_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_json_file_v3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.excel_interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">save_excel_v4</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.pack_unpack</span><span class="w"> </span><span class="kn">import</span> <span class="n">gather_model_as_data_frames</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.dgs.veragrid_to_dgs</span><span class="w"> </span><span class="kn">import</span> <span class="n">circuit_to_dgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.veragrid_to_matpower</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_matpower_case_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.raw_parser_writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_raw</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.veragrid_to_raw</span><span class="w"> </span><span class="kn">import</span> <span class="n">veragrid_to_raw</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.veragrid_to_ucte</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_ucte</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cim16.cim_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIMExport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.zip_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_veragrid_data_to_zip</span><span class="p">,</span> <span class="n">save_veragrid_multiverse_data_to_zip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.sqlite_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_data_frames_to_sqlite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.h5_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_h5</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.rawx_parser_writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_rawx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesProfileType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multiverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiVerse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverToSave</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CGMESVersions</span><span class="p">,</span> <span class="n">SimulationTypes</span><span class="p">,</span> <span class="n">FileType</span><span class="p">,</span>
+                                         <span class="n">PsseTopologyExportMode</span><span class="p">,</span> <span class="n">PsseExportMode</span><span class="p">,</span> <span class="n">DgsExportMode</span><span class="p">,</span>
+                                         <span class="n">MatpowerExportMode</span><span class="p">,</span> <span class="n">UcteExportMode</span><span class="p">,</span> <span class="n">CgmesExportMode</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span>
+
+
+<div class="viewcode-block" id="FileSavingOptions">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.FileSavingOptions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileSavingOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store the extra data required by the richer file-export paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">file_type</span><span class="p">:</span> <span class="n">FileType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dictionary_of_json_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cgmes_boundary_set</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">cgmes_version</span><span class="p">:</span> <span class="n">CGMESVersions</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">,</span>
+                 <span class="n">cgmes_profiles</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">CgmesProfileType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cgmes_one_file_per_profile</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">cgmes_map_areas_like_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">raw_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;33&quot;</span><span class="p">,</span>
+                 <span class="n">psse_topology_mode</span><span class="p">:</span> <span class="n">PsseTopologyExportMode</span> <span class="o">=</span> <span class="n">PsseTopologyExportMode</span><span class="o">.</span><span class="n">BusBranch</span><span class="p">,</span>
+                 <span class="n">psse_export_mode</span><span class="p">:</span> <span class="n">PsseExportMode</span> <span class="o">=</span> <span class="n">PsseExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+                 <span class="n">dgs_export_mode</span><span class="p">:</span> <span class="n">DgsExportMode</span> <span class="o">=</span> <span class="n">DgsExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+                 <span class="n">matpower_export_mode</span><span class="p">:</span> <span class="n">MatpowerExportMode</span> <span class="o">=</span> <span class="n">MatpowerExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+                 <span class="n">ucte_export_mode</span><span class="p">:</span> <span class="n">UcteExportMode</span> <span class="o">=</span> <span class="n">UcteExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+                 <span class="n">cgmes_export_mode</span><span class="p">:</span> <span class="n">CgmesExportMode</span> <span class="o">=</span> <span class="n">CgmesExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+                 <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one file-save options container.</span>
+
+<span class="sd">        :param file_type: Explicit file type override.</span>
+<span class="sd">        :param sessions_data: Session payloads to persist with VeraGrid files.</span>
+<span class="sd">        :param dictionary_of_json_files: Extra JSON payloads to embed.</span>
+<span class="sd">        :param cgmes_boundary_set: CGMES boundary set zip file path.</span>
+<span class="sd">        :param cgmes_version: CGMES export version.</span>
+<span class="sd">        :param cgmes_profiles: CGMES profile list to export.</span>
+<span class="sd">        :param cgmes_one_file_per_profile: Export one CGMES file per profile when ``True``.</span>
+<span class="sd">        :param cgmes_map_areas_like_raw: Reuse RAW-like area mapping for CGMES.</span>
+<span class="sd">        :param raw_version: Version to use when exporting RAW/RAWX files.</span>
+<span class="sd">        :param psse_topology_mode: RAW topology export strategy for PSSE 34+.</span>
+<span class="sd">        :param psse_export_mode: PSSE single-file or batch-zip export strategy.</span>
+<span class="sd">        :param dgs_export_mode: DGS single-file or batch-zip export strategy.</span>
+<span class="sd">        :param matpower_export_mode: MATPOWER single-file or batch-zip export strategy.</span>
+<span class="sd">        :param ucte_export_mode: UCTE single-file or batch-zip export strategy.</span>
+<span class="sd">        :param cgmes_export_mode: CGMES single-file or batch-zip export strategy.</span>
+<span class="sd">        :param t_idx: Optional time index used by file formats that support snapshot/profile exports.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span><span class="p">:</span> <span class="n">FileType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">file_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> <span class="k">if</span> <span class="n">sessions_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sessions_data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dictionary_of_json_files</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">dictionary_of_json_files</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dictionary_of_json_files</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">:</span> <span class="n">CGMESVersions</span> <span class="o">=</span> <span class="n">cgmes_version</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_boundary_set</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">cgmes_boundary_set</span>
+
+        <span class="c1"># File type description as it appears in the file saving dialogue i.e. VeraGrid zip (*.veragrid)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_selected</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># CGMES profile list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_profiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">TP</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SV</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SSH</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">DY</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">DL</span><span class="p">,</span>
+                               <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">GL</span><span class="p">]</span> <span class="k">if</span> <span class="n">cgmes_profiles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cgmes_profiles</span>
+
+        <span class="c1"># use one file per profile?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_one_file_per_profile</span> <span class="o">=</span> <span class="n">cgmes_one_file_per_profile</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_map_areas_like_raw</span> <span class="o">=</span> <span class="n">cgmes_map_areas_like_raw</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_version</span> <span class="o">=</span> <span class="n">raw_version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psse_topology_mode</span><span class="p">:</span> <span class="n">PsseTopologyExportMode</span> <span class="o">=</span> <span class="n">psse_topology_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psse_export_mode</span><span class="p">:</span> <span class="n">PsseExportMode</span> <span class="o">=</span> <span class="n">psse_export_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_export_mode</span><span class="p">:</span> <span class="n">DgsExportMode</span> <span class="o">=</span> <span class="n">dgs_export_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matpower_export_mode</span><span class="p">:</span> <span class="n">MatpowerExportMode</span> <span class="o">=</span> <span class="n">matpower_export_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ucte_export_mode</span><span class="p">:</span> <span class="n">UcteExportMode</span> <span class="o">=</span> <span class="n">ucte_export_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_export_mode</span><span class="p">:</span> <span class="n">CgmesExportMode</span> <span class="o">=</span> <span class="n">cgmes_export_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">t_idx</span>
+
+<div class="viewcode-block" id="FileSavingOptions.get_power_flow_results">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.FileSavingOptions.get_power_flow_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_power_flow_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">PowerFlowResults</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try to extract the power flow results</span>
+<span class="sd">        :return: None or PowerFlowResults</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SimulationTypes</span><span class="o">.</span><span class="n">PowerFlow_run</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">PowerFlowResults</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_excel">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_veragrid_excel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_excel</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in excel format</span>
+<span class="sd">    :param circuit: MultiCircuit</span>
+<span class="sd">    :param file_name: file name to save to</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">save_excel_v4</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_multiverse">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_veragrid_multiverse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_multiverse</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">multiverse</span><span class="p">:</span> <span class="n">MultiVerse</span><span class="p">,</span>
+                             <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                             <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in zip format</span>
+<span class="sd">    If a multiverse is passed in the options, it is &quot;commited&quot; before saving</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">multiverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># this is to make the leaf the actual diff for saving</span>
+        <span class="n">multiverse</span><span class="o">.</span><span class="n">commit_current</span><span class="p">()</span>
+
+        <span class="n">save_veragrid_multiverse_data_to_zip</span><span class="p">(</span><span class="n">filename_zip</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                             <span class="n">multiverse</span><span class="o">=</span><span class="n">multiverse</span><span class="p">,</span>
+                                             <span class="n">json_files</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">dictionary_of_json_files</span><span class="p">,</span>
+                                             <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                             <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;No multiverse data to save&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_circuit">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_veragrid_circuit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                          <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                          <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in zip format</span>
+<span class="sd">    If a multiverse is passed in the options, it is &quot;commited&quot; before saving</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="n">save_veragrid_data_to_zip</span><span class="p">(</span><span class="n">filename_zip</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                              <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                              <span class="n">sessions_data</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">sessions_data</span><span class="p">,</span>
+                              <span class="n">json_files</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">dictionary_of_json_files</span><span class="p">,</span>
+                              <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                              <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                              <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_delta">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_veragrid_delta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_delta</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                        <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in zip format</span>
+<span class="sd">    If a multiverse is passed in the options, it is &quot;commited&quot; before saving</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="n">save_veragrid_data_to_zip</span><span class="p">(</span><span class="n">filename_zip</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                              <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                              <span class="n">sessions_data</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">sessions_data</span><span class="p">,</span>
+                              <span class="n">json_files</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">dictionary_of_json_files</span><span class="p">,</span>
+                              <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                              <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                              <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_sqlite">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_veragrid_sqlite">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_sqlite</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in sqlite</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="n">gather_model_as_data_frames</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">legacy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">save_data_frames_to_sqlite</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span>
+                               <span class="n">file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                               <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                               <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_electrical_json_v3">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_electrical_json_v3">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_electrical_json_v3</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                            <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in json format</span>
+<span class="sd">    :return:logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">save_json_file_v3</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                               <span class="n">circuit</span><span class="p">,</span>
+                               <span class="n">options</span><span class="o">.</span><span class="n">sessions_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_cim">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_cim">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_cim</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in CIM format</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cim</span> <span class="o">=</span> <span class="n">CIMExport</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+    <span class="n">cim</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cim</span><span class="o">.</span><span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_cgmes_single">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_cgmes_single">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_cgmes_single</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                      <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                      <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save one CGMES export artifact for one snapshot or one time-series point.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">cgmes_boundary_set</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Missing Boundary set path.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="c1"># CGMES version should be given in the settings</span>
+    <span class="n">cgmes_circuit</span> <span class="o">=</span> <span class="n">CgmesCircuit</span><span class="p">(</span><span class="n">cgmes_version</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">,</span>
+                                 <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                 <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                 <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">data_parser</span> <span class="o">=</span> <span class="n">CgmesDataParser</span><span class="p">(</span><span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                  <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                  <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">data_parser</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_boundary_set</span><span class="p">])</span>
+
+    <span class="n">cgmes_circuit</span><span class="o">.</span><span class="n">parse_files</span><span class="p">(</span><span class="n">data_parser</span><span class="o">=</span><span class="n">data_parser</span><span class="p">)</span>
+
+    <span class="n">profiles_to_export</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">cgmes_profiles</span>
+    <span class="n">one_file_per_profile</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">cgmes_one_file_per_profile</span>
+    <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span>
+    <span class="n">pf_results</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get_power_flow_results</span><span class="p">()</span>
+    <span class="n">cgmes_logger</span> <span class="o">=</span> <span class="n">DataLogger</span><span class="p">()</span>
+    <span class="n">cgmes_circuit</span> <span class="o">=</span> <span class="n">veragrid_to_cgmes</span><span class="p">(</span><span class="n">gc_model</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                      <span class="n">num_circ</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                      <span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_circuit</span><span class="p">,</span>
+                                      <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+                                      <span class="n">logger</span><span class="o">=</span><span class="n">cgmes_logger</span><span class="p">,</span>
+                                      <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span>
+
+    <span class="n">fn</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span>
+    <span class="n">filename_in_parts</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+
+    <span class="n">model_version</span> <span class="o">=</span> <span class="s2">&quot;001&quot;</span>
+    <span class="n">scenario_time</span> <span class="o">=</span> <span class="s2">&quot;2024-01-01T19:30:00Z&quot;</span>
+    <span class="k">if</span> <span class="n">filename_in_parts</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">filename_in_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">T%H%MZ&quot;</span><span class="p">)</span>
+            <span class="n">scenario_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Invalid datetime format in the filename!&quot;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">filename_in_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Scenario time set to default value.&quot;</span>
+                             <span class="p">)</span>
+        <span class="n">model_version</span> <span class="o">=</span> <span class="n">filename_in_parts</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="n">cgmes_circuit</span> <span class="o">=</span> <span class="n">create_cgmes_headers</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_circuit</span><span class="p">,</span>
+                                         <span class="n">mas_names</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_modelling_authority_names</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                                         <span class="n">profiles_to_export</span><span class="o">=</span><span class="n">profiles_to_export</span><span class="p">,</span>
+                                         <span class="n">version</span><span class="o">=</span><span class="n">model_version</span><span class="p">,</span>
+                                         <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Test description.&quot;</span><span class="p">,</span>
+                                         <span class="n">scenario_time</span><span class="o">=</span><span class="n">scenario_time</span><span class="p">,</span>
+                                         <span class="n">logger</span><span class="o">=</span><span class="n">cgmes_logger</span><span class="p">)</span>
+
+    <span class="n">cim_exporter</span> <span class="o">=</span> <span class="n">CimExporter</span><span class="p">(</span><span class="n">cgmes_circuit</span><span class="o">=</span><span class="n">cgmes_circuit</span><span class="p">,</span>
+                               <span class="n">profiles_to_export</span><span class="o">=</span><span class="n">profiles_to_export</span><span class="p">,</span>
+                               <span class="n">one_file_per_profile</span><span class="o">=</span><span class="n">one_file_per_profile</span><span class="p">)</span>
+    <span class="n">cim_exporter</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="c1"># record the cgmes events in the normal logger</span>
+    <span class="n">logger</span> <span class="o">+=</span> <span class="n">cgmes_logger</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="compose_cgmes_batch_folder_name">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.compose_cgmes_batch_folder_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compose_cgmes_batch_folder_name</span><span class="p">(</span><span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compose one deterministic folder name for a CGMES batch-export member set.</span>
+
+<span class="sd">    :param t_idx: Time index of the exported profile point.</span>
+<span class="sd">    :param time_label: Human-readable time label.</span>
+<span class="sd">    :return: Sanitized folder name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">safe_time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9A-Za-z._-]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">time_label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">safe_time_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">safe_time_label</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">safe_time_label</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="save_cgmes_batch_zip">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_cgmes_batch_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_cgmes_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                         <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export every time-series point into one ZIP archive with one CGMES export set per step.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target ZIP path.</span>
+<span class="sd">    :param options: Export options.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">cgmes_boundary_set</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Missing Boundary set path.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;CGMES batch export requires time-series data.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">total_steps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;CGMES batch export requires at least one time-series point.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">zip_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">zip_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
+        <span class="n">zip_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zip_file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_steps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting CGMES profile [</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">progress_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)</span>
+                    <span class="n">progress_func</span><span class="p">(</span><span class="n">progress_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">])</span>
+                <span class="n">batch_folder_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">compose_cgmes_batch_folder_name</span><span class="p">(</span><span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                                                         <span class="n">time_label</span><span class="o">=</span><span class="n">time_label</span><span class="p">)</span>
+                <span class="n">export_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">batch_folder_name</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">export_dir</span><span class="p">)</span>
+
+                <span class="n">temp_options</span> <span class="o">=</span> <span class="n">FileSavingOptions</span><span class="p">(</span>
+                    <span class="n">file_type</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span>
+                    <span class="n">sessions_data</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">sessions_data</span><span class="p">,</span>
+                    <span class="n">dictionary_of_json_files</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">dictionary_of_json_files</span><span class="p">,</span>
+                    <span class="n">cgmes_boundary_set</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_boundary_set</span><span class="p">,</span>
+                    <span class="n">cgmes_version</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">,</span>
+                    <span class="n">cgmes_profiles</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_profiles</span><span class="p">,</span>
+                    <span class="n">cgmes_one_file_per_profile</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_one_file_per_profile</span><span class="p">,</span>
+                    <span class="n">cgmes_map_areas_like_raw</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_map_areas_like_raw</span><span class="p">,</span>
+                    <span class="n">raw_version</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">raw_version</span><span class="p">,</span>
+                    <span class="n">psse_topology_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">psse_topology_mode</span><span class="p">,</span>
+                    <span class="n">psse_export_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">psse_export_mode</span><span class="p">,</span>
+                    <span class="n">dgs_export_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_export_mode</span><span class="p">,</span>
+                    <span class="n">cgmes_export_mode</span><span class="o">=</span><span class="n">CgmesExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+                    <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span>
+                <span class="p">)</span>
+                <span class="n">temp_options</span><span class="o">.</span><span class="n">type_selected</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">type_selected</span>
+
+                <span class="n">temp_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">))</span>
+                <span class="n">logger</span> <span class="o">+=</span> <span class="n">save_cgmes_single</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                            <span class="n">file_name</span><span class="o">=</span><span class="n">temp_file_name</span><span class="p">,</span>
+                                            <span class="n">options</span><span class="o">=</span><span class="n">temp_options</span><span class="p">,</span>
+                                            <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                            <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">generated_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">export_dir</span><span class="p">)):</span>
+                    <span class="n">generated_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_dir</span><span class="p">,</span> <span class="n">generated_name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">generated_path</span><span class="p">):</span>
+                        <span class="n">arc_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">batch_folder_name</span><span class="p">,</span> <span class="n">generated_name</span><span class="p">)</span>
+                        <span class="n">zip_ptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">generated_path</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">arc_name</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">progress_func</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_cgmes">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_cgmes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_cgmes</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+               <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+               <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+               <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in CGMES format.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">cgmes_export_mode</span> <span class="o">==</span> <span class="n">CgmesExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_cgmes_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                    <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                    <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                    <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_cgmes_single</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                 <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                 <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                 <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                 <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_h5">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_veragrid_h5">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_h5</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in CIM format</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">save_h5</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                     <span class="n">file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                     <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                     <span class="n">prog_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_psse_raw">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_psse_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_psse_raw</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                  <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in PSSE RAW format.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options, including the optional profile selector.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">psse_export_mode</span> <span class="o">==</span> <span class="n">PsseExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_psse_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                   <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                   <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                   <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                   <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+        <span class="n">raw_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">raw_version</span><span class="p">)</span>
+
+        <span class="c1"># Forward the selected time index so the RAW writer exports either the</span>
+        <span class="c1"># snapshot state or one explicit time-series point.</span>
+        <span class="n">raw_circuit</span> <span class="o">=</span> <span class="n">veragrid_to_raw</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span>
+                                      <span class="n">version</span><span class="o">=</span><span class="n">raw_version</span><span class="p">,</span>
+                                      <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                                      <span class="n">topology_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">psse_topology_mode</span><span class="p">,</span>
+                                      <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">+=</span> <span class="n">write_raw</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">raw_circuit</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">raw_version</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_psse_rawx">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_psse_rawx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_psse_rawx</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                   <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                   <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in PSSE RAWX format.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options, including the optional profile selector.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">psse_export_mode</span> <span class="o">==</span> <span class="n">PsseExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_psse_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                   <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                   <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                   <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                   <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="c1"># RAWX shares the same intermediate RAW circuit, so the time selector</span>
+        <span class="c1"># must be forwarded here as well.</span>
+        <span class="n">raw_circuit</span> <span class="o">=</span> <span class="n">veragrid_to_raw</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span>
+                                      <span class="n">version</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">raw_version</span><span class="p">),</span>
+                                      <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                                      <span class="n">topology_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">psse_topology_mode</span><span class="p">,</span>
+                                      <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">+=</span> <span class="n">write_rawx</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">raw_circuit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="compose_psse_batch_file_name">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.compose_psse_batch_file_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compose_psse_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                 <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compose one deterministic file name for a PSSE batch export member.</span>
+
+<span class="sd">    :param base_name: Base archive name without extension.</span>
+<span class="sd">    :param t_idx: Time index of the exported profile point.</span>
+<span class="sd">    :param time_label: Human-readable time label.</span>
+<span class="sd">    :param extension: PSSE file extension, including the leading dot.</span>
+<span class="sd">    :return: Sanitized internal file name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">safe_time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9A-Za-z._-]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">time_label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">safe_time_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">safe_time_label</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">safe_time_label</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="save_psse_batch_zip">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_psse_batch_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_psse_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                        <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export every time-series point into one ZIP archive with one PSSE file per step.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target ZIP path.</span>
+<span class="sd">    :param options: Export options, including version, topology and internal PSSE format.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;PSS/e batch export requires time-series data.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">total_steps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;PSS/e batch export requires at least one time-series point.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">raw_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">raw_version</span><span class="p">)</span>
+    <span class="n">zip_extension</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">zip_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">zip_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
+        <span class="n">zip_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zip_file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_rawx</span><span class="p">:</span>
+        <span class="n">internal_extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.rawx&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">internal_extension</span> <span class="o">=</span> <span class="s2">&quot;.raw&quot;</span>
+
+    <span class="n">archive_base_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Reuse one temporary file path for every time step. Each generated file is</span>
+    <span class="c1"># zipped immediately afterwards, so only one export artifact exists on disk</span>
+    <span class="c1"># at a time while the worker thread runs.</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+        <span class="n">temp_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;psse_batch_export&quot;</span> <span class="o">+</span> <span class="n">internal_extension</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_steps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting PSS/e profile [</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">progress_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)</span>
+                    <span class="n">progress_func</span><span class="p">(</span><span class="n">progress_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">raw_circuit</span> <span class="o">=</span> <span class="n">veragrid_to_raw</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span>
+                                              <span class="n">version</span><span class="o">=</span><span class="n">raw_version</span><span class="p">,</span>
+                                              <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                                              <span class="n">topology_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">psse_topology_mode</span><span class="p">,</span>
+                                              <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_rawx</span><span class="p">:</span>
+                    <span class="n">logger</span> <span class="o">+=</span> <span class="n">write_rawx</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="n">raw_circuit</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span> <span class="o">+=</span> <span class="n">write_raw</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="n">raw_circuit</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">raw_version</span><span class="p">)</span>
+
+                <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">])</span>
+                <span class="n">internal_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">compose_psse_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="o">=</span><span class="n">archive_base_name</span><span class="p">,</span>
+                                                                       <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                                                       <span class="n">time_label</span><span class="o">=</span><span class="n">time_label</span><span class="p">,</span>
+                                                                       <span class="n">extension</span><span class="o">=</span><span class="n">internal_extension</span><span class="p">)</span>
+                <span class="n">zip_ptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">internal_file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">progress_func</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_newton">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_newton">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_newton</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in sqlite</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_newton_pa</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_newton_pa</span><span class="p">,</span> <span class="n">npa</span>
+
+        <span class="n">time_series</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">t_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t_idx</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">newton_grid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">to_newton_pa</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">use_time_series</span><span class="o">=</span><span class="n">time_series</span><span class="p">,</span> <span class="n">time_indices</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+
+        <span class="n">npa</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">newton_grid</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Error while trying to import newton package!&quot;</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_pgm">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_pgm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_pgm</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save to Power Grid Model format</span>
+<span class="sd">    :return: logger with information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_pgm</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_pgm</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="n">save_pgm</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+             <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+             <span class="n">time_series</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="compose_dgs_batch_file_name">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.compose_dgs_batch_file_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compose_dgs_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compose one deterministic file name for a DGS batch-export member.</span>
+
+<span class="sd">    :param base_name: Base archive name without extension.</span>
+<span class="sd">    :param t_idx: Time index of the exported profile point.</span>
+<span class="sd">    :param time_label: Human-readable time label.</span>
+<span class="sd">    :return: Sanitized internal file name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">safe_time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9A-Za-z._-]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">time_label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">safe_time_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">safe_time_label</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">safe_time_label</span><span class="si">}</span><span class="s2">.dgs&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="save_dgs_batch_zip">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_dgs_batch_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_dgs_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                       <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export every time-series point into one ZIP archive with one DGS file per step.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target ZIP path.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DGS batch export requires time-series data.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">total_steps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DGS batch export requires at least one time-series point.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">zip_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">zip_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
+        <span class="n">zip_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zip_file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+
+    <span class="n">archive_base_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Reuse one temporary file path for every time step. Each generated file is</span>
+    <span class="c1"># zipped immediately afterwards, so only one export artifact exists on disk</span>
+    <span class="c1"># at a time while the worker thread runs.</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+        <span class="n">temp_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;dgs_batch_export.dgs&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_steps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting DGS profile [</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">progress_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)</span>
+                    <span class="n">progress_func</span><span class="p">(</span><span class="n">progress_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">dgs</span> <span class="o">=</span> <span class="n">circuit_to_dgs</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+                <span class="n">dgs</span><span class="o">.</span><span class="n">write_dgs</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">temp_file_name</span><span class="p">)</span>
+
+                <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">])</span>
+                <span class="n">internal_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">compose_dgs_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="o">=</span><span class="n">archive_base_name</span><span class="p">,</span>
+                                                                      <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                                                      <span class="n">time_label</span><span class="o">=</span><span class="n">time_label</span><span class="p">)</span>
+                <span class="n">zip_ptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">internal_file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">progress_func</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_dgs">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_dgs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_dgs</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+             <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+             <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+             <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in DGS format.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options, including the optional profile selector.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">dgs_export_mode</span> <span class="o">==</span> <span class="n">DgsExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_dgs_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                  <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                  <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                  <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="c1"># Forward the selected time index so the DGS writer exports either the</span>
+        <span class="c1"># snapshot state or one explicit time-series point.</span>
+        <span class="n">dgs</span> <span class="o">=</span> <span class="n">circuit_to_dgs</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span>
+        <span class="n">dgs</span><span class="o">.</span><span class="n">write_dgs</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="compose_matpower_batch_file_name">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.compose_matpower_batch_file_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compose_matpower_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                     <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                     <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compose one deterministic file name for a MATPOWER batch-export member.</span>
+
+<span class="sd">    :param base_name: Base archive name without extension.</span>
+<span class="sd">    :param t_idx: Time index of the exported profile point.</span>
+<span class="sd">    :param time_label: Human-readable time label.</span>
+<span class="sd">    :return: Sanitized internal file name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">safe_time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9A-Za-z._-]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">time_label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">safe_time_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">safe_time_label</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">safe_time_label</span><span class="si">}</span><span class="s2">.m&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="save_matpower_batch_zip">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_matpower_batch_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_matpower_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                            <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export every time-series point into one ZIP archive with one MATPOWER file per step.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target ZIP path.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;MATPOWER batch export requires time-series data.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">total_steps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;MATPOWER batch export requires at least one time-series point.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">zip_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">zip_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
+        <span class="n">zip_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zip_file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+
+    <span class="n">archive_base_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+        <span class="n">temp_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;matpower_batch_export.m&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_steps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting MATPOWER profile [</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">progress_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)</span>
+                    <span class="n">progress_func</span><span class="p">(</span><span class="n">progress_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">])</span>
+                <span class="n">internal_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">compose_matpower_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="o">=</span><span class="n">archive_base_name</span><span class="p">,</span>
+                                                                           <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                                                           <span class="n">time_label</span><span class="o">=</span><span class="n">time_label</span><span class="p">)</span>
+                <span class="n">case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">internal_file_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">write_matpower_case_file</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">temp_file_name</span><span class="p">,</span>
+                                         <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                         <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                                         <span class="n">case_name</span><span class="o">=</span><span class="n">case_name</span><span class="p">)</span>
+                <span class="n">zip_ptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">internal_file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">progress_func</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_matpower">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_matpower">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_matpower</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+                  <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in MATPOWER format.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options, including the optional profile selector.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">matpower_export_mode</span> <span class="o">==</span> <span class="n">MatpowerExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_matpower_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                       <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                       <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                       <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">write_matpower_case_file</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                        <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compose_ucte_batch_file_name">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.compose_ucte_batch_file_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compose_ucte_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                 <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compose one deterministic file name for a UCTE batch-export member.</span>
+
+<span class="sd">    :param base_name: Base archive name without extension.</span>
+<span class="sd">    :param t_idx: Time index of the exported profile point.</span>
+<span class="sd">    :param time_label: Human-readable time label.</span>
+<span class="sd">    :return: Sanitized internal file name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">safe_time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9A-Za-z._-]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">time_label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">safe_time_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">safe_time_label</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">safe_time_label</span><span class="si">}</span><span class="s2">.uct&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="save_ucte_batch_zip">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_ucte_batch_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_ucte_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export every time-series point into one ZIP archive with one UCTE file per step.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target ZIP path.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;UCTE batch export requires time-series data.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">total_steps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;UCTE batch export requires at least one time-series point.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">zip_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">zip_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
+        <span class="n">zip_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zip_file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+
+    <span class="n">archive_base_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+        <span class="n">temp_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;ucte_batch_export.uct&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+            <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">t_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_steps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting UCTE profile [</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">progress_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)</span>
+                    <span class="n">progress_func</span><span class="p">(</span><span class="n">progress_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">[</span><span class="n">t_idx</span><span class="p">])</span>
+                <span class="n">internal_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">compose_ucte_batch_file_name</span><span class="p">(</span><span class="n">base_name</span><span class="o">=</span><span class="n">archive_base_name</span><span class="p">,</span>
+                                                                       <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                                                       <span class="n">time_label</span><span class="o">=</span><span class="n">time_label</span><span class="p">)</span>
+                <span class="n">write_ucte</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">temp_file_name</span><span class="p">,</span>
+                           <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                           <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                           <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                <span class="n">zip_ptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">internal_file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">progress_func</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="save_ucte">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.save_ucte">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_ucte</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+              <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+              <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span><span class="p">,</span>
+              <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the circuit information in UCTE format.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param file_name: Target file path.</span>
+<span class="sd">    :param options: Export options, including the optional profile selector.</span>
+<span class="sd">    :param text_func: Optional progress-text callback.</span>
+<span class="sd">    :param progress_func: Optional progress-value callback.</span>
+<span class="sd">    :return: Logger with export messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ucte_export_mode</span> <span class="o">==</span> <span class="n">UcteExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">save_ucte_batch_zip</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                   <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                   <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                   <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">write_ucte</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                          <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                          <span class="n">t_idx</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">t_idx</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FileSave">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.FileSave">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileSave</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FileSave</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">options</span><span class="p">:</span> <span class="n">FileSavingOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">multiverse</span><span class="p">:</span> <span class="n">MultiVerse</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        File saver</span>
+<span class="sd">        :param circuit: MultiCircuit</span>
+<span class="sd">        :param file_name: file name to save to</span>
+<span class="sd">        :param options: FileSavingOptions (optional)</span>
+<span class="sd">        :param multiverse: Multiverse instance</span>
+<span class="sd">        :param text_func: Pointer to the text function</span>
+<span class="sd">        :param progress_func: Pointer to the progress function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="p">:</span> <span class="n">MultiVerse</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">multiverse</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">FileSavingOptions</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">options</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="o">=</span> <span class="n">text_func</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="o">=</span> <span class="n">progress_func</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">=</span> <span class="n">determine_file_type</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileSave.save">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_save.FileSave.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the file in the corresponding format</span>
+<span class="sd">        :return: logger with information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_xlsx4</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">generic_excel</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_veragrid_excel</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="n">save_veragrid_circuit</span><span class="p">(</span>
+                    <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                    <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                    <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                    <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="n">save_veragrid_multiverse</span><span class="p">(</span>
+                    <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                    <span class="n">multiverse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                    <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                    <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_delta</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_veragrid_delta</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_sqlite</span><span class="p">:</span>
+            <span class="n">save_veragrid_sqlite</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_ejson3</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_electrical_json_v3</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">CGMES</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_cgmes</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">CIM</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_cim</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_h5</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_veragrid_h5</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_rawx</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_psse_rawx</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_raw</span><span class="p">:</span>
+
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_psse_raw</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PGM</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_pgm</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DGS</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_dgs</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Matpower</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_matpower</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">UCTE</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">save_ucte</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;File path extension not understood&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logger</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

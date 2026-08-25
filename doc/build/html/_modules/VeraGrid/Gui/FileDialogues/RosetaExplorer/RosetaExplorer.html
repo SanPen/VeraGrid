@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">webbrowser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="c1"># Engine imports</span>
+
+<span class="c1"># GUI imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_list_model</span><span class="p">,</span> <span class="n">get_logger_tree_model</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_RosetaExplorer</span><span class="p">,</span> <span class="n">QMainWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RosetaObjectsModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_menu_entry</span><span class="p">,</span> <span class="n">populate_cim_item_children</span><span class="p">,</span> <span class="n">get_cim_tree_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.object_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectsModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.pandas_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">PsseCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.db.db_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">DbHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.python_console</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonConsole</span>
+
+
+<div class="viewcode-block" id="clear_qt_layout">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.clear_qt_layout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_qt_layout</span><span class="p">(</span><span class="n">layout</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove all widgets from a layout object</span>
+<span class="sd">    :param layout:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">layout</span><span class="o">.</span><span class="n">count</span><span class="p">())):</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">itemAt</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span></div>
+
+
+
+<span class="c1">########################################################################################################################</span>
+<span class="c1"># Main Window</span>
+<span class="c1">########################################################################################################################</span>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RosetaExplorerGUI</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RosetaExplorerGUI</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">db_handler</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DbHandler</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        @param parent:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create main window</span>
+        <span class="n">QMainWindow</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_RosetaExplorer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Roseta Explorer&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># 1:4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">main_splitter</span><span class="o">.</span><span class="n">setStretchFactor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">main_splitter</span><span class="o">.</span><span class="n">setStretchFactor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_file_thread_object</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accepted_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;.raw&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_directory</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock_ui</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree_navigation_windows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;RosetaExplorerGUI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CgmesCircuit</span><span class="p">,</span> <span class="n">PsseCircuit</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span> <span class="o">=</span> <span class="n">DataLogger</span><span class="p">()</span>
+
+        <span class="c1"># Representation models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span><span class="o">.</span><span class="n">setRecursiveFilteringEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span><span class="o">.</span><span class="n">setFilterKeyColumn</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="o">.</span><span class="n">setSortingEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Tree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mainTreeView</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="o">.</span><span class="n">setRecursiveFilteringEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="o">.</span><span class="n">setFilterKeyColumn</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mainTreeView</span><span class="o">.</span><span class="n">setSortingEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">treeFilterComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">get_list_model</span><span class="p">([</span><span class="s1">&#39;Class&#39;</span><span class="p">,</span> <span class="s1">&#39;Property&#39;</span><span class="p">,</span> <span class="s1">&#39;Value&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">treeFilterComboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># DB</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="p">:</span> <span class="n">DbHandler</span> <span class="o">=</span> <span class="n">DbHandler</span><span class="p">(</span><span class="n">new_db</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">db_handler</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">db_handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_combo_boxes</span><span class="p">()</span>
+
+        <span class="c1"># Console</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_console</span><span class="p">()</span>
+
+        <span class="c1"># Connections --------------------------------------------------------------------------------------------------</span>
+
+        <span class="c1"># triggered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionSave_logs</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_logs</span><span class="p">)</span>
+
+        <span class="c1"># clicked</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_properties_table</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">modelTypeLabel</span><span class="o">.</span><span class="n">mouseDoubleClickEvent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_circuit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">treeFilterButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_main_tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mainTreeView</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_main_tree_on_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mainTreeView</span><span class="o">.</span><span class="n">expanded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_tree_expanded</span><span class="p">)</span>
+
+        <span class="c1"># text changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterComboBox</span><span class="o">.</span><span class="n">currentTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_filter_combobox_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">treeFilterComboBox</span><span class="o">.</span><span class="n">currentTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_tree_filter_combobox_changed</span><span class="p">)</span>
+
+        <span class="c1"># lineedit enter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterLineEdit</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_properties_table</span><span class="p">)</span>
+
+        <span class="c1"># list clicks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">clasesListView</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_class_click</span><span class="p">)</span>
+
+        <span class="c1"># context menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_objects_context_menu</span><span class="p">)</span>
+
+        <span class="c1"># Set context menu policy to CustomContextMenu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ContextMenuPolicy</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">UNLOCK</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_combo_boxes</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RosetaExplorerGUI.LOCK">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.LOCK">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">LOCK</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Lock the interface to prevent new simulation launches</span>
+<span class="sd">        :param val:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock_ui</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">progress_frame</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lock_ui</span><span class="p">)</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QGuiApplication</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.UNLOCK">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.UNLOCK">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">UNLOCK</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unlock the interface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">any_thread_running</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">LOCK</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.create_console">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.create_console">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_console</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create console</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">clear_qt_layout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">consoleLayout</span><span class="o">.</span><span class="n">layout</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">PythonConsole</span><span class="p">()</span>
+
+        <span class="c1"># add the console widget to the user interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">consoleLayout</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="p">)</span>
+
+        <span class="c1"># push some variables to the console</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+                         <span class="s2">&quot;pd&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="p">,</span>
+                         <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                         <span class="s1">&#39;circuit&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.update_combo_boxes">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.update_combo_boxes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_combo_boxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Properly update the combo boxes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">PsseCircuit</span><span class="p">):</span>
+            <span class="c1"># we do this first so that the model changing does not trigger the on_combo_box_text_change function</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">psse_lookup_db</span><span class="o">.</span><span class="n">last_file_opened</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">psse_lookup_db</span><span class="o">.</span><span class="n">list_of_db_files</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">psse_lookup_db</span><span class="o">.</span><span class="n">list_of_db_files</span><span class="o">.</span><span class="n">index</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">psse_lookup_db</span><span class="o">.</span><span class="n">last_file_opened</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">CgmesCircuit</span><span class="p">):</span>
+
+            <span class="c1"># we do this first so that the model changing does not trigger the on_combo_box_text_change function</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">cgmes_lookup_db</span><span class="o">.</span><span class="n">last_file_opened</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">cgmes_lookup_db</span><span class="o">.</span><span class="n">list_of_db_files</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">cgmes_lookup_db</span><span class="o">.</span><span class="n">list_of_db_files</span><span class="o">.</span><span class="n">index</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="o">.</span><span class="n">cgmes_lookup_db</span><span class="o">.</span><span class="n">last_file_opened</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.get_process_threads">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.get_process_threads">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_process_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all threads that has to do with processing</span>
+<span class="sd">        :return: list of process threads</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_threads</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">open_file_thread_object</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">all_threads</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.get_all_threads">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.get_all_threads">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all threads</span>
+<span class="sd">        :return: list of all threads</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_threads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_process_threads</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">all_threads</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.any_thread_running">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.any_thread_running">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">any_thread_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if any thread is running</span>
+<span class="sd">        :return: True/False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># this list cannot be created only once, because the None will be copied</span>
+        <span class="c1"># instead of being a pointer to the future value like it would in a typed language</span>
+        <span class="n">all_threads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_threads</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">thr</span> <span class="ow">in</span> <span class="n">all_threads</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">thr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">thr</span><span class="o">.</span><span class="n">isRunning</span><span class="p">():</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.dragEnterEvent">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.dragEnterEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.dragMoveEvent">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.dragMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.on_filter_combobox_changed">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_filter_combobox_changed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_filter_combobox_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main property chooser for filtering table data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span><span class="o">.</span><span class="n">setFilterKeyColumn</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.filter_properties_table">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.filter_properties_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_properties_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Action of filtering the main table data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span><span class="o">.</span><span class="n">setFilterRegularExpression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterLineEdit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.set_grid_model">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_grid_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_grid_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CgmesCircuit</span><span class="p">,</span> <span class="n">PsseCircuit</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set a grid Model</span>
+<span class="sd">        :param circuit: circuit model passed</span>
+<span class="sd">        :param</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="n">CgmesCircuit</span><span class="p">,</span> <span class="n">PsseCircuit</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_circuit</span><span class="p">(</span><span class="n">trim_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.display_circuit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.display_circuit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trim_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param trim_empty:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">property_name</span> <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_class_properties</span><span class="p">()]</span>
+            <span class="n">classes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">trim_empty</span><span class="p">:</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cl</span> <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">classes</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_objects_list</span><span class="p">(</span><span class="n">elm_type</span><span class="o">=</span><span class="n">cl</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">classes_model</span> <span class="o">=</span> <span class="n">get_list_model</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">clasesListView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes_model</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_model_label</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_combo_boxes</span><span class="p">()</span>
+
+            <span class="c1"># Tree</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_model</span> <span class="o">=</span> <span class="n">get_cim_tree_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_model</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mainTreeView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+                                 <span class="s1">&#39;circuit&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.set_model_label">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_model_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model label based on the model inner type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">PsseCircuit</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">modelTypeLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;PSSe&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s1">&#39;: PSSe&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">CgmesCircuit</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">modelTypeLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;CGMES&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s1">&#39;: CGMES&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unknown circuit type :(&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.set_logger">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_logger">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the main logger</span>
+<span class="sd">        :param logger: DataLogger object</span>
+<span class="sd">        :param message: Open message if relevant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>  <span class="c1"># assign the logger pointer</span>
+        <span class="n">logger_model</span> <span class="o">=</span> <span class="n">get_logger_tree_model</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>  <span class="c1"># crete tree model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">loggerTreeView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">logger_model</span><span class="p">)</span>  <span class="c1"># display</span>
+
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+            <span class="n">error_msg</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">get_message</span><span class="p">(),</span> <span class="s1">&#39;Logger&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.on_class_click">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_class_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_class_click</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On click on the classes list...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get the class type</span>
+        <span class="n">elm_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">clasesListView</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+
+        <span class="c1"># get the objects list of said class depending on the circuit type</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">PsseCircuit</span><span class="p">):</span>
+            <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_objects_list</span><span class="p">(</span><span class="n">elm_type</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">CgmesCircuit</span><span class="p">):</span>
+            <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_objects_list</span><span class="p">(</span><span class="n">elm_type</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unknown circuit type :(&#39;</span><span class="p">)</span>
+
+        <span class="c1"># represent the model</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">editable_headers</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">property_name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_properties</span><span class="p">()}</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">property_name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_properties</span><span class="p">()]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">editable_headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">get_list_model</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_model</span> <span class="o">=</span> <span class="n">RosetaObjectsModel</span><span class="p">(</span><span class="n">objects</span><span class="o">=</span><span class="n">objects</span><span class="p">,</span>
+                                                   <span class="n">editable_headers</span><span class="o">=</span><span class="n">editable_headers</span><span class="p">,</span>
+                                                   <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="p">,</span>
+                                                   <span class="n">editable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                   <span class="n">non_editable_attributes</span><span class="o">=</span><span class="p">[],</span>
+                                                   <span class="n">dictionary_of_lists</span><span class="o">=</span><span class="p">{})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties_proxy_model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.save_logs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.save_logs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save logger content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+
+            <span class="n">file</span><span class="p">,</span> <span class="n">selected_filter</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Export logs&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                                                          <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;Excel files (*.xlsx)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">file</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;xlsx&#39;</span> <span class="ow">in</span> <span class="n">selected_filter</span><span class="p">:</span>
+                    <span class="n">f</span> <span class="o">=</span> <span class="n">file</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xlsx&#39;</span><span class="p">):</span>
+                        <span class="n">f</span> <span class="o">+=</span> <span class="s1">&#39;.xlsx&#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">to_xlsx</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">error_msg</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; is not valid :(&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s1">&#39;There no logs :)&#39;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># def launch_tree_view(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Launch tree view of the model</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     if self.circuit is not None:</span>
+    <span class="c1">#</span>
+    <span class="c1">#         if isinstance(self.circuit, CgmesCircuit):</span>
+    <span class="c1">#             window = TreeModelViewerGUI()</span>
+    <span class="c1">#             self.tree_navigation_windows.append(window)</span>
+    <span class="c1">#             h = 740</span>
+    <span class="c1">#             window.resize(int(1.61 * h), h)  # golden ratio :)</span>
+    <span class="c1">#</span>
+    <span class="c1">#             window.set_circuit(self.circuit)</span>
+    <span class="c1">#</span>
+    <span class="c1">#             window.show()</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             info_msg(&quot;Only CGMES models are available for the tree view :/&quot;)</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         warning_msg(&quot;There is not model :/&quot;)</span>
+
+<div class="viewcode-block" id="RosetaExplorerGUI.new_rosetta_explorer">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.new_rosetta_explorer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_rosetta_explorer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PsseCircuit</span><span class="p">,</span> <span class="n">CgmesCircuit</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataLogger</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        New roseta window</span>
+<span class="sd">        :param model: (optional) the model to load</span>
+<span class="sd">        :param logger: (optional) DataLogger to display</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">RosetaExplorerGUI</span><span class="p">(</span><span class="n">db_handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_handler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree_navigation_windows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="mi">740</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1.61</span> <span class="o">*</span> <span class="n">h</span><span class="p">),</span> <span class="n">h</span><span class="p">)</span>  <span class="c1"># golden ratio :)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">set_grid_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">set_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.show_objects_context_menu">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.show_objects_context_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_objects_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show diagrams list view context menu</span>
+<span class="sd">        :param pos: Relative click position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">context_menu</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Copy&quot;</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/copy.png&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_table_to_clipboard</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.copy_table_to_clipboard">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.copy_table_to_clipboard">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_table_to_clipboard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copy objects model to the clipboard</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">propertiesTableView</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">RosetaObjectsModel</span><span class="p">):</span>
+            <span class="n">mdl</span><span class="o">.</span><span class="n">copy_to_clipboard</span><span class="p">()</span>
+            <span class="n">info_msg</span><span class="p">(</span><span class="s2">&quot;Copied table to clipboard!&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">ObjectsModel</span><span class="p">):</span>
+            <span class="n">mdl</span><span class="o">.</span><span class="n">copy_to_clipboard</span><span class="p">()</span>
+            <span class="n">info_msg</span><span class="p">(</span><span class="s2">&quot;Copied table to clipboard!&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">PandasModel</span><span class="p">):</span>
+            <span class="n">mdl</span><span class="o">.</span><span class="n">copy_to_clipboard</span><span class="p">()</span>
+            <span class="n">info_msg</span><span class="p">(</span><span class="s2">&quot;Copied table to clipboard!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.show_docs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.show_docs">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_docs</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the docs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">this_py_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">current_folder_path</span><span class="p">,</span> <span class="n">current_folder_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">this_py_file</span><span class="p">)</span>
+        <span class="n">index_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_folder_path</span><span class="p">,</span> <span class="s1">&#39;../..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;docs&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;index.html&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">index_path</span><span class="p">):</span>
+            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">index_path</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_msg</span><span class="p">(</span><span class="s2">&quot;The documentation could not be found under &quot;</span> <span class="o">+</span> <span class="n">index_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.about">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.about">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">about</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the &quot;about&quot; dialogue</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.filter_main_tree">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.filter_main_tree">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_main_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="o">.</span><span class="n">setFilterRegularExpression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">filterLineEdit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.update_main_tree_on_click">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.update_main_tree_on_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_main_tree_on_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="c1"># ix = self.proxyModel.mapToSource(index)</span>
+        <span class="c1"># parent = self.current_model.itemFromIndex(ix)</span>
+        <span class="c1"># for text in [&#39;Object class&#39;, &#39;Property&#39;, &#39;Value&#39;]:</span>
+        <span class="c1">#     children = QtGui.QStandardItem(&quot;{}_{}&quot;.format(parent.text(), text))</span>
+        <span class="c1">#     parent.appendRow(children)</span>
+        <span class="c1"># self.ui.mainTreeView.expand(index)</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.on_tree_expanded">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_tree_expanded">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_tree_expanded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">src_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">itemFromIndex</span><span class="p">(</span><span class="n">src_index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">populate_cim_item_children</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RosetaExplorerGUI.on_tree_filter_combobox_changed">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.html#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_tree_filter_combobox_changed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_tree_filter_combobox_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">treeFilterComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">treeProxyModel</span><span class="o">.</span><span class="n">setFilterKeyColumn</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

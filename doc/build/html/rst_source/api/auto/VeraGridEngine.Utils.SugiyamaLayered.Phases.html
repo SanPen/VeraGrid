@@ -1,0 +1,875 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.Phases package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Utils.Symbolic package" href="VeraGridEngine.Utils.Symbolic.html" />
+    <link rel="prev" title="VeraGridEngine.Utils.SugiyamaLayered package" href="VeraGridEngine.Utils.SugiyamaLayered.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Utils.SugiyamaLayered.html">VeraGridEngine.Utils.SugiyamaLayered package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.Phases package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-utils-sugiyamalayered-phases-package">
+<h1>VeraGridEngine.Utils.SugiyamaLayered.Phases package<a class="headerlink" href="#veragridengine-utils-sugiyamalayered-phases-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.components">
+<span id="veragridengine-utils-sugiyamalayered-phases-components-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.components module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.components" title="Link to this heading"></a></h2>
+<p>Connected components phase for the Sugiyama layered pipeline.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.components.ConnectedComponentsPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.components.</span></span><span class="sig-name descname"><span class="pre">ConnectedComponentsPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/components.html#ConnectedComponentsPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.components.ConnectedComponentsPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Detect connected graph components.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.components.ConnectedComponentsPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'connected-components'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.components.ConnectedComponentsPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.components.ConnectedComponentsPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/components.html#ConnectedComponentsPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.components.ConnectedComponentsPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the connected components phase.</p>
+<p>The phase first maps every port to its owner node so edge endpoints can
+be reduced to a pure node-level adjacency graph. Then it runs one
+breadth-first search per unvisited node to enumerate the components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><em>LayoutContext</em></a>) – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization">
+<span id="veragridengine-utils-sugiyamalayered-phases-crossing-minimization-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.</span></span><span class="sig-name descname"><span class="pre">CrossingMinimizationPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/crossing_minimization.html#CrossingMinimizationPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Reduce edge crossings by alternating layer sweeps and local transpositions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crossing-minimization'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/crossing_minimization.html#CrossingMinimizationPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the crossing-minimization phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking">
+<span id="veragridengine-utils-sugiyamalayered-phases-cycle-breaking-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking" title="Link to this heading"></a></h2>
+<p>Cycle breaking phase for the Sugiyama layered pipeline.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.CycleBreakingPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.</span></span><span class="sig-name descname"><span class="pre">CycleBreakingPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/cycle_breaking.html#CycleBreakingPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.CycleBreakingPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Orient edges to obtain one acyclic graph.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.CycleBreakingPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cycle-breaking'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.CycleBreakingPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.CycleBreakingPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/cycle_breaking.html#CycleBreakingPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.CycleBreakingPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the cycle-breaking phase.</p>
+<p>The phase first flattens port endpoints to their owner nodes, then
+computes one greedy node order, and finally orients all edges according
+to that order and the configured option biases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><em>LayoutContext</em></a>) – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.</span></span><span class="sig-name descname"><span class="pre">FlatEdge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/cycle_breaking.html#FlatEdge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Flattened edge between resolved node endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edge_id</strong> (<em>str</em>) – Original edge identifier.</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – Source node identifier.</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – Target node identifier.</p></li>
+<li><p><strong>source_port</strong> (<em>str</em><em> | </em><em>None</em>) – Optional source port identifier.</p></li>
+<li><p><strong>target_port</strong> (<em>str</em><em> | </em><em>None</em>) – Optional target port identifier.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.edge_id">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">edge_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.edge_id" title="Link to this definition"></a></dt>
+<dd><p>Return the original edge identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Original edge identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.source">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">source</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.source" title="Link to this definition"></a></dt>
+<dd><p>Return the source node identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Source node identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.source_port">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">source_port</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.source_port" title="Link to this definition"></a></dt>
+<dd><p>Return the optional source port identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Source port identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.target">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">target</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.target" title="Link to this definition"></a></dt>
+<dd><p>Return the target node identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Target node identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.target_port">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">target_port</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.cycle_breaking.FlatEdge.target_port" title="Link to this definition"></a></dt>
+<dd><p>Return the optional target port identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Target port identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing">
+<span id="veragridengine-utils-sugiyamalayered-phases-edge-routing-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.EdgeRoutingPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.</span></span><span class="sig-name descname"><span class="pre">EdgeRoutingPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/edge_routing.html#EdgeRoutingPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.EdgeRoutingPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Route edges once node positions are known.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.EdgeRoutingPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'edge-routing'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.EdgeRoutingPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.EdgeRoutingPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/edge_routing.html#EdgeRoutingPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.edge_routing.EdgeRoutingPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the edge-routing phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.labels">
+<span id="veragridengine-utils-sugiyamalayered-phases-labels-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.labels module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.labels" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.</span></span><span class="sig-name descname"><span class="pre">LabelPlacementPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/labels.html#LabelPlacementPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Place node, port and edge labels and normalize the final layout.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'labels'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/labels.html#LabelPlacementPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the label-placement phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.layering">
+<span id="veragridengine-utils-sugiyamalayered-phases-layering-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.layering module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.layering" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.</span></span><span class="sig-name descname"><span class="pre">LayeringPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/layering.html#LayeringPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Assign graph nodes to discrete layers.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'layering'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/layering.html#LayeringPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Compute the layer assignment for the current graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Pipeline execution context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges">
+<span id="veragridengine-utils-sugiyamalayered-phases-long-edges-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges" title="Link to this heading"></a></h2>
+<p>Long-edge expansion phase for the Sugiyama layered pipeline.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.</span></span><span class="sig-name descname"><span class="pre">LongEdgePhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/long_edges.html#LongEdgePhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Split edges that span more than one layer.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'long-edges'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/long_edges.html#LongEdgePhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the long-edge expansion phase.</p>
+<p>The phase inserts one dummy node on every intermediate layer crossed by
+a long edge. That transformation is required so later crossing
+minimization and coordinate assignment can operate on one proper
+layer-by-layer graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><em>LayoutContext</em></a>) – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.</span></span><span class="sig-name descname"><span class="pre">VirtualNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dummy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_edge_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/long_edges.html#VirtualNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Virtual node inserted to split a long edge across layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> (<em>str</em>) – Virtual node identifier.</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – Node width.</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – Node height.</p></li>
+<li><p><strong>is_dummy</strong> (<em>bool</em>) – Whether this node is synthetic.</p></li>
+<li><p><strong>original_edge_id</strong> (<em>str</em><em> | </em><em>None</em>) – Source edge identifier for dummy nodes.</p></li>
+<li><p><strong>chain_index</strong> (<em>int</em>) – Position inside the dummy chain.</p></li>
+<li><p><strong>chain_priority</strong> (<em>int</em>) – Dummy chain priority used in ordering.</p></li>
+<li><p><strong>model_order</strong> (<em>int</em>) – Stable model-order key.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.chain_index">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">chain_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.chain_index" title="Link to this definition"></a></dt>
+<dd><p>Return the dummy-chain index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dummy-chain index.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.chain_priority">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">chain_priority</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.chain_priority" title="Link to this definition"></a></dt>
+<dd><p>Return the dummy-chain priority.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dummy-chain priority.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.height">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">height</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.height" title="Link to this definition"></a></dt>
+<dd><p>Return the virtual node height.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Virtual node height.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.identifier">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">identifier</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.identifier" title="Link to this definition"></a></dt>
+<dd><p>Return the virtual node identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Virtual node identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.is_dummy">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_dummy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.is_dummy" title="Link to this definition"></a></dt>
+<dd><p>Return whether the node is synthetic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for dummy nodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.model_order">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">model_order</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.model_order" title="Link to this definition"></a></dt>
+<dd><p>Return the stable model-order key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Stable model-order key.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.original_edge_id">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">original_edge_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.original_edge_id" title="Link to this definition"></a></dt>
+<dd><p>Return the original edge identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Original edge identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.width">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">width</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode.width" title="Link to this definition"></a></dt>
+<dd><p>Return the virtual node width.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Virtual node width.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement">
+<span id="veragridengine-utils-sugiyamalayered-phases-node-placement-module"></span><h2>VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement module<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.NodePlacementPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.</span></span><span class="sig-name descname"><span class="pre">NodePlacementPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/node_placement.html#NodePlacementPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.NodePlacementPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Assign node and port coordinates for the layered layout.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.NodePlacementPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'node-placement'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.NodePlacementPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.NodePlacementPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/node_placement.html#NodePlacementPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.node_placement.NodePlacementPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the node-placement phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.SugiyamaLayered.Phases">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Utils.SugiyamaLayered.Phases" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.ConnectedComponentsPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">ConnectedComponentsPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/components.html#ConnectedComponentsPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.ConnectedComponentsPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Detect connected graph components.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.ConnectedComponentsPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'connected-components'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.ConnectedComponentsPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.ConnectedComponentsPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/components.html#ConnectedComponentsPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.ConnectedComponentsPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the connected components phase.</p>
+<p>The phase first maps every port to its owner node so edge endpoints can
+be reduced to a pure node-level adjacency graph. Then it runs one
+breadth-first search per unvisited node to enumerate the components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><em>LayoutContext</em></a>) – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.CrossingMinimizationPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">CrossingMinimizationPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/crossing_minimization.html#CrossingMinimizationPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.CrossingMinimizationPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Reduce edge crossings by alternating layer sweeps and local transpositions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.CrossingMinimizationPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crossing-minimization'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.CrossingMinimizationPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.CrossingMinimizationPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/crossing_minimization.html#CrossingMinimizationPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.CrossingMinimizationPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the crossing-minimization phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.CycleBreakingPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">CycleBreakingPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/cycle_breaking.html#CycleBreakingPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.CycleBreakingPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Orient edges to obtain one acyclic graph.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.CycleBreakingPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cycle-breaking'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.CycleBreakingPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.CycleBreakingPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/cycle_breaking.html#CycleBreakingPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.CycleBreakingPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the cycle-breaking phase.</p>
+<p>The phase first flattens port endpoints to their owner nodes, then
+computes one greedy node order, and finally orients all edges according
+to that order and the configured option biases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><em>LayoutContext</em></a>) – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.EdgeRoutingPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">EdgeRoutingPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/edge_routing.html#EdgeRoutingPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.EdgeRoutingPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Route edges once node positions are known.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.EdgeRoutingPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'edge-routing'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.EdgeRoutingPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.EdgeRoutingPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/edge_routing.html#EdgeRoutingPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.EdgeRoutingPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the edge-routing phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LabelPlacementPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">LabelPlacementPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/labels.html#LabelPlacementPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LabelPlacementPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Place node, port and edge labels and normalize the final layout.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LabelPlacementPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'labels'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LabelPlacementPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LabelPlacementPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/labels.html#LabelPlacementPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LabelPlacementPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the label-placement phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LayeringPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">LayeringPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/layering.html#LayeringPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LayeringPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Assign graph nodes to discrete layers.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LayeringPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'layering'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LayeringPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LayeringPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/layering.html#LayeringPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LayeringPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Compute the layer assignment for the current graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Pipeline execution context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LongEdgePhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">LongEdgePhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/long_edges.html#LongEdgePhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LongEdgePhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Split edges that span more than one layer.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LongEdgePhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'long-edges'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LongEdgePhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.LongEdgePhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/long_edges.html#LongEdgePhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.LongEdgePhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the long-edge expansion phase.</p>
+<p>The phase inserts one dummy node on every intermediate layer crossed by
+a long edge. That transformation is required so later crossing
+minimization and coordinate assignment can operate on one proper
+layer-by-layer graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><em>LayoutContext</em></a>) – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.NodePlacementPhase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.SugiyamaLayered.Phases.</span></span><span class="sig-name descname"><span class="pre">NodePlacementPhase</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/node_placement.html#NodePlacementPhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.NodePlacementPhase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutPhaseBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayoutPhaseBase</span></code></a></p>
+<p>Assign node and port coordinates for the layered layout.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.NodePlacementPhase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'node-placement'</span></span><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.NodePlacementPhase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.SugiyamaLayered.Phases.NodePlacementPhase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext" title="VeraGridEngine.Utils.SugiyamaLayered.pipeline.LayoutContext"><span class="pre">LayoutContext</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/SugiyamaLayered/Phases/node_placement.html#NodePlacementPhase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.SugiyamaLayered.Phases.NodePlacementPhase.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the node-placement phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – Shared pipeline context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Utils.SugiyamaLayered.html" class="btn btn-neutral float-left" title="VeraGridEngine.Utils.SugiyamaLayered package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Utils.Symbolic.html" class="btn btn-neutral float-right" title="VeraGridEngine.Utils.Symbolic package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

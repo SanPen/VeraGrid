@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎲 Stochastic power flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="➿ Continuation power flow" href="continuation_power_flow.html" />
+    <link rel="prev" title="⚡ Short-Circuit" href="short_circuit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🎲 Stochastic power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-the-uncertainty-comes-from">Where The Uncertainty Comes From</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sampling-modes">Sampling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-parameters">Main Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reported-results">Reported Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#raw-sampled-arrays">Raw Sampled Arrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiled-aggregate-arrays">Compiled Aggregate Arrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convergence-series">Convergence Series</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#distribution-views">Distribution Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-helper-methods">Additional Helper Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#stochasticpowerflowresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🎲 Stochastic power flow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/stochastic_power_flow.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="stochastic-power-flow">
+<h1>🎲 Stochastic power flow<a class="headerlink" href="#stochastic-power-flow" title="Link to this heading"></a></h1>
+<p>The stochastic power flow in VeraGrid evaluates the network under many sampled operating points instead of solving only
+one deterministic case. Its purpose is to estimate how uncertainty in injections propagates to voltages, branch flows,
+loading, and losses.</p>
+<p>Rather than asking “what happens for one dispatch and one load level?”, this study asks “what is the distribution of
+results over many plausible operating points?”.</p>
+<section id="what-the-study-evaluates">
+<h2>What The Study Evaluates<a class="headerlink" href="#what-the-study-evaluates" title="Link to this heading"></a></h2>
+<p>For each sampled operating point, VeraGrid runs a power flow and stores the resulting:</p>
+<ul class="simple">
+<li><p>bus injections</p></li>
+<li><p>bus voltages</p></li>
+<li><p>branch powers</p></li>
+<li><p>branch loadings</p></li>
+<li><p>branch losses</p></li>
+</ul>
+<p>After all samples are processed, the study compiles aggregate statistics and distribution views, such as:</p>
+<ul class="simple">
+<li><p>average voltage</p></li>
+<li><p>voltage standard deviation</p></li>
+<li><p>voltage CDF</p></li>
+<li><p>branch loading average</p></li>
+<li><p>branch loading standard deviation</p></li>
+<li><p>branch loading CDF</p></li>
+<li><p>branch losses average and CDF</p></li>
+</ul>
+<p>This makes the study useful for uncertainty analysis, risk screening, and probabilistic operating assessment.</p>
+</section>
+<section id="where-the-uncertainty-comes-from">
+<h2>Where The Uncertainty Comes From<a class="headerlink" href="#where-the-uncertainty-comes-from" title="Link to this heading"></a></h2>
+<p>The stochastic input builder uses the grid time-series information:</p>
+<ul class="simple">
+<li><p>fixed injections are sampled from empirical cumulative distributions built from the time-series profiles</p></li>
+<li><p>dispatchable injections are reconstructed from the sampled fixed injections through a regression model</p></li>
+<li><p>the dispatchable part is then scaled so that sampled demand and generation remain balanced</p></li>
+</ul>
+<p>In practice, this means the stochastic study is not generating arbitrary random injections. It is generating injections
+consistent with the historical or profile-based operating patterns already present in the grid model.</p>
+</section>
+<section id="sampling-modes">
+<h2>Sampling Modes<a class="headerlink" href="#sampling-modes" title="Link to this heading"></a></h2>
+<p>VeraGrid currently supports two sampling modes:</p>
+<ul class="simple">
+<li><p><strong>Monte Carlo</strong>:
+random sampling from the empirical distributions</p></li>
+<li><p><strong>Latin Hypercube</strong>:
+stratified sampling designed to cover the input space more evenly with fewer samples</p></li>
+</ul>
+<p>The corresponding API enum is <code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowType</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowType.MonteCarlo</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowType.LatinHypercube</span></code></p></li>
+</ul>
+<p><img alt="" src="../_images/settings-ml.png" /></p>
+<p>In general:</p>
+<ul class="simple">
+<li><p>use <strong>Monte Carlo</strong> when you want a straightforward random simulation</p></li>
+<li><p>use <strong>Latin Hypercube</strong> when you want better coverage of the sampled uncertainty space for a fixed sample budget</p></li>
+</ul>
+</section>
+<section id="main-parameters">
+<h2>Main Parameters<a class="headerlink" href="#main-parameters" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mc_tol</span></code></strong>:
+convergence target for the Monte Carlo error indicator</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">batch_size</span></code></strong>:
+batch size parameter for the simulation workflow</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">sampling_points</span></code></strong>:
+maximum number of sampled operating points</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">simulation_type</span></code></strong>:
+sampling method, either Monte Carlo or Latin Hypercube</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">options</span></code></strong>:
+the deterministic power flow options used for each sampled operating point</p></li>
+</ul>
+<p>The study stores all sampled points and then compiles summary statistics from them.</p>
+</section>
+<section id="reported-results">
+<h2>Reported Results<a class="headerlink" href="#reported-results" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowResults</span></code> object stores the sampled raw data as well as compiled aggregate outputs.</p>
+<section id="raw-sampled-arrays">
+<h3>Raw Sampled Arrays<a class="headerlink" href="#raw-sampled-arrays" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">S_points</span></code>: sampled bus power injections</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">V_points</span></code>: sampled bus voltages</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sbr_points</span></code>: sampled branch powers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loading_points</span></code>: sampled branch loadings</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">losses_points</span></code>: sampled branch losses</p></li>
+</ul>
+</section>
+<section id="compiled-aggregate-arrays">
+<h3>Compiled Aggregate Arrays<a class="headerlink" href="#compiled-aggregate-arrays" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code>: average bus voltage magnitude</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sbranch</span></code>: average branch active power</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loading</span></code>: average branch loading</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">losses</span></code>: average branch losses</p></li>
+</ul>
+</section>
+<section id="convergence-series">
+<h3>Convergence Series<a class="headerlink" href="#convergence-series" title="Link to this heading"></a></h3>
+<p>The result object also stores the evolution of averages and variances as the number of samples increases:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">v_avg_conv</span></code>, <code class="docutils literal notranslate"><span class="pre">v_std_conv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s_avg_conv</span></code>, <code class="docutils literal notranslate"><span class="pre">s_std_conv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">l_avg_conv</span></code>, <code class="docutils literal notranslate"><span class="pre">l_std_conv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loss_avg_conv</span></code>, <code class="docutils literal notranslate"><span class="pre">loss_std_conv</span></code></p></li>
+</ul>
+<p>These are useful to assess whether the stochastic estimates are stabilizing as more samples are added.</p>
+</section>
+</section>
+<section id="distribution-views">
+<h2>Distribution Views<a class="headerlink" href="#distribution-views" title="Link to this heading"></a></h2>
+<p>The stochastic result model exposes several result tables through <code class="docutils literal notranslate"><span class="pre">mdl()</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BusVoltageAverage</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BusVoltageStd</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BusVoltageCDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BusPowerCDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchPowerAverage</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchPowerStd</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchPowerCDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLoadingAverage</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLoadingStd</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLoadingCDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLossesAverage</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLossesStd</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLossesCDF</span></code></p></li>
+</ul>
+<p>The CDF results are especially useful when the question is probabilistic, for example:</p>
+<ul class="simple">
+<li><p>what is the probability that a branch exceeds 100% loading?</p></li>
+<li><p>how likely is a bus voltage to fall below a threshold?</p></li>
+<li><p>how dispersed are branch losses under uncertain operating conditions?</p></li>
+</ul>
+</section>
+<section id="additional-helper-methods">
+<h2>Additional Helper Methods<a class="headerlink" href="#additional-helper-methods" title="Link to this heading"></a></h2>
+<p>The results object includes a few practical helper methods:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_index_loading_cdf(max_val=1.0)</span></code>:
+finds branches whose loading distribution exceeds a threshold and returns their indices and associated probabilities</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">query_voltage(power_array)</span></code>:
+estimates voltages for a new injection vector using a regression model trained on the sampled points</p></li>
+</ul>
+<p>The first helper is particularly relevant for risk screening and is also reused by the cascading simulation.</p>
+</section>
+<section id="interpretation-notes">
+<h2>Interpretation Notes<a class="headerlink" href="#interpretation-notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>A low average branch loading does not necessarily mean low risk if the loading CDF has a long upper tail.</p></li>
+<li><p>A small voltage standard deviation means the bus voltage is robust to the sampled uncertainty.</p></li>
+<li><p>A broad CDF spread usually indicates that the corresponding variable is highly sensitive to uncertain injections.</p></li>
+<li><p>The quality of the stochastic study depends strongly on the quality and representativeness of the time-series data.</p></li>
+</ul>
+<p>As with any probabilistic study, the outputs are only as meaningful as the input distributions.</p>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="stochasticpowerflowresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowResults</span></code> registered properties<a class="headerlink" href="#stochasticpowerflowresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The stochastic power-flow result currently has no registered persisted properties.</p>
+<p>This result object currently does not register persisted result properties.</p>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>Using the driver directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">StochasticPowerFlowDriver</span><span class="p">,</span>
+    <span class="n">StochasticPowerFlowType</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_grid.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">StochasticPowerFlowDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">sampling_points</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">simulation_type</span><span class="o">=</span><span class="n">StochasticPowerFlowType</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average bus voltage magnitudes:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average branch loading:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average branch losses:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">losses</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using plain Monte Carlo sampling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">StochasticPowerFlowDriver</span><span class="p">,</span>
+    <span class="n">StochasticPowerFlowType</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_grid.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">StochasticPowerFlowDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">mc_tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">sampling_points</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="n">simulation_type</span><span class="o">=</span><span class="n">StochasticPowerFlowType</span><span class="o">.</span><span class="n">MonteCarlo</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computed samples:&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">points_number</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error series length:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">error_series</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Getting a result table:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultTypes</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BranchLoadingCDF</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finding overloaded branches probabilistically:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">idx</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">loading</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get_index_loading_cdf</span><span class="p">(</span><span class="n">max_val</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Candidate branch indices:&quot;</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Overload probabilities:&quot;</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The main constructor arguments are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">grid</span></code>: the <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> network model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">options</span></code>: power flow options</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mc_tol</span></code>: Monte Carlo convergence tolerance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code>: batch size parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling_points</span></code>: maximum number of samples</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulation_type</span></code>: <code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowType.MonteCarlo</span></code> or <code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowType.LatinHypercube</span></code></p></li>
+</ul>
+</section>
+<section id="practical-guidance">
+<h2>Practical Guidance<a class="headerlink" href="#practical-guidance" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use <strong>Latin Hypercube</strong> when you want a compact but well-spread exploration of uncertainty.</p></li>
+<li><p>Use a larger <code class="docutils literal notranslate"><span class="pre">sampling_points</span></code> value when estimating tail probabilities or overload risk.</p></li>
+<li><p>Check the CDF outputs, not only the averages, when the study is meant for risk assessment.</p></li>
+<li><p>Make sure the grid contains representative time-series data, otherwise the sampled operating points will not be
+meaningful.</p></li>
+<li><p>Use the deterministic power flow first if you need to debug convergence issues before launching the stochastic study.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="short_circuit.html" class="btn btn-neutral float-left" title="⚡ Short-Circuit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="continuation_power_flow.html" class="btn btn-neutral float-right" title="➿ Continuation power flow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

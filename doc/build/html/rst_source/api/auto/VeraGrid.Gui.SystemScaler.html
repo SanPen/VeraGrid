@@ -1,0 +1,1009 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.SystemScaler package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.Visualization package" href="VeraGrid.Gui.Visualization.html" />
+    <link rel="prev" title="VeraGrid.Gui.SyncDialogue package" href="VeraGrid.Gui.SyncDialogue.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.SystemScaler package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.SystemScaler.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-systemscaler-package">
+<h1>VeraGrid.Gui.SystemScaler package<a class="headerlink" href="#veragrid-gui-systemscaler-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.SystemScaler.system_scaler">
+<span id="veragrid-gui-systemscaler-system-scaler-module"></span><h2>VeraGrid.Gui.SystemScaler.system_scaler module<a class="headerlink" href="#module-VeraGrid.Gui.SystemScaler.system_scaler" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">SystemScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>SystemScaler GUI</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.add_checkpoint">
+<span class="sig-name descname"><span class="pre">add_checkpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.add_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.add_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Add a scaling checkpoint after the selected checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.connect_checkpoint_data_model">
+<span class="sig-name descname"><span class="pre">connect_checkpoint_data_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.connect_checkpoint_data_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.connect_checkpoint_data_model" title="Link to this definition"></a></dt>
+<dd><p>Connect a checkpoint data model to refresh checkpoint totals after factor edits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – Checkpoint data model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.do_it">
+<span class="sig-name descname"><span class="pre">do_it</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.do_it"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.do_it" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_effective_temporal_scaling_by_group">
+<span class="sig-name descname"><span class="pre">get_effective_temporal_scaling_by_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.get_effective_temporal_scaling_by_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_effective_temporal_scaling_by_group" title="Link to this definition"></a></dt>
+<dd><p>Build effective cumulative temporal scaling for one grouping type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – Grouping type to process.</p></li>
+<li><p><strong>time_profile</strong> – Time profile used for interpolation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference model and effective temporal scaling, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_scaling_preview_arrays">
+<span class="sig-name descname"><span class="pre">get_scaling_preview_arrays</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DatetimeIndex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.get_scaling_preview_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_scaling_preview_arrays" title="Link to this definition"></a></dt>
+<dd><p>Aggregate original and scaled load/generation arrays without mutating the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Time index, original load, scaled load, original generation, scaled generation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_selected_checkpoint_index">
+<span class="sig-name descname"><span class="pre">get_selected_checkpoint_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.get_selected_checkpoint_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_selected_checkpoint_index" title="Link to this definition"></a></dt>
+<dd><p>Get the selected checkpoint row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Selected checkpoint index or zero when there is no valid selection.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_temporal_checkpoints_by_group">
+<span class="sig-name descname"><span class="pre">get_temporal_checkpoints_by_group</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint"><span class="pre">SystemScalingCheckpoint</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.get_temporal_checkpoints_by_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.get_temporal_checkpoints_by_group" title="Link to this definition"></a></dt>
+<dd><p>Collect temporal checkpoints by grouping type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary keyed by grouping type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoint_data_model_data_changed">
+<span class="sig-name descname"><span class="pre">on_checkpoint_data_model_data_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom_right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.on_checkpoint_data_model_data_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoint_data_model_data_changed" title="Link to this definition"></a></dt>
+<dd><p>Refresh checkpoint total columns after editing group scaling factors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>top_left</strong> – First changed checkpoint data table index.</p></li>
+<li><p><strong>bottom_right</strong> – Last changed checkpoint data table index.</p></li>
+<li><p><strong>roles</strong> – Changed Qt roles.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoint_table_clicked">
+<span class="sig-name descname"><span class="pre">on_checkpoint_table_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.on_checkpoint_table_clicked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoint_table_clicked" title="Link to this definition"></a></dt>
+<dd><p>Display the checkpoint data when the checkpoint row is clicked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Clicked checkpoint table index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoint_table_current_changed">
+<span class="sig-name descname"><span class="pre">on_checkpoint_table_current_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.on_checkpoint_table_current_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoint_table_current_changed" title="Link to this definition"></a></dt>
+<dd><p>Display the checkpoint data when table selection changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current</strong> – Current selected model index.</p></li>
+<li><p><strong>previous</strong> – Previous selected model index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoints_model_data_changed">
+<span class="sig-name descname"><span class="pre">on_checkpoints_model_data_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom_right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.on_checkpoints_model_data_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.on_checkpoints_model_data_changed" title="Link to this definition"></a></dt>
+<dd><p>Refresh the checkpoint data table after checkpoint-level edits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>top_left</strong> – First changed checkpoint table index.</p></li>
+<li><p><strong>bottom_right</strong> – Last changed checkpoint table index.</p></li>
+<li><p><strong>roles</strong> – Changed Qt roles.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.plot_scaling">
+<span class="sig-name descname"><span class="pre">plot_scaling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.plot_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.plot_scaling" title="Link to this definition"></a></dt>
+<dd><p>Plot original and scaled aggregate load/generation without applying changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.remove_checkpoint">
+<span class="sig-name descname"><span class="pre">remove_checkpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.remove_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.remove_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Remove the selected checkpoints while keeping at least one default checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.seed_model_from_previous_checkpoint">
+<span class="sig-name descname"><span class="pre">seed_model_from_previous_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_checkpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint"><span class="pre">SystemScalingCheckpoint</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.seed_model_from_previous_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.seed_model_from_previous_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Copy scaling values from a previous checkpoint when both use the same grouping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – New model to seed.</p></li>
+<li><p><strong>previous_checkpoint</strong> – Previous checkpoint used as the source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.set_checkpoint_data_delegates">
+<span class="sig-name descname"><span class="pre">set_checkpoint_data_delegates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.set_checkpoint_data_delegates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.set_checkpoint_data_delegates" title="Link to this definition"></a></dt>
+<dd><p>Configure the selected checkpoint data table delegates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.set_checkpoints_delegates">
+<span class="sig-name descname"><span class="pre">set_checkpoints_delegates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.set_checkpoints_delegates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.set_checkpoints_delegates" title="Link to this definition"></a></dt>
+<dd><p>Configure the checkpoint table delegates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.set_current_checkpoint_data_model">
+<span class="sig-name descname"><span class="pre">set_current_checkpoint_data_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScaler.set_current_checkpoint_data_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.set_current_checkpoint_data_model" title="Link to this definition"></a></dt>
+<dd><p>Display the group scaling data model for a checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint index to display.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;SystemScaler&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">SystemScalingCheckpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Typed container for a temporal scaling checkpoint.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint.model">
+<span class="sig-name descname"><span class="pre">model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint.time_key">
+<span class="sig-name descname"><span class="pre">time_key</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">object</span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint.time_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">SystemScalingCheckpointsModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint"><span class="pre">SystemScalingCheckpoint</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QTableView</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QTableView</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
+<p>Table model showing the configured scaling checkpoints.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.checkpoints">
+<span class="sig-name descname"><span class="pre">checkpoints</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint"><span class="pre">SystemScalingCheckpoint</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.checkpoints" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.columnCount" title="Link to this definition"></a></dt>
+<dd><p>Get the number of columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> – Parent model index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ItemDataRole</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.data" title="Link to this definition"></a></dt>
+<dd><p>Get the displayed checkpoint value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Model index.</p></li>
+<li><p><strong>role</strong> – Qt data role.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Display value or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.data_parent">
+<span class="sig-name descname"><span class="pre">data_parent</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QTableView</span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.data_parent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ItemFlag</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.flags" title="Link to this definition"></a></dt>
+<dd><p>Get the display mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Model index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Qt item flags.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_checkpoint_and_group_indices">
+<span class="sig-name descname"><span class="pre">get_checkpoint_and_group_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_checkpoint_and_group_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_checkpoint_and_group_indices" title="Link to this definition"></a></dt>
+<dd><p>Convert a table row into checkpoint and group row indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>row</strong> – Flat table row.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Checkpoint index and group index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_cumulative_factors_for_checkpoint">
+<span class="sig-name descname"><span class="pre">get_cumulative_factors_for_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_cumulative_factors_for_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_cumulative_factors_for_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Get effective cumulative factors for a checkpoint row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint row index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Effective load/generation factor matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_effective_total_generation_for_checkpoint">
+<span class="sig-name descname"><span class="pre">get_effective_total_generation_for_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_effective_total_generation_for_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_effective_total_generation_for_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Get the effective cumulative total generation for a checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint row index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Effective total generation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_effective_total_load_for_checkpoint">
+<span class="sig-name descname"><span class="pre">get_effective_total_load_for_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_effective_total_load_for_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_effective_total_load_for_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Get the effective cumulative total load for a checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint row index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Effective total load.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_first_row_of_checkpoint">
+<span class="sig-name descname"><span class="pre">get_first_row_of_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_first_row_of_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_first_row_of_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Get the first flat table row for a checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>First table row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_next_time_index">
+<span class="sig-name descname"><span class="pre">get_next_time_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_next_time_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_next_time_index" title="Link to this definition"></a></dt>
+<dd><p>Get the next temporal checkpoint index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint row index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Next temporal index or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_previous_time_index">
+<span class="sig-name descname"><span class="pre">get_previous_time_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.get_previous_time_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.get_previous_time_index" title="Link to this definition"></a></dt>
+<dd><p>Get the previous temporal checkpoint index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint_idx</strong> – Checkpoint row index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Previous temporal index or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.groups">
+<span class="sig-name descname"><span class="pre">groups</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.groups" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ItemDataRole</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.headerData" title="Link to this definition"></a></dt>
+<dd><p>Get the table headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong> – Header section.</p></li>
+<li><p><strong>orientation</strong> – Header orientation.</p></li>
+<li><p><strong>role</strong> – Qt data role.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Header value or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.is_valid_time_index_for_row">
+<span class="sig-name descname"><span class="pre">is_valid_time_index_for_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.is_valid_time_index_for_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.is_valid_time_index_for_row" title="Link to this definition"></a></dt>
+<dd><p>Check whether a checkpoint time keeps the table strictly increasing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>checkpoint_idx</strong> – Checkpoint row index.</p></li>
+<li><p><strong>time_idx</strong> – Candidate time index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the candidate keeps checkpoint times ordered.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.rowCount" title="Link to this definition"></a></dt>
+<dd><p>Get the number of rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> – Parent model index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of checkpoints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.setData">
+<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ItemDataRole</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ItemDataRole.EditRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.setData" title="Link to this definition"></a></dt>
+<dd><p>Set the editable checkpoint value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Model index.</p></li>
+<li><p><strong>value</strong> – New value.</p></li>
+<li><p><strong>role</strong> – Qt data role.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the value was accepted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;SystemScalingCheckpointsModel&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QAbstractTableModel&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingCheckpointsModel.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpointsModel.update" title="Link to this definition"></a></dt>
+<dd><p>Notify the view that the checkpoint table changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">SystemScalingModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QTableView</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_delegates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
+<p>Class to populate a Qt table view with a pandas data frame</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.apply_scaling">
+<span class="sig-name descname"><span class="pre">apply_scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.apply_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.apply_scaling" title="Link to this definition"></a></dt>
+<dd><p>Aply the scaling to the objects
+:param with_time_series: scale time profiles too?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.columnCount" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.flags" title="Link to this definition"></a></dt>
+<dd><p>Get the display mode
+:param index:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.headerData" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong></p></li>
+<li><p><strong>orientation</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.rowCount" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.setData">
+<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.setData" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong></p></li>
+<li><p><strong>value</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.set_delegates">
+<span class="sig-name descname"><span class="pre">set_delegates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.set_delegates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.set_delegates" title="Link to this definition"></a></dt>
+<dd><p>Set the cell editor types depending on the attribute_types array</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.set_load_generation_scaling_factors">
+<span class="sig-name descname"><span class="pre">set_load_generation_scaling_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.set_load_generation_scaling_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.set_load_generation_scaling_factors" title="Link to this definition"></a></dt>
+<dd><p>Set the editable load/generation scaling factors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>factors</strong> – array with shape (number of groups, 2)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;SystemScalingModel&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QAbstractTableModel&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#SystemScalingModel.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel.update" title="Link to this definition"></a></dt>
+<dd><p>update table</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.apply_time_series_scaling_from_checkpoints">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">apply_time_series_scaling_from_checkpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint"><span class="pre">SystemScalingCheckpoint</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#apply_time_series_scaling_from_checkpoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.apply_time_series_scaling_from_checkpoints" title="Link to this definition"></a></dt>
+<dd><p>Apply temporally interpolated checkpoint scaling to load and generator profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – System scaling model that defines the target grouping.</p></li>
+<li><p><strong>checkpoints</strong> – Scaling checkpoints to interpolate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Interpolated scaling factors with shape <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">group,</span> <span class="pre">2)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.build_demo_system_scaler_grid">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">build_demo_system_scaler_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#build_demo_system_scaler_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.build_demo_system_scaler_grid" title="Link to this definition"></a></dt>
+<dd><p>Build a small five-bus grid for manually testing the system scaler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Demo grid with aggregation groups, injections and twelve time steps.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.configure_demo_system_scaler_checkpoints">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">configure_demo_system_scaler_checkpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScaler"><span class="pre">SystemScaler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#configure_demo_system_scaler_checkpoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.configure_demo_system_scaler_checkpoints" title="Link to this definition"></a></dt>
+<dd><p>Add several sample checkpoints to a SystemScaler window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>window</strong> – SystemScaler instance to populate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.get_checkpoint_time_index">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">get_checkpoint_time_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#get_checkpoint_time_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.get_checkpoint_time_index" title="Link to this definition"></a></dt>
+<dd><p>Convert a checkpoint key into a position in the master time profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_profile</strong> – Grid time profile.</p></li>
+<li><p><strong>time_key</strong> – Integer position or timestamp-like value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Integer time index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.get_cumulative_checkpoint_values">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">get_cumulative_checkpoint_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_are_incremental</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#get_cumulative_checkpoint_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.get_cumulative_checkpoint_values" title="Link to this definition"></a></dt>
+<dd><p>Convert incremental checkpoint factors into cumulative factors ordered by time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>checkpoint_indices</strong> – Integer checkpoint time indices.</p></li>
+<li><p><strong>checkpoint_values</strong> – Incremental checkpoint factors with shape <code class="docutils literal notranslate"><span class="pre">(checkpoint,</span> <span class="pre">group,</span> <span class="pre">factor)</span></code>.</p></li>
+<li><p><strong>values_are_incremental</strong> – Whether the checkpoint values must be multiplied cumulatively.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Unique checkpoint indices and cumulative factors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.get_generator_time_series_values">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">get_generator_time_series_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#get_generator_time_series_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.get_generator_time_series_values" title="Link to this definition"></a></dt>
+<dd><p>Get the active generation values used by the scaler preview.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generator</strong> – Generator device.</p></li>
+<li><p><strong>time_profile</strong> – Grid time profile.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Active generation vector in MW.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.get_load_time_series_values">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">get_load_time_series_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#get_load_time_series_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.get_load_time_series_values" title="Link to this definition"></a></dt>
+<dd><p>Get the active load values used by the scaler preview.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load</strong> – Load device.</p></li>
+<li><p><strong>time_profile</strong> – Grid time profile.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Active load vector in MW.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.get_system_scaling_model_group_signature">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">get_system_scaling_model_group_signature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingModel"><span class="pre">SystemScalingModel</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#get_system_scaling_model_group_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.get_system_scaling_model_group_signature" title="Link to this definition"></a></dt>
+<dd><p>Build a stable group signature to validate checkpoint compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – System scaling model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of group device type and idtag pairs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.interpolate_time_series_scaling">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">interpolate_time_series_scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint" title="VeraGrid.Gui.SystemScaler.system_scaler.SystemScalingCheckpoint"><span class="pre">SystemScalingCheckpoint</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#interpolate_time_series_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.interpolate_time_series_scaling" title="Link to this definition"></a></dt>
+<dd><p>Interpolate cumulative load/generation scaling factors over a time profile.</p>
+<p>The returned array has shape <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">group,</span> <span class="pre">2)</span></code>, where the last dimension is
+load factor and generation factor. Declared checkpoint values are incremental
+over the previous declared factor. Values outside the checkpoint span use the
+closest cumulative checkpoint value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_profile</strong> – Grid time profile.</p></li>
+<li><p><strong>checkpoints</strong> – Scaling checkpoints to interpolate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Interpolated scaling factors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.scale_float_profile_values">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">scale_float_profile_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#scale_float_profile_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.scale_float_profile_values" title="Link to this definition"></a></dt>
+<dd><p>Scale a float profile by a temporal vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> – Profile to scale.</p></li>
+<li><p><strong>scaling_vector</strong> – Vector with one scaling factor per time step.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler.scale_load_time_series_profiles">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler.</span></span><span class="sig-name descname"><span class="pre">scale_load_time_series_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler.html#scale_load_time_series_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler.scale_load_time_series_profiles" title="Link to this definition"></a></dt>
+<dd><p>Scale all load power time series profiles by a temporal vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load</strong> – Load device to scale.</p></li>
+<li><p><strong>scaling_vector</strong> – Vector with one scaling factor per time step.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.SystemScaler.system_scaler_ui">
+<span id="veragrid-gui-systemscaler-system-scaler-ui-module"></span><h2>VeraGrid.Gui.SystemScaler.system_scaler_ui module<a class="headerlink" href="#module-VeraGrid.Gui.SystemScaler.system_scaler_ui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler_ui.Ui_Dialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.SystemScaler.system_scaler_ui.</span></span><span class="sig-name descname"><span class="pre">Ui_Dialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler_ui.html#Ui_Dialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler_ui.Ui_Dialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler_ui.Ui_Dialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler_ui.html#Ui_Dialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler_ui.Ui_Dialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.SystemScaler.system_scaler_ui.Ui_Dialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/SystemScaler/system_scaler_ui.html#Ui_Dialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.SystemScaler.system_scaler_ui.Ui_Dialog.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.SystemScaler.update_gui_file">
+<span id="veragrid-gui-systemscaler-update-gui-file-module"></span><h2>VeraGrid.Gui.SystemScaler.update_gui_file module<a class="headerlink" href="#module-VeraGrid.Gui.SystemScaler.update_gui_file" title="Link to this heading"></a></h2>
+<p>Script to update correctly the main GUI (.py) file from the Qt design (.ui) file</p>
+</section>
+<section id="module-VeraGrid.Gui.SystemScaler">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.SystemScaler" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.SyncDialogue.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.SyncDialogue package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.Visualization.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.Visualization package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,788 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.source_emt_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.source_emt_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.source_emt_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Emt.load_RLC_emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">_get_phase_count_name</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">symbolic</span> <span class="k">as</span> <span class="n">sym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.template_definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDefinition</span><span class="p">,</span> <span class="n">TemplateProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_active_nabc_labels</span><span class="p">(</span><span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the enabled NABC labels in deterministic order.</span>
+
+<span class="sd">    :param phN: Whether neutral is active.</span>
+<span class="sd">    :param phA: Whether phase A is active.</span>
+<span class="sd">    :param phB: Whether phase B is active.</span>
+<span class="sd">    :param phC: Whether phase C is active.</span>
+<span class="sd">    :return: Ordered active label list.</span>
+<span class="sd">    :raises ValueError: If no terminal is enabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">phN</span><span class="p">:</span>
+        <span class="n">active_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">phA</span><span class="p">:</span>
+        <span class="n">active_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">phB</span><span class="p">:</span>
+        <span class="n">active_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">phC</span><span class="p">:</span>
+        <span class="n">active_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">active_labels</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">active_labels</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one source terminal must be enabled for an EMT source template&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the EMT voltage reference enum for one NABC label.</span>
+
+<span class="sd">    :param phase_label: One of ``N``, ``A``, ``B`` or ``C``.</span>
+<span class="sd">    :return: Matching voltage reference enum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_N</span>
+    <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span>
+    <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span>
+    <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported source phase label &#39;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the EMT injected-current reference enum for one NABC label.</span>
+
+<span class="sd">    :param phase_label: One of ``N``, ``A``, ``B`` or ``C``.</span>
+<span class="sd">    :return: Matching current reference enum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_N</span>
+    <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span>
+    <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span>
+    <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported source phase label &#39;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_external_mapping</span><span class="p">(</span><span class="n">voltage_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span> <span class="n">current_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one full EMT external mapping with inactive entries set to ``None``.</span>
+
+<span class="sd">    :param voltage_vars: Active bus-voltage inputs by label.</span>
+<span class="sd">    :param current_vars: Active injected-current outputs by label.</span>
+<span class="sd">    :return: External mapping dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_N</span><span class="p">:</span> <span class="n">voltage_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">:</span> <span class="n">voltage_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">:</span> <span class="n">voltage_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">:</span> <span class="n">voltage_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_N</span><span class="p">:</span> <span class="n">current_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">:</span> <span class="n">current_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">:</span> <span class="n">current_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">:</span> <span class="n">current_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">})</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_source_template_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                <span class="n">requested_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve one source template name with a phase-count suffix.</span>
+
+<span class="sd">    :param base_name: Base symbolic name.</span>
+<span class="sd">    :param phN: Whether neutral is active.</span>
+<span class="sd">    :param phA: Whether phase A is active.</span>
+<span class="sd">    :param phB: Whether phase B is active.</span>
+<span class="sd">    :param phC: Whether phase C is active.</span>
+<span class="sd">    :param requested_name: Optional caller-provided name.</span>
+<span class="sd">    :return: Resolved template name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phase_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">phN</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">phA</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">phB</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">phC</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_phase_count_name</span><span class="p">(</span><span class="n">base_name</span><span class="o">=</span><span class="n">base_name</span><span class="p">,</span> <span class="n">phase_count</span><span class="o">=</span><span class="n">phase_count</span><span class="p">,</span> <span class="n">requested_name</span><span class="o">=</span><span class="n">requested_name</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_phase_value</span><span class="p">(</span><span class="n">phase_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">default_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return one optional per-phase scalar value.</span>
+
+<span class="sd">    :param phase_values: Optional per-phase dictionary.</span>
+<span class="sd">    :param phase_label: Requested phase label.</span>
+<span class="sd">    :param default_value: Fallback value.</span>
+<span class="sd">    :return: Scalar phase value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phase_values</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">phase_values</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">phase_values</span><span class="p">[</span><span class="n">phase_label</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_sinusoidal_wave_expression</span><span class="p">(</span><span class="n">amplitude_expr</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span>
+                                      <span class="n">theta_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+                                      <span class="n">phase_deg_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+                                      <span class="n">offset_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one sinusoidal wave expression based on the global EMT time.</span>
+
+<span class="sd">    :param amplitude_expr: Wave amplitude expression.</span>
+<span class="sd">    :param theta_var: Internal electrical angle state in rad.</span>
+<span class="sd">    :param phase_deg_var: Phase offset in degrees.</span>
+<span class="sd">    :param offset_var: DC offset.</span>
+<span class="sd">    :return: Sinusoidal expression.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phase_rad_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">3.141592653589793</span><span class="p">)</span> <span class="o">/</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">180.0</span><span class="p">))</span> <span class="o">*</span> <span class="n">phase_deg_var</span>
+    <span class="k">return</span> <span class="n">offset_var</span> <span class="o">+</span> <span class="n">amplitude_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_var</span> <span class="o">+</span> <span class="n">phase_rad_expr</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CurrentSourceEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.CurrentSourceEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CurrentSourceEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phN&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether neutral is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phA&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase A is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phB&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase B is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phC&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase C is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;amplitude_values&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional sinusoidal amplitudes by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Common sinusoidal frequency.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">50.0</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional phase offsets in degrees by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;offset_values&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional DC offsets by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Symbolic block name.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;current_source_emt&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="CurrentSourceEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.CurrentSourceEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phN&quot;</span><span class="p">)</span>
+        <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phA&quot;</span><span class="p">)</span>
+        <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phB&quot;</span><span class="p">)</span>
+        <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phC&quot;</span><span class="p">)</span>
+        <span class="n">amplitude_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;amplitude_values&quot;</span><span class="p">)</span>
+        <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">)</span>
+        <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">)</span>
+        <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;offset_values&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">get_current_source_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">amplitude_values</span><span class="p">,</span> <span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">offset_values</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_current_source_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.get_current_source_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_current_source_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                                    <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                    <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">amplitude_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+                                    <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;current_source_emt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one phase-selective sinusoidal EMT current source.</span>
+
+<span class="sd">    Positive currents inject into the connected bus according to the existing EMT</span>
+<span class="sd">    source convention used by generator-like blocks.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param phN: Whether neutral is active.</span>
+<span class="sd">    :param phA: Whether phase A is active.</span>
+<span class="sd">    :param phB: Whether phase B is active.</span>
+<span class="sd">    :param phC: Whether phase C is active.</span>
+<span class="sd">    :param amplitude_values: Optional sinusoidal amplitudes by phase label.</span>
+<span class="sd">    :param frequency_hz: Common sinusoidal frequency in Hz.</span>
+<span class="sd">    :param phase_angle_deg: Optional phase offsets in degrees by phase label.</span>
+<span class="sd">    :param offset_values: Optional DC offsets by phase label.</span>
+<span class="sd">    :param name: Optional symbolic block name.</span>
+<span class="sd">    :return: Configured EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_active_nabc_labels</span><span class="p">(</span><span class="n">phN</span><span class="o">=</span><span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="o">=</span><span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="o">=</span><span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="o">=</span><span class="n">phC</span><span class="p">)</span>
+    <span class="n">resolved_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_source_template_name</span><span class="p">(</span><span class="s2">&quot;current_source_emt&quot;</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+
+    <span class="n">frequency_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;f_src&quot;</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">frequency_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">))</span>
+    <span class="n">theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta_src&quot;</span><span class="p">)</span>
+    <span class="n">d_theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_theta_src&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">theta_var</span><span class="p">)</span>
+
+    <span class="n">voltage_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">current_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">in_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">out_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">active_labels</span><span class="p">:</span>
+        <span class="n">voltage_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">current_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">amplitude_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;I_amp_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">phase_deg_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_deg_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">offset_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;I_offset_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">amplitude_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">amplitude_values</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">phase_deg_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">offset_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">offset_values</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">voltage_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">voltage_var</span>
+        <span class="n">current_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_var</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltage_var</span><span class="p">)</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span> <span class="o">-</span> <span class="n">_build_sinusoidal_wave_expression</span><span class="p">(</span><span class="n">amplitude_var</span><span class="p">,</span> <span class="n">theta_var</span><span class="p">,</span> <span class="n">phase_deg_var</span><span class="p">,</span> <span class="n">offset_var</span><span class="p">))</span>
+        <span class="n">out_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">current_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset_var</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">in_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">d_theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">3.141592653589793</span><span class="p">)</span> <span class="o">*</span> <span class="n">frequency_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">out_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">_build_external_mapping</span><span class="p">(</span><span class="n">voltage_vars</span><span class="p">,</span> <span class="n">current_vars</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">theta_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+
+
+<div class="viewcode-block" id="ControlledCurrentSourceEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.ControlledCurrentSourceEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ControlledCurrentSourceEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phN&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether neutral is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phA&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase A is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phB&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase B is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phC&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase C is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Common sinusoidal frequency.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">50.0</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional phase offsets in degrees by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;offset_values&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional DC offsets by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Symbolic block name.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;controlled_current_source_emt&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ControlledCurrentSourceEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.ControlledCurrentSourceEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phN&quot;</span><span class="p">)</span>
+        <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phA&quot;</span><span class="p">)</span>
+        <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phB&quot;</span><span class="p">)</span>
+        <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phC&quot;</span><span class="p">)</span>
+        <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">)</span>
+        <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">)</span>
+        <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;offset_values&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">get_controlled_current_source_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">offset_values</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_controlled_current_source_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.get_controlled_current_source_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_controlled_current_source_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                                               <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                               <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+                                               <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                               <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                               <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;controlled_current_source_emt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one phase-selective controlled sinusoidal EMT current source.</span>
+
+<span class="sd">    The command inputs represent the per-phase sinusoidal amplitudes.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param phN: Whether neutral is active.</span>
+<span class="sd">    :param phA: Whether phase A is active.</span>
+<span class="sd">    :param phB: Whether phase B is active.</span>
+<span class="sd">    :param phC: Whether phase C is active.</span>
+<span class="sd">    :param frequency_hz: Common sinusoidal frequency in Hz.</span>
+<span class="sd">    :param phase_angle_deg: Optional phase offsets in degrees by phase label.</span>
+<span class="sd">    :param offset_values: Optional DC offsets by phase label.</span>
+<span class="sd">    :param name: Optional symbolic block name.</span>
+<span class="sd">    :return: Configured EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_active_nabc_labels</span><span class="p">(</span><span class="n">phN</span><span class="o">=</span><span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="o">=</span><span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="o">=</span><span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="o">=</span><span class="n">phC</span><span class="p">)</span>
+    <span class="n">resolved_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_source_template_name</span><span class="p">(</span><span class="s2">&quot;controlled_current_source_emt&quot;</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+
+    <span class="n">frequency_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;f_src&quot;</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">frequency_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">))</span>
+    <span class="n">theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta_src&quot;</span><span class="p">)</span>
+    <span class="n">d_theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_theta_src&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">theta_var</span><span class="p">)</span>
+
+    <span class="n">voltage_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">current_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">in_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">out_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">active_labels</span><span class="p">:</span>
+        <span class="n">voltage_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">current_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">amplitude_command_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_amp_cmd_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">phase_deg_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_deg_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">offset_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;I_offset_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">phase_deg_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">offset_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">offset_values</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">voltage_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">voltage_var</span>
+        <span class="n">current_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_var</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltage_var</span><span class="p">)</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amplitude_command_var</span><span class="p">)</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span> <span class="o">-</span> <span class="n">_build_sinusoidal_wave_expression</span><span class="p">(</span><span class="n">amplitude_command_var</span><span class="p">,</span> <span class="n">theta_var</span><span class="p">,</span> <span class="n">phase_deg_var</span><span class="p">,</span> <span class="n">offset_var</span><span class="p">))</span>
+        <span class="n">out_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">current_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset_var</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">in_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">d_theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">3.141592653589793</span><span class="p">)</span> <span class="o">*</span> <span class="n">frequency_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">out_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">_build_external_mapping</span><span class="p">(</span><span class="n">voltage_vars</span><span class="p">,</span> <span class="n">current_vars</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">theta_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+
+
+<div class="viewcode-block" id="VoltageSourceEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.VoltageSourceEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VoltageSourceEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phN&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether neutral is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phA&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase A is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phB&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase B is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phC&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase C is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;amplitude_values&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional sinusoidal amplitudes by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Common sinusoidal frequency.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">50.0</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional phase offsets in degrees by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;offset_values&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional DC offsets by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;source_conductance_value&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Common Norton conductance.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Symbolic block name.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;voltage_source_emt&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="VoltageSourceEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.VoltageSourceEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phN&quot;</span><span class="p">)</span>
+        <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phA&quot;</span><span class="p">)</span>
+        <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phB&quot;</span><span class="p">)</span>
+        <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phC&quot;</span><span class="p">)</span>
+        <span class="n">amplitude_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;amplitude_values&quot;</span><span class="p">)</span>
+        <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">)</span>
+        <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">)</span>
+        <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;offset_values&quot;</span><span class="p">)</span>
+        <span class="n">source_conductance_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;source_conductance_value&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">get_voltage_source_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">amplitude_values</span><span class="p">,</span> <span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">offset_values</span><span class="p">,</span> <span class="n">source_conductance_value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_voltage_source_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.get_voltage_source_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_voltage_source_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                                    <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                    <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">amplitude_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+                                    <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">source_conductance_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;voltage_source_emt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one phase-selective sinusoidal EMT voltage source using one Norton-like injection.</span>
+
+<span class="sd">    The block injects ``i = g * (v_src - v_bus)`` where ``v_src`` is one</span>
+<span class="sd">    internally generated sinusoidal waveform.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param phN: Whether neutral is active.</span>
+<span class="sd">    :param phA: Whether phase A is active.</span>
+<span class="sd">    :param phB: Whether phase B is active.</span>
+<span class="sd">    :param phC: Whether phase C is active.</span>
+<span class="sd">    :param amplitude_values: Optional sinusoidal amplitudes by phase label.</span>
+<span class="sd">    :param frequency_hz: Common sinusoidal frequency in Hz.</span>
+<span class="sd">    :param phase_angle_deg: Optional phase offsets in degrees by phase label.</span>
+<span class="sd">    :param offset_values: Optional DC offsets by phase label.</span>
+<span class="sd">    :param source_conductance_value: Common Norton conductance.</span>
+<span class="sd">    :param name: Optional symbolic block name.</span>
+<span class="sd">    :return: Configured EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_active_nabc_labels</span><span class="p">(</span><span class="n">phN</span><span class="o">=</span><span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="o">=</span><span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="o">=</span><span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="o">=</span><span class="n">phC</span><span class="p">)</span>
+    <span class="n">resolved_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_source_template_name</span><span class="p">(</span><span class="s2">&quot;voltage_source_emt&quot;</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+
+    <span class="n">frequency_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;f_src&quot;</span><span class="p">)</span>
+    <span class="n">source_conductance_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;g_src&quot;</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">frequency_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">))</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">source_conductance_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_conductance_value</span><span class="p">))</span>
+    <span class="n">theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta_src&quot;</span><span class="p">)</span>
+    <span class="n">d_theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_theta_src&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">theta_var</span><span class="p">)</span>
+
+    <span class="n">voltage_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">current_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">in_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">out_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">active_labels</span><span class="p">:</span>
+        <span class="n">voltage_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">current_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">amplitude_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;V_amp_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">phase_deg_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_deg_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">offset_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;V_offset_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">amplitude_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">amplitude_values</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">phase_deg_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">offset_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">offset_values</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">voltage_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">voltage_var</span>
+        <span class="n">current_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_var</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltage_var</span><span class="p">)</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span> <span class="o">-</span> <span class="n">source_conductance_var</span> <span class="o">*</span> <span class="p">(</span><span class="n">_build_sinusoidal_wave_expression</span><span class="p">(</span><span class="n">amplitude_var</span><span class="p">,</span> <span class="n">theta_var</span><span class="p">,</span> <span class="n">phase_deg_var</span><span class="p">,</span> <span class="n">offset_var</span><span class="p">)</span> <span class="o">-</span> <span class="n">voltage_var</span><span class="p">))</span>
+        <span class="n">out_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">current_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_conductance_var</span> <span class="o">*</span> <span class="p">(</span><span class="n">offset_var</span> <span class="o">-</span> <span class="n">voltage_var</span><span class="p">)</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">in_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">d_theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">3.141592653589793</span><span class="p">)</span> <span class="o">*</span> <span class="n">frequency_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">out_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">_build_external_mapping</span><span class="p">(</span><span class="n">voltage_vars</span><span class="p">,</span> <span class="n">current_vars</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">theta_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+
+
+<div class="viewcode-block" id="ControlledVoltageSourceEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.ControlledVoltageSourceEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ControlledVoltageSourceEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phN&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether neutral is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phA&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase A is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phB&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase B is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phC&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase C is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Common sinusoidal frequency.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">50.0</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional phase offsets in degrees by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;offset_values&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Optional DC offsets by phase label.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;source_conductance_value&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Common Norton conductance.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Symbolic block name.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;controlled_voltage_source_emt&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ControlledVoltageSourceEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.ControlledVoltageSourceEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phN&quot;</span><span class="p">)</span>
+        <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phA&quot;</span><span class="p">)</span>
+        <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phB&quot;</span><span class="p">)</span>
+        <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phC&quot;</span><span class="p">)</span>
+        <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">)</span>
+        <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phase_angle_deg&quot;</span><span class="p">)</span>
+        <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;offset_values&quot;</span><span class="p">)</span>
+        <span class="n">source_conductance_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;source_conductance_value&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">get_controlled_voltage_source_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">offset_values</span><span class="p">,</span> <span class="n">source_conductance_value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_controlled_voltage_source_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.source_emt_template.get_controlled_voltage_source_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_controlled_voltage_source_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                                               <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                               <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+                                               <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                               <span class="n">offset_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                               <span class="n">source_conductance_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                                               <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;controlled_voltage_source_emt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one phase-selective controlled sinusoidal EMT voltage source.</span>
+
+<span class="sd">    The command inputs represent the per-phase sinusoidal amplitudes. The bus sees</span>
+<span class="sd">    the same Norton-like equivalent ``i = g * (v_src - v_bus)``.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param phN: Whether neutral is active.</span>
+<span class="sd">    :param phA: Whether phase A is active.</span>
+<span class="sd">    :param phB: Whether phase B is active.</span>
+<span class="sd">    :param phC: Whether phase C is active.</span>
+<span class="sd">    :param frequency_hz: Common sinusoidal frequency in Hz.</span>
+<span class="sd">    :param phase_angle_deg: Optional phase offsets in degrees by phase label.</span>
+<span class="sd">    :param offset_values: Optional DC offsets by phase label.</span>
+<span class="sd">    :param source_conductance_value: Common Norton conductance.</span>
+<span class="sd">    :param name: Optional symbolic block name.</span>
+<span class="sd">    :return: Configured EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_active_nabc_labels</span><span class="p">(</span><span class="n">phN</span><span class="o">=</span><span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="o">=</span><span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="o">=</span><span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="o">=</span><span class="n">phC</span><span class="p">)</span>
+    <span class="n">resolved_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_source_template_name</span><span class="p">(</span><span class="s2">&quot;controlled_voltage_source_emt&quot;</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+
+    <span class="n">frequency_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;f_src&quot;</span><span class="p">)</span>
+    <span class="n">source_conductance_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;g_src&quot;</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">frequency_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">))</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">source_conductance_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_conductance_value</span><span class="p">))</span>
+    <span class="n">theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta_src&quot;</span><span class="p">)</span>
+    <span class="n">d_theta_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_theta_src&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">theta_var</span><span class="p">)</span>
+
+    <span class="n">voltage_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">current_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">in_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">out_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">active_labels</span><span class="p">:</span>
+        <span class="n">voltage_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">current_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">amplitude_command_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_amp_cmd_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">phase_deg_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_deg_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">offset_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;V_offset_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">phase_deg_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">phase_angle_deg</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">offset_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_resolve_phase_value</span><span class="p">(</span><span class="n">offset_values</span><span class="p">,</span> <span class="n">phase_label</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">voltage_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">voltage_var</span>
+        <span class="n">current_vars</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_var</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltage_var</span><span class="p">)</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amplitude_command_var</span><span class="p">)</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span> <span class="o">-</span> <span class="n">source_conductance_var</span> <span class="o">*</span> <span class="p">(</span><span class="n">_build_sinusoidal_wave_expression</span><span class="p">(</span><span class="n">amplitude_command_var</span><span class="p">,</span> <span class="n">theta_var</span><span class="p">,</span> <span class="n">phase_deg_var</span><span class="p">,</span> <span class="n">offset_var</span><span class="p">)</span> <span class="o">-</span> <span class="n">voltage_var</span><span class="p">))</span>
+        <span class="n">out_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_var</span><span class="p">)</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">current_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_conductance_var</span> <span class="o">*</span> <span class="p">(</span><span class="n">offset_var</span> <span class="o">-</span> <span class="n">voltage_var</span><span class="p">)</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">in_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">d_theta_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">3.141592653589793</span><span class="p">)</span> <span class="o">*</span> <span class="n">frequency_var</span><span class="p">]</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">out_vars</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">_build_external_mapping</span><span class="p">(</span><span class="n">voltage_vars</span><span class="p">,</span> <span class="n">current_vars</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">theta_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

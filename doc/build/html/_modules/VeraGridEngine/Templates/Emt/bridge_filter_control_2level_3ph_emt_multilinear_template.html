@@ -1,0 +1,755 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_multilinear_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_multilinear_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_multilinear_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Emt.bridge_filter_2level_3ph_emt_multilinear_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_bridge_filter_2level_3ph_emt_multilinear_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">build_name_to_var_lookup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">hard_saturation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_bridge_filter_current_control_block</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one dq0 current controller matched to the switched bridge + filter plant.</span>
+
+<span class="sd">    The switched plant is built from phase-domain RL equations and then measured in</span>
+<span class="sd">    dq0. Under the retained ``sin / -cos`` convention used across the bridge/filter</span>
+<span class="sd">    templates, the phase-domain dynamics induce the opposite dq cross-coupling signs</span>
+<span class="sd">    to the validated pseudo-EMT branch model. Reusing the pseudo inner loop here</span>
+<span class="sd">    therefore overdrives the d-axis command and collapses the residual q-axis</span>
+<span class="sd">    headroom after handover.</span>
+
+<span class="sd">    This block keeps the same saturation and nominal-voltage logic as the pseudo</span>
+<span class="sd">    controller, but flips only the dq decoupling signs so the inner loop matches the</span>
+<span class="sd">    actual switched abc plant.</span>
+
+<span class="sd">    :param vf: Shared EMT variable factory.</span>
+<span class="sd">    :param name: Symbolic model name suffix.</span>
+<span class="sd">    :return: dq0 current-controller block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v_d</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_d_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">v_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">v_0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_0_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_d</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_d_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_q_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_0_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_pll</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_pll_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_base</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_base_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">R_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;R_eq_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">L_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;L_eq_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_0_ref</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_0_ref_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_d_ref</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_d_ref_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_q_ref</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_q_ref_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_kp</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_kp_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">i_ki</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_ki_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">aw_gain</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;aw_gain_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">m_max</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;m_max_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">Vdc_ref</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Vdc_ref_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">v_dc</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">vdc_floor</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vdc_floor_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">sbase</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;sbase_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">P_ref</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;P_ref_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">Q_ref</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Q_ref_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">P_loss0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;P_loss0_inner_in&quot;</span><span class="p">)</span>
+    <span class="n">Vpk</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Vpk_inner_in&quot;</span><span class="p">)</span>
+
+    <span class="n">xi_id</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;xi_id&quot;</span><span class="p">)</span>
+    <span class="n">xi_iq</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;xi_iq&quot;</span><span class="p">)</span>
+    <span class="n">xi_i0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;xi_i0&quot;</span><span class="p">)</span>
+    <span class="n">d_xi_id</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_xi_id&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">xi_id</span><span class="p">)</span>
+    <span class="n">d_xi_iq</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_xi_iq&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">xi_iq</span><span class="p">)</span>
+    <span class="n">d_xi_i0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_xi_i0&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">xi_i0</span><span class="p">)</span>
+
+    <span class="n">v_pi_d_u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_pi_d_u&quot;</span><span class="p">)</span>
+    <span class="n">v_pi_q_u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_pi_q_u&quot;</span><span class="p">)</span>
+    <span class="n">v_pi_0_u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_pi_0_u&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_d_u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_d_u&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_q_u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_q_u&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_0_u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_0_u&quot;</span><span class="p">)</span>
+    <span class="n">k_v_conv</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;k_v_conv&quot;</span><span class="p">)</span>
+    <span class="n">v_lim</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_lim&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_d</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_d&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_q&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_0&quot;</span><span class="p">)</span>
+    <span class="n">v_d_cap_out</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_d_cap&quot;</span><span class="p">)</span>
+    <span class="n">v_d_cap_mode</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_d_cap_mode&quot;</span><span class="p">)</span>
+    <span class="n">v_q_cap</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_cap&quot;</span><span class="p">)</span>
+    <span class="n">v_q_cap_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_cap_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_0_cap</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_0_cap&quot;</span><span class="p">)</span>
+    <span class="n">v_0_cap_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_0_cap_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_lim_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_lim_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_d_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_d_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_q_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_q_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_norm</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_norm&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_norm_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_norm_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_d0_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_d0_aux&quot;</span><span class="p">)</span>
+    <span class="n">v_cmd_q0_aux</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_cmd_q0_aux&quot;</span><span class="p">)</span>
+
+    <span class="n">eps</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0e-10</span><span class="p">)</span>
+    <span class="n">c0</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">c23</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">v_dc_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v_dc</span><span class="p">,</span> <span class="n">vdc_floor</span><span class="p">)</span>
+    <span class="n">omega_ratio</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">omega_pll</span> <span class="o">/</span> <span class="p">(</span><span class="n">omega_base</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">i_d0</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">c23</span> <span class="o">*</span> <span class="p">((</span><span class="n">P_ref</span> <span class="o">/</span> <span class="n">sbase</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">P_loss0</span> <span class="o">/</span> <span class="n">sbase</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vpk</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">i_q0</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">c23</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q_ref</span> <span class="o">/</span> <span class="n">sbase</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vpk</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">v_cmd_d0</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Vpk</span> <span class="o">-</span> <span class="n">R_f</span> <span class="o">*</span> <span class="n">i_d0</span> <span class="o">-</span> <span class="n">L_f</span> <span class="o">*</span> <span class="n">i_q0</span>
+    <span class="n">v_cmd_q0</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="o">-</span><span class="n">R_f</span> <span class="o">*</span> <span class="n">i_q0</span> <span class="o">+</span> <span class="n">L_f</span> <span class="o">*</span> <span class="n">i_d0</span>
+    <span class="n">v_lim_sq_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_lim</span> <span class="o">*</span> <span class="n">v_lim_aux</span>
+    <span class="n">v_cmd_d_sq_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_cmd_d</span> <span class="o">*</span> <span class="n">v_cmd_d_aux</span>
+    <span class="n">v_cmd_q_sq_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_cmd_q</span> <span class="o">*</span> <span class="n">v_cmd_q_aux</span>
+    <span class="n">v_cmd_d0_sq_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_cmd_d0</span> <span class="o">*</span> <span class="n">v_cmd_d0_aux</span>
+    <span class="n">v_cmd_q0_sq_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_cmd_q0</span> <span class="o">*</span> <span class="n">v_cmd_q0_aux</span>
+    <span class="n">v_q_cap_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v_lim_sq_expr</span> <span class="o">-</span> <span class="n">v_cmd_d_sq_expr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">v_0_cap_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">((</span><span class="n">v_lim_sq_expr</span> <span class="o">-</span> <span class="n">v_cmd_d_sq_expr</span> <span class="o">-</span> <span class="n">v_cmd_q_sq_expr</span><span class="p">)</span> <span class="o">/</span> <span class="n">Const</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span> <span class="n">eps</span> <span class="o">/</span> <span class="n">Const</span><span class="p">(</span><span class="mf">3.0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="c1"># The d-axis current integrator accumulates the d-axis current error plus anti-windup feedback.</span>
+            <span class="n">i_ki</span> <span class="o">*</span> <span class="p">((</span><span class="n">i_d_ref</span> <span class="o">-</span> <span class="n">i_d</span><span class="p">)</span> <span class="o">+</span> <span class="n">aw_gain</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_cmd_d</span> <span class="o">-</span> <span class="n">v_cmd_d_u</span><span class="p">)),</span>
+            <span class="c1"># The q-axis current integrator accumulates the q-axis current error plus anti-windup feedback.</span>
+            <span class="n">i_ki</span> <span class="o">*</span> <span class="p">((</span><span class="n">i_q_ref</span> <span class="o">-</span> <span class="n">i_q</span><span class="p">)</span> <span class="o">+</span> <span class="n">aw_gain</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_cmd_q</span> <span class="o">-</span> <span class="n">v_cmd_q_u</span><span class="p">)),</span>
+            <span class="c1"># The zero-sequence current integrator accumulates the zero-sequence current error plus anti-windup feedback.</span>
+            <span class="n">i_ki</span> <span class="o">*</span> <span class="p">((</span><span class="n">i_0_ref</span> <span class="o">-</span> <span class="n">i_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">aw_gain</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_cmd_0</span> <span class="o">-</span> <span class="n">v_cmd_0_u</span><span class="p">)),</span>
+        <span class="p">]),</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">xi_id</span><span class="p">,</span> <span class="n">xi_iq</span><span class="p">,</span> <span class="n">xi_i0</span><span class="p">]),</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">d_xi_id</span><span class="p">,</span> <span class="n">d_xi_iq</span><span class="p">,</span> <span class="n">d_xi_i0</span><span class="p">]),</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">v_pi_d_u</span> <span class="o">-</span> <span class="p">(</span><span class="n">i_kp</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_d_ref</span> <span class="o">-</span> <span class="n">i_d</span><span class="p">)</span> <span class="o">+</span> <span class="n">xi_id</span><span class="p">),</span>
+            <span class="n">v_pi_q_u</span> <span class="o">-</span> <span class="p">(</span><span class="n">i_kp</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_q_ref</span> <span class="o">-</span> <span class="n">i_q</span><span class="p">)</span> <span class="o">+</span> <span class="n">xi_iq</span><span class="p">),</span>
+            <span class="n">v_pi_0_u</span> <span class="o">-</span> <span class="p">(</span><span class="n">i_kp</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_0_ref</span> <span class="o">-</span> <span class="n">i_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">xi_i0</span><span class="p">),</span>
+            <span class="c1"># The switched abc RL plant induces the opposite dq cross-coupling signs to the pseudo</span>
+            <span class="c1"># dq branch, so the decoupling terms must be flipped here to recover the same low-</span>
+            <span class="c1"># frequency closed-loop behaviour after handover.</span>
+            <span class="n">v_cmd_d_u</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_d</span> <span class="o">-</span> <span class="n">R_f</span> <span class="o">*</span> <span class="n">i_d</span> <span class="o">-</span> <span class="n">omega_ratio</span> <span class="o">*</span> <span class="n">L_f</span> <span class="o">*</span> <span class="n">i_q</span> <span class="o">-</span> <span class="n">v_pi_d_u</span><span class="p">),</span>
+            <span class="n">v_cmd_q_u</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_q</span> <span class="o">-</span> <span class="n">R_f</span> <span class="o">*</span> <span class="n">i_q</span> <span class="o">+</span> <span class="n">omega_ratio</span> <span class="o">*</span> <span class="n">L_f</span> <span class="o">*</span> <span class="n">i_d</span> <span class="o">-</span> <span class="n">v_pi_q_u</span><span class="p">),</span>
+            <span class="n">v_cmd_0_u</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_0</span> <span class="o">-</span> <span class="n">R_f</span> <span class="o">*</span> <span class="n">i_0</span> <span class="o">-</span> <span class="n">v_pi_0_u</span><span class="p">),</span>
+            <span class="n">v_cmd_d0_aux</span> <span class="o">-</span> <span class="n">v_cmd_d0</span><span class="p">,</span>
+            <span class="n">v_cmd_q0_aux</span> <span class="o">-</span> <span class="n">v_cmd_q0</span><span class="p">,</span>
+            <span class="n">v_cmd_norm</span> <span class="o">*</span> <span class="n">v_cmd_norm_aux</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_cmd_d0_sq_expr</span> <span class="o">+</span> <span class="n">v_cmd_q0_sq_expr</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span>
+            <span class="n">v_cmd_norm</span> <span class="o">-</span> <span class="n">v_cmd_norm_aux</span><span class="p">,</span>
+            <span class="n">k_v_conv</span> <span class="o">*</span> <span class="p">(</span><span class="n">m_max</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vdc_ref</span> <span class="o">+</span> <span class="n">eps</span><span class="p">))</span> <span class="o">-</span> <span class="n">v_cmd_norm</span><span class="p">,</span>
+            <span class="n">v_lim</span> <span class="o">-</span> <span class="p">(</span><span class="n">k_v_conv</span> <span class="o">*</span> <span class="n">m_max</span> <span class="o">*</span> <span class="n">v_dc_eff</span><span class="p">),</span>
+            <span class="n">v_lim_aux</span> <span class="o">-</span> <span class="n">v_lim</span><span class="p">,</span>
+            <span class="n">v_cmd_d_aux</span> <span class="o">-</span> <span class="n">v_cmd_d</span><span class="p">,</span>
+            <span class="n">v_cmd_q_aux</span> <span class="o">-</span> <span class="n">v_cmd_q</span><span class="p">,</span>
+            <span class="n">v_q_cap</span> <span class="o">*</span> <span class="n">v_q_cap_aux</span> <span class="o">-</span> <span class="n">v_q_cap_rhs</span><span class="p">,</span>
+            <span class="n">v_q_cap</span> <span class="o">-</span> <span class="n">v_q_cap_aux</span><span class="p">,</span>
+            <span class="n">v_0_cap</span> <span class="o">*</span> <span class="n">v_0_cap_aux</span> <span class="o">-</span> <span class="n">v_0_cap_rhs</span><span class="p">,</span>
+            <span class="n">v_0_cap</span> <span class="o">-</span> <span class="n">v_0_cap_aux</span><span class="p">,</span>
+            <span class="n">v_d_cap_out</span> <span class="o">-</span> <span class="n">v_d_cap_mode</span><span class="p">,</span>
+            <span class="n">v_cmd_d</span> <span class="o">-</span> <span class="n">v_d_cap_out</span><span class="p">,</span>
+            <span class="n">v_cmd_q</span> <span class="o">-</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">v_cmd_q_u</span><span class="p">,</span> <span class="o">-</span><span class="n">v_q_cap</span><span class="p">,</span> <span class="n">v_q_cap</span><span class="p">),</span>
+            <span class="n">v_cmd_0</span> <span class="o">-</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">v_cmd_0_u</span><span class="p">,</span> <span class="o">-</span><span class="n">v_0_cap</span><span class="p">,</span> <span class="n">v_0_cap</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">v_pi_d_u</span><span class="p">,</span> <span class="n">v_pi_q_u</span><span class="p">,</span> <span class="n">v_pi_0_u</span><span class="p">,</span>
+            <span class="n">v_cmd_d_u</span><span class="p">,</span> <span class="n">v_cmd_q_u</span><span class="p">,</span> <span class="n">v_cmd_0_u</span><span class="p">,</span>
+            <span class="n">k_v_conv</span><span class="p">,</span> <span class="n">v_lim</span><span class="p">,</span>
+            <span class="n">v_lim_aux</span><span class="p">,</span> <span class="n">v_cmd_d_aux</span><span class="p">,</span> <span class="n">v_cmd_q_aux</span><span class="p">,</span>
+            <span class="n">v_cmd_norm</span><span class="p">,</span> <span class="n">v_cmd_norm_aux</span><span class="p">,</span> <span class="n">v_cmd_d0_aux</span><span class="p">,</span> <span class="n">v_cmd_q0_aux</span><span class="p">,</span>
+            <span class="n">v_q_cap</span><span class="p">,</span> <span class="n">v_q_cap_aux</span><span class="p">,</span> <span class="n">v_0_cap</span><span class="p">,</span> <span class="n">v_0_cap_aux</span><span class="p">,</span>
+            <span class="n">v_d_cap_out</span><span class="p">,</span> <span class="n">v_cmd_d</span><span class="p">,</span> <span class="n">v_cmd_q</span><span class="p">,</span> <span class="n">v_cmd_0</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="n">mode_dict</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">v_d_cap_mode</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">xi_id</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">xi_iq</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">xi_i0</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_pi_d_u</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_pi_q_u</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_pi_0_u</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_d_u</span><span class="p">,</span> <span class="n">v_cmd_d0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_q_u</span><span class="p">,</span> <span class="n">v_cmd_q0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_0_u</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_norm</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_cmd_d0</span> <span class="o">*</span> <span class="n">v_cmd_d0</span> <span class="o">+</span> <span class="n">v_cmd_q0</span> <span class="o">*</span> <span class="n">v_cmd_q0</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_cmd_norm_aux</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_cmd_d0</span> <span class="o">*</span> <span class="n">v_cmd_d0</span> <span class="o">+</span> <span class="n">v_cmd_q0</span> <span class="o">*</span> <span class="n">v_cmd_q0</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_cmd_d0_aux</span><span class="p">,</span> <span class="n">v_cmd_d0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_q0_aux</span><span class="p">,</span> <span class="n">v_cmd_q0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">k_v_conv</span><span class="p">,</span> <span class="n">v_cmd_norm</span> <span class="o">/</span> <span class="p">(</span><span class="n">m_max</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vdc_ref</span> <span class="o">+</span> <span class="n">eps</span><span class="p">))),</span>
+            <span class="p">(</span><span class="n">v_lim</span><span class="p">,</span> <span class="n">k_v_conv</span> <span class="o">*</span> <span class="n">m_max</span> <span class="o">*</span> <span class="n">v_dc_eff</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_lim_aux</span><span class="p">,</span> <span class="n">v_lim</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_d_aux</span><span class="p">,</span> <span class="n">v_cmd_d</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_q_aux</span><span class="p">,</span> <span class="n">v_cmd_q</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_q_cap</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_q_cap_rhs</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_q_cap_aux</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_q_cap_rhs</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_0_cap</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_0_cap_rhs</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_0_cap_aux</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_0_cap_rhs</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_d_cap_out</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">v_cmd_d_u</span><span class="p">,</span> <span class="o">-</span><span class="n">v_lim</span><span class="p">,</span> <span class="n">v_lim</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">v_cmd_d</span><span class="p">,</span> <span class="n">v_cmd_d0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_q</span><span class="p">,</span> <span class="n">v_cmd_q0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_cmd_0</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">diff_init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">d_xi_id</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_xi_iq</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_xi_i0</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_d</span><span class="p">,</span> <span class="n">v_q</span><span class="p">,</span> <span class="n">v_0</span><span class="p">,</span> <span class="n">i_d</span><span class="p">,</span> <span class="n">i_q</span><span class="p">,</span> <span class="n">i_0</span><span class="p">,</span> <span class="n">omega_pll</span><span class="p">,</span> <span class="n">omega_base</span><span class="p">,</span> <span class="n">R_f</span><span class="p">,</span> <span class="n">L_f</span><span class="p">,</span> <span class="n">i_0_ref</span><span class="p">,</span> <span class="n">i_d_ref</span><span class="p">,</span> <span class="n">i_q_ref</span><span class="p">,</span> <span class="n">i_kp</span><span class="p">,</span> <span class="n">i_ki</span><span class="p">,</span> <span class="n">aw_gain</span><span class="p">,</span> <span class="n">m_max</span><span class="p">,</span> <span class="n">Vdc_ref</span><span class="p">,</span> <span class="n">v_dc</span><span class="p">,</span> <span class="n">vdc_floor</span><span class="p">,</span> <span class="n">sbase</span><span class="p">,</span> <span class="n">P_ref</span><span class="p">,</span> <span class="n">Q_ref</span><span class="p">,</span> <span class="n">P_loss0</span><span class="p">,</span> <span class="n">Vpk</span><span class="p">]),</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_cmd_d</span><span class="p">,</span> <span class="n">v_cmd_q</span><span class="p">,</span> <span class="n">v_cmd_0</span><span class="p">,</span> <span class="n">k_v_conv</span><span class="p">]),</span>
+        <span class="n">procedural_logic</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">hard_saturation</span><span class="p">(</span>
+                <span class="n">output</span><span class="o">=</span><span class="n">v_d_cap_mode</span><span class="p">,</span>
+                <span class="n">u</span><span class="o">=</span><span class="n">v_cmd_d_u</span><span class="p">,</span>
+                <span class="n">u_min</span><span class="o">=-</span><span class="n">v_lim</span><span class="p">,</span>
+                <span class="n">u_max</span><span class="o">=</span><span class="n">v_lim</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_d_cap_sat_sample&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_current_ctrl&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_bridge_filter_pll_block</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the SRF-PLL used by the switched bridge/filter/control template.</span>
+
+<span class="sd">    The switched bridge/filter/control stack keeps its own local copy of the PLL</span>
+<span class="sd">    helper so this template does not depend on another converter template module.</span>
+
+<span class="sd">    :param vf: Shared EMT variable factory.</span>
+<span class="sd">    :param name: Symbolic model name suffix.</span>
+<span class="sd">    :return: PLL block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_pll_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_base</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_base_pll_in&quot;</span><span class="p">)</span>
+    <span class="n">pll_kp</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;pll_kp_in&quot;</span><span class="p">)</span>
+    <span class="n">pll_ki</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;pll_ki_in&quot;</span><span class="p">)</span>
+    <span class="n">phi_v</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_v_pll_in&quot;</span><span class="p">)</span>
+
+    <span class="n">theta_pll</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta_pll&quot;</span><span class="p">)</span>
+    <span class="n">xi_pll</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;xi_pll&quot;</span><span class="p">)</span>
+    <span class="n">omega_pll</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_pll&quot;</span><span class="p">)</span>
+
+    <span class="n">d_theta_pll</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_theta_pll&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">theta_pll</span><span class="p">)</span>
+    <span class="n">d_xi_pll</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_xi_pll&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">xi_pll</span><span class="p">)</span>
+    <span class="n">c0</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">omega_pll</span><span class="p">,</span>
+            <span class="o">-</span><span class="n">pll_ki</span> <span class="o">*</span> <span class="n">v_q</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">theta_pll</span><span class="p">,</span> <span class="n">xi_pll</span><span class="p">]),</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">d_theta_pll</span><span class="p">,</span> <span class="n">d_xi_pll</span><span class="p">]),</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">omega_pll</span> <span class="o">-</span> <span class="p">(</span><span class="n">omega_base</span> <span class="o">-</span> <span class="n">pll_kp</span> <span class="o">*</span> <span class="n">v_q</span> <span class="o">+</span> <span class="n">xi_pll</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">omega_pll</span><span class="p">]),</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">theta_pll</span><span class="p">,</span> <span class="n">phi_v</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">xi_pll</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">omega_pll</span><span class="p">,</span> <span class="n">omega_base</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">diff_init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">d_theta_pll</span><span class="p">,</span> <span class="n">omega_base</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_xi_pll</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_q</span><span class="p">,</span> <span class="n">omega_base</span><span class="p">,</span> <span class="n">pll_kp</span><span class="p">,</span> <span class="n">pll_ki</span><span class="p">,</span> <span class="n">phi_v</span><span class="p">]),</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">theta_pll</span><span class="p">,</span> <span class="n">omega_pll</span><span class="p">]),</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_pll&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_bridge_filter_pll_input_filter_block</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one first-order filter for the q-axis PLL input of the switched plant.</span>
+
+<span class="sd">    The pseudo-EMT converter sees a smooth fundamental q-axis voltage, while the</span>
+<span class="sd">    switched bridge/filter plant exposes switching ripple at the same measurement</span>
+<span class="sd">    point. Filtering the q-axis voltage before feeding the PLL makes both models</span>
+<span class="sd">    comparable without altering the converter control hierarchy itself.</span>
+
+<span class="sd">    The time constant is tied to the PWM carrier half-period:</span>
+
+<span class="sd">    ``tau_pll_vq = pi / omega_sw``</span>
+
+<span class="sd">    This keeps the filter physically interpretable and avoids introducing one ad hoc</span>
+<span class="sd">    fixed delay parameter into the public switched-converter model.</span>
+
+<span class="sd">    :param vf: Shared EMT variable factory.</span>
+<span class="sd">    :param name: Symbolic model name suffix.</span>
+<span class="sd">    :return: q-axis PLL-input filter block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v_q_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_pll_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_sw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_sw_pll_filter_in&quot;</span><span class="p">)</span>
+
+    <span class="n">v_q_pll_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_pll_f&quot;</span><span class="p">)</span>
+    <span class="n">d_v_q_pll_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_v_q_pll_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">v_q_pll_f</span><span class="p">)</span>
+
+    <span class="n">eps</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0e-10</span><span class="p">)</span>
+    <span class="n">c_pi</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">c0</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_q_pll_f</span><span class="p">]),</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="c1"># The switched plant should feed the PLL with the low-frequency q-axis content rather than</span>
+            <span class="c1"># with the raw switching ripple of the network-side voltage measurement.</span>
+            <span class="p">(</span><span class="n">v_q_raw</span> <span class="o">-</span> <span class="n">v_q_pll_f</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">omega_sw</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span><span class="o">/</span><span class="n">c_pi</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">d_v_q_pll_f</span><span class="p">]),</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">v_q_pll_f</span><span class="p">,</span> <span class="n">v_q_raw</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">diff_init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">d_v_q_pll_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_q_raw</span><span class="p">,</span> <span class="n">omega_sw</span><span class="p">]),</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_q_pll_f</span><span class="p">]),</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_pll_input_filter&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_bridge_filter_measurement_filter_block</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one first-order dq0 measurement filter for the switched bridge + filter plant.</span>
+
+<span class="sd">    The averaged pseudo-EMT converter controllers act on smooth dq0 quantities. The</span>
+<span class="sd">    switched bridge plant, in contrast, exposes carrier-frequency ripple directly in</span>
+<span class="sd">    its reconstructed dq0 measurements. Filtering those measurements before they feed</span>
+<span class="sd">    the PLL and inner current loop isolates the low-frequency controller dynamics from</span>
+<span class="sd">    switching artifacts without altering the electrical plant itself.</span>
+
+<span class="sd">    The time constant is tied to the PWM carrier half-period:</span>
+
+<span class="sd">    ``tau_meas = pi / omega_sw``</span>
+
+<span class="sd">    :param vf: Shared EMT variable factory.</span>
+<span class="sd">    :param name: Symbolic model name suffix.</span>
+<span class="sd">    :return: dq0 measurement-filter block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v_d_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_d_meas_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">v_q_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_meas_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">v_0_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_0_meas_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">i_d_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_d_meas_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">i_q_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_q_meas_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">i_0_raw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_0_meas_filter_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_sw</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_sw_meas_filter_in&quot;</span><span class="p">)</span>
+
+    <span class="n">v_d_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_d_meas_f&quot;</span><span class="p">)</span>
+    <span class="n">v_q_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_q_meas_f&quot;</span><span class="p">)</span>
+    <span class="n">v_0_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_0_meas_f&quot;</span><span class="p">)</span>
+    <span class="n">i_d_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_d_meas_f&quot;</span><span class="p">)</span>
+    <span class="n">i_q_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_q_meas_f&quot;</span><span class="p">)</span>
+    <span class="n">i_0_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_0_meas_f&quot;</span><span class="p">)</span>
+
+    <span class="n">d_v_d_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_v_d_meas_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">v_d_meas_f</span><span class="p">)</span>
+    <span class="n">d_v_q_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_v_q_meas_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">v_q_meas_f</span><span class="p">)</span>
+    <span class="n">d_v_0_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_v_0_meas_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">v_0_meas_f</span><span class="p">)</span>
+    <span class="n">d_i_d_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_i_d_meas_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_d_meas_f</span><span class="p">)</span>
+    <span class="n">d_i_q_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_i_q_meas_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_q_meas_f</span><span class="p">)</span>
+    <span class="n">d_i_0_meas_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_i_0_meas_f&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_0_meas_f</span><span class="p">)</span>
+
+    <span class="n">eps</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0e-10</span><span class="p">)</span>
+    <span class="n">c_pi</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">c0</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">inv_tau_meas_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">omega_sw</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span><span class="o">/</span><span class="n">c_pi</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">v_d_raw</span> <span class="o">-</span> <span class="n">v_d_meas_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_tau_meas_expr</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">v_q_raw</span> <span class="o">-</span> <span class="n">v_q_meas_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_tau_meas_expr</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">v_0_raw</span> <span class="o">-</span> <span class="n">v_0_meas_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_tau_meas_expr</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">i_d_raw</span> <span class="o">-</span> <span class="n">i_d_meas_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_tau_meas_expr</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">i_q_raw</span> <span class="o">-</span> <span class="n">i_q_meas_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_tau_meas_expr</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">i_0_raw</span> <span class="o">-</span> <span class="n">i_0_meas_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_tau_meas_expr</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_d_meas_f</span><span class="p">,</span> <span class="n">v_q_meas_f</span><span class="p">,</span> <span class="n">v_0_meas_f</span><span class="p">,</span> <span class="n">i_d_meas_f</span><span class="p">,</span> <span class="n">i_q_meas_f</span><span class="p">,</span> <span class="n">i_0_meas_f</span><span class="p">]),</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">d_v_d_meas_f</span><span class="p">,</span> <span class="n">d_v_q_meas_f</span><span class="p">,</span> <span class="n">d_v_0_meas_f</span><span class="p">,</span> <span class="n">d_i_d_meas_f</span><span class="p">,</span> <span class="n">d_i_q_meas_f</span><span class="p">,</span> <span class="n">d_i_0_meas_f</span><span class="p">]),</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">v_d_meas_f</span><span class="p">,</span> <span class="n">v_d_raw</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_q_meas_f</span><span class="p">,</span> <span class="n">v_q_raw</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">v_0_meas_f</span><span class="p">,</span> <span class="n">v_0_raw</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">i_d_meas_f</span><span class="p">,</span> <span class="n">i_d_raw</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">i_q_meas_f</span><span class="p">,</span> <span class="n">i_q_raw</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">i_0_meas_f</span><span class="p">,</span> <span class="n">i_0_raw</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">diff_init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">d_v_d_meas_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_v_q_meas_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_v_0_meas_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_i_d_meas_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_i_q_meas_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">d_i_0_meas_f</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_d_raw</span><span class="p">,</span> <span class="n">v_q_raw</span><span class="p">,</span> <span class="n">v_0_raw</span><span class="p">,</span> <span class="n">i_d_raw</span><span class="p">,</span> <span class="n">i_q_raw</span><span class="p">,</span> <span class="n">i_0_raw</span><span class="p">,</span> <span class="n">omega_sw</span><span class="p">]),</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">v_d_meas_f</span><span class="p">,</span> <span class="n">v_q_meas_f</span><span class="p">,</span> <span class="n">v_0_meas_f</span><span class="p">,</span> <span class="n">i_d_meas_f</span><span class="p">,</span> <span class="n">i_q_meas_f</span><span class="p">,</span> <span class="n">i_0_meas_f</span><span class="p">]),</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_measurement_filter&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_bridge_filter_control_2level_3ph_emt_multilinear_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_multilinear_template.get_bridge_filter_control_2level_3ph_emt_multilinear_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bridge_filter_control_2level_3ph_emt_multilinear_template</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bridge_filter_control_2level_3ph_emt_ml&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one standalone bridge + filter + control EMT template.</span>
+
+<span class="sd">    The template reuses the validated standalone bridge + filter plant and adds</span>
+<span class="sd">    one PLL plus one dq0 current controller. This is the next incremental step</span>
+<span class="sd">    before reintegrating the switched plant into the full VSC model.</span>
+
+<span class="sd">    :param vf: Shared EMT variable factory.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Standalone bridge + filter + control EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DynamicModelHostDevice</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">omega_base_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_base_in&quot;</span><span class="p">)</span>
+    <span class="n">v_A_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_A_in&quot;</span><span class="p">)</span>
+    <span class="n">v_B_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_B_in&quot;</span><span class="p">)</span>
+    <span class="n">v_C_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_C_in&quot;</span><span class="p">)</span>
+    <span class="n">v_dc_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_in&quot;</span><span class="p">)</span>
+    <span class="n">i_d_ref_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_d_ref_in&quot;</span><span class="p">)</span>
+    <span class="n">i_q_ref_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_q_ref_in&quot;</span><span class="p">)</span>
+    <span class="n">i_0_ref_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_0_ref_in&quot;</span><span class="p">)</span>
+    <span class="n">m_max_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;m_max_in&quot;</span><span class="p">)</span>
+    <span class="n">vdc_floor_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vdc_floor_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_sw_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_sw_in&quot;</span><span class="p">)</span>
+    <span class="n">omega_meas_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_meas_in&quot;</span><span class="p">)</span>
+    <span class="n">carrier_phase_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;carrier_phase_in&quot;</span><span class="p">)</span>
+    <span class="n">R_f_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;R_f_in&quot;</span><span class="p">)</span>
+    <span class="n">L_f_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;L_f_in&quot;</span><span class="p">)</span>
+    <span class="n">pll_kp_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;pll_kp_in&quot;</span><span class="p">)</span>
+    <span class="n">pll_ki_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;pll_ki_in&quot;</span><span class="p">)</span>
+    <span class="n">i_kp_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_kp_in&quot;</span><span class="p">)</span>
+    <span class="n">i_ki_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_ki_in&quot;</span><span class="p">)</span>
+    <span class="n">aw_gain_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;aw_gain_in&quot;</span><span class="p">)</span>
+    <span class="n">phi_v_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_v_in&quot;</span><span class="p">)</span>
+    <span class="n">Vdc_ref_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Vdc_ref_in&quot;</span><span class="p">)</span>
+    <span class="n">sbase_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;sbase_in&quot;</span><span class="p">)</span>
+    <span class="n">P_ref_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;P_ref_in&quot;</span><span class="p">)</span>
+    <span class="n">Q_ref_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Q_ref_in&quot;</span><span class="p">)</span>
+    <span class="n">P_loss0_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;P_loss0_in&quot;</span><span class="p">)</span>
+    <span class="n">Vpk_in</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Vpk_in&quot;</span><span class="p">)</span>
+
+    <span class="n">plant_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">get_bridge_filter_2level_3ph_emt_multilinear_template</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_plant&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+    <span class="n">measurement_filter_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_bridge_filter_measurement_filter_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">pll_input_filter_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_bridge_filter_pll_input_filter_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">pll_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_bridge_filter_pll_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">current_ctrl_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_bridge_filter_current_control_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">plant_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_name_to_var_lookup</span><span class="p">(</span><span class="n">plant_block</span><span class="p">)</span>
+    <span class="n">measurement_filter_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_name_to_var_lookup</span><span class="p">(</span><span class="n">measurement_filter_block</span><span class="p">)</span>
+    <span class="n">pll_input_filter_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_name_to_var_lookup</span><span class="p">(</span><span class="n">pll_input_filter_block</span><span class="p">)</span>
+    <span class="n">pll_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_name_to_var_lookup</span><span class="p">(</span><span class="n">pll_block</span><span class="p">)</span>
+    <span class="n">current_ctrl_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_name_to_var_lookup</span><span class="p">(</span><span class="n">current_ctrl_block</span><span class="p">)</span>
+
+    <span class="n">plant_i_A</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;i_A&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_i_B</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;i_B&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_i_C</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;i_C&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_i_d</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;i_d&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_i_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;i_q&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_i_0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;i_0&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_v_d</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v_d&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_v_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v_q&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_v_0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v_0&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_gate_a</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gate_a&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_gate_b</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gate_b&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_gate_c</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gate_c&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_v_conv_a</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v_conv_a&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_v_conv_b</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v_conv_b&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plant_v_conv_c</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plant_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;v_conv_c&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">meas_v_d_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">measurement_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_d_meas_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">meas_v_q_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">measurement_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_q_meas_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">meas_v_0_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">measurement_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_0_meas_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">meas_i_d_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">measurement_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;i_d_meas_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">meas_i_q_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">measurement_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;i_q_meas_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">meas_i_0_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">measurement_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;i_0_meas_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pll_input_v_q_f</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">pll_input_filter_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_q_pll_f&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pll_theta</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">pll_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;theta_pll&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pll_omega</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">pll_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;omega_pll&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">ctrl_v_cmd_d</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">current_ctrl_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_cmd_d&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">ctrl_v_cmd_q</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">current_ctrl_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_cmd_q&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">ctrl_v_cmd_0</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">current_ctrl_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v_cmd_0&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">ctrl_k_v_conv</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">current_ctrl_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;k_v_conv&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">plant_i_A</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_i_B</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_i_C</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_i_d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_i_q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_i_0</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_v_d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_v_q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_v_0</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_gate_a</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_gate_b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_gate_c</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_v_conv_a</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_v_conv_b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">plant_v_conv_c</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">meas_v_d_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">meas_v_q_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">meas_v_0_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">meas_i_d_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">meas_i_q_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">meas_i_0_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pll_input_v_q_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pll_theta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pll_omega</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ctrl_v_cmd_d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ctrl_v_cmd_q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ctrl_v_cmd_0</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ctrl_k_v_conv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The bridge + filter + control template &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; could not resolve one or more internal variables&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># The plant receives electrical inputs and the voltage commands produced by the current controller.</span>
+    <span class="c1"># The PLL angle is generated internally by ``pll_block`` so the parent block does not expose</span>
+    <span class="c1"># a dead external angle input.</span>
+    <span class="n">plant_block</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">plant_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">pll_theta</span><span class="p">,</span>
+        <span class="n">omega_base_in</span><span class="p">,</span>
+        <span class="n">v_A_in</span><span class="p">,</span>
+        <span class="n">v_B_in</span><span class="p">,</span>
+        <span class="n">v_C_in</span><span class="p">,</span>
+        <span class="n">ctrl_v_cmd_d</span><span class="p">,</span>
+        <span class="n">ctrl_v_cmd_q</span><span class="p">,</span>
+        <span class="n">ctrl_v_cmd_0</span><span class="p">,</span>
+        <span class="n">v_dc_in</span><span class="p">,</span>
+        <span class="n">ctrl_k_v_conv</span><span class="p">,</span>
+        <span class="n">m_max_in</span><span class="p">,</span>
+        <span class="n">vdc_floor_in</span><span class="p">,</span>
+        <span class="n">omega_sw_in</span><span class="p">,</span>
+        <span class="n">carrier_phase_in</span><span class="p">,</span>
+        <span class="n">R_f_in</span><span class="p">,</span>
+        <span class="n">L_f_in</span><span class="p">,</span>
+    <span class="p">]))</span>
+
+    <span class="c1"># The switched plant dq0 measurements are filtered before they feed the controls so the PLL and</span>
+    <span class="c1"># current loop react to the low-frequency plant behaviour rather than to carrier ripple.</span>
+    <span class="n">measurement_filter_block</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">measurement_filter_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">plant_v_d</span><span class="p">,</span>
+        <span class="n">plant_v_q</span><span class="p">,</span>
+        <span class="n">plant_v_0</span><span class="p">,</span>
+        <span class="n">plant_i_d</span><span class="p">,</span>
+        <span class="n">plant_i_q</span><span class="p">,</span>
+        <span class="n">plant_i_0</span><span class="p">,</span>
+        <span class="n">omega_meas_in</span><span class="p">,</span>
+    <span class="p">]))</span>
+
+    <span class="c1"># The PLL still uses one dedicated q-axis input filter on top of the generic measurement filter.</span>
+    <span class="c1"># This keeps the already-validated PLL smoothing path while removing the strongest carrier ripple</span>
+    <span class="c1"># before it reaches that dedicated stage.</span>
+    <span class="n">pll_input_filter_block</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">pll_input_filter_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">meas_v_q_f</span><span class="p">,</span>
+        <span class="n">omega_meas_in</span><span class="p">,</span>
+    <span class="p">]))</span>
+
+    <span class="c1"># The PLL uses the filtered q-axis plant voltage.</span>
+    <span class="n">pll_block</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">pll_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">pll_input_v_q_f</span><span class="p">,</span>
+        <span class="n">omega_base_in</span><span class="p">,</span>
+        <span class="n">pll_kp_in</span><span class="p">,</span>
+        <span class="n">pll_ki_in</span><span class="p">,</span>
+        <span class="n">phi_v_in</span><span class="p">,</span>
+    <span class="p">]))</span>
+
+    <span class="c1"># The switched plant reuses the full pseudo-EMT inner loop so its dq controller shares the</span>
+    <span class="c1"># same modulation-limit logic as the averaged reference converter.</span>
+    <span class="n">current_ctrl_block</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">current_ctrl_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">25</span><span class="p">],</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">meas_v_d_f</span><span class="p">,</span>
+        <span class="n">meas_v_q_f</span><span class="p">,</span>
+        <span class="n">meas_v_0_f</span><span class="p">,</span>
+        <span class="n">meas_i_d_f</span><span class="p">,</span>
+        <span class="n">meas_i_q_f</span><span class="p">,</span>
+        <span class="n">meas_i_0_f</span><span class="p">,</span>
+        <span class="n">pll_omega</span><span class="p">,</span>
+        <span class="n">omega_base_in</span><span class="p">,</span>
+        <span class="n">R_f_in</span><span class="p">,</span>
+        <span class="n">L_f_in</span><span class="p">,</span>
+        <span class="n">i_0_ref_in</span><span class="p">,</span>
+        <span class="n">i_d_ref_in</span><span class="p">,</span>
+        <span class="n">i_q_ref_in</span><span class="p">,</span>
+        <span class="n">i_kp_in</span><span class="p">,</span>
+        <span class="n">i_ki_in</span><span class="p">,</span>
+        <span class="n">aw_gain_in</span><span class="p">,</span>
+        <span class="n">m_max_in</span><span class="p">,</span>
+        <span class="n">Vdc_ref_in</span><span class="p">,</span>
+        <span class="n">v_dc_in</span><span class="p">,</span>
+        <span class="n">vdc_floor_in</span><span class="p">,</span>
+        <span class="n">sbase_in</span><span class="p">,</span>
+        <span class="n">P_ref_in</span><span class="p">,</span>
+        <span class="n">Q_ref_in</span><span class="p">,</span>
+        <span class="n">P_loss0_in</span><span class="p">,</span>
+        <span class="n">Vpk_in</span><span class="p">,</span>
+    <span class="p">]))</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">([</span><span class="n">plant_block</span><span class="p">,</span> <span class="n">measurement_filter_block</span><span class="p">,</span> <span class="n">pll_input_filter_block</span><span class="p">,</span> <span class="n">pll_block</span><span class="p">,</span> <span class="n">current_ctrl_block</span><span class="p">]))</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">unify_blocks</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">omega_base_in</span><span class="p">,</span>
+        <span class="n">v_A_in</span><span class="p">,</span>
+        <span class="n">v_B_in</span><span class="p">,</span>
+        <span class="n">v_C_in</span><span class="p">,</span>
+        <span class="n">v_dc_in</span><span class="p">,</span>
+        <span class="n">i_d_ref_in</span><span class="p">,</span>
+        <span class="n">i_q_ref_in</span><span class="p">,</span>
+        <span class="n">i_0_ref_in</span><span class="p">,</span>
+        <span class="n">m_max_in</span><span class="p">,</span>
+        <span class="n">vdc_floor_in</span><span class="p">,</span>
+        <span class="n">omega_sw_in</span><span class="p">,</span>
+        <span class="n">omega_meas_in</span><span class="p">,</span>
+        <span class="n">carrier_phase_in</span><span class="p">,</span>
+        <span class="n">R_f_in</span><span class="p">,</span>
+        <span class="n">L_f_in</span><span class="p">,</span>
+        <span class="n">pll_kp_in</span><span class="p">,</span>
+        <span class="n">pll_ki_in</span><span class="p">,</span>
+        <span class="n">i_kp_in</span><span class="p">,</span>
+        <span class="n">i_ki_in</span><span class="p">,</span>
+        <span class="n">aw_gain_in</span><span class="p">,</span>
+        <span class="n">phi_v_in</span><span class="p">,</span>
+        <span class="n">Vdc_ref_in</span><span class="p">,</span>
+        <span class="n">sbase_in</span><span class="p">,</span>
+        <span class="n">P_ref_in</span><span class="p">,</span>
+        <span class="n">Q_ref_in</span><span class="p">,</span>
+        <span class="n">P_loss0_in</span><span class="p">,</span>
+        <span class="n">Vpk_in</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">plant_i_A</span><span class="p">,</span>
+        <span class="n">plant_i_B</span><span class="p">,</span>
+        <span class="n">plant_i_C</span><span class="p">,</span>
+        <span class="n">plant_i_d</span><span class="p">,</span>
+        <span class="n">plant_i_q</span><span class="p">,</span>
+        <span class="n">plant_i_0</span><span class="p">,</span>
+        <span class="n">plant_gate_a</span><span class="p">,</span>
+        <span class="n">plant_gate_b</span><span class="p">,</span>
+        <span class="n">plant_gate_c</span><span class="p">,</span>
+        <span class="n">plant_v_conv_a</span><span class="p">,</span>
+        <span class="n">plant_v_conv_b</span><span class="p">,</span>
+        <span class="n">plant_v_conv_c</span><span class="p">,</span>
+        <span class="n">ctrl_v_cmd_d</span><span class="p">,</span>
+        <span class="n">ctrl_v_cmd_q</span><span class="p">,</span>
+        <span class="n">ctrl_v_cmd_0</span><span class="p">,</span>
+        <span class="n">meas_v_d_f</span><span class="p">,</span>
+        <span class="n">meas_v_q_f</span><span class="p">,</span>
+        <span class="n">meas_i_d_f</span><span class="p">,</span>
+        <span class="n">meas_i_q_f</span><span class="p">,</span>
+        <span class="n">pll_input_v_q_f</span><span class="p">,</span>
+        <span class="n">pll_theta</span><span class="p">,</span>
+        <span class="n">pll_omega</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

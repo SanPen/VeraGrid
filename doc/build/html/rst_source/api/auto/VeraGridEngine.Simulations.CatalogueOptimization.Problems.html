@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.CatalogueOptimization.Problems package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Simulations.CleanRoom package" href="VeraGridEngine.Simulations.CleanRoom.html" />
+    <link rel="prev" title="VeraGridEngine.Simulations.CatalogueOptimization package" href="VeraGridEngine.Simulations.CatalogueOptimization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.CatalogueOptimization.html">VeraGridEngine.Simulations.CatalogueOptimization package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.CatalogueOptimization.Problems package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.Problems.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-simulations-catalogueoptimization-problems-package">
+<h1>VeraGridEngine.Simulations.CatalogueOptimization.Problems package<a class="headerlink" href="#veragridengine-simulations-catalogueoptimization-problems-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem">
+<span id="veragridengine-simulations-catalogueoptimization-problems-catalogue-problem-module"></span><h2>VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem module<a class="headerlink" href="#module-VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.</span></span><span class="sig-name descname"><span class="pre">CatalogueOptimizationProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pf_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_branches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltage_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/CatalogueOptimization/Problems/catalogue_problem.html#CatalogueOptimizationProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate" title="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate</span></code></a></p>
+<p>Multi-objective black-box problem that selects, for each user-pre-selected branch, a template
+from the grid’s catalogue so as to minimise the six techno-economic scores
+(losses, overload, voltage module, voltage angle, financial, technical).</p>
+<p>The decision vector <cite>x</cite> is integer-valued: <cite>x[i]</cite> is the index of the chosen template within the
+pool associated with branch <cite>branches[i]</cite>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.get_objectives_names">
+<span class="sig-name descname"><span class="pre">get_objectives_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/CatalogueOptimization/Problems/catalogue_problem.html#CatalogueOptimizationProblem.get_objectives_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.get_objectives_names" title="Link to this definition"></a></dt>
+<dd><p>Get the human-readable names for the elements of <cite>f</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array of objective names matching the order of <cite>objective_function</cite>’s output.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.get_vars_names">
+<span class="sig-name descname"><span class="pre">get_vars_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/CatalogueOptimization/Problems/catalogue_problem.html#CatalogueOptimizationProblem.get_vars_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.get_vars_names" title="Link to this definition"></a></dt>
+<dd><p>Get the human-readable names for the elements of <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array of branch names; one entry per decision slot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.n_objectives">
+<span class="sig-name descname"><span class="pre">n_objectives</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/CatalogueOptimization/Problems/catalogue_problem.html#CatalogueOptimizationProblem.n_objectives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.n_objectives" title="Link to this definition"></a></dt>
+<dd><p>Number of objectives in <cite>f</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>6 (losses, overload, voltage module, voltage angle, financial, technical).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.n_vars">
+<span class="sig-name descname"><span class="pre">n_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/CatalogueOptimization/Problems/catalogue_problem.html#CatalogueOptimizationProblem.n_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.n_vars" title="Link to this definition"></a></dt>
+<dd><p>Number of decision variables in <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of optimisable branch slots.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.objective_function">
+<span class="sig-name descname"><span class="pre">objective_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/CatalogueOptimization/Problems/catalogue_problem.html#CatalogueOptimizationProblem.objective_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem.CatalogueOptimizationProblem.objective_function" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the objective function <cite>f(x)</cite>.</p>
+<dl class="simple">
+<dt>Strategy:</dt><dd><ol class="arabic simple">
+<li><p>Apply the chosen templates to every branch and compute the financial cost.</p></li>
+<li><p>Run a power flow on the modified grid and compute the four technical scores.</p></li>
+<li><p>Restore every branch to its baseline state, regardless of whether the PF succeeded.</p></li>
+<li><p>Return the six-objective vector.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – integer decision vector with <cite>x[i]</cite> indexing the template within <cite>pools[i]</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>array of six objective values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.CatalogueOptimization.Problems">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Simulations.CatalogueOptimization.Problems" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Simulations.CatalogueOptimization.html" class="btn btn-neutral float-left" title="VeraGridEngine.Simulations.CatalogueOptimization package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Simulations.CleanRoom.html" class="btn btn-neutral float-right" title="VeraGridEngine.Simulations.CleanRoom package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

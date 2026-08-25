@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌘 Sigma analysis &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="☀️ Solar power wizard" href="solar_wizard.html" />
+    <link rel="prev" title="➿ Continuation power flow" href="continuation_power_flow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🌘 Sigma analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#classical-sigma">Classical sigma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dpr-sigma">DPR sigma</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Classical sigma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dpr-sigma-with-controls">DPR sigma with controls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#direct-multi-island-call">Direct multi-island call</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🌘 Sigma analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/sigma_analysis.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="sigma-analysis">
+<h1>🌘 Sigma analysis<a class="headerlink" href="#sigma-analysis" title="Link to this heading"></a></h1>
+<p>Sigma analysis is used to estimate how close an AC power-flow solution is to
+voltage collapse. It maps each bus to a point in the sigma plane and measures
+the distance from that point to the sigma stability boundary. Buses with smaller
+distances are closer to the voltage-stability limit, so the study helps identify
+weak areas of the grid before running heavier continuation power-flow studies.</p>
+<p><img alt="img.png" src="../_images/sigma_analysis.png" /></p>
+<p>Sigma analysis is a voltage-stability diagnostic based on the HELM
+(Holomorphic Embedding Load-flow Method) voltage series. VeraGrid can compute
+sigma values with the classical HELM formulation or with the DPR HELM
+formulation used by the HELM power-flow solver.</p>
+<p>The result is shown in the sigma plane and in a table with the bus-wise sigma
+coordinates and distances to the sigma stability boundary.</p>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<p>The Sigma analysis window includes a compact rerun panel. It lets you recompute
+the result without closing the plot window.</p>
+<ul class="simple">
+<li><p><strong>Method</strong>:
+Selects the sigma formulation.
+<code class="docutils literal notranslate"><span class="pre">DPR</span> <span class="pre">HELM</span></code> uses the DPR formulation and the control-aware DPR power-flow
+path. <code class="docutils literal notranslate"><span class="pre">Classical</span> <span class="pre">HELM</span></code> uses the original single-embedding HELM sigma method.</p></li>
+<li><p><strong>DPR start</strong>:
+Selects the initial germ for the DPR power-flow part of the sigma analysis.
+<code class="docutils literal notranslate"><span class="pre">Stored</span> <span class="pre">guess</span></code> uses the voltage stored in the buses as the first DPR state.
+<code class="docutils literal notranslate"><span class="pre">Classical</span> <span class="pre">no-load</span></code> uses the HELM no-load germ.</p></li>
+<li><p><strong>Q limits</strong>:
+Enables reactive power limit controls for voltage-controlled buses during the
+DPR solve. If a generator reaches its reactive limit, the bus type can change
+and the DPR model is restarted.</p></li>
+<li><p><strong>Discrete shunts</strong>:
+Enables discrete shunt controls during the DPR solve. Shunt admittance
+changes are treated as fixed-model changes, so the DPR solve restarts after
+the control action.</p></li>
+<li><p><strong>QV droop</strong>:
+Enables generator QV droop controls during the DPR solve. Droop changes the
+specified reactive injection and therefore changes the fixed algebraic model.</p></li>
+<li><p><strong>Distributed slack</strong>:
+Enables distributed slack redistribution during the DPR solve. This modifies
+the active-power target and requires another fixed-model DPR solve.</p></li>
+<li><p><strong>Re-run</strong>:
+Runs sigma analysis again with the selected options and refreshes the plot and
+table in place.</p></li>
+</ul>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<section id="classical-sigma">
+<h3>Classical sigma<a class="headerlink" href="#classical-sigma" title="Link to this heading"></a></h3>
+<p>Classical sigma analysis uses one HELM embedding from the no-load solution to
+the target loading condition.</p>
+<p>The HELM voltage and inverse-voltage series are:</p>
+<div class="math">
+<p><span class="math">V(s) = \sum_{k=0}^{N} U_k s^k</span></p>
+</div><div class="math">
+<p><span class="math">X(s) = \frac{1}{V^*(s)} = \sum_{k=0}^{N} X_k s^k</span></p>
+</div><p>The sigma value is obtained from the Padé relationship between the voltage
+series and the reciprocal-conjugate voltage series. The resulting complex value</p>
+<div class="math">
+<p><span class="math">\sigma = \sigma_r + j \sigma_i</span></p>
+</div><p>is plotted against the sigma stability boundary:</p>
+<div class="math">
+<p><span class="math">\sigma_i = \pm \sqrt{0.25 + \sigma_r}</span></p>
+</div><p>The reported distance is the distance from the bus sigma point to that boundary.
+Smaller distances indicate lower voltage-stability margin.</p>
+</section>
+<section id="dpr-sigma">
+<h3>DPR sigma<a class="headerlink" href="#dpr-sigma" title="Link to this heading"></a></h3>
+<p>DPR means <strong>Dynamic Power Restart</strong>. In VeraGrid it refers to the DPRHEM
+variant of HELM, where one long embedding is replaced by a sequence of shorter
+embeddings.</p>
+<p>Classical HELM builds one analytic path from the no-load germ to the final
+loading condition. DPRHEM instead starts from a physical voltage state, embeds
+towards the target powers, accepts the best physical point found on that local
+segment, and restarts the embedding from that new point. The process is:</p>
+<ol class="arabic simple">
+<li><p>Choose an initial germ.</p></li>
+<li><p>Solve a local HELM segment from the germ towards the target powers.</p></li>
+<li><p>Evaluate physical candidate voltages on that segment.</p></li>
+<li><p>Accept the candidate that improves the power-flow residual.</p></li>
+<li><p>Restart the embedding from the accepted physical voltage.</p></li>
+</ol>
+<p>The restart is called “dynamic power” because every segment recomputes the
+initial physical power injection at the current germ and embeds only the
+remaining power difference towards the target. This is different from simply
+continuing the same polynomial series.</p>
+<p>This structure is useful for difficult power flows because each local segment is
+shorter and better conditioned. It also gives VeraGrid a natural place to apply
+controls. Reactive limits, discrete shunts, QV droop and distributed slack are
+model changes, so they are applied between fixed-model DPR solves, not inside a
+coefficient recurrence.</p>
+<p>For sigma analysis there is an important consequence: the coefficients of an
+accepted DPR restart segment are <strong>local correction coefficients</strong>. After one or
+more restarts, the current germ may already be close to the solved voltage, so
+the remaining correction coefficients can be very small. Feeding those small
+local coefficients directly into the classical sigma Padé system would make the
+sigma point look artificially close to zero and would not represent the
+stability margin of the complete solved case.</p>
+<p>For that reason, VeraGrid’s DPR sigma proceeds in two stages:</p>
+<ol class="arabic simple">
+<li><p>Run the DPR power-flow path with the selected controls until the final
+fixed-control model is settled.</p></li>
+<li><p>Build one non-restarting DPR continuation embedding for that final model and
+compute sigma from those continuation coefficients.</p></li>
+</ol>
+<p>This keeps the main advantage of DPR, namely robust convergence and control
+handling, while ensuring that sigma is computed from coefficients that represent
+a full continuation path instead of a small post-restart correction.</p>
+<p>Control actions are treated as model discontinuities. They are not analytic
+continuation segments. Sigma is therefore computed for the final controlled
+model.</p>
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<section id="id1">
+<h3>Classical sigma<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_open</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileOpen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">SigmaAnalysisDriver</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">FileOpen</span><span class="p">(</span><span class="s2">&quot;case.veragrid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">SigmaAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                             <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                             <span class="n">classical_sigma</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converged:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Minimum sigma distance:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="dpr-sigma-with-controls">
+<h3>DPR sigma with controls<a class="headerlink" href="#dpr-sigma-with-controls" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_open</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileOpen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">SigmaAnalysisDriver</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">FileOpen</span><span class="p">(</span><span class="s2">&quot;case.veragrid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+                           <span class="n">max_iter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+                           <span class="n">control_q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                           <span class="n">distributed_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">use_stored_guess</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">SigmaAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                             <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                             <span class="n">classical_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">dpr_use_stored_guess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_control_q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_control_discrete_shunts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_control_qv_droop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_distributed_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converged:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Minimum sigma distance:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="direct-multi-island-call">
+<h3>Direct multi-island call<a class="headerlink" href="#direct-multi-island-call" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_open</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileOpen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">multi_island_sigma</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">FileOpen</span><span class="p">(</span><span class="s2">&quot;case.veragrid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">multi_island_sigma</span><span class="p">(</span><span class="n">multi_circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                             <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                             <span class="n">classical_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">dpr_use_stored_guess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_control_q</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_Q</span><span class="p">,</span>
+                             <span class="n">dpr_control_discrete_shunts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_control_qv_droop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">dpr_distributed_slack</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">distributed_slack</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sigma_re</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sigma_im</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">distances</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p>The sigma analysis result stores bus-indexed arrays:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_re</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Real component of the sigma-plane value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_im</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Imaginary component of the sigma-plane value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">distances</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Distance from each sigma point to the stability boundary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection used by the analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>True when the underlying sigma solve converged.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="continuation_power_flow.html" class="btn btn-neutral float-left" title="➿ Continuation power flow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="solar_wizard.html" class="btn btn-neutral float-right" title="☀️ Solar power wizard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

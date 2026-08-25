@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiRationalModeFit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate_jmarti_rational_mode_fit</span>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiModePassivityReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Passivity-like and boundedness metrics for one scalar JMARTI mode.</span>
+
+<span class="sd">    The first JMARTI implementation treats the modal channels independently. For</span>
+<span class="sd">    that reason the physical admissibility checks are also scalar per mode:</span>
+<span class="sd">    ``Re(Yc)`` must remain non-negative within tolerance and ``|Hres|`` must not</span>
+<span class="sd">    exceed one beyond the configured slack.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_mode_index&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_target_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_minimum_real_part&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_maximum_gain&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_minimum_real_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_maximum_gain_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_passes_real_part_check&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_passes_gain_check&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">minimum_real_part</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">maximum_gain</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">minimum_real_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">maximum_gain_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">passes_real_part_check</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">passes_gain_check</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one scalar passivity/boundedness report.</span>
+
+<span class="sd">        :param mode_index: Modal channel index.</span>
+<span class="sd">        :param target_name: Scalar target name.</span>
+<span class="sd">        :param minimum_real_part: Minimum sampled real part.</span>
+<span class="sd">        :param maximum_gain: Maximum sampled magnitude.</span>
+<span class="sd">        :param minimum_real_frequency_hz: Frequency where the minimum real part occurs.</span>
+<span class="sd">        :param maximum_gain_frequency_hz: Frequency where the maximum gain occurs.</span>
+<span class="sd">        :param passes_real_part_check: Whether the real-part test passes.</span>
+<span class="sd">        :param passes_gain_check: Whether the gain test passes.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mode_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_real_part</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">minimum_real_part</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_gain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">maximum_gain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_real_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">minimum_real_frequency_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_gain_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">maximum_gain_frequency_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_passes_real_part_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">passes_real_part_check</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_passes_gain_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">passes_gain_check</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_mode_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_mode_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal channel index.</span>
+
+<span class="sd">        :return: Modal channel index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_target_name">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_target_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the scalar target name.</span>
+
+<span class="sd">        :return: Scalar target name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_name</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_minimum_real_part">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_minimum_real_part">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_minimum_real_part</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the minimum sampled real part.</span>
+
+<span class="sd">        :return: Minimum sampled real part.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_real_part</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_maximum_gain">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_maximum_gain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_maximum_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the maximum sampled magnitude.</span>
+
+<span class="sd">        :return: Maximum sampled magnitude.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_gain</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_minimum_real_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_minimum_real_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_minimum_real_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the frequency where the minimum real part occurs.</span>
+
+<span class="sd">        :return: Frequency in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_real_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_maximum_gain_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_maximum_gain_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_maximum_gain_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the frequency where the maximum magnitude occurs.</span>
+
+<span class="sd">        :return: Frequency in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_gain_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_passes_real_part_check">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_passes_real_part_check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_passes_real_part_check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the real-part admissibility test passes.</span>
+
+<span class="sd">        :return: Boolean state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passes_real_part_check</span></div>
+
+
+<div class="viewcode-block" id="JMartiModePassivityReport.get_passes_gain_check">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiModePassivityReport.get_passes_gain_check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_passes_gain_check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the gain admissibility test passes.</span>
+
+<span class="sd">        :return: Boolean state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passes_gain_check</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="JMartiPassivityReport">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiPassivityReport">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiPassivityReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aggregate passivity-like report for a set of scalar JMARTI fits.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_mode_reports&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mode_reports</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiModePassivityReport</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one aggregate passivity report.</span>
+
+<span class="sd">        :param frequency_hz: Dense frequency grid used for the checks.</span>
+<span class="sd">        :param mode_reports: Per-mode admissibility reports.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_reports</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModePassivityReport</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">mode_reports</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JMartiPassivityReport.get_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiPassivityReport.get_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the dense frequency grid used for the checks.</span>
+
+<span class="sd">        :return: Dense frequency grid in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiPassivityReport.get_mode_reports">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiPassivityReport.get_mode_reports">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModePassivityReport</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the per-mode reports.</span>
+
+<span class="sd">        :return: Per-mode report tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_reports</span></div>
+
+
+<div class="viewcode-block" id="JMartiPassivityReport.get_all_checks_pass">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.JMartiPassivityReport.get_all_checks_pass">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_checks_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether every mode passes its admissibility checks.</span>
+
+<span class="sd">        :return: Boolean global status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">report_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">report_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_reports</span><span class="p">):</span>
+            <span class="n">report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_reports</span><span class="p">[</span><span class="n">report_index</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">get_passes_real_part_check</span><span class="p">()</span> <span class="ow">and</span> <span class="n">report</span><span class="o">.</span><span class="n">get_passes_gain_check</span><span class="p">():</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">report_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_passivity_frequency_grid">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.build_jmarti_passivity_frequency_grid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_passivity_frequency_grid</span><span class="p">(</span><span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                          <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                          <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one dense frequency grid for passivity checks.</span>
+
+<span class="sd">    :param low_hz: Lower frequency in Hz.</span>
+<span class="sd">    :param high_hz: Upper frequency in Hz.</span>
+<span class="sd">    :param sample_count: Number of samples requested by the user.</span>
+<span class="sd">    :return: Dense logarithmic or affine frequency grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">low_hz</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">low_hz</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">high_hz</span><span class="p">),</span> <span class="n">sample_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">low_hz</span><span class="p">,</span> <span class="n">high_hz</span><span class="p">,</span> <span class="n">sample_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="evaluate_jmarti_mode_passivity">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.evaluate_jmarti_mode_passivity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jmarti_mode_passivity</span><span class="p">(</span><span class="n">fit</span><span class="p">:</span> <span class="n">JMartiRationalModeFit</span><span class="p">,</span>
+                                   <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                                   <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiModePassivityReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate one scalar JMARTI mode on a dense frequency grid.</span>
+
+<span class="sd">    ``Yc`` is checked through its minimum real part, while propagation-like</span>
+<span class="sd">    targets such as ``Hres`` are checked through their maximum gain.</span>
+
+<span class="sd">    :param fit: Scalar rational fit.</span>
+<span class="sd">    :param frequency_hz: Dense frequency grid in Hz.</span>
+<span class="sd">    :param options: Optional user-configurable JMARTI fitting options.</span>
+<span class="sd">    :return: Scalar passivity/boundedness report.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">=</span> <span class="n">JMartiFitOptions</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">options</span>
+    <span class="n">response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">evaluate_jmarti_rational_mode_fit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">frequency_hz</span><span class="p">)</span>
+    <span class="n">real_part</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">response_values</span><span class="p">)</span>
+    <span class="n">gain</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">response_values</span><span class="p">)</span>
+    <span class="n">minimum_real_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">real_part</span><span class="p">))</span>
+    <span class="n">maximum_gain_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gain</span><span class="p">))</span>
+    <span class="n">minimum_real_part</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">real_part</span><span class="p">[</span><span class="n">minimum_real_index</span><span class="p">])</span>
+    <span class="n">maximum_gain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gain</span><span class="p">[</span><span class="n">maximum_gain_index</span><span class="p">])</span>
+    <span class="n">passes_real_part_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">minimum_real_part</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_passivity_minimum_real_yc_tolerance</span><span class="p">()</span>
+    <span class="n">passes_gain_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">maximum_gain</span> <span class="o">&lt;=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">resolved_options</span><span class="o">.</span><span class="n">get_passivity_maximum_hres_gain_tolerance</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_target_name</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Yc&#39;</span><span class="p">:</span>
+        <span class="n">passes_gain_check</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_target_name</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Hres&#39;</span><span class="p">:</span>
+        <span class="n">passes_real_part_check</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">JMartiModePassivityReport</span><span class="p">(</span>
+        <span class="n">mode_index</span><span class="o">=</span><span class="n">fit</span><span class="o">.</span><span class="n">get_mode_index</span><span class="p">(),</span>
+        <span class="n">target_name</span><span class="o">=</span><span class="n">fit</span><span class="o">.</span><span class="n">get_target_name</span><span class="p">(),</span>
+        <span class="n">minimum_real_part</span><span class="o">=</span><span class="n">minimum_real_part</span><span class="p">,</span>
+        <span class="n">maximum_gain</span><span class="o">=</span><span class="n">maximum_gain</span><span class="p">,</span>
+        <span class="n">minimum_real_frequency_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">minimum_real_index</span><span class="p">]),</span>
+        <span class="n">maximum_gain_frequency_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">maximum_gain_index</span><span class="p">]),</span>
+        <span class="n">passes_real_part_check</span><span class="o">=</span><span class="n">passes_real_part_check</span><span class="p">,</span>
+        <span class="n">passes_gain_check</span><span class="o">=</span><span class="n">passes_gain_check</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="evaluate_jmarti_passivity_report">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity.evaluate_jmarti_passivity_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jmarti_passivity_report</span><span class="p">(</span><span class="n">fits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">],</span>
+                                     <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                     <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                     <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiPassivityReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate passivity-like metrics for a set of scalar JMARTI fits.</span>
+
+<span class="sd">    :param fits: Scalar rational fits to inspect.</span>
+<span class="sd">    :param low_hz: Lower frequency of the dense check grid.</span>
+<span class="sd">    :param high_hz: Upper frequency of the dense check grid.</span>
+<span class="sd">    :param options: Optional user-configurable JMARTI fitting options.</span>
+<span class="sd">    :return: Aggregate passivity report.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">=</span> <span class="n">JMartiFitOptions</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">options</span>
+    <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">build_jmarti_passivity_frequency_grid</span><span class="p">(</span>
+        <span class="n">low_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">low_hz</span><span class="p">),</span>
+        <span class="n">high_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">high_hz</span><span class="p">),</span>
+        <span class="n">sample_count</span><span class="o">=</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_passivity_frequency_sample_count</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">reports</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JMartiModePassivityReport</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">fit_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">fit_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">fits</span><span class="p">):</span>
+        <span class="n">reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">evaluate_jmarti_mode_passivity</span><span class="p">(</span>
+                <span class="n">fit</span><span class="o">=</span><span class="n">fits</span><span class="p">[</span><span class="n">fit_index</span><span class="p">],</span>
+                <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">fit_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">JMartiPassivityReport</span><span class="p">(</span><span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">mode_reports</span><span class="o">=</span><span class="n">reports</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

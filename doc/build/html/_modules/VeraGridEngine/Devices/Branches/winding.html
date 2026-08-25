@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Branches.winding &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Branches.winding</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Branches.winding</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">WindingsConnection</span><span class="p">,</span> <span class="n">BuildStatus</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformerType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+
+
+<div class="viewcode-block" id="Winding">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.winding.Winding">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Winding</span><span class="p">(</span><span class="n">Transformer2W</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">bus_from</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">bus_to</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Winding&#39;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">HV</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">LV</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">nominal_power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
+                 <span class="n">copper_losses</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">iron_losses</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">no_load_current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">short_circuit_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">r</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span>
+                 <span class="n">g</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">design_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
+                 <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
+                 <span class="n">tap_module</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">tap_module_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+                 <span class="n">tap_module_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">tap_phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">tap_phase_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.28</span><span class="p">,</span>
+                 <span class="n">tap_phase_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.28</span><span class="p">,</span>
+                 <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">cost</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+                 <span class="n">mttf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mttr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">vset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">Pset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">Qset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">temp_base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+                 <span class="n">temp_oper</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+                 <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.00330</span><span class="p">,</span>
+                 <span class="n">tap_module_control_mode</span><span class="p">:</span> <span class="n">TapModuleControl</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">fixed</span><span class="p">,</span>
+                 <span class="n">tap_phase_control_mode</span><span class="p">:</span> <span class="n">TapPhaseControl</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">fixed</span><span class="p">,</span>
+                 <span class="n">contingency_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">protection_rating_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
+                 <span class="n">contingency_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">monitor_loading</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">r0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">g0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">b0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">r2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">x2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">g2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">b2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">conn</span><span class="p">:</span> <span class="n">WindingsConnection</span> <span class="o">=</span> <span class="n">WindingsConnection</span><span class="o">.</span><span class="n">GG</span><span class="p">,</span>
+                 <span class="n">capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">opex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">build_status</span><span class="p">:</span> <span class="n">BuildStatus</span> <span class="o">=</span> <span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transformer constructor</span>
+<span class="sd">        :param name: Name of the branch</span>
+<span class="sd">        :param idtag: UUID code</span>
+<span class="sd">        :param code: secondary id</span>
+<span class="sd">        :param bus_from: &quot;From&quot; :ref:`bus&lt;Bus&gt;` object</span>
+<span class="sd">        :param bus_to: &quot;To&quot; :ref:`bus&lt;Bus&gt;` object</span>
+<span class="sd">        :param HV: Higher voltage value in kV</span>
+<span class="sd">        :param LV: Lower voltage value in kV</span>
+<span class="sd">        :param nominal_power: Nominal power of the machine in MVA</span>
+<span class="sd">        :param copper_losses: Copper losses in kW</span>
+<span class="sd">        :param iron_losses: Iron losses in kW</span>
+<span class="sd">        :param no_load_current: No load current in %</span>
+<span class="sd">        :param short_circuit_voltage: Short circuit voltage in %</span>
+<span class="sd">        :param r: resistance in per unit</span>
+<span class="sd">        :param x: reactance in per unit</span>
+<span class="sd">        :param g: shunt conductance in per unit</span>
+<span class="sd">        :param b: shunt susceptance in per unit</span>
+<span class="sd">        :param design_rate: Design rate (MVA)</span>
+<span class="sd">        :param rate: rate in MVA</span>
+<span class="sd">        :param tap_module: tap module in p.u.</span>
+<span class="sd">        :param tap_module_max:</span>
+<span class="sd">        :param tap_module_min:</span>
+<span class="sd">        :param tap_phase: phase shift angle (rad)</span>
+<span class="sd">        :param tap_phase_max:</span>
+<span class="sd">        :param tap_phase_min:</span>
+<span class="sd">        :param active: Is the branch active?</span>
+<span class="sd">        :param tolerance: Tolerance specified for the branch impedance in %</span>
+<span class="sd">        :param cost: Cost of overload (e/MW)</span>
+<span class="sd">        :param mttf: Mean time to failure in hours</span>
+<span class="sd">        :param mttr: Mean time to recovery in hours</span>
+<span class="sd">        :param vset: Voltage set-point of the voltage controlled bus in per unit</span>
+<span class="sd">        :param Pset: Power set point</span>
+<span class="sd">        :param temp_base: Base temperature at which `r` is measured in °C</span>
+<span class="sd">        :param temp_oper: Operating temperature in °C</span>
+<span class="sd">        :param alpha: Thermal constant of the material in °C</span>
+<span class="sd">        :param tap_module_control_mode: Tap module Control model</span>
+<span class="sd">        :param tap_phase_control_mode: Tap phase Control model</span>
+<span class="sd">        :param template: Branch template</span>
+<span class="sd">        :param contingency_factor: Rating factor in case of contingency</span>
+<span class="sd">        :param contingency_enabled: enabled for contingencies (Legacy)</span>
+<span class="sd">        :param monitor_loading: monitor the loading (used in OPF)</span>
+<span class="sd">        :param r0: zero-sequence resistence (p.u.)</span>
+<span class="sd">        :param x0: zero-sequence reactance (p.u.)</span>
+<span class="sd">        :param g0: zero-sequence conductance (p.u.)</span>
+<span class="sd">        :param b0: zero-sequence susceptance (p.u.)</span>
+<span class="sd">        :param r2: negative-sequence resistence (p.u.)</span>
+<span class="sd">        :param x2: negative-sequence reactance (p.u.)</span>
+<span class="sd">        :param g2: negative-sequence conductance (p.u.)</span>
+<span class="sd">        :param b2: negative-sequence susceptance (p.u.)</span>
+<span class="sd">        :param conn: transformer connection type</span>
+<span class="sd">        :param capex: Cost of investment (e/MW)</span>
+<span class="sd">        :param opex: Cost of operation (e/MWh)</span>
+<span class="sd">        :param build_status: build status (now time)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Transformer2W</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                               <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                               <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                               <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                               <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                               <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                               <span class="n">HV</span><span class="o">=</span><span class="n">HV</span><span class="p">,</span>
+                               <span class="n">LV</span><span class="o">=</span><span class="n">LV</span><span class="p">,</span>
+                               <span class="n">nominal_power</span><span class="o">=</span><span class="n">nominal_power</span><span class="p">,</span>
+                               <span class="n">copper_losses</span><span class="o">=</span><span class="n">copper_losses</span><span class="p">,</span>
+                               <span class="n">iron_losses</span><span class="o">=</span><span class="n">iron_losses</span><span class="p">,</span>
+                               <span class="n">no_load_current</span><span class="o">=</span><span class="n">no_load_current</span><span class="p">,</span>
+                               <span class="n">short_circuit_voltage</span><span class="o">=</span><span class="n">short_circuit_voltage</span><span class="p">,</span>
+                               <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                               <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+                               <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+                               <span class="n">design_rate</span><span class="o">=</span><span class="n">design_rate</span><span class="p">,</span>
+                               <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                               <span class="n">tap_module</span><span class="o">=</span><span class="n">tap_module</span><span class="p">,</span>
+                               <span class="n">tap_module_max</span><span class="o">=</span><span class="n">tap_module_max</span><span class="p">,</span>
+                               <span class="n">tap_module_min</span><span class="o">=</span><span class="n">tap_module_min</span><span class="p">,</span>
+                               <span class="n">tap_phase</span><span class="o">=</span><span class="n">tap_phase</span><span class="p">,</span>
+                               <span class="n">tap_phase_max</span><span class="o">=</span><span class="n">tap_phase_max</span><span class="p">,</span>
+                               <span class="n">tap_phase_min</span><span class="o">=</span><span class="n">tap_phase_min</span><span class="p">,</span>
+                               <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+                               <span class="n">reducible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                               <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span>
+                               <span class="n">cost</span><span class="o">=</span><span class="n">cost</span><span class="p">,</span>
+                               <span class="n">mttf</span><span class="o">=</span><span class="n">mttf</span><span class="p">,</span>
+                               <span class="n">mttr</span><span class="o">=</span><span class="n">mttr</span><span class="p">,</span>
+                               <span class="n">vset</span><span class="o">=</span><span class="n">vset</span><span class="p">,</span>
+                               <span class="n">Pset</span><span class="o">=</span><span class="n">Pset</span><span class="p">,</span>
+                               <span class="n">Qset</span><span class="o">=</span><span class="n">Qset</span><span class="p">,</span>
+                               <span class="n">temp_base</span><span class="o">=</span><span class="n">temp_base</span><span class="p">,</span>
+                               <span class="n">temp_oper</span><span class="o">=</span><span class="n">temp_oper</span><span class="p">,</span>
+                               <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                               <span class="n">tap_module_control_mode</span><span class="o">=</span><span class="n">tap_module_control_mode</span><span class="p">,</span>
+                               <span class="n">tap_phase_control_mode</span><span class="o">=</span><span class="n">tap_phase_control_mode</span><span class="p">,</span>
+                               <span class="n">contingency_factor</span><span class="o">=</span><span class="n">contingency_factor</span><span class="p">,</span>
+                               <span class="n">protection_rating_factor</span><span class="o">=</span><span class="n">protection_rating_factor</span><span class="p">,</span>
+                               <span class="n">contingency_enabled</span><span class="o">=</span><span class="n">contingency_enabled</span><span class="p">,</span>
+                               <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                               <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span>
+                               <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                               <span class="n">g0</span><span class="o">=</span><span class="n">g0</span><span class="p">,</span>
+                               <span class="n">b0</span><span class="o">=</span><span class="n">b0</span><span class="p">,</span>
+                               <span class="n">r2</span><span class="o">=</span><span class="n">r2</span><span class="p">,</span>
+                               <span class="n">x2</span><span class="o">=</span><span class="n">x2</span><span class="p">,</span>
+                               <span class="n">g2</span><span class="o">=</span><span class="n">g2</span><span class="p">,</span>
+                               <span class="n">b2</span><span class="o">=</span><span class="n">b2</span><span class="p">,</span>
+                               <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span>
+                               <span class="n">capex</span><span class="o">=</span><span class="n">capex</span><span class="p">,</span>
+                               <span class="n">opex</span><span class="o">=</span><span class="n">opex</span><span class="p">,</span>
+                               <span class="n">build_status</span><span class="o">=</span><span class="n">build_status</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">WindingDevice</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

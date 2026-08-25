@@ -1,0 +1,611 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">timeit</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span> <span class="k">as</span> <span class="n">csc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">sparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc</span><span class="w"> </span><span class="kn">import</span> <span class="n">pack_3_by_4</span><span class="p">,</span> <span class="n">diags</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseSolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_fx</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">interior_point_solver</span> <span class="k">as</span> <span class="n">interior_point_solver_fx</span><span class="p">,</span>
+    <span class="n">step_calculation</span><span class="p">,</span>
+    <span class="n">split</span><span class="p">,</span>
+    <span class="n">calc_feas_cond</span><span class="p">,</span>
+    <span class="n">calc_grad_cond</span><span class="p">,</span>
+    <span class="n">calc_c_cond</span><span class="p">,</span>
+    <span class="n">has_tail_converged</span><span class="p">,</span>
+    <span class="n">compute_adaptive_sigma</span><span class="p">,</span>
+    <span class="n">get_ips_linear_solver_candidates</span><span class="p">,</span>
+    <span class="n">solve_kkt_with_fallback</span><span class="p">,</span>
+    <span class="n">IpsIterationHistory</span><span class="p">,</span>
+    <span class="n">IpsSolution</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="build_reduced_kkt_system">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.OPF.NumericalMethods.html#VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc.build_reduced_kkt_system">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_reduced_kkt_system</span><span class="p">(</span><span class="n">fx</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                             <span class="n">G</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                             <span class="n">H</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                             <span class="n">Gx</span><span class="p">:</span> <span class="n">csc</span><span class="p">,</span>
+                             <span class="n">Hx</span><span class="p">:</span> <span class="n">csc</span><span class="p">,</span>
+                             <span class="n">fxx</span><span class="p">:</span> <span class="n">csc</span><span class="p">,</span>
+                             <span class="n">Gxx</span><span class="p">:</span> <span class="n">csc</span><span class="p">,</span>
+                             <span class="n">Hxx</span><span class="p">:</span> <span class="n">csc</span><span class="p">,</span>
+                             <span class="n">lam</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                             <span class="n">mu</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                             <span class="n">z_inv</span><span class="p">,</span>
+                             <span class="n">mu_diag</span><span class="p">,</span>
+                             <span class="n">barrier_rhs</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">csc</span><span class="p">,</span> <span class="n">Vec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the reduced KKT matrix and right-hand side for one primal-dual IPS Newton solve.</span>
+
+<span class="sd">    :param fx: Objective Jacobian.</span>
+<span class="sd">    :param G: Equality residuals.</span>
+<span class="sd">    :param H: Inequality residuals.</span>
+<span class="sd">    :param Gx: Equality Jacobian.</span>
+<span class="sd">    :param Hx: Inequality Jacobian.</span>
+<span class="sd">    :param fxx: Objective Hessian.</span>
+<span class="sd">    :param Gxx: Equality Hessian contribution.</span>
+<span class="sd">    :param Hxx: Inequality Hessian contribution.</span>
+<span class="sd">    :param lam: Equality multipliers.</span>
+<span class="sd">    :param mu: Inequality multipliers.</span>
+<span class="sd">    :param z_inv: Inverse slack diagonal matrix.</span>
+<span class="sd">    :param mu_diag: Multiplier diagonal matrix.</span>
+<span class="sd">    :param barrier_rhs: Right-hand side contribution for the complementarity block.</span>
+<span class="sd">    :return: ``(jac, rhs)`` reduced KKT system.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Hx_t</span> <span class="o">=</span> <span class="n">Hx</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">Gx_t</span> <span class="o">=</span> <span class="n">Gx</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">lxx</span> <span class="o">=</span> <span class="n">fxx</span> <span class="o">+</span> <span class="n">Gxx</span> <span class="o">+</span> <span class="n">Hxx</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">lxx</span> <span class="o">+</span> <span class="n">Hx_t</span> <span class="o">@</span> <span class="n">z_inv</span> <span class="o">@</span> <span class="n">mu_diag</span> <span class="o">@</span> <span class="n">Hx</span>
+    <span class="n">jac</span> <span class="o">=</span> <span class="n">pack_3_by_4</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">tocsc</span><span class="p">(),</span> <span class="n">Gx_t</span><span class="o">.</span><span class="n">tocsc</span><span class="p">(),</span> <span class="n">Gx</span><span class="o">.</span><span class="n">tocsc</span><span class="p">())</span>
+    <span class="n">lx</span> <span class="o">=</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">Gx_t</span> <span class="o">@</span> <span class="n">lam</span> <span class="o">+</span> <span class="n">Hx_t</span> <span class="o">@</span> <span class="n">mu</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">lx</span> <span class="o">+</span> <span class="n">Hx_t</span> <span class="o">@</span> <span class="n">z_inv</span> <span class="o">@</span> <span class="n">barrier_rhs</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">G</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">jac</span><span class="p">,</span> <span class="n">rhs</span></div>
+
+
+
+<div class="viewcode-block" id="interior_point_solver">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.OPF.NumericalMethods.html#VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc.interior_point_solver">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interior_point_solver</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span>
+                          <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                          <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                          <span class="n">pf_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">trust</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                          <span class="n">step_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">xi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99995</span><span class="p">,</span>
+                          <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                          <span class="n">alpha_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                          <span class="n">max_stepsize</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IpsSolution</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve one nonlinear OPF problem with a Mehrotra-style predictor-corrector primal-dual IPS.</span>
+
+<span class="sd">    The predictor-corrector path is tried first. If it does not return a converged point, retry the</span>
+<span class="sd">    same problem with the historical FX-centered step so the new solver selection remains usable on</span>
+<span class="sd">    hard large-scale cases while the PC path keeps improving.</span>
+
+<span class="sd">    :param problem: Optimization problem structure.</span>
+<span class="sd">    :param max_iter: Maximum number of iterations.</span>
+<span class="sd">    :param tol: Convergence tolerance.</span>
+<span class="sd">    :param pf_init: Use the power flow solution as initial multiplier values.</span>
+<span class="sd">    :param trust: Initial trust amount for the damped step-control path.</span>
+<span class="sd">    :param verbose: Verbosity level.</span>
+<span class="sd">    :param step_control: Use step control to improve the solution process control.</span>
+<span class="sd">    :param xi: Fraction-to-the-boundary parameter for primal/dual steps.</span>
+<span class="sd">    :param sigma: Fallback centering parameter when adaptive centering is unavailable.</span>
+<span class="sd">    :param alpha_min: Minimum accepted primal/dual step before declaring numeric failure.</span>
+<span class="sd">    :param max_stepsize: Maximum allowed Newton direction norm before declaring numeric failure.</span>
+<span class="sd">    :return: IPS solution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x0_initial</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">pc_solution</span><span class="p">:</span> <span class="n">IpsSolution</span> <span class="o">=</span> <span class="n">interior_point_solver_pc_core</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                                             <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+                                                             <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span>
+                                                             <span class="n">pf_init</span><span class="o">=</span><span class="n">pf_init</span><span class="p">,</span>
+                                                             <span class="n">trust</span><span class="o">=</span><span class="n">trust</span><span class="p">,</span>
+                                                             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                                             <span class="n">step_control</span><span class="o">=</span><span class="n">step_control</span><span class="p">,</span>
+                                                             <span class="n">xi</span><span class="o">=</span><span class="n">xi</span><span class="p">,</span>
+                                                             <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+                                                             <span class="n">alpha_min</span><span class="o">=</span><span class="n">alpha_min</span><span class="p">,</span>
+                                                             <span class="n">max_stepsize</span><span class="o">=</span><span class="n">max_stepsize</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pc_solution</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pc_solution</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">problem</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x0_initial</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">interior_point_solver_fx</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                    <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+                                    <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span>
+                                    <span class="n">pf_init</span><span class="o">=</span><span class="n">pf_init</span><span class="p">,</span>
+                                    <span class="n">trust</span><span class="o">=</span><span class="n">trust</span><span class="p">,</span>
+                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                    <span class="n">step_control</span><span class="o">=</span><span class="n">step_control</span><span class="p">,</span>
+                                    <span class="n">xi</span><span class="o">=</span><span class="n">xi</span><span class="p">,</span>
+                                    <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+                                    <span class="n">alpha_min</span><span class="o">=</span><span class="n">alpha_min</span><span class="p">,</span>
+                                    <span class="n">max_stepsize</span><span class="o">=</span><span class="n">max_stepsize</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="interior_point_solver_pc_core">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.OPF.NumericalMethods.html#VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc.interior_point_solver_pc_core">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interior_point_solver_pc_core</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span>
+                          <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                          <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                          <span class="n">pf_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">trust</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                          <span class="n">step_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">xi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99995</span><span class="p">,</span>
+                          <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                          <span class="n">alpha_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                          <span class="n">max_stepsize</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IpsSolution</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve one nonlinear OPF problem with a Mehrotra-style predictor-corrector primal-dual IPS.</span>
+
+<span class="sd">    :param problem: Optimization problem structure.</span>
+<span class="sd">    :param max_iter: Maximum number of iterations.</span>
+<span class="sd">    :param tol: Convergence tolerance.</span>
+<span class="sd">    :param pf_init: Use the power flow solution as initial multiplier values.</span>
+<span class="sd">    :param trust: Initial trust amount for the damped step-control path.</span>
+<span class="sd">    :param verbose: Verbosity level.</span>
+<span class="sd">    :param step_control: Use step control to improve the solution process control.</span>
+<span class="sd">    :param xi: Fraction-to-the-boundary parameter for primal/dual steps.</span>
+<span class="sd">    :param sigma: Fallback centering parameter when adaptive centering is unavailable.</span>
+<span class="sd">    :param alpha_min: Minimum accepted primal/dual step before declaring numeric failure.</span>
+<span class="sd">    :param max_stepsize: Maximum allowed Newton direction norm before declaring numeric failure.</span>
+<span class="sd">    :return: IPS solution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">linear_solver_candidates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">SparseSolver</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">csc</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">get_ips_linear_solver_candidates</span><span class="p">()</span>
+    <span class="n">t_start</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">&lt;=</span> <span class="n">xi</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;xi must be in [0.5, 1.0), got </span><span class="si">{</span><span class="n">xi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sigma must be in (0.0, 1.0], got </span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">alpha_min</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;alpha_min must be positive, got </span><span class="si">{</span><span class="n">alpha_min</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_stepsize</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_stepsize must be positive, got </span><span class="si">{</span><span class="n">max_stepsize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">error</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span>
+    <span class="n">iter_counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">f_prev</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">cost_cond</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">nabla</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">rho_lower</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">nabla</span>
+    <span class="n">rho_upper</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">nabla</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">nineq</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pf_init</span><span class="p">:</span>
+        <span class="n">z0</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">nineq</span><span class="p">)</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">fx</span><span class="p">,</span> <span class="n">Gx</span><span class="p">,</span> <span class="n">Hx</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_jacobians_and_hessians</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">compute_hessians</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="n">H</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">zz</span> <span class="o">&lt;</span> <span class="mf">1e-2</span> <span class="k">else</span> <span class="n">zz</span> <span class="k">for</span> <span class="n">zz</span> <span class="ow">in</span> <span class="n">z</span><span class="p">])</span>
+        <span class="n">z_inv</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">z_inv</span> <span class="o">@</span> <span class="n">e</span><span class="p">)</span>
+        <span class="n">mu_diag</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lsqr</span><span class="p">(</span><span class="n">Gx</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="o">-</span><span class="n">fx</span> <span class="o">-</span> <span class="n">Hx</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">mu</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">z0</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">nineq</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">nineq</span><span class="p">)</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+        <span class="n">kk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">H</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">z0</span><span class="p">)</span>
+        <span class="n">z</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">H</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span>
+        <span class="n">z_inv</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">kk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">((</span><span class="n">gamma</span> <span class="o">/</span> <span class="n">z</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">z0</span><span class="p">)</span>
+        <span class="n">mu</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">z</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span>
+        <span class="n">mu_diag</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+
+    <span class="n">fx</span><span class="p">,</span> <span class="n">Gx</span><span class="p">,</span> <span class="n">Hx</span><span class="p">,</span> <span class="n">fxx</span><span class="p">,</span> <span class="n">Gxx</span><span class="p">,</span> <span class="n">Hxx</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_jacobians_and_hessians</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">compute_hessians</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Hx_t</span> <span class="o">=</span> <span class="n">Hx</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">Gx_t</span> <span class="o">=</span> <span class="n">Gx</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">lx</span> <span class="o">=</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">Gx_t</span> <span class="o">@</span> <span class="n">lam</span> <span class="o">+</span> <span class="n">Hx_t</span> <span class="o">@</span> <span class="n">mu</span>
+    <span class="n">feas_cond</span> <span class="o">=</span> <span class="n">calc_feas_cond</span><span class="p">(</span><span class="n">g</span><span class="o">=</span><span class="n">G</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">H</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">gradcond</span> <span class="o">=</span> <span class="n">calc_grad_cond</span><span class="p">(</span><span class="n">lx</span><span class="o">=</span><span class="n">lx</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">comp_cond</span> <span class="o">=</span> <span class="n">calc_c_cond</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">f_prev</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="n">cost_cond</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">feas_cond</span><span class="p">,</span> <span class="n">gradcond</span><span class="p">,</span> <span class="n">comp_cond</span><span class="p">,</span> <span class="n">gamma</span><span class="p">])</span>
+    <span class="n">converged</span> <span class="o">=</span> <span class="n">has_tail_converged</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                   <span class="n">step_control</span><span class="o">=</span><span class="n">step_control</span><span class="p">,</span>
+                                   <span class="n">feas_cond</span><span class="o">=</span><span class="n">feas_cond</span><span class="p">,</span>
+                                   <span class="n">gradcond</span><span class="o">=</span><span class="n">gradcond</span><span class="p">,</span>
+                                   <span class="n">comp_cond</span><span class="o">=</span><span class="n">comp_cond</span><span class="p">,</span>
+                                   <span class="n">cost_cond</span><span class="o">=</span><span class="n">cost_cond</span><span class="p">,</span>
+                                   <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+                                   <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+    <span class="n">max_displ</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">error_evolution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">feas_cond_evolution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">objective_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gradcond_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">compcond_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">costcond_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gamma_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">alphap_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">alphad_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">step_norm_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">objective_scale</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="s2">&quot;objective_scale&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">feas_cond_evolution</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">feas_cond</span>
+    <span class="n">error_evolution</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">error</span>
+    <span class="n">objective_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span> <span class="o">/</span> <span class="n">objective_scale</span>
+    <span class="n">gradcond_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">gradcond</span>
+    <span class="n">compcond_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp_cond</span>
+    <span class="n">costcond_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost_cond</span>
+    <span class="n">gamma_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span>
+    <span class="n">alphap_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">alphad_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">step_norm_history</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">residuals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">NV</span> <span class="o">+</span> <span class="n">problem</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+    <span class="n">dlam</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span> <span class="ow">and</span> <span class="n">iter_counter</span> <span class="o">&lt;</span> <span class="n">max_iter</span><span class="p">:</span>
+        <span class="n">z_inv</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">mu_diag</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+
+        <span class="c1"># Predictor: affine-scaling direction with zero centering target.</span>
+        <span class="n">barrier_rhs_aff</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">H</span>
+        <span class="n">jac</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">build_reduced_kkt_system</span><span class="p">(</span><span class="n">fx</span><span class="o">=</span><span class="n">fx</span><span class="p">,</span>
+                                            <span class="n">G</span><span class="o">=</span><span class="n">G</span><span class="p">,</span>
+                                            <span class="n">H</span><span class="o">=</span><span class="n">H</span><span class="p">,</span>
+                                            <span class="n">Gx</span><span class="o">=</span><span class="n">Gx</span><span class="p">,</span>
+                                            <span class="n">Hx</span><span class="o">=</span><span class="n">Hx</span><span class="p">,</span>
+                                            <span class="n">fxx</span><span class="o">=</span><span class="n">fxx</span><span class="p">,</span>
+                                            <span class="n">Gxx</span><span class="o">=</span><span class="n">Gxx</span><span class="p">,</span>
+                                            <span class="n">Hxx</span><span class="o">=</span><span class="n">Hxx</span><span class="p">,</span>
+                                            <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span>
+                                            <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+                                            <span class="n">z_inv</span><span class="o">=</span><span class="n">z_inv</span><span class="p">,</span>
+                                            <span class="n">mu_diag</span><span class="o">=</span><span class="n">mu_diag</span><span class="p">,</span>
+                                            <span class="n">barrier_rhs</span><span class="o">=</span><span class="n">barrier_rhs_aff</span><span class="p">)</span>
+        <span class="n">dxdlam_aff</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solve_kkt_with_fallback</span><span class="p">(</span><span class="n">jac</span><span class="o">=</span><span class="n">jac</span><span class="p">,</span>
+                                                   <span class="n">r</span><span class="o">=</span><span class="n">rhs</span><span class="p">,</span>
+                                                   <span class="n">linear_solver_candidates</span><span class="o">=</span><span class="n">linear_solver_candidates</span><span class="p">,</span>
+                                                   <span class="n">max_stepsize</span><span class="o">=</span><span class="n">max_stepsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dxdlam_aff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">dx_aff</span><span class="p">,</span> <span class="n">dlam_aff</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">dxdlam_aff</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">NV</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dx_aff</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dlam_aff</span><span class="p">)):</span>
+            <span class="k">break</span>
+
+        <span class="n">dz_aff</span> <span class="o">=</span> <span class="o">-</span><span class="n">H</span> <span class="o">-</span> <span class="n">z</span> <span class="o">-</span> <span class="n">Hx</span> <span class="o">@</span> <span class="n">dx_aff</span>
+        <span class="n">dmu_aff</span> <span class="o">=</span> <span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">z_inv</span> <span class="o">@</span> <span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">*</span> <span class="n">dz_aff</span><span class="p">)</span>
+
+        <span class="n">alpha_p_aff</span> <span class="o">=</span> <span class="n">step_calculation</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">dz_aff</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">xi</span><span class="p">)</span>
+        <span class="n">alpha_d_aff</span> <span class="o">=</span> <span class="n">step_calculation</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dmu_aff</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">xi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha_p_aff</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha_d_aff</span><span class="p">))</span> <span class="ow">or</span> <span class="n">alpha_p_aff</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">alpha_d_aff</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="c1"># Corrector: target a centered point and cancel the affine complementarity cross term.</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">nineq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">sigma_iter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">compute_adaptive_sigma</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+                                                       <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                                                       <span class="n">dmu</span><span class="o">=</span><span class="n">dmu_aff</span><span class="p">,</span>
+                                                       <span class="n">dz</span><span class="o">=</span><span class="n">dz_aff</span><span class="p">,</span>
+                                                       <span class="n">alpha_p</span><span class="o">=</span><span class="n">alpha_p_aff</span><span class="p">,</span>
+                                                       <span class="n">alpha_d</span><span class="o">=</span><span class="n">alpha_d_aff</span><span class="p">)</span>
+            <span class="n">mu_bar</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">z</span><span class="p">))</span>
+            <span class="n">sigma_mu</span> <span class="o">=</span> <span class="n">sigma_iter</span> <span class="o">*</span> <span class="n">mu_bar</span>
+            <span class="n">corrector_cross</span> <span class="o">=</span> <span class="n">dmu_aff</span> <span class="o">*</span> <span class="n">dz_aff</span>
+            <span class="n">barrier_rhs</span> <span class="o">=</span> <span class="n">sigma_mu</span> <span class="o">*</span> <span class="n">e</span> <span class="o">-</span> <span class="n">corrector_cross</span> <span class="o">+</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">H</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sigma_iter</span> <span class="o">=</span> <span class="n">sigma</span>
+            <span class="n">barrier_rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">jac</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">build_reduced_kkt_system</span><span class="p">(</span><span class="n">fx</span><span class="o">=</span><span class="n">fx</span><span class="p">,</span>
+                                            <span class="n">G</span><span class="o">=</span><span class="n">G</span><span class="p">,</span>
+                                            <span class="n">H</span><span class="o">=</span><span class="n">H</span><span class="p">,</span>
+                                            <span class="n">Gx</span><span class="o">=</span><span class="n">Gx</span><span class="p">,</span>
+                                            <span class="n">Hx</span><span class="o">=</span><span class="n">Hx</span><span class="p">,</span>
+                                            <span class="n">fxx</span><span class="o">=</span><span class="n">fxx</span><span class="p">,</span>
+                                            <span class="n">Gxx</span><span class="o">=</span><span class="n">Gxx</span><span class="p">,</span>
+                                            <span class="n">Hxx</span><span class="o">=</span><span class="n">Hxx</span><span class="p">,</span>
+                                            <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span>
+                                            <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+                                            <span class="n">z_inv</span><span class="o">=</span><span class="n">z_inv</span><span class="p">,</span>
+                                            <span class="n">mu_diag</span><span class="o">=</span><span class="n">mu_diag</span><span class="p">,</span>
+                                            <span class="n">barrier_rhs</span><span class="o">=</span><span class="n">barrier_rhs</span><span class="p">)</span>
+        <span class="n">dxdlam</span><span class="p">,</span> <span class="n">linear_solver_used</span><span class="p">,</span> <span class="n">linear_residual</span> <span class="o">=</span> <span class="n">solve_kkt_with_fallback</span><span class="p">(</span><span class="n">jac</span><span class="o">=</span><span class="n">jac</span><span class="p">,</span>
+                                                                              <span class="n">r</span><span class="o">=</span><span class="n">rhs</span><span class="p">,</span>
+                                                                              <span class="n">linear_solver_candidates</span><span class="o">=</span><span class="n">linear_solver_candidates</span><span class="p">,</span>
+                                                                              <span class="n">max_stepsize</span><span class="o">=</span><span class="n">max_stepsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dxdlam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">linear_solver_used</span> <span class="o">!=</span> <span class="n">linear_solver_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Fallback linear solver: </span><span class="si">{</span><span class="n">linear_solver_used</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">linear_residual</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">dx</span><span class="p">,</span> <span class="n">dlam</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">dxdlam</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">NV</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dx</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dlam</span><span class="p">)):</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">dx</span><span class="p">,</span> <span class="n">dlam</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_stepsize</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">dz</span> <span class="o">=</span> <span class="o">-</span><span class="n">H</span> <span class="o">-</span> <span class="n">z</span> <span class="o">-</span> <span class="n">Hx</span> <span class="o">@</span> <span class="n">dx</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">nineq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dmu</span> <span class="o">=</span> <span class="n">z_inv</span> <span class="o">@</span> <span class="p">(</span><span class="n">sigma_mu</span> <span class="o">*</span> <span class="n">e</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">z</span> <span class="o">-</span> <span class="n">corrector_cross</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">dz</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dmu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">step_control</span><span class="p">:</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span>
+            <span class="n">f1</span><span class="p">,</span> <span class="n">G1</span><span class="p">,</span> <span class="n">H1</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+            <span class="n">fx1</span><span class="p">,</span> <span class="n">Gx1</span><span class="p">,</span> <span class="n">Hx1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_jacobians_and_hessians</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">compute_hessians</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">l1</span> <span class="o">=</span> <span class="n">f1</span> <span class="o">+</span> <span class="n">lam</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">G1</span> <span class="o">+</span> <span class="n">mu</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="p">(</span><span class="n">H1</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+            <span class="n">lx1</span> <span class="o">=</span> <span class="n">fx1</span> <span class="o">+</span> <span class="n">Gx1</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">lam</span> <span class="o">+</span> <span class="n">Hx1</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">mu</span>
+            <span class="n">feas_cond1</span> <span class="o">=</span> <span class="n">calc_feas_cond</span><span class="p">(</span><span class="n">g</span><span class="o">=</span><span class="n">G1</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">H1</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">gradcond1</span> <span class="o">=</span> <span class="n">calc_grad_cond</span><span class="p">(</span><span class="n">lx</span><span class="o">=</span><span class="n">lx1</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">feas_cond1</span> <span class="o">&gt;</span> <span class="n">feas_cond</span> <span class="ow">and</span> <span class="n">gradcond1</span> <span class="o">&gt;</span> <span class="n">calc_grad_cond</span><span class="p">(</span><span class="n">lx</span><span class="o">=</span><span class="n">lx</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">):</span>
+                <span class="n">lxx</span> <span class="o">=</span> <span class="n">fxx</span> <span class="o">+</span> <span class="n">Gxx</span> <span class="o">+</span> <span class="n">Hxx</span>
+                <span class="n">l0</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">G</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">H</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">trust</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+                    <span class="n">dx1</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">dx</span>
+                    <span class="n">x1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx1</span>
+                    <span class="n">f1</span><span class="p">,</span> <span class="n">G1</span><span class="p">,</span> <span class="n">H1</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+                    <span class="n">l1</span> <span class="o">=</span> <span class="n">f1</span> <span class="o">+</span> <span class="n">lam</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">G1</span> <span class="o">+</span> <span class="n">mu</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="p">(</span><span class="n">H1</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+                    <span class="n">rho</span> <span class="o">=</span> <span class="p">(</span><span class="n">l1</span> <span class="o">-</span> <span class="n">l0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lx</span> <span class="o">@</span> <span class="n">dx1</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dx1</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">lxx</span> <span class="o">@</span> <span class="n">dx1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">rho_lower</span> <span class="o">&lt;</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="n">rho_upper</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.0</span>
+                <span class="n">dx</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">dx</span>
+                <span class="n">dz</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">dz</span>
+                <span class="n">dlam</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">dlam</span>
+                <span class="n">dmu</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">dmu</span>
+
+        <span class="n">alpha_p</span> <span class="o">=</span> <span class="n">step_calculation</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">xi</span><span class="p">)</span>
+        <span class="n">alpha_d</span> <span class="o">=</span> <span class="n">step_calculation</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dmu</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">xi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha_p</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha_d</span><span class="p">))</span> <span class="ow">or</span> <span class="n">alpha_p</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">alpha_d</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span> <span class="o">*</span> <span class="n">alpha_p</span>
+        <span class="n">z</span> <span class="o">+=</span> <span class="n">dz</span> <span class="o">*</span> <span class="n">alpha_p</span>
+        <span class="n">lam</span> <span class="o">+=</span> <span class="n">dlam</span> <span class="o">*</span> <span class="n">alpha_d</span>
+        <span class="n">mu</span> <span class="o">+=</span> <span class="n">dmu</span> <span class="o">*</span> <span class="n">alpha_d</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">sigma_iter</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">@</span> <span class="n">z</span> <span class="o">/</span> <span class="n">problem</span><span class="o">.</span><span class="n">nineq</span> <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">nineq</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="ow">or</span>
+                <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lam</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span> <span class="ow">or</span>
+                <span class="n">gamma</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span> <span class="ow">or</span> <span class="n">gamma</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">):</span>
+            <span class="k">break</span>
+
+        <span class="n">f</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">fx</span><span class="p">,</span> <span class="n">Gx</span><span class="p">,</span> <span class="n">Hx</span><span class="p">,</span> <span class="n">fxx</span><span class="p">,</span> <span class="n">Gxx</span><span class="p">,</span> <span class="n">Hxx</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_jacobians_and_hessians</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">compute_hessians</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">Hx_t</span> <span class="o">=</span> <span class="n">Hx</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">Gx_t</span> <span class="o">=</span> <span class="n">Gx</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">lx</span> <span class="o">=</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">Hx_t</span> <span class="o">@</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">Gx_t</span> <span class="o">@</span> <span class="n">lam</span>
+        <span class="n">feas_cond</span> <span class="o">=</span> <span class="n">calc_feas_cond</span><span class="p">(</span><span class="n">g</span><span class="o">=</span><span class="n">G</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">H</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">gradcond</span> <span class="o">=</span> <span class="n">calc_grad_cond</span><span class="p">(</span><span class="n">lx</span><span class="o">=</span><span class="n">lx</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">comp_cond</span> <span class="o">=</span> <span class="n">calc_c_cond</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">cost_cond</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f</span> <span class="o">-</span> <span class="n">f_prev</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f_prev</span><span class="p">))</span> <span class="k">if</span> <span class="n">step_control</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">feas_cond</span><span class="p">,</span> <span class="n">gradcond</span><span class="p">,</span> <span class="n">comp_cond</span><span class="p">,</span> <span class="n">gamma</span><span class="p">])</span>
+        <span class="n">max_displ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">dx</span><span class="p">,</span> <span class="n">dlam</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">dmu</span><span class="p">])</span> <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">nineq</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">dx</span><span class="p">,</span> <span class="n">dlam</span><span class="p">])</span>
+        <span class="n">residuals</span> <span class="o">=</span> <span class="n">rhs</span>
+        <span class="n">converged</span> <span class="o">=</span> <span class="n">has_tail_converged</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                       <span class="n">step_control</span><span class="o">=</span><span class="n">step_control</span><span class="p">,</span>
+                                       <span class="n">feas_cond</span><span class="o">=</span><span class="n">feas_cond</span><span class="p">,</span>
+                                       <span class="n">gradcond</span><span class="o">=</span><span class="n">gradcond</span><span class="p">,</span>
+                                       <span class="n">comp_cond</span><span class="o">=</span><span class="n">comp_cond</span><span class="p">,</span>
+                                       <span class="n">cost_cond</span><span class="o">=</span><span class="n">cost_cond</span><span class="p">,</span>
+                                       <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+                                       <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+
+        <span class="n">iter_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">feas_cond_evolution</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">feas_cond</span>
+        <span class="n">error_evolution</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">error</span>
+        <span class="n">objective_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span> <span class="o">/</span> <span class="n">objective_scale</span>
+        <span class="n">gradcond_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">gradcond</span>
+        <span class="n">compcond_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp_cond</span>
+        <span class="n">costcond_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost_cond</span>
+        <span class="n">gamma_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="n">alphap_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_p</span>
+        <span class="n">alphad_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_d</span>
+        <span class="n">step_norm_history</span><span class="p">[</span><span class="n">iter_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>
+        <span class="n">f_prev</span> <span class="o">=</span> <span class="n">f</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Iteration: </span><span class="si">{</span><span class="n">iter_counter</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Gamma:&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Comp cond:&quot;</span><span class="p">,</span> <span class="n">comp_cond</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Cost cond:&quot;</span><span class="p">,</span> <span class="n">cost_cond</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Err:&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Max Displacement:&quot;</span><span class="p">,</span> <span class="n">max_displ</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">x_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;dx&#39;</span><span class="p">:</span> <span class="n">dx</span><span class="p">})</span>
+                <span class="n">eq_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;λ&#39;</span><span class="p">:</span> <span class="n">lam</span><span class="p">,</span> <span class="s1">&#39;dλ&#39;</span><span class="p">:</span> <span class="n">dlam</span><span class="p">})</span>
+                <span class="n">ineq_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="n">mu</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="s1">&#39;dmu&#39;</span><span class="p">:</span> <span class="n">dmu</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">:</span> <span class="n">dz</span><span class="p">})</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">x_df</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EQ:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">eq_df</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;INEQ:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ineq_df</span><span class="p">)</span>
+
+    <span class="n">t_end</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SOLUTION&#39;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">F.obj: </span><span class="si">{</span><span class="n">f</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">objective_scale</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Err: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Iterations: </span><span class="si">{</span><span class="n">iter_counter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Max Displacement: </span><span class="si">{</span><span class="n">max_displ</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Time elapsed (s): </span><span class="si">{</span><span class="n">t_end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t_start</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Feas cond: &#39;</span><span class="p">,</span> <span class="n">feas_cond</span><span class="p">)</span>
+
+    <span class="n">history</span> <span class="o">=</span> <span class="n">IpsIterationHistory</span><span class="p">(</span>
+        <span class="n">iteration</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">objective</span><span class="o">=</span><span class="n">objective_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">feas_cond</span><span class="o">=</span><span class="n">feas_cond_evolution</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">gradcond</span><span class="o">=</span><span class="n">gradcond_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">comp_cond</span><span class="o">=</span><span class="n">compcond_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">cost_cond</span><span class="o">=</span><span class="n">costcond_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="n">gamma_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">alpha_p</span><span class="o">=</span><span class="n">alphap_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">alpha_d</span><span class="o">=</span><span class="n">alphad_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">step_norm</span><span class="o">=</span><span class="n">step_norm_history</span><span class="p">[:</span><span class="n">iter_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">IpsSolution</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                       <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                       <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+                       <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span>
+                       <span class="n">dlam</span><span class="o">=</span><span class="n">dlam</span><span class="p">,</span>
+                       <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+                       <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                       <span class="n">residuals</span><span class="o">=</span><span class="n">residuals</span><span class="p">,</span>
+                       <span class="n">converged</span><span class="o">=</span><span class="n">converged</span><span class="p">,</span>
+                       <span class="n">iterations</span><span class="o">=</span><span class="n">iter_counter</span><span class="p">,</span>
+                       <span class="n">error_evolution</span><span class="o">=</span><span class="n">error_evolution</span><span class="p">,</span>
+                       <span class="n">history</span><span class="o">=</span><span class="n">history</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

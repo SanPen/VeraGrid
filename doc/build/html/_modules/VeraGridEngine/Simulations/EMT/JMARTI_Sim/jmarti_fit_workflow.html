@@ -1,0 +1,908 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.overhead_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverheadLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.overhead_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">calc_y_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.overhead_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">calc_z_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.sequence_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.underground_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">UndergroundLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitBundle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_jmarti_fit_bundle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFrequencySamples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_jmarti_frequency_samples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_jmarti_mode_loewner_seed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_modal_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiModalSamples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_modal_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiModeDelayEstimate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_modal_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_jmarti_modal_samples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_modal_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">estimate_jmarti_mode_delays</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiPassivityReport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate_jmarti_passivity_report</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiRationalModeFit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_jmarti_mode_vector_fit</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_phase_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize one imported phase label to the internal upper-case representation.</span>
+
+<span class="sd">    :param label: Imported phase-like object.</span>
+<span class="sd">    :return: Normalized phase label.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">label</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_complex_array_from_npz</span><span class="p">(</span><span class="n">archive</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">npyio</span><span class="o">.</span><span class="n">NpzFile</span><span class="p">,</span> <span class="n">base_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load one complex array from one NPZ archive.</span>
+
+<span class="sd">    The loader accepts either one native complex array under ``base_key`` or one</span>
+<span class="sd">    explicit real/imag pair under ``&lt;base_key&gt;_real`` and ``&lt;base_key&gt;_imag``.</span>
+
+<span class="sd">    :param archive: Open NPZ archive.</span>
+<span class="sd">    :param base_key: Base array key.</span>
+<span class="sd">    :return: Complex array.</span>
+<span class="sd">    :raises ValueError: If the expected arrays are missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base_key</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="n">base_key</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">_real&quot;</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">files</span> <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">_imag&quot;</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">_real&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">_imag&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;JMARTI import requires &#39;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">&#39; or the pair &#39;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">_real&#39;/&#39;</span><span class="si">{</span><span class="n">base_key</span><span class="si">}</span><span class="s2">_imag&#39; in the NPZ file&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_symmetric_abc_matrix_from_sequence_values</span><span class="p">(</span><span class="n">positive_sequence_value</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                                                     <span class="n">zero_sequence_value</span><span class="p">:</span> <span class="nb">complex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reconstruct one phase-domain matrix from positive and zero sequence values.</span>
+
+<span class="sd">    :param positive_sequence_value: Positive-sequence scalar value.</span>
+<span class="sd">    :param zero_sequence_value: Zero-sequence scalar value.</span>
+<span class="sd">    :return: Symmetric 3x3 phase-domain matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diagonal_value</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">positive_sequence_value</span> <span class="o">+</span> <span class="n">zero_sequence_value</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+    <span class="n">off_diagonal_value</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="p">(</span><span class="n">zero_sequence_value</span> <span class="o">-</span> <span class="n">positive_sequence_value</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+    <span class="n">matrix_abc</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">off_diagonal_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">matrix_abc</span><span class="p">,</span> <span class="n">diagonal_value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">matrix_abc</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_sequence_shunt_admittance_from_susceptance</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                                      <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                                      <span class="n">susceptance_micro_siemens_per_km</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one frequency-scaled shunt admittance from one nominal susceptance.</span>
+
+<span class="sd">    :param frequency_hz: Target frequency in Hz.</span>
+<span class="sd">    :param nominal_frequency_hz: Nominal frequency in Hz.</span>
+<span class="sd">    :param susceptance_micro_siemens_per_km: Nominal susceptance in uS/km.</span>
+<span class="sd">    :return: Complex shunt admittance in S/km.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">susceptance_micro_siemens_per_km</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0e-6</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nominal_frequency_hz</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_sequence_shunt_admittance_from_capacitance</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                                      <span class="n">capacitance_per_km</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                                      <span class="n">capacitance_scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one shunt admittance from one capacitance density.</span>
+
+<span class="sd">    :param frequency_hz: Target frequency in Hz.</span>
+<span class="sd">    :param capacitance_per_km: Capacitance value in user units per km.</span>
+<span class="sd">    :param capacitance_scale: Unit scale to Farad/km.</span>
+<span class="sd">    :return: Complex shunt admittance in S/km.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">capacitance_per_km</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">capacitance_scale</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_template_nominal_frequency_hz</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+                                           <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve the nominal frequency attached to one line template.</span>
+
+<span class="sd">    :param template: Candidate template object.</span>
+<span class="sd">    :param nominal_frequency_hz: Optional user override.</span>
+<span class="sd">    :return: Positive nominal frequency in Hz.</span>
+<span class="sd">    :raises ValueError: If no positive nominal frequency is available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">nominal_frequency_hz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">nominal_frequency_hz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">nominal_frequency_hz</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;JMARTI automatic fitting requires one positive nominal frequency for this line template&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_sequence_line_frequency_sweep</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="n">SequenceLineType</span><span class="p">,</span>
+                                         <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                         <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one approximate frequency sweep from one ``SequenceLineType``.</span>
+
+<span class="sd">    :param template: Sequence line template.</span>
+<span class="sd">    :param frequency_hz: Target frequency grid in Hz.</span>
+<span class="sd">    :param nominal_frequency_hz: Nominal reference frequency in Hz.</span>
+<span class="sd">    :return: ``(Z, Y, phase_labels)`` with per-km units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">sample_count</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">sample_count</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">positive_inductance_per_km</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">X</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">nominal_frequency_hz</span><span class="p">)</span>
+    <span class="n">zero_inductance_per_km</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">X0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">nominal_frequency_hz</span><span class="p">)</span>
+    <span class="n">sample_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">z1</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">z0</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">y1</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">y0</span><span class="p">:</span> <span class="nb">complex</span>
+
+    <span class="k">while</span> <span class="n">sample_index</span> <span class="o">&lt;</span> <span class="n">sample_count</span><span class="p">:</span>
+        <span class="n">z1</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">])</span> <span class="o">*</span> <span class="n">positive_inductance_per_km</span><span class="p">)</span>
+        <span class="n">z0</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">R0</span><span class="p">),</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">])</span> <span class="o">*</span> <span class="n">zero_inductance_per_km</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">use_conductance</span><span class="p">):</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_capacitance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">Cnf</span><span class="p">),</span> <span class="mf">1.0e-9</span><span class="p">)</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_capacitance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">Cnf0</span><span class="p">),</span> <span class="mf">1.0e-9</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_susceptance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="n">nominal_frequency_hz</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_susceptance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="n">nominal_frequency_hz</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">B0</span><span class="p">))</span>
+
+        <span class="n">z_per_length</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">_build_symmetric_abc_matrix_from_sequence_values</span><span class="p">(</span><span class="n">z1</span><span class="p">,</span> <span class="n">z0</span><span class="p">)</span>
+        <span class="n">y_per_length</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">_build_symmetric_abc_matrix_from_sequence_values</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y0</span><span class="p">)</span>
+        <span class="n">sample_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">z_per_length</span><span class="p">,</span> <span class="n">y_per_length</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_underground_line_frequency_sweep</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="n">UndergroundLineType</span><span class="p">,</span>
+                                            <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                            <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one approximate frequency sweep from one ``UndergroundLineType``.</span>
+
+<span class="sd">    :param template: Underground line template.</span>
+<span class="sd">    :param frequency_hz: Target frequency grid in Hz.</span>
+<span class="sd">    :param nominal_frequency_hz: Nominal reference frequency in Hz.</span>
+<span class="sd">    :return: ``(Z, Y, phase_labels)`` with per-km units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">sample_count</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">sample_count</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">positive_inductance_per_km</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">X</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">nominal_frequency_hz</span><span class="p">)</span>
+    <span class="n">zero_inductance_per_km</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">X0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">nominal_frequency_hz</span><span class="p">)</span>
+    <span class="n">sample_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">z1</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">z0</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">y1</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">y0</span><span class="p">:</span> <span class="nb">complex</span>
+
+    <span class="k">while</span> <span class="n">sample_index</span> <span class="o">&lt;</span> <span class="n">sample_count</span><span class="p">:</span>
+        <span class="n">z1</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">])</span> <span class="o">*</span> <span class="n">positive_inductance_per_km</span><span class="p">)</span>
+        <span class="n">z0</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">R0</span><span class="p">),</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">])</span> <span class="o">*</span> <span class="n">zero_inductance_per_km</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">C</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">C0</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_capacitance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">C</span><span class="p">),</span> <span class="mf">1.0e-6</span><span class="p">)</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_capacitance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">C0</span><span class="p">),</span> <span class="mf">1.0e-6</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_susceptance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="n">nominal_frequency_hz</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">_build_sequence_shunt_admittance_from_susceptance</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span> <span class="n">nominal_frequency_hz</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">B0</span><span class="p">))</span>
+
+        <span class="n">z_per_length</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">_build_symmetric_abc_matrix_from_sequence_values</span><span class="p">(</span><span class="n">z1</span><span class="p">,</span> <span class="n">z0</span><span class="p">)</span>
+        <span class="n">y_per_length</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">_build_symmetric_abc_matrix_from_sequence_values</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y0</span><span class="p">)</span>
+        <span class="n">sample_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">z_per_length</span><span class="p">,</span> <span class="n">y_per_length</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_jmarti_frequency_samples_from_npz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow.load_jmarti_frequency_samples_from_npz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_jmarti_frequency_samples_from_npz</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                           <span class="n">phase_n</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                           <span class="n">phase_a</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                           <span class="n">phase_b</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                           <span class="n">phase_c</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                           <span class="n">fallback_line_length_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiFrequencySamples</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load one JMARTI frequency-domain sample set from one NPZ archive.</span>
+
+<span class="sd">    Required arrays:</span>
+<span class="sd">    - ``frequency_hz`` with shape ``(nf,)``</span>
+<span class="sd">    - ``z_per_length`` or ``z_per_length_real``/``z_per_length_imag`` with shape ``(nf, np, np)``</span>
+<span class="sd">    - ``y_per_length`` or ``y_per_length_real``/``y_per_length_imag`` with shape ``(nf, np, np)``</span>
+
+<span class="sd">    Optional arrays:</span>
+<span class="sd">    - ``phase_labels`` with shape ``(np,)``</span>
+<span class="sd">    - ``line_length_m`` scalar</span>
+
+<span class="sd">    Unit convention:</span>
+<span class="sd">    - ``z_per_length`` must already be expressed in per-unit per meter</span>
+<span class="sd">    - ``y_per_length`` must already be expressed in per-unit per meter</span>
+
+<span class="sd">    :param file_path: NPZ file path.</span>
+<span class="sd">    :param phase_n: Whether the neutral is enabled.</span>
+<span class="sd">    :param phase_a: Whether phase A is enabled.</span>
+<span class="sd">    :param phase_b: Whether phase B is enabled.</span>
+<span class="sd">    :param phase_c: Whether phase C is enabled.</span>
+<span class="sd">    :param fallback_line_length_m: Optional line-length fallback in meters.</span>
+<span class="sd">    :return: Imported and validated frequency-domain samples.</span>
+<span class="sd">    :raises ValueError: If the archive is missing required data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">resolved_file_path</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI import requires one NPZ file path&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">resolved_file_path</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">archive</span><span class="p">:</span>
+            <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="s2">&quot;frequency_hz&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_load_complex_array_from_npz</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="s2">&quot;z_per_length&quot;</span><span class="p">)</span>
+            <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_load_complex_array_from_npz</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="s2">&quot;y_per_length&quot;</span><span class="p">)</span>
+            <span class="n">line_length_m</span><span class="p">:</span> <span class="nb">float</span>
+
+            <span class="k">if</span> <span class="s2">&quot;phase_labels&quot;</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+                <span class="n">available_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="n">_normalize_phase_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="s2">&quot;phase_labels&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">available_labels</span> <span class="o">=</span> <span class="n">_build_available_phase_labels</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">z_per_length</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="s2">&quot;line_length_m&quot;</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+                <span class="n">line_length_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="s2">&quot;line_length_m&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">fallback_line_length_m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">line_length_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fallback_line_length_m</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI NPZ import requires one line_length_m array or one GUI fallback line length&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JMARTI NPZ import is missing the array &#39;</span><span class="si">{</span><span class="n">exc</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to read JMARTI NPZ file &#39;</span><span class="si">{</span><span class="n">resolved_file_path</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+    <span class="n">requested_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">phase_n</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phase_a</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phase_b</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phase_c</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+    <span class="n">phase_selection</span><span class="p">,</span> <span class="n">selected_labels</span> <span class="o">=</span> <span class="n">_build_phase_selection_indices</span><span class="p">(</span><span class="n">available_labels</span><span class="p">,</span> <span class="n">requested_labels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">build_jmarti_frequency_samples</span><span class="p">(</span>
+        <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+        <span class="n">z_per_length</span><span class="o">=</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">z_per_length</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">),</span>
+        <span class="n">y_per_length</span><span class="o">=</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">y_per_length</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">),</span>
+        <span class="n">line_length_m</span><span class="o">=</span><span class="n">line_length_m</span><span class="p">,</span>
+        <span class="n">phase_labels</span><span class="o">=</span><span class="n">selected_labels</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_template_phase_id_to_label</span><span class="p">(</span><span class="n">phase_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one NABC phase identifier to the GUI/runtime label.</span>
+
+<span class="sd">    :param phase_id: Template phase identifier.</span>
+<span class="sd">    :return: Phase label.</span>
+<span class="sd">    :raises ValueError: If the phase layout is outside the first single-circuit NABC set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">phase_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;N&quot;</span>
+    <span class="k">elif</span> <span class="n">phase_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;A&quot;</span>
+    <span class="k">elif</span> <span class="n">phase_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;B&quot;</span>
+    <span class="k">elif</span> <span class="n">phase_id</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;C&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The first JMARTI GUI workflow currently supports only single-circuit NABC overhead templates&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_available_phase_labels</span><span class="p">(</span><span class="n">template_phase_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">matrix_dimension</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve one label set for the sampled phase-domain matrices.</span>
+
+<span class="sd">    :param template_phase_ids: Optional stored phase identifiers.</span>
+<span class="sd">    :param matrix_dimension: Matrix order.</span>
+<span class="sd">    :return: Ordered phase labels.</span>
+<span class="sd">    :raises ValueError: If the phase metadata is inconsistent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">template_phase_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">template_phase_ids</span><span class="p">)</span> <span class="o">==</span> <span class="n">matrix_dimension</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_convert_template_phase_id_to_label</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">phase_id</span><span class="p">))</span> <span class="k">for</span> <span class="n">phase_id</span> <span class="ow">in</span> <span class="n">template_phase_ids</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">matrix_dimension</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span>
+    <span class="k">elif</span> <span class="n">matrix_dimension</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span>
+    <span class="k">elif</span> <span class="n">matrix_dimension</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span>
+    <span class="k">elif</span> <span class="n">matrix_dimension</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;JMARTI GUI fitting expects one NABC-like overhead-line matrix with at most four conductors&quot;</span>
+        <span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_phase_selection_indices</span><span class="p">(</span><span class="n">available_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                                   <span class="n">requested_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Map one requested phase layout to matrix row and column indices.</span>
+
+<span class="sd">    :param available_labels: Labels available in the sampled matrices.</span>
+<span class="sd">    :param requested_labels: Labels requested by the GUI configuration.</span>
+<span class="sd">    :return: Selected matrix indices and ordered labels.</span>
+<span class="sd">    :raises ValueError: If the selected block phases are not available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">available_label_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">available_labels</span><span class="p">)</span>
+    <span class="n">selected_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">requested_label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">requested_label</span> <span class="ow">in</span> <span class="n">requested_labels</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">requested_label</span> <span class="ow">in</span> <span class="n">available_label_list</span><span class="p">:</span>
+            <span class="n">selected_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">available_label_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">requested_label</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Requested JMARTI phase &#39;</span><span class="si">{</span><span class="n">requested_label</span><span class="si">}</span><span class="s2">&#39; is not available in the attached line template&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">requested_labels</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_select_square_submatrices</span><span class="p">(</span><span class="n">matrices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select one consistent square submatrix across a whole frequency sweep.</span>
+
+<span class="sd">    :param matrices: Sweep tensor with shape ``(nf, np, np)``.</span>
+<span class="sd">    :param selection: Selected phase indices.</span>
+<span class="sd">    :return: Reduced sweep tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">matrices</span><span class="p">[:,</span> <span class="n">selection</span><span class="p">,</span> <span class="p">:][:,</span> <span class="p">:,</span> <span class="n">selection</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">matrices_per_km</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one per-km sweep tensor to one per-meter sweep tensor.</span>
+
+<span class="sd">    :param matrices_per_km: Sweep tensor expressed per km.</span>
+<span class="sd">    :return: Sweep tensor expressed per meter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">matrices_per_km</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>
+
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_physical_per_meter_series_shunt_to_per_unit</span><span class="p">(</span><span class="n">z_per_meter</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                                          <span class="n">y_per_meter</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                                          <span class="n">sbase_mva</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                                          <span class="n">vbase_kv</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one physical per-meter ``(Z, Y)`` sweep pair to per unit.</span>
+
+<span class="sd">    :param z_per_meter: Physical series impedance per meter in ohm/m.</span>
+<span class="sd">    :param y_per_meter: Physical shunt admittance per meter in S/m.</span>
+<span class="sd">    :param sbase_mva: System base power in MVA.</span>
+<span class="sd">    :param vbase_kv: Voltage base in kV.</span>
+<span class="sd">    :return: Per-unit per-meter ``(Z, Y)`` tensors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z_base_ohm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">vbase_kv</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">vbase_kv</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sbase_mva</span><span class="p">)</span>
+    <span class="n">y_base_siemens</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">z_base_ohm</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z_per_meter</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span> <span class="o">/</span> <span class="n">z_base_ohm</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_per_meter</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_base_siemens</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_nominal_rlgc_frequency_sweep</span><span class="p">(</span><span class="n">z_nominal_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                        <span class="n">y_nominal_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                        <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                        <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one approximate RLGC sweep from one nominal overhead-line matrix pair.</span>
+
+<span class="sd">    When only one nominal-frequency matrix pair is available, the first GUI flow</span>
+<span class="sd">    assumes frequency-independent ``R``, ``L``, ``G`` and ``C`` matrices and</span>
+<span class="sd">    reconstructs the sweep as ``R + jwL`` and ``G + jwC``.</span>
+
+<span class="sd">    :param z_nominal_per_length: Nominal series-impedance matrix.</span>
+<span class="sd">    :param y_nominal_per_length: Nominal shunt-admittance matrix.</span>
+<span class="sd">    :param nominal_frequency_hz: Frequency where the nominal matrices were computed.</span>
+<span class="sd">    :param frequency_hz: Sweep grid in Hz.</span>
+<span class="sd">    :return: Frequency-dependent ``(Z, Y)`` tensors.</span>
+<span class="sd">    :raises ValueError: If the nominal frequency is not positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nominal_frequency_hz</span><span class="p">)</span>
+    <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">phase_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">z_nominal_per_length</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">angular_reference</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">resolved_nominal_frequency_hz</span>
+    <span class="n">angular_frequency</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">z_sweep</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">sample_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">y_sweep</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">sample_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">resistance_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">inductance_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">conductance_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">capacitance_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">sample_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">resolved_nominal_frequency_hz</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI nominal overhead-line matrices require one positive reference frequency&quot;</span><span class="p">)</span>
+
+    <span class="n">resistance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">z_nominal_per_length</span><span class="p">)</span>
+    <span class="n">inductance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">z_nominal_per_length</span><span class="p">)</span> <span class="o">/</span> <span class="n">angular_reference</span>
+    <span class="n">conductance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">y_nominal_per_length</span><span class="p">)</span>
+    <span class="n">capacitance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">y_nominal_per_length</span><span class="p">)</span> <span class="o">/</span> <span class="n">angular_reference</span>
+
+    <span class="k">while</span> <span class="n">sample_index</span> <span class="o">&lt;</span> <span class="n">sample_count</span><span class="p">:</span>
+        <span class="n">z_sweep</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">resistance_matrix</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">angular_frequency</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]</span> <span class="o">*</span> <span class="n">inductance_matrix</span>
+        <span class="n">y_sweep</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">conductance_matrix</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">angular_frequency</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]</span> <span class="o">*</span> <span class="n">capacitance_matrix</span>
+        <span class="n">sample_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">z_sweep</span><span class="p">,</span> <span class="n">y_sweep</span>
+
+
+<div class="viewcode-block" id="build_jmarti_frequency_samples_from_line">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow.build_jmarti_frequency_samples_from_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_frequency_samples_from_line</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="n">Line</span><span class="p">,</span>
+                                             <span class="n">phase_n</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                             <span class="n">phase_a</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                             <span class="n">phase_b</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                             <span class="n">phase_c</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                             <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                             <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                             <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                             <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                             <span class="n">sbase_mva</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiFrequencySamples</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one JMARTI frequency-domain dataset from one physical line object.</span>
+
+<span class="sd">    The GUI-driven flow targets concrete ``Line`` devices backed by one overhead,</span>
+<span class="sd">    sequence, or underground template. When the template still carries conductor</span>
+<span class="sd">    geometry, the sweep is evaluated directly over frequency. Otherwise the first</span>
+<span class="sd">    implementation falls back to one frequency-independent RLGC extrapolation</span>
+<span class="sd">    reconstructed from the nominal template values.</span>
+
+<span class="sd">    :param line: Concrete line device being edited.</span>
+<span class="sd">    :param phase_n: Whether the neutral is enabled on the EMT block.</span>
+<span class="sd">    :param phase_a: Whether phase A is enabled.</span>
+<span class="sd">    :param phase_b: Whether phase B is enabled.</span>
+<span class="sd">    :param phase_c: Whether phase C is enabled.</span>
+<span class="sd">    :param low_hz: Lower sweep frequency in Hz.</span>
+<span class="sd">    :param high_hz: Upper sweep frequency in Hz.</span>
+<span class="sd">    :param sample_count: Number of sweep samples.</span>
+<span class="sd">    :param nominal_frequency_hz: Optional nominal frequency used to reconstruct RLGC sweeps.</span>
+<span class="sd">    :param sbase_mva: System base power in MVA used to convert the line data to per unit.</span>
+<span class="sd">    :return: Frequency-domain JMARTI sample set.</span>
+<span class="sd">    :raises ValueError: If the line cannot provide compatible data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">template</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">template</span>
+
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">resolved_vbase_kv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">resolved_vbase_kv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">template</span><span class="p">,</span> <span class="p">(</span><span class="n">OverheadLineType</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">resolved_vbase_kv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI fitting requires one positive nominal voltage to convert the line data to per unit&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">low_hz</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">frequency_hz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">low_hz</span><span class="p">)),</span>
+                           <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">high_hz</span><span class="p">)),</span>
+                           <span class="nb">int</span><span class="p">(</span><span class="n">sample_count</span><span class="p">),</span>
+                           <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">frequency_hz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">low_hz</span><span class="p">),</span>
+                           <span class="nb">float</span><span class="p">(</span><span class="n">high_hz</span><span class="p">),</span>
+                           <span class="nb">int</span><span class="p">(</span><span class="n">sample_count</span><span class="p">),</span>
+                           <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">requested_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">phase_n</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phase_a</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phase_b</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phase_c</span><span class="p">:</span>
+        <span class="n">requested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+
+
+    <span class="n">phase_selection</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">selected_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">wires_in_tower</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">available_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sample_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">z_full</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="n">y_full</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="n">z_phase_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+        <span class="n">y_phase_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+        <span class="k">while</span> <span class="n">sample_index</span> <span class="o">&lt;</span> <span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">z_full</span><span class="p">,</span> <span class="n">z_phase_ids</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">calc_z_matrix</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">wires_in_tower</span><span class="p">,</span>
+                                                         <span class="n">f</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]),</span>
+                                                         <span class="n">rho</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">earth_resistivity</span><span class="p">)</span>
+            <span class="n">y_full</span><span class="p">,</span> <span class="n">y_phase_ids</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">calc_y_matrix</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">wires_in_tower</span><span class="p">,</span>
+                                                         <span class="n">f</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">z_phase_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y_phase_ids</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI overhead-line frequency sweep produced inconsistent Z/Y phase layouts&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">available_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">available_labels</span> <span class="o">=</span> <span class="n">_build_available_phase_labels</span><span class="p">(</span><span class="n">z_phase_ids</span><span class="p">,</span> <span class="n">z_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">phase_selection</span><span class="p">,</span> <span class="n">selected_labels</span> <span class="o">=</span> <span class="n">_build_phase_selection_indices</span><span class="p">(</span><span class="n">available_labels</span><span class="p">,</span> <span class="n">requested_labels</span><span class="p">)</span>
+                <span class="n">z_per_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">phase_selection</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">phase_selection</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+                <span class="n">y_per_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">phase_selection</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">phase_selection</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">z_per_length</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">z_full</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">phase_selection</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)]</span>
+            <span class="n">y_per_length</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y_full</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">phase_selection</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)]</span>
+            <span class="n">sample_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">z_per_length_pu</span><span class="p">,</span> <span class="n">y_per_length_pu</span> <span class="o">=</span> <span class="n">_convert_physical_per_meter_series_shunt_to_per_unit</span><span class="p">(</span>
+            <span class="n">z_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">z_per_length</span><span class="p">),</span>
+            <span class="n">y_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">y_per_length</span><span class="p">),</span>
+            <span class="n">sbase_mva</span><span class="o">=</span><span class="n">sbase_mva</span><span class="p">,</span>
+            <span class="n">vbase_kv</span><span class="o">=</span><span class="n">resolved_vbase_kv</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">build_jmarti_frequency_samples</span><span class="p">(</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">z_per_length</span><span class="o">=</span><span class="n">z_per_length_pu</span><span class="p">,</span>
+            <span class="n">y_per_length</span><span class="o">=</span><span class="n">y_per_length_pu</span><span class="p">,</span>
+            <span class="n">line_length_m</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">phase_labels</span><span class="o">=</span><span class="n">selected_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">template</span><span class="o">.</span><span class="n">z_nabc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">template</span><span class="o">.</span><span class="n">y_nabc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">available_labels</span> <span class="o">=</span> <span class="n">_build_available_phase_labels</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">z_phases_nabc</span><span class="p">,</span> <span class="n">template</span><span class="o">.</span><span class="n">z_nabc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">phase_selection</span><span class="p">,</span> <span class="n">selected_labels</span> <span class="o">=</span> <span class="n">_build_phase_selection_indices</span><span class="p">(</span><span class="n">available_labels</span><span class="p">,</span> <span class="n">requested_labels</span><span class="p">)</span>
+        <span class="n">z_full_sweep</span><span class="p">,</span> <span class="n">y_full_sweep</span> <span class="o">=</span> <span class="n">_build_nominal_rlgc_frequency_sweep</span><span class="p">(</span>
+            <span class="n">z_nominal_per_length</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">z_nabc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">),</span>
+            <span class="n">y_nominal_per_length</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">y_nabc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">),</span>
+            <span class="n">nominal_frequency_hz</span><span class="o">=</span><span class="n">_resolve_template_nominal_frequency_hz</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">nominal_frequency_hz</span><span class="p">),</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_per_length_pu</span><span class="p">,</span> <span class="n">y_per_length_pu</span> <span class="o">=</span> <span class="n">_convert_physical_per_meter_series_shunt_to_per_unit</span><span class="p">(</span>
+            <span class="n">z_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">z_full_sweep</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)),</span>
+            <span class="n">y_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">y_full_sweep</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)),</span>
+            <span class="n">sbase_mva</span><span class="o">=</span><span class="n">sbase_mva</span><span class="p">,</span>
+            <span class="n">vbase_kv</span><span class="o">=</span><span class="n">resolved_vbase_kv</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">build_jmarti_frequency_samples</span><span class="p">(</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">z_per_length</span><span class="o">=</span><span class="n">z_per_length_pu</span><span class="p">,</span>
+            <span class="n">y_per_length</span><span class="o">=</span><span class="n">y_per_length_pu</span><span class="p">,</span>
+            <span class="n">line_length_m</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">phase_labels</span><span class="o">=</span><span class="n">selected_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">):</span>
+        <span class="n">z_full_sweep</span><span class="p">,</span> <span class="n">y_full_sweep</span><span class="p">,</span> <span class="n">available_labels</span> <span class="o">=</span> <span class="n">_build_sequence_line_frequency_sweep</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">nominal_frequency_hz</span><span class="o">=</span><span class="n">_resolve_template_nominal_frequency_hz</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">nominal_frequency_hz</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">phase_selection</span><span class="p">,</span> <span class="n">selected_labels</span> <span class="o">=</span> <span class="n">_build_phase_selection_indices</span><span class="p">(</span><span class="n">available_labels</span><span class="p">,</span> <span class="n">requested_labels</span><span class="p">)</span>
+
+        <span class="n">z_per_length_pu</span><span class="p">,</span> <span class="n">y_per_length_pu</span> <span class="o">=</span> <span class="n">_convert_physical_per_meter_series_shunt_to_per_unit</span><span class="p">(</span>
+            <span class="n">z_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">z_full_sweep</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)),</span>
+            <span class="n">y_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">y_full_sweep</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)),</span>
+            <span class="n">sbase_mva</span><span class="o">=</span><span class="n">sbase_mva</span><span class="p">,</span>
+            <span class="n">vbase_kv</span><span class="o">=</span><span class="n">resolved_vbase_kv</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">build_jmarti_frequency_samples</span><span class="p">(</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">z_per_length</span><span class="o">=</span><span class="n">z_per_length_pu</span><span class="p">,</span>
+            <span class="n">y_per_length</span><span class="o">=</span><span class="n">y_per_length_pu</span><span class="p">,</span>
+            <span class="n">line_length_m</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">phase_labels</span><span class="o">=</span><span class="n">selected_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">):</span>
+        <span class="n">z_full_sweep</span><span class="p">,</span> <span class="n">y_full_sweep</span><span class="p">,</span> <span class="n">available_labels</span> <span class="o">=</span> <span class="n">_build_underground_line_frequency_sweep</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">nominal_frequency_hz</span><span class="o">=</span><span class="n">_resolve_template_nominal_frequency_hz</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">nominal_frequency_hz</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">phase_selection</span><span class="p">,</span> <span class="n">selected_labels</span> <span class="o">=</span> <span class="n">_build_phase_selection_indices</span><span class="p">(</span><span class="n">available_labels</span><span class="p">,</span> <span class="n">requested_labels</span><span class="p">)</span>
+
+        <span class="n">z_per_length_pu</span><span class="p">,</span> <span class="n">y_per_length_pu</span> <span class="o">=</span> <span class="n">_convert_physical_per_meter_series_shunt_to_per_unit</span><span class="p">(</span>
+            <span class="n">z_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">z_full_sweep</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)),</span>
+            <span class="n">y_per_meter</span><span class="o">=</span><span class="n">_convert_per_km_tensor_to_per_m</span><span class="p">(</span><span class="n">_select_square_submatrices</span><span class="p">(</span><span class="n">y_full_sweep</span><span class="p">,</span> <span class="n">phase_selection</span><span class="p">)),</span>
+            <span class="n">sbase_mva</span><span class="o">=</span><span class="n">sbase_mva</span><span class="p">,</span>
+            <span class="n">vbase_kv</span><span class="o">=</span><span class="n">resolved_vbase_kv</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">build_jmarti_frequency_samples</span><span class="p">(</span>
+            <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+            <span class="n">z_per_length</span><span class="o">=</span><span class="n">z_per_length_pu</span><span class="p">,</span>
+            <span class="n">y_per_length</span><span class="o">=</span><span class="n">y_per_length_pu</span><span class="p">,</span>
+            <span class="n">line_length_m</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">phase_labels</span><span class="o">=</span><span class="n">selected_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;JMARTI GUI fitting requires one compatible line template with geometry, nominal matrices, or sequence data&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_hres_modal_responses">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow.build_jmarti_hres_modal_responses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_hres_modal_responses</span><span class="p">(</span><span class="n">modal_samples</span><span class="p">:</span> <span class="n">JMartiModalSamples</span><span class="p">,</span>
+                                      <span class="n">mode_delays</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiModeDelayEstimate</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the residual propagation responses fitted as ``Hres`` per mode.</span>
+
+<span class="sd">    ``Hres`` is the propagation operator left after extracting one pure delay</span>
+<span class="sd">    from each modal channel. It combines attenuation and the residual dispersive</span>
+<span class="sd">    phase not captured by the affine delay estimate.</span>
+
+<span class="sd">    :param modal_samples: Modalized frequency samples.</span>
+<span class="sd">    :param mode_delays: Per-mode delay estimates.</span>
+<span class="sd">    :return: Complex response matrix with shape ``(nf, nmodes)``.</span>
+<span class="sd">    :raises ValueError: If the modal objects do not align.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mode_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_mode_count</span><span class="p">()</span>
+    <span class="n">tau_values_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mode_delays</span><span class="p">)</span> <span class="o">==</span> <span class="n">mode_count</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI Hres construction requires exactly one delay estimate per mode&quot;</span><span class="p">)</span>
+
+    <span class="n">tau_values_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">delay</span><span class="o">.</span><span class="n">get_tau_s</span><span class="p">()</span> <span class="k">for</span> <span class="n">delay</span> <span class="ow">in</span> <span class="n">mode_delays</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="o">-</span><span class="p">(</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_gamma_modal</span><span class="p">()</span> <span class="o">*</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_line_length_m</span><span class="p">())</span>
+        <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_angular_frequency_rad_per_s</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">tau_values_s</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_fit_bundle_from_frequency_samples">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_workflow.build_jmarti_fit_bundle_from_frequency_samples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_fit_bundle_from_frequency_samples</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="n">JMartiFrequencySamples</span><span class="p">,</span>
+                                                   <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiFitBundle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the full first-generation JMARTI fitting pipeline on one sample set.</span>
+
+<span class="sd">    The helper centralizes the modal preprocessing, delay extraction, Loewner</span>
+<span class="sd">    seeding, Vector Fitting, and passivity-like checks so higher layers such as</span>
+<span class="sd">    the GUI can trigger one consistent offline preprocessing workflow.</span>
+
+<span class="sd">    :param samples: Frequency-domain line dataset.</span>
+<span class="sd">    :param options: Optional user-configurable fit options.</span>
+<span class="sd">    :return: Offline JMARTI fit bundle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">=</span> <span class="n">JMartiFitOptions</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">options</span>
+    <span class="n">modal_samples</span><span class="p">:</span> <span class="n">JMartiModalSamples</span> <span class="o">=</span> <span class="n">build_jmarti_modal_samples</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">)</span>
+    <span class="n">mode_delays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JMartiModeDelayEstimate</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate_jmarti_mode_delays</span><span class="p">(</span><span class="n">modal_samples</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">)</span>
+    <span class="n">hres_modal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">build_jmarti_hres_modal_responses</span><span class="p">(</span><span class="n">modal_samples</span><span class="o">=</span><span class="n">modal_samples</span><span class="p">,</span> <span class="n">mode_delays</span><span class="o">=</span><span class="n">mode_delays</span><span class="p">)</span>
+    <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_frequency_hz</span><span class="p">()</span>
+    <span class="n">mode_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_mode_count</span><span class="p">()</span>
+    <span class="n">yc_fits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">hres_fits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">yc_response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">hres_response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">combined_fits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">]</span>
+    <span class="n">passivity_report</span><span class="p">:</span> <span class="n">JMartiPassivityReport</span>
+
+    <span class="k">while</span> <span class="n">mode_index</span> <span class="o">&lt;</span> <span class="n">mode_count</span><span class="p">:</span>
+        <span class="n">yc_response_values</span> <span class="o">=</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_yc_modal</span><span class="p">()[:,</span> <span class="n">mode_index</span><span class="p">]</span>
+        <span class="n">hres_response_values</span> <span class="o">=</span> <span class="n">hres_modal</span><span class="p">[:,</span> <span class="n">mode_index</span><span class="p">]</span>
+        <span class="n">yc_fits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">build_jmarti_mode_vector_fit</span><span class="p">(</span>
+                <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+                <span class="n">response_values</span><span class="o">=</span><span class="n">yc_response_values</span><span class="p">,</span>
+                <span class="n">loewner_seed</span><span class="o">=</span><span class="n">build_jmarti_mode_loewner_seed</span><span class="p">(</span>
+                    <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+                    <span class="n">response_values</span><span class="o">=</span><span class="n">yc_response_values</span><span class="p">,</span>
+                    <span class="n">target_name</span><span class="o">=</span><span class="s2">&quot;Yc&quot;</span><span class="p">,</span>
+                    <span class="n">mode_index</span><span class="o">=</span><span class="n">mode_index</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">hres_fits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">build_jmarti_mode_vector_fit</span><span class="p">(</span>
+                <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+                <span class="n">response_values</span><span class="o">=</span><span class="n">hres_response_values</span><span class="p">,</span>
+                <span class="n">loewner_seed</span><span class="o">=</span><span class="n">build_jmarti_mode_loewner_seed</span><span class="p">(</span>
+                    <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+                    <span class="n">response_values</span><span class="o">=</span><span class="n">hres_response_values</span><span class="p">,</span>
+                    <span class="n">target_name</span><span class="o">=</span><span class="s2">&quot;Hres&quot;</span><span class="p">,</span>
+                    <span class="n">mode_index</span><span class="o">=</span><span class="n">mode_index</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">mode_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">combined_fits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">yc_fits</span><span class="p">)</span>
+    <span class="n">combined_fits</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">hres_fits</span><span class="p">)</span>
+    <span class="n">passivity_report</span> <span class="o">=</span> <span class="n">evaluate_jmarti_passivity_report</span><span class="p">(</span>
+        <span class="n">fits</span><span class="o">=</span><span class="n">combined_fits</span><span class="p">,</span>
+        <span class="n">low_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">high_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">resolved_options</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">build_jmarti_fit_bundle</span><span class="p">(</span>
+        <span class="n">modal_samples</span><span class="o">=</span><span class="n">modal_samples</span><span class="p">,</span>
+        <span class="n">mode_delays</span><span class="o">=</span><span class="n">mode_delays</span><span class="p">,</span>
+        <span class="n">yc_fits</span><span class="o">=</span><span class="n">yc_fits</span><span class="p">,</span>
+        <span class="n">hres_fits</span><span class="o">=</span><span class="n">hres_fits</span><span class="p">,</span>
+        <span class="n">passivity_report</span><span class="o">=</span><span class="n">passivity_report</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

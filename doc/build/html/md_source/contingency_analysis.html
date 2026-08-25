@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💥 Contingency analysis &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🏦 Investment optimization" href="investment_optimization.html" />
+    <link rel="prev" title="☀️ Solar power wizard" href="solar_wizard.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">💥 Contingency analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#contingencyanalysisresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">ContingencyAnalysisResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contingencyanalysistimeseriesresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">ContingencyAnalysisTimeSeriesResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#snapshot-contingency-analysis">Snapshot contingency analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contingency-analysis-time-series">Contingency analysis time series</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">💥 Contingency analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/contingency_analysis.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p>from trunk.ai.ai_iterable_example import grid_</p>
+<section class="tex2jax_ignore mathjax_ignore" id="contingency-analysis">
+<h1>💥 Contingency analysis<a class="headerlink" href="#contingency-analysis" title="Link to this heading"></a></h1>
+<p>VeraGrid has contingency simulations, and it features a quite flexible way of defining contingencies.
+First you define a contingency group, and then define individual events that are assigned to that contingency group.
+The simulation then tries all the contingency groups and apply the events registered in each group.</p>
+<p><img alt="" src="../_images/settings-con.png" /></p>
+<ul class="simple">
+<li><p>Contingency method or engine:</p>
+<ul>
+<li><p>“Power flow”: Base flows are obtained with a power flow according to <code class="docutils literal notranslate"><span class="pre">pf_options</span></code>.
+Each contingency is obtained by runnig a power flow also according to <code class="docutils literal notranslate"><span class="pre">pf_options</span></code>
+and to the more sophisticated contingency definition.</p></li>
+<li><p>“Linear”: Base flows are taken from <code class="docutils literal notranslate"><span class="pre">options.Pf</span></code> or if not provided, computed linearly.
+The continegencies are computed linearly, according to the more sophisticated contingency definition.</p></li>
+<li><p>“PTDF Scan”: Brute contingency scan, this is the fastest
+and may not adhere to the sophisticated contingency definition.
+No SRAP or particular condition is performed.</p></li>
+</ul>
+</li>
+</ul>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="contingencyanalysisresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">ContingencyAnalysisResults</span></code> registered properties<a class="headerlink" href="#contingencyanalysisresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The snapshot contingency analysis result stores the post-contingency network quantities and report object.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">con_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with contingency-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">srap_used_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>SRAP remedial action power used in the contingency study.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">report</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ContingencyResultsReport</span></code></p></td>
+<td><p>Detailed report object produced by the study.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="contingencyanalysistimeseriesresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">ContingencyAnalysisTimeSeriesResults</span></code> registered properties<a class="headerlink" href="#contingencyanalysistimeseriesresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The time-series contingency analysis result stores aggregate contingency limits and overload statistics per time step.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">con_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with contingency-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">S</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Complex bus power result matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_flows</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Maximum branch flow observed across contingencies.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Maximum branch loading observed across contingencies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sum_overload</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Sum of overload values across contingencies.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mean_overload</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Mean overload value across contingencies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std_dev_overload</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Standard deviation of overload values across contingencies.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">srap_used_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>SRAP remedial action power used in the contingency study.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">report</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ContingencyResultsReport</span></code></p></td>
+<td><p>Detailed report object produced by the study.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<section id="snapshot-contingency-analysis">
+<h3>Snapshot contingency analysis<a class="headerlink" href="#snapshot-contingency-analysis" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE 5 Bus.xlsx&#39;</span><span class="p">)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">branches</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branches</span><span class="p">()</span>
+
+<span class="c1"># manually generate the contingencies</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">br</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">branches</span><span class="p">):</span>
+  <span class="c1"># add a contingency group</span>
+  <span class="n">group</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContingencyGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;contingency </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="n">grid</span><span class="o">.</span><span class="n">add_contingency_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+  <span class="c1"># add the branch contingency to the groups, only groups are failed at once</span>
+  <span class="n">con</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Contingency</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">br</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">br</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+  <span class="n">grid</span><span class="o">.</span><span class="n">add_contingency</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+
+<span class="c1"># add a special contingency</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContingencyGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Special contingency&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_contingency_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_contingency</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">Contingency</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">branches</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">branches</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_contingency</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">Contingency</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">branches</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">branches</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span>
+
+<span class="n">pf_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">)</span>
+
+<span class="c1"># declare the contingency options</span>
+<span class="n">options_</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContingencyAnalysisOptions</span><span class="p">(</span>
+    
+  <span class="c1"># Contingency method to use</span>
+  <span class="n">contingency_method</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">,</span>
+
+  <span class="c1"># optional, you can send here any contingency groups</span>
+  <span class="n">contingency_groups</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">(),</span>
+  
+  <span class="c1"># if no power flow options are provided</span>
+  <span class="c1"># a linear power flow is used</span>
+  <span class="n">pf_options</span><span class="o">=</span><span class="n">pf_options</span>
+<span class="p">)</span>
+
+<span class="c1"># Get all the defined contingency groups from the circuit</span>
+<span class="n">contingency_groups</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">()</span>
+
+<span class="c1"># Pass the list of contingency groups as required (optional)</span>
+<span class="n">linear_multiple_contingencies</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">LinearMultiContingencies</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                                             <span class="n">contingency_groups_used</span><span class="o">=</span><span class="n">contingency_groups</span><span class="p">)</span>
+
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContingencyAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                           <span class="n">options</span><span class="o">=</span><span class="n">options_</span><span class="p">,</span>
+                                           <span class="n">linear_multiple_contingencies</span><span class="o">=</span><span class="n">linear_multiple_contingencies</span><span class="p">)</span>
+
+<span class="n">simulation</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># print results</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BranchActivePowerFrom</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Contingency flows:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Contingency flows:
+                       Branch 0-1  Branch 0-3  Branch 0-4  Branch 1-2  Branch 2-3  Branch 3-4
+# contingency 1          0.000000  322.256814 -112.256814 -300.000000 -277.616985 -350.438026
+# contingency 2        314.174885    0.000000 -104.174887   11.387545   34.758624 -358.359122
+# contingency 3        180.382705   29.617295    0.000000 -120.547317  -97.293581 -460.040537
+# contingency 4        303.046401  157.540574 -250.586975    0.000000   23.490000 -214.130663
+# contingency 5        278.818887  170.710914 -239.529801  -23.378976    0.000000 -225.076976
+# contingency 6        323.104522  352.002620 -465.107139   20.157096   43.521763    0.000000
+# Special contingency  303.046401  372.060738 -465.107139    0.000000   23.490000    0.000000
+</pre></div>
+</div>
+<p>This simulation can also be done for time series.</p>
+</section>
+<section id="contingency-analysis-time-series">
+<h3>Contingency analysis time series<a class="headerlink" href="#contingency-analysis-time-series" title="Link to this heading"></a></h3>
+<p>To perform the contingency analysis of a time series, it’s easier to directly usi the API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE39_1W.veragrid&#39;</span><span class="p">)</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">contingencies_ts</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span>
+                               <span class="n">detailed_massive_report</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                               <span class="n">contingency_deadband</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                               <span class="n">contingency_method</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the grid must have the declared contingencies saved already.
+Also note that the results are statistics, and you will not get a cube because
+for large grids that demands terabytes of RAM memory.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="solar_wizard.html" class="btn btn-neutral float-left" title="☀️ Solar power wizard" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="investment_optimization.html" class="btn btn-neutral float-right" title="🏦 Investment optimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌀 State estimation &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🧲 Dynamic simulations" href="dynamic_simulations.html" />
+    <link rel="prev" title="🚧 Reliability" href="reliability.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🌀 State estimation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supported-measurements">Supported Measurements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#observability">Observability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pseudo-measurements">Pseudo-Measurements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-options">Main Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#result-object">Result Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#stateestimationresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">StateEstimationResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🌀 State estimation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/state_estimation.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="state-estimation">
+<h1>🌀 State estimation<a class="headerlink" href="#state-estimation" title="Link to this heading"></a></h1>
+<p>State estimation in VeraGrid reconstructs the electrical state of the network from measurements instead of assuming
+that all bus injections and branch conditions are perfectly known.</p>
+<p>Its objective is to infer the most likely bus voltages, angles, flows, and injections that best fit the available
+measurements.</p>
+<p>This is the standard study to use when the network model is known but the real-time operating point is only partially
+observed through telemetry.</p>
+<p><img alt="se_settings.png" src="../_images/se_settings.png" /></p>
+<section id="what-the-study-evaluates">
+<h2>What The Study Evaluates<a class="headerlink" href="#what-the-study-evaluates" title="Link to this heading"></a></h2>
+<p>The state estimation study combines:</p>
+<ul class="simple">
+<li><p>the network model</p></li>
+<li><p>the available measurements</p></li>
+<li><p>the measurement uncertainty</p></li>
+</ul>
+<p>to estimate:</p>
+<ul class="simple">
+<li><p>bus voltage magnitudes</p></li>
+<li><p>bus voltage angles</p></li>
+<li><p>bus active and reactive injections</p></li>
+<li><p>branch active and reactive flows</p></li>
+<li><p>branch currents, loading, and losses</p></li>
+</ul>
+<p>Unlike a standard power flow, the operating point is not prescribed directly from deterministic injections. Instead, it
+is inferred from the measurement set.</p>
+</section>
+<section id="supported-measurements">
+<h2>Supported Measurements<a class="headerlink" href="#supported-measurements" title="Link to this heading"></a></h2>
+<p>The driver collects measurements already attached to the network model.</p>
+<p>The current implementation supports:</p>
+<ul class="simple">
+<li><p>bus active power injection measurements</p></li>
+<li><p>bus reactive power injection measurements</p></li>
+<li><p>generator active power measurements</p></li>
+<li><p>generator reactive power measurements</p></li>
+<li><p>bus voltage magnitude measurements</p></li>
+<li><p>bus voltage angle measurements</p></li>
+<li><p>branch active power flow measurements on the from side</p></li>
+<li><p>branch active power flow measurements on the to side</p></li>
+<li><p>branch reactive power flow measurements on the from side</p></li>
+<li><p>branch reactive power flow measurements on the to side</p></li>
+<li><p>branch current magnitude measurements on the from side</p></li>
+<li><p>branch current magnitude measurements on the to side</p></li>
+</ul>
+<p>Each measurement carries both:</p>
+<ul class="simple">
+<li><p>a measured value</p></li>
+<li><p>a standard deviation or uncertainty</p></li>
+</ul>
+<p>That uncertainty is essential because the estimator weighs measurements according to their confidence.</p>
+</section>
+<section id="observability">
+<h2>Observability<a class="headerlink" href="#observability" title="Link to this heading"></a></h2>
+<p>A state estimator can only recover the network state if the measurement set is sufficiently informative.</p>
+<p>This is the observability problem:</p>
+<ul class="simple">
+<li><p>if the system is observable, the estimator has enough information to solve for the state</p></li>
+<li><p>if the system is not observable, some buses or variables cannot be uniquely inferred from the available measurements</p></li>
+</ul>
+<p>VeraGrid can run an observability analysis before solving the estimator. When enabled, the driver can:</p>
+<ul class="simple">
+<li><p>detect unobservable buses</p></li>
+<li><p>profile the contribution of measurements</p></li>
+<li><p>optionally add pseudo-measurements for unobservable buses</p></li>
+</ul>
+<p>This is especially useful when building new telemetry sets or validating whether a measurement configuration is
+sufficient for state estimation.</p>
+</section>
+<section id="pseudo-measurements">
+<h2>Pseudo-Measurements<a class="headerlink" href="#pseudo-measurements" title="Link to this heading"></a></h2>
+<p>If the network is not fully observable, VeraGrid can augment the measurement set with pseudo-measurements.</p>
+<p>Pseudo-measurements are synthetic measurements, usually with a relatively high uncertainty, that help make the system
+observable enough to solve.</p>
+<p>They are useful when:</p>
+<ul class="simple">
+<li><p>some buses have no direct telemetry</p></li>
+<li><p>the measurement set is incomplete</p></li>
+<li><p>a practical solution is preferred over rejecting the case as unobservable</p></li>
+</ul>
+<p>The driver records the pseudo-measurements it injects so they can be inspected later through the convergence reports.</p>
+</section>
+<section id="solvers">
+<h2>Solvers<a class="headerlink" href="#solvers" title="Link to this heading"></a></h2>
+<p>The state estimation driver currently supports several numerical solvers through <code class="docutils literal notranslate"><span class="pre">StateEstimationOptions</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SolverType.NR</span></code>: Newton-Raphson</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SolverType.LM</span></code>: Levenberg-Marquardt</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SolverType.GN</span></code>: Gauss-Newton</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SolverType.Decoupled_LU</span></code>: decoupled state estimation</p></li>
+</ul>
+<p>In general:</p>
+<ul class="simple">
+<li><p>use <strong>Newton-Raphson</strong> as the default robust choice</p></li>
+<li><p>use <strong>Levenberg-Marquardt</strong> when a damped method is preferred</p></li>
+<li><p>use <strong>Gauss-Newton</strong> for the classical least-squares style formulation</p></li>
+<li><p>use <strong>Decoupled</strong> when a faster approximate approach is acceptable</p></li>
+</ul>
+</section>
+<section id="main-options">
+<h2>Main Options<a class="headerlink" href="#main-options" title="Link to this heading"></a></h2>
+<p>The main state estimation options are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">solver</span></code>:
+numerical method used to solve the estimator</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tol</span></code>:
+convergence tolerance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_iter</span></code>:
+maximum number of iterations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>:
+solver verbosity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prefer_correct</span></code>:
+whether correction is preferred over measurement deletion in bad-data handling logic</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">c_threshold</span></code>:
+confidence threshold used in bad-data related logic</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed_slack</span></code>:
+whether slack-bus measurements are omitted from the formulation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_observability_analyis</span></code>:
+enables observability analysis before estimation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_pseudo_measurements</span></code>:
+injects pseudo-measurements when unobservable buses are detected</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_measurement_profiling</span></code>:
+enables measurement contribution profiling</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">include_line_measurements_on_both_ends</span></code>:
+controls how line-end measurements are considered during observability analysis</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pseudo_meas_std</span></code>:
+standard deviation assigned to created pseudo-measurements</p></li>
+</ul>
+</section>
+<section id="result-object">
+<h2>Result Object<a class="headerlink" href="#result-object" title="Link to this heading"></a></h2>
+<p>The study returns a <code class="docutils literal notranslate"><span class="pre">StateEstimationResults</span></code> object.</p>
+<p>It exposes the estimated electrical state through arrays and convenience methods.</p>
+<p>Main result arrays include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code>, <code class="docutils literal notranslate"><span class="pre">St</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">If</span></code>, <code class="docutils literal notranslate"><span class="pre">It</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></li>
+</ul>
+<p>Convenience methods include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_bus_df()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_branch_df()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_report_dataframe(island_idx=0)</span></code></p></li>
+</ul>
+<p>The result object also stores <code class="docutils literal notranslate"><span class="pre">convergence_reports</span></code>, one per island, which contain:</p>
+<ul class="simple">
+<li><p>convergence status</p></li>
+<li><p>error</p></li>
+<li><p>elapsed time</p></li>
+<li><p>iteration count</p></li>
+<li><p>bad-data detection status</p></li>
+<li><p>observability status</p></li>
+<li><p>unobservable buses</p></li>
+<li><p>pseudo-measurements</p></li>
+<li><p>measurement profiling information</p></li>
+</ul>
+</section>
+<section id="interpretation-notes">
+<h2>Interpretation Notes<a class="headerlink" href="#interpretation-notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>A converged solution does not automatically mean the measurement set was good; always inspect observability and
+bad-data information as well.</p></li>
+<li><p>If pseudo-measurements were needed, the estimate is usable but less grounded in direct telemetry.</p></li>
+<li><p>If the network splits into islands, each island is solved separately and has its own convergence report.</p></li>
+<li><p>The quality of the estimate depends strongly on both the placement and the uncertainty values of the measurements.</p></li>
+</ul>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="stateestimationresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">StateEstimationResults</span></code> registered properties<a class="headerlink" href="#stateestimationresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The state-estimation result stores estimated network quantities and bad-data status.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with generator-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">batt_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with battery-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with shunt-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch from-bus index for each branch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch to-bus index for each branch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC from-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC to-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_area_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area index assigned to each bus.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area names or area identifiers used for inter-area aggregation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tap_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap module used in the solved state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tap_angle</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap angle used in the solved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Vbranch</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch voltage result used by branch reports.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Losses result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pf_hvdc</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pt_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pt_hvdc</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Loading result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Losses result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Complex branch current at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Loading result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gen_q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator reactive power output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">battery_q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Battery reactive power output.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Shunt reactive power output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bad_data_detected</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Flag indicating whether bad data was detected by the estimator.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>The following example is based on the classic three-bus reference from A. Monticelli’s book.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">m_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">()</span>
+
+<span class="n">b1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="s1">&#39;B1&#39;</span><span class="p">,</span> <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="s1">&#39;B2&#39;</span><span class="p">)</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="s1">&#39;B3&#39;</span><span class="p">)</span>
+
+<span class="n">br1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Br1&#39;</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="n">br2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b3</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Br2&#39;</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="n">br3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Br3&#39;</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+
+<span class="c1"># add measurements</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_pf_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">PfMeasurement</span><span class="p">(</span><span class="mf">0.888</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="n">br1</span><span class="p">))</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_pf_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">PfMeasurement</span><span class="p">(</span><span class="mf">1.173</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="n">br2</span><span class="p">))</span>
+
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_qf_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">QfMeasurement</span><span class="p">(</span><span class="mf">0.568</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="n">br1</span><span class="p">))</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_qf_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">QfMeasurement</span><span class="p">(</span><span class="mf">0.663</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="n">br2</span><span class="p">))</span>
+
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_pi_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">PiMeasurement</span><span class="p">(</span><span class="o">-</span><span class="mf">0.501</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">b2</span><span class="p">))</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_qi_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">QiMeasurement</span><span class="p">(</span><span class="o">-</span><span class="mf">0.286</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">b2</span><span class="p">))</span>
+
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_vm_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">VmMeasurement</span><span class="p">(</span><span class="mf">1.006</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">,</span> <span class="n">b1</span><span class="p">))</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_vm_measurement</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">VmMeasurement</span><span class="p">(</span><span class="mf">0.968</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">,</span> <span class="n">b2</span><span class="p">))</span>
+
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span>
+
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">br1</span><span class="p">)</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">br2</span><span class="p">)</span>
+<span class="n">m_circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">br3</span><span class="p">)</span>
+
+<span class="n">se</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">StateEstimationDriver</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">m_circuit</span><span class="p">)</span>
+<span class="n">se</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">se</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">se</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>          Vm        Va         P        Q
+B1  0.999629  0.000000  2.064016  1.22644
+B2  0.974156 -1.247547  0.000000  0.00000
+B3  0.943890 -2.745717  0.000000  0.00000
+
+            Pf        Qf          Pt         Qt    loading    Ploss    Qloss
+Br1  89.299199 55.882169  -88.188659 -52.550550  89.299199 1.110540 3.331619
+Br2 117.102446 66.761871 -113.465724 -57.670065 117.102446 3.636722 9.091805
+Br3  38.591163 22.775597  -37.956374 -21.082828  38.591163 0.634789 1.692770
+</pre></div>
+</div>
+<p>Using explicit options:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">StateEstimationOptions</span><span class="p">(</span>
+    <span class="n">solver</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+    <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">run_observability_analyis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">add_pseudo_measurements</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">run_measurement_profiling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">pseudo_meas_std</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">StateEstimationDriver</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">m_circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converged:&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error:&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_report_dataframe</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Inspecting the convergence and observability report:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">report</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">convergence_reports</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bad data detected:&quot;</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">get_bad_data_detected</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unobservable buses:&quot;</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">get_unobservable_buses</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pseudo measurements:&quot;</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">get_pseudo_measurements</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Measurement profile:&quot;</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">get_measurement_profile</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Accessing result tables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultTypes</span>
+
+<span class="n">bus_vm_table</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusVoltageModule</span><span class="p">)</span>
+<span class="n">branch_loading_table</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BranchLoading</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bus_vm_table</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">branch_loading_table</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="practical-guidance">
+<h2>Practical Guidance<a class="headerlink" href="#practical-guidance" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Start by checking observability before tuning solver settings.</p></li>
+<li><p>Use realistic measurement standard deviations; arbitrary values can distort the estimator strongly.</p></li>
+<li><p>Prefer adding a few well-placed real measurements over relying heavily on pseudo-measurements.</p></li>
+<li><p>Inspect <code class="docutils literal notranslate"><span class="pre">get_report_dataframe()</span></code> and <code class="docutils literal notranslate"><span class="pre">convergence_reports</span></code>, not only the estimated voltages and flows.</p></li>
+<li><p>If the estimate looks strange, verify both the measurement values and the device associations first.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reliability.html" class="btn btn-neutral float-left" title="🚧 Reliability" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dynamic_simulations.html" class="btn btn-neutral float-right" title="🧲 Dynamic simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

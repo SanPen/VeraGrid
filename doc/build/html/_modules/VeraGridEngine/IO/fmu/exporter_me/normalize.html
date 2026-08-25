@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.exporter_me.normalize &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.exporter_me.normalize</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.fmu.exporter_me.normalize</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">compat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flatten</span><span class="w"> </span><span class="kn">import</span> <span class="n">flatten_block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.snapshot</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstruct_block</span>
+
+
+<span class="n">Const</span> <span class="o">=</span> <span class="n">compat</span><span class="o">.</span><span class="n">Const</span>
+<span class="n">Var</span> <span class="o">=</span> <span class="n">compat</span><span class="o">.</span><span class="n">Var</span>
+<span class="n">BinOp</span> <span class="o">=</span> <span class="n">compat</span><span class="o">.</span><span class="n">BinOp</span>
+<span class="n">UnOp</span> <span class="o">=</span> <span class="n">compat</span><span class="o">.</span><span class="n">UnOp</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_simplify_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">simplify</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;simplify&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">simplify</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">simplify</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">expr</span>
+
+
+<div class="viewcode-block" id="TransferBlockData">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter_me.html#VeraGridEngine.IO.fmu.exporter_me.normalize.TransferBlockData">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransferBlockData</span><span class="p">:</span>
+    <span class="n">output_var</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">input_var</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">input_expr</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">export_in_vars</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">remaining_algebraic_vars</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">remaining_algebraic_eqs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">den_coeffs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">num_coeffs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="FlatTransferMatch">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter_me.html#VeraGridEngine.IO.fmu.exporter_me.normalize.FlatTransferMatch">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlatTransferMatch</span><span class="p">:</span>
+    <span class="n">output_var</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">input_var</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">input_expr</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">output_chain</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">input_chain</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">main_equation_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">input_assignment_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">export_in_vars</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">den_coeffs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">num_coeffs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_zero_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_contains_uid</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">getter</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;get_vars&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">getter</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">target_uids</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">getter</span><span class="p">()))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_coeff_maps</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">right</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">+</span> <span class="n">value</span> <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">result</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">value</span> <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mul_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">factor</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">expr</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_div_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">divisor</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">expr</span> <span class="o">/</span> <span class="n">divisor</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="n">expr</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">target_uids</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">expr</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)},</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="n">expr</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported unary operator </span><span class="si">{</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">coeffs</span><span class="p">,</span> <span class="n">const_term</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">operand</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">uid</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">value</span> <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">const_term</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+            <span class="n">left_coeffs</span><span class="p">,</span> <span class="n">left_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="n">right_coeffs</span><span class="p">,</span> <span class="n">right_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_merge_coeff_maps</span><span class="p">(</span><span class="n">left_coeffs</span><span class="p">,</span> <span class="n">right_coeffs</span><span class="p">),</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">left_const</span> <span class="o">+</span> <span class="n">right_const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="n">left_coeffs</span><span class="p">,</span> <span class="n">left_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="n">right_coeffs</span><span class="p">,</span> <span class="n">right_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_merge_coeff_maps</span><span class="p">(</span><span class="n">left_coeffs</span><span class="p">,</span> <span class="n">right_coeffs</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">left_const</span> <span class="o">-</span> <span class="n">right_const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+            <span class="n">left_coeffs</span><span class="p">,</span> <span class="n">left_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="n">right_coeffs</span><span class="p">,</span> <span class="n">right_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">left_coeffs</span> <span class="ow">and</span> <span class="n">right_coeffs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Non-linear product in transfer-function lowering&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">left_coeffs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">uid</span><span class="p">:</span> <span class="n">_mul_expr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">right_const</span><span class="p">)</span> <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">left_coeffs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span> <span class="n">_mul_expr</span><span class="p">(</span><span class="n">left_const</span><span class="p">,</span> <span class="n">right_const</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">right_coeffs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">uid</span><span class="p">:</span> <span class="n">_mul_expr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">left_const</span><span class="p">)</span> <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">right_coeffs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span> <span class="n">_mul_expr</span><span class="p">(</span><span class="n">left_const</span><span class="p">,</span> <span class="n">right_const</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{},</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">left_const</span> <span class="o">*</span> <span class="n">right_const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+            <span class="n">left_coeffs</span><span class="p">,</span> <span class="n">left_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="n">right_coeffs</span><span class="p">,</span> <span class="n">right_const</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">target_uids</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">right_coeffs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transfer-function lowering does not support target variables in denominators&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">uid</span><span class="p">:</span> <span class="n">_div_expr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">right_const</span><span class="p">)</span> <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">left_coeffs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span> <span class="n">_div_expr</span><span class="p">(</span><span class="n">left_const</span><span class="p">,</span> <span class="n">right_const</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported expression node in transfer-function lowering: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">var</span>
+    <span class="k">while</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="s2">&quot;base_var&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">base_var</span>
+    <span class="k">return</span> <span class="n">current</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_chain</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">diff_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">]</span>
+    <span class="n">members</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">diff_vars</span> <span class="k">if</span> <span class="n">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">root</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
+    <span class="n">chain</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">members</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">diff_order</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">chain</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unwrap_assignment_target</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">target_uid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">target_uid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_equation_target_uid</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">uid</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">}:</span>
+        <span class="n">left_target</span> <span class="o">=</span> <span class="n">_equation_target_uid</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">left_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">left_target</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">uid</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_substitute_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">subs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;subs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">subs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">subs</span><span class="p">(</span><span class="n">mapping</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">expr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_external_input_vars</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">internal_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="n">getter</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;get_vars&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">getter</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">()</span>
+    <span class="n">ordered</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">getter</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">internal_uids</span> <span class="ow">or</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ordered</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parameter_uids</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="n">uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;event_dict&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;mode_dict&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">uids</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_match_transfer_block</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransferBlockData</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">algebraic_vars</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_vars&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">output_var</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;out_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[</span><span class="n">algebraic_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">)</span>
+    <span class="n">root_vars</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="n">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">diff_vars</span> <span class="p">}</span>
+    <span class="n">output_root</span> <span class="o">=</span> <span class="n">_root_var</span><span class="p">(</span><span class="n">output_var</span><span class="p">)</span>
+    <span class="n">output_chain</span> <span class="o">=</span> <span class="n">_collect_chain</span><span class="p">(</span><span class="n">output_root</span><span class="p">,</span> <span class="n">diff_vars</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_chain</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">internal_root_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">}</span> <span class="o">|</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">diff_vars</span><span class="p">}</span> <span class="o">|</span> <span class="n">_parameter_uids</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">removable_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">root_vars</span><span class="p">}</span>
+
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">variable_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">algebraic_vars</span><span class="p">)):</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="n">algebraic_vars</span><span class="p">[</span><span class="n">variable_index</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">removable_uids</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">equation_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">replacement</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">candidate_index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+                <span class="n">replacement</span> <span class="o">=</span> <span class="n">_unwrap_assignment_target</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">replacement</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">equation_index</span> <span class="o">=</span> <span class="n">candidate_index</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">replacement</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">replacement</span><span class="p">,</span> <span class="p">{</span><span class="n">variable</span><span class="o">.</span><span class="n">uid</span><span class="p">}):</span>
+                <span class="k">continue</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">variable</span><span class="p">:</span> <span class="n">replacement</span><span class="p">}</span>
+            <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">variable_index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">equation_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">equation_index</span><span class="p">)</span>
+            <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_substitute_expr</span><span class="p">(</span><span class="n">eq</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span> <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">algebraic_eqs</span><span class="p">]</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+
+    <span class="n">explicit_inputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;in_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="n">explicit_inputs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">explicit_inputs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">input_var</span> <span class="o">=</span> <span class="n">explicit_inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span> <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">root_vars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">uid</span> <span class="o">!=</span> <span class="n">output_root</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_roots</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">input_var</span> <span class="o">=</span> <span class="n">input_roots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">input_chain</span> <span class="o">=</span> <span class="n">_collect_chain</span><span class="p">(</span><span class="n">_root_var</span><span class="p">(</span><span class="n">input_var</span><span class="p">),</span> <span class="n">diff_vars</span><span class="p">)</span>
+    <span class="n">target_chain</span> <span class="o">=</span> <span class="n">output_chain</span> <span class="o">+</span> <span class="n">input_chain</span>
+    <span class="n">target_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">target_chain</span><span class="p">}</span>
+
+    <span class="n">main_equation_index</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">preferred_output_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+    <span class="k">if</span> <span class="n">preferred_output_uids</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="n">preferred_output_uids</span><span class="p">):</span>
+                <span class="n">main_equation_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">break</span>
+    <span class="k">if</span> <span class="n">main_equation_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">}):</span>
+                <span class="n">main_equation_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">break</span>
+    <span class="k">if</span> <span class="n">main_equation_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">coeff_map</span><span class="p">,</span> <span class="n">const_term</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">[</span><span class="n">main_equation_index</span><span class="p">],</span> <span class="n">target_uids</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">const_term</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">den_coeffs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">coeff_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">)</span>
+    <span class="n">num_coeffs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">coeff_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">input_chain</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">den_coeffs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">den_coeffs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">input_expr</span> <span class="o">=</span> <span class="n">input_var</span>
+    <span class="n">input_assignment_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_chain</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="n">main_equation_index</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">replacement</span> <span class="o">=</span> <span class="n">_unwrap_assignment_target</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">replacement</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">input_expr</span> <span class="o">=</span> <span class="n">replacement</span>
+                <span class="n">input_assignment_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">break</span>
+
+    <span class="n">remaining_algebraic_vars</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">variable</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">algebraic_vars</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">output_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">input_assignment_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">remaining_algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">equation</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">main_equation_index</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">input_assignment_index</span>
+    <span class="p">]</span>
+
+    <span class="n">export_in_vars</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">explicit_inputs</span><span class="p">)</span> <span class="k">if</span> <span class="n">explicit_inputs</span> <span class="ow">and</span> <span class="n">input_assignment_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_collect_external_input_vars</span><span class="p">(</span><span class="n">input_expr</span><span class="p">,</span> <span class="n">internal_root_uids</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">TransferBlockData</span><span class="p">(</span>
+        <span class="n">output_var</span><span class="o">=</span><span class="n">output_var</span><span class="p">,</span>
+        <span class="n">input_var</span><span class="o">=</span><span class="n">input_var</span><span class="p">,</span>
+        <span class="n">input_expr</span><span class="o">=</span><span class="n">input_expr</span><span class="p">,</span>
+        <span class="n">export_in_vars</span><span class="o">=</span><span class="n">export_in_vars</span><span class="p">,</span>
+        <span class="n">remaining_algebraic_vars</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">remaining_algebraic_vars</span><span class="p">),</span>
+        <span class="n">remaining_algebraic_eqs</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">remaining_algebraic_eqs</span><span class="p">),</span>
+        <span class="n">den_coeffs</span><span class="o">=</span><span class="n">den_coeffs</span><span class="p">,</span>
+        <span class="n">num_coeffs</span><span class="o">=</span><span class="n">num_coeffs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_state_name</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;me_tf_state_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lower_transfer_block_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TransferBlockData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">leading</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">num_coeffs</span><span class="p">[:</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+        <span class="n">beta</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">_div_expr</span><span class="p">(</span><span class="n">coeff</span><span class="p">,</span> <span class="n">leading</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="n">_div_expr</span><span class="p">(</span><span class="n">coeff</span><span class="p">,</span> <span class="n">leading</span><span class="p">)</span> <span class="k">for</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">direct_term</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">output_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_simplify_expr</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">direct_term</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+
+    <span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">Var</span><span class="p">(</span><span class="n">_state_name</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">output_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">Var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;d_</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">state</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_vars</span><span class="p">]</span>
+    <span class="n">state_eqs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_vars</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">input_expr</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">rhs</span> <span class="o">-</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">state_vars</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+    <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_simplify_expr</span><span class="p">(</span><span class="n">rhs</span><span class="p">))</span>
+
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">remaining_algebraic_vars</span><span class="p">)</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">remaining_algebraic_eqs</span><span class="p">)</span>
+
+    <span class="n">output_expr</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">direct_term</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">input_expr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_coeffs</span><span class="p">,</span> <span class="n">state_vars</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">output_expr</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">output_expr</span> <span class="o">+</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">state</span><span class="p">)</span>
+    <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">output_var</span><span class="p">)</span>
+    <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">output_var</span> <span class="o">-</span> <span class="n">output_expr</span><span class="p">))</span>
+
+    <span class="n">init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">)</span>
+    <span class="n">valid_algebraic_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">init_eqs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]}</span> <span class="ow">and</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_algebraic_uids</span><span class="p">:</span>
+            <span class="n">init_eqs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+    <span class="n">init_eqs</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">output_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_expr</span>
+    <span class="k">if</span> <span class="n">order</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">state_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">state_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">input_expr</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="p">{</span><span class="n">diff_var</span><span class="p">:</span> <span class="n">expr</span> <span class="k">for</span> <span class="n">diff_var</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">diff_vars</span><span class="p">,</span> <span class="n">state_eqs</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)}</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="n">state_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="n">state_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">diff_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="n">init_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">export_in_vars</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">output_var</span><span class="p">]</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">var_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lower_transfer_blocks_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]):</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="n">_lower_transfer_blocks_inplace</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="ow">or</span> <span class="n">changed</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_match_transfer_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_lower_transfer_block_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">changed</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_transfer_realization</span><span class="p">(</span><span class="n">output_var</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">input_expr</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">den_coeffs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">num_coeffs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">den_coeffs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">leading</span> <span class="o">=</span> <span class="n">den_coeffs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">num_coeffs</span><span class="p">[:</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+        <span class="n">beta</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">_div_expr</span><span class="p">(</span><span class="n">coeff</span><span class="p">,</span> <span class="n">leading</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="n">_div_expr</span><span class="p">(</span><span class="n">coeff</span><span class="p">,</span> <span class="n">leading</span><span class="p">)</span> <span class="k">for</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">den_coeffs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">direct_term</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">output_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_simplify_expr</span><span class="p">(</span><span class="n">beta</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">direct_term</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+
+    <span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">Var</span><span class="p">(</span><span class="n">_state_name</span><span class="p">(</span><span class="n">output_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">Var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;d_</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">state</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_vars</span><span class="p">]</span>
+    <span class="n">state_eqs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_vars</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">input_expr</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">rhs</span> <span class="o">-</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">state_vars</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+    <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_simplify_expr</span><span class="p">(</span><span class="n">rhs</span><span class="p">))</span>
+
+    <span class="n">output_expr</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">direct_term</span> <span class="o">*</span> <span class="n">input_expr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_coeffs</span><span class="p">,</span> <span class="n">state_vars</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">output_expr</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">output_expr</span> <span class="o">+</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state_vars</span><span class="p">,</span> <span class="n">diff_vars</span><span class="p">,</span> <span class="n">state_eqs</span><span class="p">,</span> <span class="n">output_expr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_match_transfer_pattern_in_flat_block</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">output_var</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlatTransferMatch</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="n">output_var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">algebraic_vars</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">algebraic_eqs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">diff_vars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">output_chain</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_collect_chain</span><span class="p">(</span><span class="n">_root_var</span><span class="p">(</span><span class="n">output_var</span><span class="p">),</span> <span class="n">diff_vars</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_chain</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">root_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">diff_vars</span><span class="p">}</span>
+    <span class="n">algebraic_uid_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">}</span>
+    <span class="n">state_uid_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]}</span>
+    <span class="n">input_uid_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;in_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]}</span>
+    <span class="n">parameter_uid_set</span> <span class="o">=</span> <span class="n">_parameter_uids</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">internal_root_uids</span> <span class="o">=</span> <span class="n">algebraic_uid_set</span> <span class="o">|</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">diff_vars</span><span class="p">}</span> <span class="o">|</span> <span class="n">state_uid_set</span> <span class="o">|</span> <span class="n">parameter_uid_set</span>
+
+    <span class="n">main_equation_index</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">preferred_output_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+    <span class="k">if</span> <span class="n">preferred_output_uids</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="n">preferred_output_uids</span><span class="p">):</span>
+                <span class="n">main_equation_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">break</span>
+    <span class="k">if</span> <span class="n">main_equation_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">}):</span>
+                <span class="n">main_equation_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">break</span>
+    <span class="k">if</span> <span class="n">main_equation_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">vars_in_main</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">algebraic_eqs</span><span class="p">[</span><span class="n">main_equation_index</span><span class="p">]</span><span class="o">.</span><span class="n">get_vars</span><span class="p">())</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">[</span><span class="n">main_equation_index</span><span class="p">],</span> <span class="s2">&quot;get_vars&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">input_roots</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen_roots</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">output_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">vars_in_main</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">output_uids</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">seen_roots</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">parameter_uid_set</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">algebraic_uid_set</span> <span class="ow">and</span> <span class="n">root</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">state_uid_set</span> <span class="ow">and</span> <span class="n">root</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_uid_set</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">input_roots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">seen_roots</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_roots</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">input_var</span> <span class="o">=</span> <span class="n">input_roots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">input_chain</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_collect_chain</span><span class="p">(</span><span class="n">_root_var</span><span class="p">(</span><span class="n">input_var</span><span class="p">),</span> <span class="n">diff_vars</span><span class="p">))</span>
+    <span class="n">target_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span> <span class="o">+</span> <span class="n">input_chain</span><span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">coeff_map</span><span class="p">,</span> <span class="n">const_term</span> <span class="o">=</span> <span class="n">_extract_affine</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">[</span><span class="n">main_equation_index</span><span class="p">],</span> <span class="n">target_uids</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">const_term</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">input_expr</span> <span class="o">=</span> <span class="n">input_var</span>
+    <span class="n">input_assignment_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_chain</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">input_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">algebraic_uid_set</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="n">main_equation_index</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">replacement</span> <span class="o">=</span> <span class="n">_unwrap_assignment_target</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">replacement</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">replacement</span><span class="p">,</span> <span class="p">{</span><span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">}):</span>
+                <span class="k">continue</span>
+            <span class="n">input_expr</span> <span class="o">=</span> <span class="n">replacement</span>
+            <span class="n">input_assignment_index</span> <span class="o">=</span> <span class="n">index</span>
+            <span class="k">break</span>
+
+    <span class="n">den_coeffs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">coeff_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">output_chain</span><span class="p">)</span>
+    <span class="n">num_coeffs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">coeff_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">input_chain</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">den_coeffs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">den_coeffs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">export_in_vars</span> <span class="o">=</span> <span class="n">_collect_external_input_vars</span><span class="p">(</span><span class="n">input_expr</span><span class="p">,</span> <span class="n">internal_root_uids</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">FlatTransferMatch</span><span class="p">(</span>
+        <span class="n">output_var</span><span class="o">=</span><span class="n">output_var</span><span class="p">,</span>
+        <span class="n">input_var</span><span class="o">=</span><span class="n">input_var</span><span class="p">,</span>
+        <span class="n">input_expr</span><span class="o">=</span><span class="n">input_expr</span><span class="p">,</span>
+        <span class="n">output_chain</span><span class="o">=</span><span class="n">output_chain</span><span class="p">,</span>
+        <span class="n">input_chain</span><span class="o">=</span><span class="n">input_chain</span><span class="p">,</span>
+        <span class="n">main_equation_index</span><span class="o">=</span><span class="n">main_equation_index</span><span class="p">,</span>
+        <span class="n">input_assignment_index</span><span class="o">=</span><span class="n">input_assignment_index</span><span class="p">,</span>
+        <span class="n">export_in_vars</span><span class="o">=</span><span class="n">export_in_vars</span><span class="p">,</span>
+        <span class="n">den_coeffs</span><span class="o">=</span><span class="n">den_coeffs</span><span class="p">,</span>
+        <span class="n">num_coeffs</span><span class="o">=</span><span class="n">num_coeffs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lower_transfer_pattern_in_flat_block_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">match</span><span class="p">:</span> <span class="n">FlatTransferMatch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">state_vars</span><span class="p">,</span> <span class="n">new_diff_vars</span><span class="p">,</span> <span class="n">state_eqs</span><span class="p">,</span> <span class="n">output_expr</span> <span class="o">=</span> <span class="n">_build_transfer_realization</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">output_var</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">input_expr</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">num_coeffs</span><span class="p">)</span>
+
+    <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">state_var_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">state_eq_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">diff_var_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;init_eqs&quot;</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{})</span>
+    <span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_init_eqs&quot;</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{})</span>
+    <span class="n">in_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;in_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+
+    <span class="n">index_skip</span> <span class="o">=</span> <span class="p">{</span><span class="n">match</span><span class="o">.</span><span class="n">main_equation_index</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">input_assignment_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">index_skip</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">input_assignment_index</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_substitute_expr</span><span class="p">(</span><span class="n">eq</span><span class="p">,</span> <span class="p">{</span><span class="n">match</span><span class="o">.</span><span class="n">input_var</span><span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">input_expr</span><span class="p">})</span> <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">algebraic_eqs</span><span class="p">]</span>
+
+    <span class="n">old_diff_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">output_chain</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">match</span><span class="o">.</span><span class="n">input_chain</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+    <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span>
+        <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">match</span><span class="o">.</span><span class="n">output_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">input_assignment_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">match</span><span class="o">.</span><span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">eq</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index_skip</span><span class="p">]</span>
+    <span class="n">diff_var_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">diff_var_list</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">old_diff_uids</span><span class="p">]</span>
+
+    <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">output_var</span><span class="p">)</span>
+    <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">output_var</span> <span class="o">-</span> <span class="n">output_expr</span><span class="p">))</span>
+    <span class="n">state_var_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">state_vars</span><span class="p">)</span>
+    <span class="n">state_eq_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">state_eqs</span><span class="p">)</span>
+    <span class="n">diff_var_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_diff_vars</span><span class="p">)</span>
+
+    <span class="n">valid_algebraic_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">init_eqs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_algebraic_uids</span> <span class="ow">and</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">match</span><span class="o">.</span><span class="n">output_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">and</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">match</span><span class="o">.</span><span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+            <span class="n">init_eqs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+    <span class="n">init_eqs</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">output_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_expr</span>
+    <span class="k">if</span> <span class="n">state_vars</span><span class="p">:</span>
+        <span class="n">alpha0</span> <span class="o">=</span> <span class="n">_div_expr</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">match</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">den_coeffs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_is_zero_expr</span><span class="p">(</span><span class="n">alpha0</span><span class="p">):</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">state_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">state_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">input_expr</span> <span class="o">/</span> <span class="n">alpha0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">old_uid</span> <span class="ow">in</span> <span class="n">old_diff_uids</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">diff_var</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">diff_init_eqs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">old_uid</span><span class="p">:</span>
+                <span class="n">diff_init_eqs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">diff_var</span><span class="p">)</span>
+    <span class="n">diff_init_eqs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">diff_var</span><span class="p">:</span> <span class="n">expr</span> <span class="k">for</span> <span class="n">diff_var</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_diff_vars</span><span class="p">,</span> <span class="n">state_eqs</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)})</span>
+
+    <span class="n">merged_inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen_input_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">in_vars</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">export_in_vars</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">seen_input_uids</span> <span class="ow">or</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">match</span><span class="o">.</span><span class="n">input_var</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">merged_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="n">seen_input_uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="n">state_var_list</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="n">state_eq_list</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">diff_var_list</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="n">init_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">merged_inputs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">var_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lower_transfer_patterns_in_flat_block_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">changed_any</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">root_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">_root_var</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])}</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]):</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">root_uids</span><span class="p">:</span>
+                <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">_match_transfer_pattern_in_flat_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">candidate</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">_lower_transfer_pattern_in_flat_block_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">match</span><span class="p">)</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">changed_any</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">changed_any</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_realign_algebraic_system_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">remaining</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">))</span>
+    <span class="n">ordered</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">:</span>
+        <span class="n">match_pos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">equation</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">remaining</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_equation_target_uid</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span> <span class="o">==</span> <span class="n">variable</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="n">match_pos</span> <span class="o">=</span> <span class="n">pos</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">match_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">original_index</span><span class="p">,</span> <span class="n">equation</span> <span class="o">=</span> <span class="n">remaining</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">match_pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">original_index</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered</span><span class="p">):</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">ordered</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_promote_explicit_diff_states_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">changed_any</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]):</span>
+        <span class="n">changed_any</span> <span class="o">=</span> <span class="n">_promote_explicit_diff_states_inplace</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="ow">or</span> <span class="n">changed_any</span>
+
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;algebraic_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="n">diff_uid_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])}</span>
+        <span class="n">algebraic_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span><span class="p">}</span>
+        <span class="n">state_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]}</span>
+        <span class="k">for</span> <span class="n">diff_var</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[]):</span>
+            <span class="n">base_var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">diff_var</span><span class="p">,</span> <span class="s2">&quot;base_var&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">base_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">base_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">algebraic_uids</span> <span class="ow">or</span> <span class="n">base_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">state_uids</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">equation_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rhs_expr</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">):</span>
+                <span class="n">candidate</span> <span class="o">=</span> <span class="n">_unwrap_assignment_target</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="p">{</span><span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">}):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">_contains_uid</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">diff_uid_set</span> <span class="o">-</span> <span class="p">{</span><span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">}):</span>
+                    <span class="k">continue</span>
+                <span class="n">equation_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="n">rhs_expr</span> <span class="o">=</span> <span class="n">candidate</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">equation_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rhs_expr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">algebraic_vars</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">base_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">equation</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">equation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">equation_index</span><span class="p">]</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="n">base_var</span><span class="p">]</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;state_eqs&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="n">_simplify_expr</span><span class="p">(</span><span class="n">rhs_expr</span><span class="p">)]</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_init_eqs&quot;</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{})</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">diff_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_simplify_expr</span><span class="p">(</span><span class="n">rhs_expr</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">var_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;diff_vars&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">[])}</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">changed_any</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">changed_any</span>
+
+
+<div class="viewcode-block" id="prepare_flat_block_for_me">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter_me.html#VeraGridEngine.IO.fmu.exporter_me.normalize.prepare_flat_block_for_me">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_flat_block_for_me</span><span class="p">(</span><span class="n">snapshot</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]):</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">reconstruct_block</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+    <span class="n">_lower_transfer_blocks_inplace</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">flat_block</span> <span class="o">=</span> <span class="n">flatten_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="n">_lower_transfer_patterns_in_flat_block_inplace</span><span class="p">(</span><span class="n">flat_block</span><span class="p">)</span> <span class="ow">or</span> <span class="n">changed</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="n">_promote_explicit_diff_states_inplace</span><span class="p">(</span><span class="n">flat_block</span><span class="p">)</span> <span class="ow">or</span> <span class="n">changed</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="n">_realign_algebraic_system_inplace</span><span class="p">(</span><span class="n">flat_block</span><span class="p">)</span> <span class="ow">or</span> <span class="n">changed</span>
+    <span class="k">return</span> <span class="n">flat_block</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

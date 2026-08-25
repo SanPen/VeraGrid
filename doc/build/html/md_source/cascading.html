@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎢 Cascading &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🚢 Net transfer capacity optimization" href="net_transfer_capacity.html" />
+    <link rel="prev" title="🏦 Investment optimization" href="investment_optimization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🎢 Cascading</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-the-cascade-advances">How The Cascade Advances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#branch-removal-logic">Branch Removal Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-by-step-mode">Step-By-Step Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-cascade-mode">Full Cascade Mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#stopping-criterion">Stopping Criterion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#result-object">Result Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🎢 Cascading</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/cascading.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="cascading">
+<h1>🎢 Cascading<a class="headerlink" href="#cascading" title="Link to this heading"></a></h1>
+<p>The cascading study in VeraGrid simulates progressive branch outages after an initial disturbance. Its purpose is to
+study how an overloaded network can deteriorate step by step, potentially splitting into islands and causing a broader
+blackout than the original triggering event.</p>
+<p>At each cascade step, VeraGrid runs a network simulation, identifies the branches to remove, updates the topology, and
+repeats the process until the stopping criterion is reached.</p>
+<section id="what-the-study-evaluates">
+<h2>What The Study Evaluates<a class="headerlink" href="#what-the-study-evaluates" title="Link to this heading"></a></h2>
+<p>A cascading simulation is not a long-term reliability Monte Carlo study. It is a sequential contingency propagation
+study:</p>
+<ul class="simple">
+<li><p>an initial outage or set of outages is applied, or the cascade starts from the current network state</p></li>
+<li><p>the network is solved</p></li>
+<li><p>overloaded branches are selected for removal</p></li>
+<li><p>the topology is updated and the network is solved again</p></li>
+<li><p>the process continues until the system has split enough or the step limit is reached</p></li>
+</ul>
+<p>This is useful when you want to understand whether a local disturbance stays local or propagates through the network.</p>
+</section>
+<section id="how-the-cascade-advances">
+<h2>How The Cascade Advances<a class="headerlink" href="#how-the-cascade-advances" title="Link to this heading"></a></h2>
+<p>The current implementation removes <strong>branches</strong> during the cascade.</p>
+<p>Two main execution styles are available:</p>
+<ul class="simple">
+<li><p><strong>PowerFlow</strong>:
+the cascade is driven by a standard power flow result at each step</p></li>
+<li><p><strong>LatinHypercube</strong>:
+the cascade is driven by stochastic loading information from the Latin Hypercube stochastic power flow</p></li>
+</ul>
+<p>The driver supports two related execution patterns:</p>
+<ul class="simple">
+<li><p><strong>Full cascade run</strong> with <code class="docutils literal notranslate"><span class="pre">run()</span></code>:
+repeatedly solves and removes branches until the stopping criterion is met</p></li>
+<li><p><strong>Step-by-step cascade</strong> with <code class="docutils literal notranslate"><span class="pre">perform_step_run()</span></code>:
+executes a single cascade step, useful for interactive workflows</p></li>
+</ul>
+</section>
+<section id="branch-removal-logic">
+<h2>Branch Removal Logic<a class="headerlink" href="#branch-removal-logic" title="Link to this heading"></a></h2>
+<p>The branch removal policy depends on the path used by the driver:</p>
+<section id="step-by-step-mode">
+<h3>Step-By-Step Mode<a class="headerlink" href="#step-by-step-mode" title="Link to this heading"></a></h3>
+<p>When <code class="docutils literal notranslate"><span class="pre">perform_step_run()</span></code> is used:</p>
+<ul class="simple">
+<li><p>on the first step, the explicitly provided <code class="docutils literal notranslate"><span class="pre">triggering_idx</span></code> is removed if given</p></li>
+<li><p>otherwise, branches with loading above <code class="docutils literal notranslate"><span class="pre">1.0</span></code> are removed</p></li>
+<li><p>if no branch exceeds <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, the most loaded branch is removed</p></li>
+</ul>
+</section>
+<section id="full-cascade-mode">
+<h3>Full Cascade Mode<a class="headerlink" href="#full-cascade-mode" title="Link to this heading"></a></h3>
+<p>When <code class="docutils literal notranslate"><span class="pre">run()</span></code> is used:</p>
+<ul class="simple">
+<li><p>if the selected cascade mode provides overload probabilities, branches with overload probability above the configured
+threshold are removed</p></li>
+<li><p>if no branch passes that threshold, the algorithm falls back to removing one branch based on the most critical
+loading condition</p></li>
+</ul>
+<p>This means the study is designed to force cascade progression even when the system is close to criticality but no
+branch crosses the main probabilistic criterion.</p>
+</section>
+</section>
+<section id="stopping-criterion">
+<h2>Stopping Criterion<a class="headerlink" href="#stopping-criterion" title="Link to this heading"></a></h2>
+<p>The full cascade run stops when the network has split into enough islands or the step counter reaches the internal
+limit derived from:</p>
+<ul class="simple">
+<li><p>the initial number of islands</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_additional_islands</span></code></p></li>
+<li><p>the number of buses, used as a safety bound</p></li>
+</ul>
+<p>In practice, <code class="docutils literal notranslate"><span class="pre">max_additional_islands</span></code> controls how much topological fragmentation is allowed before the cascade is
+considered complete.</p>
+</section>
+<section id="result-object">
+<h2>Result Object<a class="headerlink" href="#result-object" title="Link to this heading"></a></h2>
+<p>The cascading study returns a <code class="docutils literal notranslate"><span class="pre">CascadingResults</span></code> object. It stores one event per cascade step.</p>
+<p>Each event contains:</p>
+<ul class="simple">
+<li><p>the indices of the removed branches</p></li>
+<li><p>the simulation results used at that step</p></li>
+<li><p>the removal criterion that was applied</p></li>
+</ul>
+<p>The result object provides a few practical helpers:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">results.events</span></code>:
+raw list of cascade events</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">results.get_failed_idx()</span></code>:
+flat array with the indices of all removed branches</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">results.get_table()</span></code>:
+summary table with the cascade step, number of failed elements, and criterion used</p></li>
+</ul>
+</section>
+<section id="interpretation-notes">
+<h2>Interpretation Notes<a class="headerlink" href="#interpretation-notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>A short cascade with only one or two steps usually means the initial disturbance remains contained.</p></li>
+<li><p>A long cascade with many removals indicates strong topological or loading sensitivity.</p></li>
+<li><p>If the cascade rapidly creates islands, the system is structurally vulnerable to fragmentation.</p></li>
+<li><p>If most removals happen because of fallback criteria rather than strong overload probability, the case is near
+critical but not necessarily dominated by one obvious branch overload.</p></li>
+</ul>
+<p>The outputs should be interpreted together with the underlying power flow or stochastic power flow results at each step.</p>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>Using the driver directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CascadeType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Reliability.blackout_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">CascadingDriver</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_grid.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">CascadingDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">triggering_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">max_additional_islands</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">cascade_type_</span><span class="o">=</span><span class="n">CascadeType</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_table</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed branch indices:&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">get_failed_idx</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of cascade steps:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">events</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Using the Latin Hypercube mode:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CascadeType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Reliability.blackout_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">CascadingDriver</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_grid.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">CascadingDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">cascade_type_</span><span class="o">=</span><span class="n">CascadeType</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">,</span>
+    <span class="n">n_lhs_samples_</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_table</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Running the cascade step by step:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CascadeType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Reliability.blackout_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">CascadingDriver</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_grid.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">CascadingDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">triggering_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">cascade_type_</span><span class="o">=</span><span class="n">CascadeType</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">drv</span><span class="o">.</span><span class="n">perform_step_run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_table</span><span class="p">())</span>
+
+<span class="n">drv</span><span class="o">.</span><span class="n">perform_step_run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_table</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The main constructor arguments are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">grid</span></code>: the <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> network model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">options</span></code>: power flow options</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">triggering_idx</span></code>: optional list of branch indices to remove on the first step</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_additional_islands</span></code>: maximum additional islands tolerated before stopping</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cascade_type_</span></code>: <code class="docutils literal notranslate"><span class="pre">CascadeType.PowerFlow</span></code> or <code class="docutils literal notranslate"><span class="pre">CascadeType.LatinHypercube</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_lhs_samples_</span></code>: number of Latin Hypercube samples when using the stochastic mode</p></li>
+</ul>
+</section>
+<section id="practical-guidance">
+<h2>Practical Guidance<a class="headerlink" href="#practical-guidance" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Start with a deterministic <code class="docutils literal notranslate"><span class="pre">CascadeType.PowerFlow</span></code> study when debugging a specific disturbance.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">triggering_idx</span></code> when you already know the initiating branch outage you want to study.</p></li>
+<li><p>Use the Latin Hypercube mode when you want a cascade driven by stochastic loading conditions rather than a single
+operating point.</p></li>
+<li><p>Check the per-step power flow results inside <code class="docutils literal notranslate"><span class="pre">results.events</span></code> if you need to understand why a particular branch was
+selected for removal.</p></li>
+<li><p>Keep in mind that the current implementation removes branches only; this is a cascading branch outage study, not a
+full protection-and-restoration simulation.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="investment_optimization.html" class="btn btn-neutral float-left" title="🏦 Investment optimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="net_transfer_capacity.html" class="btn btn-neutral float-right" title="🚢 Net transfer capacity optimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cim16.cim_data_parser &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cim16.cim_data_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cim16.cim_data_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.base_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.zip_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_xml_from_zip</span><span class="p">,</span> <span class="n">get_xml_content</span>
+
+
+<div class="viewcode-block" id="find_id">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.find_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_id</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to find the ID of an element</span>
+<span class="sd">    :param child: XML element</span>
+<span class="sd">    :return: RDFID</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj_id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;about&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;resource&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">obj_id</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj_id</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">obj_id</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">obj_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_class_name">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.find_class_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_class_name</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to find the CIM class name</span>
+<span class="sd">    :param child: XML element</span>
+<span class="sd">    :return: class name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;}&#39;</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span>
+
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">class_name</span><span class="p">:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">class_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">class_name</span></div>
+
+
+
+<div class="viewcode-block" id="parse_xml_to_dict">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.parse_xml_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_xml_to_dict</span><span class="p">(</span><span class="n">xml_element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse element into dictionary</span>
+<span class="sd">    :param xml_element: XML element</span>
+<span class="sd">    :return: Dictionary representing the XML</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">xml_element</span><span class="p">:</span>
+        <span class="c1"># key = child.tag</span>
+
+        <span class="n">obj_id</span> <span class="o">=</span> <span class="n">find_id</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">find_class_name</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">child_result</span> <span class="o">=</span> <span class="n">parse_xml_to_dict</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+            <span class="n">objects_list</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">objects_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">obj_id</span><span class="p">:</span> <span class="n">child_result</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">objects_list</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">child_result</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj_id</span>  <span class="c1"># it is a resource id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="merge">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.merge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+          <span class="n">B</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+          <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify A using B</span>
+<span class="sd">    :param A: CIM data dictionary to be modified in-place</span>
+<span class="sd">    :param B: CIM data dictionary used to modify A</span>
+<span class="sd">    :param logger: DataLogger to fill in logs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># for each category in B</span>
+    <span class="k">for</span> <span class="n">class_name_b</span><span class="p">,</span> <span class="n">class_obj_dict_b</span> <span class="ow">in</span> <span class="n">B</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">class_obj_dict_a</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_name_b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">class_obj_dict_a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># the category does not exist in A, just copy it from B</span>
+            <span class="n">A</span><span class="p">[</span><span class="n">class_name_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_obj_dict_b</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># for every object in the category from B</span>
+            <span class="k">for</span> <span class="n">rdfid</span><span class="p">,</span> <span class="n">obj_b</span> <span class="ow">in</span> <span class="n">class_obj_dict_b</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="n">obj_a</span> <span class="o">=</span> <span class="n">class_obj_dict_a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rdfid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">obj_a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># the object in B does not exist in A, copy it</span>
+                    <span class="n">class_obj_dict_a</span><span class="p">[</span><span class="n">rdfid</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj_b</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># the object in B already has an entry in A, modify it</span>
+
+                    <span class="c1"># for each property</span>
+                    <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">value_b</span> <span class="ow">in</span> <span class="n">obj_b</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                        <span class="n">value_a</span> <span class="o">=</span> <span class="n">obj_a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">value_a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="c1"># the property does not exist in A, add it</span>
+                            <span class="n">obj_a</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_b</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">value_b</span> <span class="o">!=</span> <span class="n">value_a</span><span class="p">:</span>
+                                <span class="c1"># the value exists in A, and the value in B is not None, add it</span>
+                                <span class="n">obj_a</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_b</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Overwriting value&quot;</span><span class="p">,</span>
+                                                   <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">obj_a</span><span class="p">),</span>
+                                                   <span class="n">device_class</span><span class="o">=</span><span class="n">class_name_b</span><span class="p">,</span>
+                                                   <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                                                   <span class="n">value</span><span class="o">=</span><span class="n">value_b</span><span class="p">,</span>
+                                                   <span class="n">expected_value</span><span class="o">=</span><span class="n">value_a</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c1"># the assigning value from B is the same as the already stored in A</span>
+                                <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="read_cim_files">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.read_cim_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_cim_files</span><span class="p">(</span><span class="n">cim_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a list of .zip or xml into a dictionary of file name -&gt; list of text lines</span>
+<span class="sd">    :param cim_files: list of file names</span>
+<span class="sd">    :return: dictionary of file name -&gt; list of text lines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read files and sort them in the preferred reading order</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cim_files</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">cim_files</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.xml&#39;</span><span class="p">:</span>
+                <span class="n">file_ptr</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_xml_content</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">)</span>
+                <span class="n">file_ptr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+                <span class="c1"># read the content of a zip file</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">get_xml_from_zip</span><span class="p">(</span><span class="n">file_name_zip</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">cim_files</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.xml&#39;</span><span class="p">:</span>
+            <span class="n">file_ptr</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">cim_files</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_xml_content</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">)</span>
+            <span class="n">file_ptr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+            <span class="c1"># read the content of a zip file</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">get_xml_from_zip</span><span class="p">(</span><span class="n">file_name_zip</span><span class="o">=</span><span class="n">cim_files</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="sort_cim_files">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.sort_cim_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_cim_files</span><span class="p">(</span><span class="n">file_names</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sorts the CIM files in the preferred reading order</span>
+<span class="sd">    :param file_names: lis of file names</span>
+<span class="sd">    :return: sorted list of file names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># sort the files</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">nn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nn</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">file_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;TP&#39;</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">or</span> <span class="s1">&#39;TPDB&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_names</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="n">nn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nn</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">file_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;EQ&#39;</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">or</span> <span class="s1">&#39;EQBD&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_names</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="n">lst2</span> <span class="o">=</span> <span class="n">lst</span> <span class="o">+</span> <span class="n">file_names</span>
+
+    <span class="k">return</span> <span class="n">lst2</span></div>
+
+
+
+<div class="viewcode-block" id="CimDataParser">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.CimDataParser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CimDataParser</span><span class="p">(</span><span class="n">BaseCircuit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to read any cim-like set of files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">logger</span><span class="o">=</span><span class="n">DataLogger</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CIM circuit constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseCircuit</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="o">=</span> <span class="n">text_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="o">=</span> <span class="n">progress_func</span>
+
+        <span class="c1"># dictionary representation of the xml data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cim_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CimDataParser.emit_text">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.CimDataParser.emit_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param val:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CimDataParser.emit_progress">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.CimDataParser.emit_progress">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param val:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CimDataParser.parse_xml_text">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.CimDataParser.parse_xml_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_xml_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the XML into the objects</span>
+<span class="sd">        :param text_lines:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">xml_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text_lines</span><span class="p">)</span>
+
+        <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">xml_string</span><span class="p">)</span>
+        <span class="n">new_cim_data</span> <span class="o">=</span> <span class="n">parse_xml_to_dict</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">merge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cim_data</span><span class="p">,</span> <span class="n">new_cim_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CimDataParser.load_cim_file">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_data_parser.CimDataParser.load_cim_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_cim_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cim_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load CIM file</span>
+<span class="sd">        :param cim_files: list of CIM files (.xml)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># import the cim files&#39; content into a dictionary</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">read_cim_files</span><span class="p">(</span><span class="n">cim_files</span><span class="p">)</span>
+
+        <span class="n">lst2</span> <span class="o">=</span> <span class="n">sort_cim_files</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="c1"># Parse the files</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst2</span><span class="p">):</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit_text</span><span class="p">(</span><span class="s1">&#39;Parsing xml structure of &#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml_text</span><span class="p">(</span><span class="n">text_lines</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit_progress</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">emit_text</span><span class="p">(</span><span class="s1">&#39;Done!&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

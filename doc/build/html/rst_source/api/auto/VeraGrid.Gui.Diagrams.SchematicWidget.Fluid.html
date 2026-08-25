@@ -1,0 +1,759 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections package" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html" />
+    <link rel="prev" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches package" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.html">VeraGrid.Gui.Diagrams package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.SchematicWidget.html">VeraGrid.Gui.Diagrams.SchematicWidget package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.SchematicWidget.Fluid package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-diagrams-schematicwidget-fluid-package">
+<h1>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid package<a class="headerlink" href="#veragrid-gui-diagrams-schematicwidget-fluid-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-fluid-fluid-node-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.</span></span><span class="sig-name descname"><span class="pre">FluidNodeGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluid_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget" title="VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericDiagramWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsRectItem</span></code></p>
+<p>Represents a block in the diagram
+Has an x and y and width and height
+width and height can only be adjusted with a tip in the lower right corner.</p>
+<ul class="simple">
+<li><p>in and output ports</p></li>
+<li><p>parameters</p></li>
+<li><p>description</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_object">
+<span class="sig-name descname"><span class="pre">add_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.EditableDevice" title="VeraGridEngine.Devices.Parents.editable_device.EditableDevice"><span class="pre">EditableDevice</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.add_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_object" title="Link to this definition"></a></dt>
+<dd><p>Add any recognized object
+:param api_obj: EditableDevice</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_p2x">
+<span class="sig-name descname"><span class="pre">add_p2x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x" title="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x"><span class="pre">FluidP2x</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.add_p2x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_p2x" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_pump">
+<span class="sig-name descname"><span class="pre">add_pump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump" title="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump"><span class="pre">FluidPump</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.add_pump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_pump" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_turbine">
+<span class="sig-name descname"><span class="pre">add_turbine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine" title="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine"><span class="pre">FluidTurbine</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.add_turbine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.add_turbine" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.arrange_children">
+<span class="sig-name descname"><span class="pre">arrange_children</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.arrange_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.arrange_children" title="Link to this definition"></a></dt>
+<dd><p>This function sorts the load and generators icons
+Returns:</p>
+<blockquote>
+<div><p>Nothing</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.auto_assign_branch_slots">
+<span class="sig-name descname"><span class="pre">auto_assign_branch_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.auto_assign_branch_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.auto_assign_branch_slots" title="Link to this definition"></a></dt>
+<dd><p>Assign coordinate-based branch anchors to attached fluid paths from current geometry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.change_size">
+<span class="sig-name descname"><span class="pre">change_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.change_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.change_size" title="Link to this definition"></a></dt>
+<dd><p>Resize block function
+&#64;param w:
+&#64;param h:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.create_bus_if_necessary">
+<span class="sig-name descname"><span class="pre">create_bus_if_necessary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.create_bus_if_necessary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.create_bus_if_necessary" title="Link to this definition"></a></dt>
+<dd><p>Create the internal electrical bus of the fluid node
+:return api_object.bus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.create_children_widgets">
+<span class="sig-name descname"><span class="pre">create_children_widgets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">injections_by_tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath"><span class="pre">FluidPath</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x" title="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x"><span class="pre">FluidP2x</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine" title="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine"><span class="pre">FluidTurbine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump" title="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump"><span class="pre">FluidPump</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.create_children_widgets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.create_children_widgets" title="Link to this definition"></a></dt>
+<dd><p>Create the icons of the elements that are attached to the API bus object
+Returns:</p>
+<blockquote>
+<div><p>Nothing</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.delete_all_connections">
+<span class="sig-name descname"><span class="pre">delete_all_connections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_from_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.delete_all_connections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.delete_all_connections" title="Link to this definition"></a></dt>
+<dd><p>Delete all bus connections</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.editor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">editor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.editor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_associated_branch_graphics">
+<span class="sig-name descname"><span class="pre">get_associated_branch_graphics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_associated_branch_graphics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_associated_branch_graphics" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all associated branch graphics
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_associated_widgets">
+<span class="sig-name descname"><span class="pre">get_associated_widgets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">FLUID_CHILD_GRAPHICS</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_associated_widgets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_associated_widgets" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all associated graphics
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_bottom_dock_baseline">
+<span class="sig-name descname"><span class="pre">get_bottom_dock_baseline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_bottom_dock_baseline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_bottom_dock_baseline" title="Link to this definition"></a></dt>
+<dd><p>Return the baseline local Y coordinate used for bottom-docked children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bottom dock baseline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_branch_attachment_center">
+<span class="sig-name descname"><span class="pre">get_branch_attachment_center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_branch_attachment_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_branch_attachment_center" title="Link to this definition"></a></dt>
+<dd><p>Get the scene center used to infer branch attachment sides.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_branch_endpoint_for_graphic">
+<span class="sig-name descname"><span class="pre">get_branch_endpoint_for_graphic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphic_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SchematicBranchEndpoint" title="VeraGridEngine.enumerations.SchematicBranchEndpoint"><span class="pre">SchematicBranchEndpoint</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_branch_endpoint_for_graphic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_branch_endpoint_for_graphic" title="Link to this definition"></a></dt>
+<dd><p>Determine which endpoint of a branch graphic is attached to this node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_connection_local_point_from_local_point">
+<span class="sig-name descname"><span class="pre">get_connection_local_point_from_local_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_connection_local_point_from_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_connection_local_point_from_local_point" title="Link to this definition"></a></dt>
+<dd><p>Project one local point to the fluid-node connection line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>local_point</strong> – Requested local point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Projected local attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_connection_local_point_from_scene_point">
+<span class="sig-name descname"><span class="pre">get_connection_local_point_from_scene_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_connection_local_point_from_scene_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_connection_local_point_from_scene_point" title="Link to this definition"></a></dt>
+<dd><p>Project one scene point to the fluid-node connection line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scene_point</strong> – Requested scene point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Projected local attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_connection_scene_point_from_local_point">
+<span class="sig-name descname"><span class="pre">get_connection_scene_point_from_local_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_connection_scene_point_from_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_connection_scene_point_from_local_point" title="Link to this definition"></a></dt>
+<dd><p>Map one local connection point to the scene after clamping it to the host geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>local_point</strong> – Requested local point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Scene attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_default_connection_local_point">
+<span class="sig-name descname"><span class="pre">get_default_connection_local_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_default_connection_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_default_connection_local_point" title="Link to this definition"></a></dt>
+<dd><p>Return the default local anchor used for fluid-path attachments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Local attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_explicit_slot_entries">
+<span class="sig-name descname"><span class="pre">get_explicit_slot_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_explicit_slot_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_explicit_slot_entries" title="Link to this definition"></a></dt>
+<dd><p>Collect persisted explicit slot entries for this graphic on one side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_explicit_slot_orders">
+<span class="sig-name descname"><span class="pre">get_explicit_slot_orders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_explicit_slot_orders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_explicit_slot_orders" title="Link to this definition"></a></dt>
+<dd><p>Collect persisted explicit slot orders for this graphic on one side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_explicit_terminal_slots">
+<span class="sig-name descname"><span class="pre">get_explicit_terminal_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_explicit_terminal_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_explicit_terminal_slots" title="Link to this definition"></a></dt>
+<dd><p>Build the explicit slot catalog currently attached to this fluid node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_nexus_point">
+<span class="sig-name descname"><span class="pre">get_nexus_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_nexus_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_nexus_point" title="Link to this definition"></a></dt>
+<dd><p>Get the connection point for the chldren nexus line
+:return: QPointF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_nexus_point_for_child">
+<span class="sig-name descname"><span class="pre">get_nexus_point_for_child</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child_graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem"><span class="pre">FluidTurbineGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem"><span class="pre">FluidPumpGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem"><span class="pre">FluidP2xGraphicItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_nexus_point_for_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_nexus_point_for_child" title="Link to this definition"></a></dt>
+<dd><p>Compatibility connection point for docked child graphics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal">
+<span class="sig-name descname"><span class="pre">get_terminal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem"><span class="pre">BarTerminalItem</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_terminal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal" title="Link to this definition"></a></dt>
+<dd><p>Get the hosting terminal of this bus object
+:return: TerminalItem</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal_alignment_from_scene_point">
+<span class="sig-name descname"><span class="pre">get_terminal_alignment_from_scene_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_terminal_alignment_from_scene_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal_alignment_from_scene_point" title="Link to this definition"></a></dt>
+<dd><p>Convert one scene point to a normalized alignment value on the requested side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>side_key</strong> – Attachment side.</p></li>
+<li><p><strong>scene_point</strong> – Scene point selected by the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized alignment factor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal_anchor_by_key">
+<span class="sig-name descname"><span class="pre">get_terminal_anchor_by_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminal_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphic_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget" title="VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget"><span class="pre">GenericDiagramWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_terminal_anchor_by_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal_anchor_by_key" title="Link to this definition"></a></dt>
+<dd><p>Resolve the scene anchor point for a named attachment slot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal_slots">
+<span class="sig-name descname"><span class="pre">get_terminal_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.get_terminal_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.get_terminal_slots" title="Link to this definition"></a></dt>
+<dd><p>Compatibility catalog for named fluid-node attachment slots.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.has_duplicate_explicit_slot_order">
+<span class="sig-name descname"><span class="pre">has_duplicate_explicit_slot_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.has_duplicate_explicit_slot_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.has_duplicate_explicit_slot_order" title="Link to this definition"></a></dt>
+<dd><p>Check whether an explicit slot order is duplicated on one side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.mouseMoveEvent" title="Link to this definition"></a></dt>
+<dd><p>On mouse move of this object…
+Args:</p>
+<blockquote>
+<div><p>event: QGraphicsSceneMouseEvent inherited</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>mouse press: display the editor
+:param event:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.plot_electrical_profiles">
+<span class="sig-name descname"><span class="pre">plot_electrical_profiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.plot_electrical_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.plot_electrical_profiles" title="Link to this definition"></a></dt>
+<dd><p>&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.plot_fluid_profiles">
+<span class="sig-name descname"><span class="pre">plot_fluid_profiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.plot_fluid_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.plot_fluid_profiles" title="Link to this definition"></a></dt>
+<dd><p>&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.redraw">
+<span class="sig-name descname"><span class="pre">redraw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.redraw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.redraw" title="Link to this definition"></a></dt>
+<dd><p>Update the object
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.remove" title="Link to this definition"></a></dt>
+<dd><p>Remove this element
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_api_object_color">
+<span class="sig-name descname"><span class="pre">set_api_object_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_api_object_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_api_object_color" title="Link to this definition"></a></dt>
+<dd><p>Gather the color from the api object and apply
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_fluid_values">
+<span class="sig-name descname"><span class="pre">set_fluid_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Va</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluid_node_p2x_flow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluid_node_current_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluid_node_spillage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluid_node_flow_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluid_node_flow_out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:10.2f}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_fluid_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_fluid_values" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong></p></li>
+<li><p><strong>Vm</strong></p></li>
+<li><p><strong>Va</strong></p></li>
+<li><p><strong>P</strong></p></li>
+<li><p><strong>Q</strong></p></li>
+<li><p><strong>tpe</strong></p></li>
+<li><p><strong>fluid_node_p2x_flow</strong></p></li>
+<li><p><strong>fluid_node_current_level</strong></p></li>
+<li><p><strong>fluid_node_spillage</strong></p></li>
+<li><p><strong>fluid_node_flow_in</strong></p></li>
+<li><p><strong>fluid_node_flow_out</strong></p></li>
+<li><p><strong>format_str</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_height">
+<span class="sig-name descname"><span class="pre">set_height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_height" title="Link to this definition"></a></dt>
+<dd><p>Set the object height
+:param h: height in pixels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_label">
+<span class="sig-name descname"><span class="pre">set_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_label" title="Link to this definition"></a></dt>
+<dd><p>Set the label content
+:param val:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_position">
+<span class="sig-name descname"><span class="pre">set_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_position" title="Link to this definition"></a></dt>
+<dd><p>Set the bus x, y position
+:param x: x in pixels
+:param y: y in pixels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_tile_color">
+<span class="sig-name descname"><span class="pre">set_tile_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brush</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QBrush</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QColor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_tile_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_tile_color" title="Link to this definition"></a></dt>
+<dd><p>Set the color of the title
+Args:</p>
+<blockquote>
+<div><p>brush:  Qt Color</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_values">
+<span class="sig-name descname"><span class="pre">set_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Va</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:10.2f}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.set_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.set_values" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong></p></li>
+<li><p><strong>Vm</strong></p></li>
+<li><p><strong>Va</strong></p></li>
+<li><p><strong>P</strong></p></li>
+<li><p><strong>Q</strong></p></li>
+<li><p><strong>tpe</strong></p></li>
+<li><p><strong>format_str</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.update_color">
+<span class="sig-name descname"><span class="pre">update_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_node_graphics.html#FluidNodeGraphicItem.update_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics.FluidNodeGraphicItem.update_color" title="Link to this definition"></a></dt>
+<dd><p>Update the colour</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-fluid-fluid-p2x-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.</span></span><span class="sig-name descname"><span class="pre">FluidP2xGraphicItem</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_p2x_graphics.html#FluidP2xGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_p2x_graphics.html#FluidP2xGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_p2x_graphics.html#FluidP2xGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics.FluidP2xGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-fluid-fluid-path-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.</span></span><span class="sig-name descname"><span class="pre">FluidPathGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem"><span class="pre">BarTerminalItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.RoundTerminalItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.RoundTerminalItem"><span class="pre">RoundTerminalItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem"><span class="pre">BarTerminalItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.RoundTerminalItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.RoundTerminalItem"><span class="pre">RoundTerminalItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath"><span class="pre">FluidPath</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">LineGraphicTemplateItem</span></code></a></p>
+<p>LineGraphicItem</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath"><span class="pre">FluidPath</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Show context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.edit">
+<span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.edit" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.mouseDoubleClickEvent" title="Link to this definition"></a></dt>
+<dd><p>On double-click, edit
+:param event:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.plot_profiles">
+<span class="sig-name descname"><span class="pre">plot_profiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.plot_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.plot_profiles" title="Link to this definition"></a></dt>
+<dd><p>Plot the time series profiles
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.set_api_object_color">
+<span class="sig-name descname"><span class="pre">set_api_object_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.set_api_object_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.set_api_object_color" title="Link to this definition"></a></dt>
+<dd><p>Gather the color from the api object and apply
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.set_colour">
+<span class="sig-name descname"><span class="pre">set_colour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QColor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PenStyle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.set_colour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.set_colour" title="Link to this definition"></a></dt>
+<dd><p>Set color and style
+:param color: QColor instance
+:param w: width
+:param style: PenStyle instance
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.to_line">
+<span class="sig-name descname"><span class="pre">to_line</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_path_graphics.html#FluidPathGraphicItem.to_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics.FluidPathGraphicItem.to_line" title="Link to this definition"></a></dt>
+<dd><p>Convert this object to transformer
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-fluid-fluid-pump-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.</span></span><span class="sig-name descname"><span class="pre">FluidPumpGraphicItem</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_pump_graphics.html#FluidPumpGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_pump_graphics.html#FluidPumpGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_pump_graphics.html#FluidPumpGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics.FluidPumpGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-fluid-fluid-turbine-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.</span></span><span class="sig-name descname"><span class="pre">FluidTurbineGraphicItem</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_turbine_graphics.html#FluidTurbineGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_turbine_graphics.html#FluidTurbineGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Fluid/fluid_turbine_graphics.html#FluidTurbineGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics.FluidTurbineGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Fluid" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

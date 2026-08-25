@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.measurement &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.measurement</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.measurement</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_at</span><span class="p">,</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.pointer_device_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointerDeviceParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">DcLine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.winding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Winding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.switch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Switch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.series_reactance</span><span class="w"> </span><span class="kn">import</span> <span class="n">SeriesReactance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.upfc</span><span class="w"> </span><span class="kn">import</span> <span class="n">UPFC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProfileFloat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span>
+
+<span class="c1"># NOTE: These areas here because this object loads first than the types file with the types aggregations</span>
+
+<span class="n">SE_BRANCH_TYPES</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Line</span><span class="p">,</span>
+    <span class="n">DcLine</span><span class="p">,</span>
+    <span class="n">Transformer2W</span><span class="p">,</span>
+    <span class="n">UPFC</span><span class="p">,</span>
+    <span class="n">Winding</span><span class="p">,</span>
+    <span class="n">Switch</span><span class="p">,</span>
+    <span class="n">SeriesReactance</span><span class="p">,</span>
+    <span class="n">Generator</span>
+<span class="p">]</span>
+<span class="n">MEASURABLE_OBJECT</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Bus</span><span class="p">,</span> <span class="n">SE_BRANCH_TYPES</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MeasurementTemplate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.MeasurementTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeasurementTemplate</span><span class="p">(</span><span class="n">PointerDeviceParent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_value&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_value_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_sigma&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_sigma_prof&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">profile_name</span><span class="o">=</span><span class="s2">&quot;value_prof&quot;</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s2">&quot;Value of the measurement&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">profile_name</span><span class="o">=</span><span class="s2">&quot;sigma_prof&quot;</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s2">&quot;Uncertainty of the measurement&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">MEASURABLE_OBJECT</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                 <span class="n">device_type</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param value: value</span>
+<span class="sd">        :param uncertainty: uncertainty (standard deviation)</span>
+<span class="sd">        :param api_obj:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param idtag:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">PointerDeviceParent</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">code</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uncertainty</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_prof</span> <span class="o">=</span> <span class="n">ProfileFloat</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_prof</span> <span class="o">=</span> <span class="n">ProfileFloat</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileFloat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_prof</span>
+
+    <span class="nd">@value_prof</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProfileFloat</span><span class="p">,</span> <span class="n">Vec</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ProfileFloat</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value_prof</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a value_prof&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MeasurementTemplate.get_value_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.MeasurementTemplate.get_value_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_prof</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sigma_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileFloat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_prof</span>
+
+    <span class="nd">@sigma_prof</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sigma_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProfileFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ProfileFloat</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_prof</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sigma_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a sigma_prof&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MeasurementTemplate.get_sigma_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.MeasurementTemplate.get_sigma_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sigma_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_prof</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeasurementTemplate.get_value_pu_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.MeasurementTemplate.get_value_pu_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value_pu_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get measurement per-unit value at a given point</span>
+<span class="sd">        :param t: None for snapshot, integer for time point</span>
+<span class="sd">        :param Sbase: Base power (100 MVA)</span>
+<span class="sd">        :return: value in p.u.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">Sbase</span></div>
+
+
+<div class="viewcode-block" id="MeasurementTemplate.get_standard_deviation_pu_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.MeasurementTemplate.get_standard_deviation_pu_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_standard_deviation_pu_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get measurement per-unit standard deviation at a given point</span>
+<span class="sd">        :param t: None for snapshot, integer for time point</span>
+<span class="sd">        :param Sbase: Base power (100 MVA)</span>
+<span class="sd">        :return: value in p.u.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sigma_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">Sbase</span></div>
+
+
+    <span class="c1"># Scalar property accessors coerce assignments to the declared schema types.</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``value``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``value``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``sigma``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
+
+    <span class="nd">@sigma</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``sigma``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PiMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PiMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PiMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bus active power injection measurement</span>
+<span class="sd">        :param value: value in MW</span>
+<span class="sd">        :param uncertainty: standard deviation in MW</span>
+<span class="sd">        :param api_obj: bus object</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">PiMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QiMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QiMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QiMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bus reactive power injection measurement</span>
+<span class="sd">        :param value: value in MVAr</span>
+<span class="sd">        :param uncertainty: standard deviation in MVAr</span>
+<span class="sd">        :param api_obj: bus object</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">QiMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PgMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PgMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PgMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator active power injection measurement</span>
+<span class="sd">        :param value: value in MW</span>
+<span class="sd">        :param uncertainty: standard deviation in MW</span>
+<span class="sd">        :param api_obj: bus object</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">PgMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QgMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QgMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QgMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator reactive power injection measurement</span>
+<span class="sd">        :param value: value in MVAr</span>
+<span class="sd">        :param uncertainty: standard deviation in MVAr</span>
+<span class="sd">        :param api_obj: bus object</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">QgMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VmMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VmMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VmMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">VmMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VaMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VaMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VaMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">VaMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PfMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PfMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PfMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">SE_BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PfMeasurement</span>
+<span class="sd">        :param value: Power flow in MW</span>
+<span class="sd">        :param uncertainty: standard deviation in MW</span>
+<span class="sd">        :param api_obj: a branch</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">PfMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QfMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QfMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QfMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">SE_BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        QfMeasurement</span>
+<span class="sd">        :param value: Power flow in MVAr</span>
+<span class="sd">        :param uncertainty: standard deviation in MVAr</span>
+<span class="sd">        :param api_obj: a branch</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">QfMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PtMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PtMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PtMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">SE_BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PtMeasurement</span>
+<span class="sd">        :param value: Power flow in MW</span>
+<span class="sd">        :param uncertainty: standard deviation in MW</span>
+<span class="sd">        :param api_obj: a branch</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">PtMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QtMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QtMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QtMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">SE_BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        QtMeasurement</span>
+<span class="sd">        :param value: Power flow in MVAr</span>
+<span class="sd">        :param uncertainty: standard deviation in MVAr</span>
+<span class="sd">        :param api_obj: a branch</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">QtMeasurementDevice</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_i_base">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.get_i_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_i_base</span><span class="p">(</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">Vbase</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vbase</span> <span class="o">*</span> <span class="mf">1.732050808</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="IfMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.IfMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IfMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">SE_BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IfMeasurement</span>
+<span class="sd">        :param value: current flow in kA, note this is the absolute value</span>
+<span class="sd">        :param uncertainty: standard deviation in kA</span>
+<span class="sd">        :param api_obj: a branch</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">IfMeasurementDevice</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IfMeasurement.get_value_pu_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.IfMeasurement.get_value_pu_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value_pu_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">get_i_base</span><span class="p">(</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">Vbase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IfMeasurement.get_standard_deviation_pu_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.IfMeasurement.get_standard_deviation_pu_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_standard_deviation_pu_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sigma_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">get_i_base</span><span class="p">(</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">Vbase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ItMeasurement">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.ItMeasurement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ItMeasurement</span><span class="p">(</span><span class="n">MeasurementTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measurement class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">uncertainty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">api_obj</span><span class="p">:</span> <span class="n">SE_BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ItMeasurement</span>
+<span class="sd">        :param value: current flow in kA, note this is the absolute value</span>
+<span class="sd">        :param uncertainty: standard deviation in kA</span>
+<span class="sd">        :param api_obj: a branch</span>
+<span class="sd">        :param name: name</span>
+<span class="sd">        :param idtag: idtag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MeasurementTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                     <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                     <span class="n">api_obj</span><span class="o">=</span><span class="n">api_obj</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                     <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                     <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">ItMeasurementDevice</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SE_BRANCH_TYPES</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        device getter</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
+
+<div class="viewcode-block" id="ItMeasurement.get_value_pu_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.ItMeasurement.get_value_pu_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value_pu_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="n">get_i_base</span><span class="p">(</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">Vbase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ItMeasurement.get_standard_deviation_pu_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.ItMeasurement.get_standard_deviation_pu_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_standard_deviation_pu_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">/</span> <span class="n">get_i_base</span><span class="p">(</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">Vbase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Fluid package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Devices.Injections package" href="VeraGridEngine.Devices.Injections.html" />
+    <link rel="prev" title="VeraGridEngine.Devices.Events package" href="VeraGridEngine.Devices.Events.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Fluid package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Devices.Fluid.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-devices-fluid-package">
+<h1>VeraGridEngine.Devices.Fluid package<a class="headerlink" href="#veragridengine-devices-fluid-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid.fluid_injection_template">
+<span id="veragridengine-devices-fluid-fluid-injection-template-module"></span><h2>VeraGridEngine.Devices.Fluid.fluid_injection_template module<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid.fluid_injection_template" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Fluid.fluid_injection_template.</span></span><span class="sig-name descname"><span class="pre">FluidInjectionTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficiency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_flow_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Fluid</span> <span class="pre">Turbine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_injection_template.html#FluidInjectionTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice" title="VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicalDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'plant',</span> <span class="pre">'generator')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'active':</span> <span class="pre">'active_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'active':</span> <span class="pre">prop:active,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'efficiency':</span> <span class="pre">prop:efficiency,</span> <span class="pre">'facility':</span> <span class="pre">prop:facility,</span> <span class="pre">'generator':</span> <span class="pre">prop:generator,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'max_flow_rate':</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'plant':</span> <span class="pre">prop:plant,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.active">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">active</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.active" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">active</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.active_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">active_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool" title="VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool"><span class="pre">ProfileBool</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.active_prof" title="Link to this definition"></a></dt>
+<dd><p>Cost profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.build_status">
+<span class="sig-name descname"><span class="pre">build_status</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.build_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.efficiency">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">efficiency</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.efficiency" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">efficiency</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.facility">
+<span class="sig-name descname"><span class="pre">facility</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.facility" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.generator">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">generator</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.generator" title="Link to this definition"></a></dt>
+<dd><p>Generator getter
+:return: Generator</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.max_flow_rate">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_flow_rate</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.max_flow_rate" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">max_flow_rate</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.plant">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">plant</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate.plant" title="Link to this definition"></a></dt>
+<dd><p>Plant getter
+:return: FluidNode</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid.fluid_node">
+<span id="veragridengine-devices-fluid-fluid-node-module"></span><h2>VeraGridEngine.Devices.Fluid.fluid_node module<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid.fluid_node" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Fluid.fluid_node.</span></span><span class="sig-name descname"><span class="pre">FluidNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_soc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_soc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spillage_cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inflow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_node.html#FluidNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice" title="VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicalDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'bus')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'inflow':</span> <span class="pre">'inflow_prof',</span> <span class="pre">'max_soc':</span> <span class="pre">'max_soc_prof',</span> <span class="pre">'min_soc':</span> <span class="pre">'min_soc_prof',</span> <span class="pre">'spillage_cost':</span> <span class="pre">'spillage_cost_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:min_level,</span> <span class="pre">prop:max_level,</span> <span class="pre">prop:min_soc,</span> <span class="pre">prop:max_soc,</span> <span class="pre">prop:initial_level,</span> <span class="pre">prop:bus,</span> <span class="pre">prop:spillage_cost,</span> <span class="pre">prop:inflow,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:min_level,</span> <span class="pre">prop:max_level,</span> <span class="pre">prop:min_soc,</span> <span class="pre">prop:max_soc,</span> <span class="pre">prop:initial_level,</span> <span class="pre">prop:bus,</span> <span class="pre">prop:spillage_cost,</span> <span class="pre">prop:inflow,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'bus':</span> <span class="pre">prop:bus,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'color':</span> <span class="pre">prop:color,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'inflow':</span> <span class="pre">prop:inflow,</span> <span class="pre">'initial_level':</span> <span class="pre">prop:initial_level,</span> <span class="pre">'max_level':</span> <span class="pre">prop:max_level,</span> <span class="pre">'max_soc':</span> <span class="pre">prop:max_soc,</span> <span class="pre">'min_level':</span> <span class="pre">prop:min_level,</span> <span class="pre">'min_soc':</span> <span class="pre">prop:min_soc,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'spillage_cost':</span> <span class="pre">prop:spillage_cost}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:min_level,</span> <span class="pre">prop:max_level,</span> <span class="pre">prop:min_soc,</span> <span class="pre">prop:max_soc,</span> <span class="pre">prop:initial_level,</span> <span class="pre">prop:bus,</span> <span class="pre">prop:spillage_cost,</span> <span class="pre">prop:inflow,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.build_status">
+<span class="sig-name descname"><span class="pre">build_status</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.build_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.bus">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">bus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.bus" title="Link to this definition"></a></dt>
+<dd><p>Bus getter function
+:return: Bus</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_node.html#FluidNode.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.copy" title="Link to this definition"></a></dt>
+<dd><p>Make a deep copy of this object
+:return: Copy of this object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_inflow_at">
+<span class="sig-name descname"><span class="pre">get_inflow_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_node.html#FluidNode.get_inflow_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_inflow_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_max_soc_at">
+<span class="sig-name descname"><span class="pre">get_max_soc_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_node.html#FluidNode.get_max_soc_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_max_soc_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_min_soc_at">
+<span class="sig-name descname"><span class="pre">get_min_soc_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_node.html#FluidNode.get_min_soc_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_min_soc_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_spillage_cost_at">
+<span class="sig-name descname"><span class="pre">get_spillage_cost_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_node.html#FluidNode.get_spillage_cost_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.get_spillage_cost_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.inflow">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">inflow</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.inflow" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">inflow</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.inflow_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">inflow_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.inflow_prof" title="Link to this definition"></a></dt>
+<dd><p>Cost profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.initial_level">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">initial_level</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.initial_level" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">initial_level</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.max_level">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_level</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.max_level" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">max_level</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.max_soc">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_soc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.max_soc" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">max_soc</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.max_soc_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_soc_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.max_soc_prof" title="Link to this definition"></a></dt>
+<dd><p>Max soc profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.min_level">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">min_level</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.min_level" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">min_level</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.min_soc">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">min_soc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.min_soc" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">min_soc</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.min_soc_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">min_soc_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.min_soc_prof" title="Link to this definition"></a></dt>
+<dd><p>Min soc profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.spillage_cost">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">spillage_cost</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.spillage_cost" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">spillage_cost</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.spillage_cost_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">spillage_cost_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode.spillage_cost_prof" title="Link to this definition"></a></dt>
+<dd><p>Cost profile
+:return: Profile</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid.fluid_p2x">
+<span id="veragridengine-devices-fluid-fluid-p2x-module"></span><h2>VeraGridEngine.Devices.Fluid.fluid_p2x module<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid.fluid_p2x" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Fluid.fluid_p2x.</span></span><span class="sig-name descname"><span class="pre">FluidP2x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficiency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_flow_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_p2x.html#FluidP2x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate" title="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FluidInjectionTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'plant',</span> <span class="pre">'generator')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'active':</span> <span class="pre">'active_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'active':</span> <span class="pre">prop:active,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'efficiency':</span> <span class="pre">prop:efficiency,</span> <span class="pre">'facility':</span> <span class="pre">prop:facility,</span> <span class="pre">'generator':</span> <span class="pre">prop:generator,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'max_flow_rate':</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'plant':</span> <span class="pre">prop:plant,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.build_status">
+<span class="sig-name descname"><span class="pre">build_status</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.build_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.facility">
+<span class="sig-name descname"><span class="pre">facility</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x.facility" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid.fluid_path">
+<span id="veragridengine-devices-fluid-fluid-path-module"></span><h2>VeraGridEngine.Devices.Fluid.fluid_path module<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid.fluid_path" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Fluid.fluid_path.</span></span><span class="sig-name descname"><span class="pre">FluidPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_flow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_flow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_path.html#FluidPath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice" title="VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicalDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'locations')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:source,</span> <span class="pre">prop:target,</span> <span class="pre">prop:min_flow,</span> <span class="pre">prop:max_flow,</span> <span class="pre">prop:locations,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:source,</span> <span class="pre">prop:target,</span> <span class="pre">prop:min_flow,</span> <span class="pre">prop:max_flow,</span> <span class="pre">prop:locations,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'color':</span> <span class="pre">prop:color,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'locations':</span> <span class="pre">prop:locations,</span> <span class="pre">'max_flow':</span> <span class="pre">prop:max_flow,</span> <span class="pre">'min_flow':</span> <span class="pre">prop:min_flow,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'source':</span> <span class="pre">prop:source,</span> <span class="pre">'target':</span> <span class="pre">prop:target}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:source,</span> <span class="pre">prop:target,</span> <span class="pre">prop:min_flow,</span> <span class="pre">prop:max_flow,</span> <span class="pre">prop:locations,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_path.html#FluidPath.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.copy" title="Link to this definition"></a></dt>
+<dd><p>Make a deep copy of this object
+:return: Copy of this object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.get_from_and_to_objects">
+<span class="sig-name descname"><span class="pre">get_from_and_to_objects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">CONNECTION_TYPE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">CONNECTION_TYPE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_path.html#FluidPath.get_from_and_to_objects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.get_from_and_to_objects" title="Link to this definition"></a></dt>
+<dd><p>Get the from and to connection objects of the branch
+:return: Object from, Object to, is it ok?</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.locations">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">locations</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocations" title="VeraGridEngine.Devices.Branches.line_locations.LineLocations"><span class="pre">LineLocations</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.locations" title="Link to this definition"></a></dt>
+<dd><p>Cost profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.max_flow">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_flow</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.max_flow" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">max_flow</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.min_flow">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">min_flow</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.min_flow" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">min_flow</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.source">
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.target">
+<span class="sig-name descname"><span class="pre">target</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath.target" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid.fluid_pump">
+<span id="veragridengine-devices-fluid-fluid-pump-module"></span><h2>VeraGridEngine.Devices.Fluid.fluid_pump module<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid.fluid_pump" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Fluid.fluid_pump.</span></span><span class="sig-name descname"><span class="pre">FluidPump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficiency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_flow_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reservoir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_pump.html#FluidPump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate" title="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FluidInjectionTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'plant',</span> <span class="pre">'generator')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'active':</span> <span class="pre">'active_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'active':</span> <span class="pre">prop:active,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'efficiency':</span> <span class="pre">prop:efficiency,</span> <span class="pre">'facility':</span> <span class="pre">prop:facility,</span> <span class="pre">'generator':</span> <span class="pre">prop:generator,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'max_flow_rate':</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'plant':</span> <span class="pre">prop:plant,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.build_status">
+<span class="sig-name descname"><span class="pre">build_status</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.build_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.facility">
+<span class="sig-name descname"><span class="pre">facility</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump.facility" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid.fluid_turbine">
+<span id="veragridengine-devices-fluid-fluid-turbine-module"></span><h2>VeraGridEngine.Devices.Fluid.fluid_turbine module<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid.fluid_turbine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Fluid.fluid_turbine.</span></span><span class="sig-name descname"><span class="pre">FluidTurbine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficiency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_flow_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Fluid/fluid_turbine.html#FluidTurbine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate" title="VeraGridEngine.Devices.Fluid.fluid_injection_template.FluidInjectionTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FluidInjectionTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'plant',</span> <span class="pre">'generator')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'active':</span> <span class="pre">'active_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:active,</span> <span class="pre">prop:efficiency,</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">prop:plant,</span> <span class="pre">prop:generator,</span> <span class="pre">prop:facility)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'active':</span> <span class="pre">prop:active,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'efficiency':</span> <span class="pre">prop:efficiency,</span> <span class="pre">'facility':</span> <span class="pre">prop:facility,</span> <span class="pre">'generator':</span> <span class="pre">prop:generator,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'max_flow_rate':</span> <span class="pre">prop:max_flow_rate,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'plant':</span> <span class="pre">prop:plant,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.build_status">
+<span class="sig-name descname"><span class="pre">build_status</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.build_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.facility">
+<span class="sig-name descname"><span class="pre">facility</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine.facility" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Fluid">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Devices.Fluid" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Devices.Events.html" class="btn btn-neutral float-left" title="VeraGridEngine.Devices.Events package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Devices.Injections.html" class="btn btn-neutral float-right" title="VeraGridEngine.Devices.Injections package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

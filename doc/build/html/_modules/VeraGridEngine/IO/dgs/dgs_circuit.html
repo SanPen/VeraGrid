@@ -1,0 +1,637 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.dgs.dgs_circuit &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.dgs.dgs_circuit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.dgs.dgs_circuit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.dgs.dgs_objects</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_populate_from_pf_object</span><span class="p">(</span><span class="n">pf_obj</span><span class="p">:</span> <span class="n">DGSElement</span><span class="p">,</span> <span class="n">dgs_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Populate a DGSElement subclass from a PowerFactory API object,</span>
+<span class="sd">    using the class schema (properties_list).</span>
+<span class="sd">    Assumes the DGSElement has an explicit __init__.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">elem</span> <span class="o">=</span> <span class="n">dgs_cls</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">dgs_cls</span><span class="o">.</span><span class="n">properties_list</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">pf_obj</span><span class="o">.</span><span class="n">name</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">elem</span>
+
+
+<div class="viewcode-block" id="parse_header">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.parse_header">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_header</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse $$ header line and return property -&gt; index map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">element_type</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># skip $$ElementType</span>
+    <span class="n">header_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name_stub</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+        <span class="n">name_stub</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">stubs</span> <span class="o">=</span> <span class="n">name_stub</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span>
+        <span class="n">prop_name</span> <span class="o">=</span> <span class="n">stubs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stubs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">name_stub</span>
+        <span class="n">header_map</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="c1"># PowerFactory exports commonly use &#39;FID&#39; as the unique identifier column.</span>
+        <span class="c1"># The schema in dgs_objects.py uses the python attribute name &#39;ID&#39;. Map both.</span>
+        <span class="k">if</span> <span class="n">prop_name</span> <span class="o">==</span> <span class="s1">&#39;FID&#39;</span><span class="p">:</span>
+            <span class="n">header_map</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+    <span class="k">return</span> <span class="n">element_type</span><span class="p">,</span> <span class="n">header_map</span></div>
+
+
+
+<div class="viewcode-block" id="DgsCircuit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.DgsCircuit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DgsCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strongly-typed container for a PowerFactory DGS file.&quot;&quot;&quot;</span>
+
+    <span class="n">_ELEMENT_CLASSES</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">General</span><span class="p">,</span>
+        <span class="n">BlkDef</span><span class="p">,</span>
+        <span class="n">BlkFrom</span><span class="p">,</span>
+        <span class="n">BlkGoto</span><span class="p">,</span>
+        <span class="n">BlkRef</span><span class="p">,</span>
+        <span class="n">BlkSig</span><span class="p">,</span>
+        <span class="n">BlkSlot</span><span class="p">,</span>
+        <span class="n">BlkSum</span><span class="p">,</span>
+        <span class="n">ChaRef</span><span class="p">,</span>
+        <span class="n">ChaVec</span><span class="p">,</span>
+        <span class="n">ElmComp</span><span class="p">,</span>
+        <span class="n">ElmDsl</span><span class="p">,</span>
+        <span class="n">ElmBranch</span><span class="p">,</span>
+        <span class="n">ElmAsm</span><span class="p">,</span>
+        <span class="n">ElmCoup</span><span class="p">,</span>
+        <span class="n">ElmFeeder</span><span class="p">,</span>
+        <span class="n">ElmGenstat</span><span class="p">,</span>
+        <span class="n">ElmLne</span><span class="p">,</span>
+        <span class="n">ElmTow</span><span class="p">,</span>
+        <span class="n">ElmZpu</span><span class="p">,</span>
+        <span class="n">ElmScap</span><span class="p">,</span>
+        <span class="n">ElmSind</span><span class="p">,</span>
+        <span class="n">ElmLnesec</span><span class="p">,</span>
+        <span class="n">ElmVac</span><span class="p">,</span>
+        <span class="n">ElmLod</span><span class="p">,</span>
+        <span class="n">ElmLodlv</span><span class="p">,</span>
+        <span class="n">ElmLodlvp</span><span class="p">,</span>
+        <span class="n">ElmNet</span><span class="p">,</span>
+        <span class="n">ElmShnt</span><span class="p">,</span>
+        <span class="n">ElmSvs</span><span class="p">,</span>
+        <span class="n">ElmSite</span><span class="p">,</span>
+        <span class="n">ElmSubstat</span><span class="p">,</span>
+        <span class="n">ElmSym</span><span class="p">,</span>
+        <span class="n">ElmTerm</span><span class="p">,</span>
+        <span class="n">ElmTr2</span><span class="p">,</span>
+        <span class="n">ElmTr3</span><span class="p">,</span>
+        <span class="n">ElmTr4</span><span class="p">,</span>
+        <span class="n">ElmXnet</span><span class="p">,</span>
+        <span class="n">ElmZone</span><span class="p">,</span>
+        <span class="n">ElmArea</span><span class="p">,</span>
+        <span class="n">General</span><span class="p">,</span>
+        <span class="n">IntFolder</span><span class="p">,</span>
+        <span class="n">IntRef</span><span class="p">,</span>
+        <span class="n">IntTemplate</span><span class="p">,</span>
+        <span class="n">IntGrf</span><span class="p">,</span>
+        <span class="n">IntGrfcon</span><span class="p">,</span>
+        <span class="n">IntGrfnet</span><span class="p">,</span>
+        <span class="n">Matrix</span><span class="p">,</span>
+        <span class="n">RelFuse</span><span class="p">,</span>
+        <span class="n">StaCubic</span><span class="p">,</span>
+        <span class="n">StaCt</span><span class="p">,</span>
+        <span class="n">StaSwitch</span><span class="p">,</span>
+        <span class="n">StaVt</span><span class="p">,</span>
+        <span class="n">TypSwitch</span><span class="p">,</span>
+        <span class="n">TypAsmo</span><span class="p">,</span>
+        <span class="n">TypCt</span><span class="p">,</span>
+        <span class="n">TypFuse</span><span class="p">,</span>
+        <span class="n">TypCon</span><span class="p">,</span>
+        <span class="n">TypGeo</span><span class="p">,</span>
+        <span class="n">TypLne</span><span class="p">,</span>
+        <span class="n">TypTow</span><span class="p">,</span>
+        <span class="n">TypSind</span><span class="p">,</span>
+        <span class="n">TypLod</span><span class="p">,</span>
+        <span class="n">TypSym</span><span class="p">,</span>
+        <span class="n">TypTr2</span><span class="p">,</span>
+        <span class="n">TypTr3</span><span class="p">,</span>
+        <span class="n">TypTr4</span><span class="p">,</span>
+        <span class="n">TypVt</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">_REGISTRY</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">element_type</span><span class="p">:</span> <span class="bp">cls</span> <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">_ELEMENT_CLASSES</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">General</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blkdefs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkDef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blkfroms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkFrom</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blkgotos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkGoto</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blkrefs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blksigs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkSig</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blkslots</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkSlot</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blksums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlkSum</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmcomps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmComp</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmdsls</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmDsl</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmbranches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmBranch</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charefs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ChaRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chavecs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ChaVec</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmasms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmAsm</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmcoups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmCoup</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmfeeders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmFeeder</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmgenstats</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmGenstat</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmlnes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmLne</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmtows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmTow</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmsinds</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmSind</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmlnesecs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmLnesec</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmvacs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmVac</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmlods</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmLod</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmlodlvs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmLodlv</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmlodlvps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmLodlvp</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmNet</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmshnts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmShnt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmsvss</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmSvs</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmzpus</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmZpu</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmscaps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmScap</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmsites</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmSite</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmsubstats</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmSubstat</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmsyms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmSym</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmterms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmTerm</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmtr2s</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmTr2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmtr3s</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmTr3</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmtr4s</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmTr4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmxnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmXnet</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmzones</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmZone</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elmareas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmArea</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intfolders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntFolder</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intrefs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inttemplates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intgrfs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntGrf</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intgrfcons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntGrfcon</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intgrfnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntGrfnet</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matrixes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Matrix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relfuses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RelFuse</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stacubics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StaCubic</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stacts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StaCt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">staswitchs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StaSwitch</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stavts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StaVt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typswitches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypSwitch</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typasmos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypAsmo</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typcts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypCt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typfuses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypFuse</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typcons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypCon</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typgeos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypGeo</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typlnes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypLne</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typtows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypTow</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typsinds</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypSind</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typlods</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypLod</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typsyms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypSym</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typtr2s</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypTr2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typtr3s</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypTr3</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typtr4s</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypTr4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typvts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TypVt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_CLASS_TO_LIST</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">General</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generals</span><span class="p">,</span>
+            <span class="n">BlkDef</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blkdefs</span><span class="p">,</span>
+            <span class="n">BlkFrom</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blkfroms</span><span class="p">,</span>
+            <span class="n">BlkGoto</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blkgotos</span><span class="p">,</span>
+            <span class="n">BlkRef</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blkrefs</span><span class="p">,</span>
+            <span class="n">BlkSig</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blksigs</span><span class="p">,</span>
+            <span class="n">BlkSlot</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blkslots</span><span class="p">,</span>
+            <span class="n">BlkSum</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">blksums</span><span class="p">,</span>
+            <span class="n">ChaRef</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">charefs</span><span class="p">,</span>
+            <span class="n">ChaVec</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">chavecs</span><span class="p">,</span>
+            <span class="n">ElmComp</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmcomps</span><span class="p">,</span>
+            <span class="n">ElmDsl</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmdsls</span><span class="p">,</span>
+            <span class="n">ElmBranch</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmbranches</span><span class="p">,</span>
+            <span class="n">ElmAsm</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmasms</span><span class="p">,</span>
+            <span class="n">ElmCoup</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmcoups</span><span class="p">,</span>
+            <span class="n">ElmFeeder</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmfeeders</span><span class="p">,</span>
+            <span class="n">ElmGenstat</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmgenstats</span><span class="p">,</span>
+            <span class="n">ElmLne</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmlnes</span><span class="p">,</span>
+            <span class="n">ElmTow</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmtows</span><span class="p">,</span>
+            <span class="n">ElmZpu</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmzpus</span><span class="p">,</span>
+            <span class="n">ElmScap</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmscaps</span><span class="p">,</span>
+            <span class="n">ElmSind</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmsinds</span><span class="p">,</span>
+            <span class="n">ElmLnesec</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmlnesecs</span><span class="p">,</span>
+            <span class="n">ElmVac</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmvacs</span><span class="p">,</span>
+            <span class="n">ElmLod</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmlods</span><span class="p">,</span>
+            <span class="n">ElmLodlv</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmlodlvs</span><span class="p">,</span>
+            <span class="n">ElmLodlvp</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmlodlvps</span><span class="p">,</span>
+            <span class="n">ElmNet</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmnets</span><span class="p">,</span>
+            <span class="n">ElmShnt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmshnts</span><span class="p">,</span>
+            <span class="n">ElmSvs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmsvss</span><span class="p">,</span>
+            <span class="n">ElmSite</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmsites</span><span class="p">,</span>
+            <span class="n">ElmSubstat</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmsubstats</span><span class="p">,</span>
+            <span class="n">ElmSym</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmsyms</span><span class="p">,</span>
+            <span class="n">ElmTerm</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmterms</span><span class="p">,</span>
+            <span class="n">ElmTr2</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmtr2s</span><span class="p">,</span>
+            <span class="n">ElmTr3</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmtr3s</span><span class="p">,</span>
+            <span class="n">ElmTr4</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmtr4s</span><span class="p">,</span>
+            <span class="n">ElmXnet</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmxnets</span><span class="p">,</span>
+            <span class="n">ElmZone</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmzones</span><span class="p">,</span>
+            <span class="n">ElmArea</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elmareas</span><span class="p">,</span>
+            <span class="n">IntFolder</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">intfolders</span><span class="p">,</span>
+            <span class="n">IntRef</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">intrefs</span><span class="p">,</span>
+            <span class="n">IntTemplate</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inttemplates</span><span class="p">,</span>
+            <span class="n">IntGrf</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">intgrfs</span><span class="p">,</span>
+            <span class="n">IntGrfcon</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">intgrfcons</span><span class="p">,</span>
+            <span class="n">IntGrfnet</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">intgrfnets</span><span class="p">,</span>
+            <span class="n">Matrix</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrixes</span><span class="p">,</span>
+            <span class="n">RelFuse</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">relfuses</span><span class="p">,</span>
+            <span class="n">StaCubic</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacubics</span><span class="p">,</span>
+            <span class="n">StaCt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacts</span><span class="p">,</span>
+            <span class="n">StaSwitch</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">staswitchs</span><span class="p">,</span>
+            <span class="n">StaVt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stavts</span><span class="p">,</span>
+            <span class="n">TypSwitch</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typswitches</span><span class="p">,</span>
+            <span class="n">TypAsmo</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typasmos</span><span class="p">,</span>
+            <span class="n">TypCt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typcts</span><span class="p">,</span>
+            <span class="n">TypFuse</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typfuses</span><span class="p">,</span>
+            <span class="n">TypCon</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typcons</span><span class="p">,</span>
+            <span class="n">TypGeo</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typgeos</span><span class="p">,</span>
+            <span class="n">TypLne</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typlnes</span><span class="p">,</span>
+            <span class="n">TypTow</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typtows</span><span class="p">,</span>
+            <span class="n">TypSind</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typsinds</span><span class="p">,</span>
+            <span class="n">TypLod</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typlods</span><span class="p">,</span>
+            <span class="n">TypSym</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typsyms</span><span class="p">,</span>
+            <span class="n">TypTr2</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typtr2s</span><span class="p">,</span>
+            <span class="n">TypTr3</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typtr3s</span><span class="p">,</span>
+            <span class="n">TypTr4</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typtr4s</span><span class="p">,</span>
+            <span class="n">TypVt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">typvts</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="DgsCircuit.new_id">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.DgsCircuit.new_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_counter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DgsCircuit.add_element_cubicles">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.DgsCircuit.add_element_cubicles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_element_cubicles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dgs_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ElmTerm</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add cubicles + their StaSwitch objects.</span>
+<span class="sd">        IMPORTANT: Import expects StaSwitch.fold_id == StaCubic.ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dgs_buses</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">StaCubic</span><span class="p">()</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_id</span><span class="p">()</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">loc_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;StaCubic_</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">obj_id</span> <span class="o">=</span> <span class="n">element_id</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">obj_bus</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">fold_id</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">ID</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">it2p1</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">it2p2</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">it2p3</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stacubics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+            <span class="c1"># Create the switch that belongs to this cubicle</span>
+            <span class="n">sw</span> <span class="o">=</span> <span class="n">StaSwitch</span><span class="p">()</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_id</span><span class="p">()</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">loc_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;StaSwitch_</span><span class="si">{</span><span class="n">sw</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">fold_id</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ID</span>  <span class="c1"># points to StaCubic.ID</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">on_off</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># default closed</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">typ_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">iUse</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">for_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">aUsage</span> <span class="o">=</span> <span class="s2">&quot;cbk&quot;</span>  <span class="c1"># matches typical PF exports</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">staswitchs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DgsCircuit.parse_dgs">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.DgsCircuit.parse_dgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_dgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse a DGS file and populate the typed lists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">current_cls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">header_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">raw_line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">raw_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+                    <span class="c1"># Empty line or comment</span>
+                    <span class="k">pass</span>
+
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$$&quot;</span><span class="p">):</span>
+                    <span class="c1"># Header line</span>
+                    <span class="n">element_type</span><span class="p">,</span> <span class="n">header_map</span> <span class="o">=</span> <span class="n">parse_header</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="n">current_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">element_type</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Data line</span>
+                    <span class="k">if</span> <span class="n">current_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">obj</span> <span class="o">=</span> <span class="n">current_cls</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">,</span> <span class="n">header_map</span><span class="o">=</span><span class="n">header_map</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">objects_lst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CLASS_TO_LIST</span><span class="p">[</span><span class="n">current_cls</span><span class="p">]</span>
+                            <span class="n">objects_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DgsCircuit.write_dgs">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.DgsCircuit.write_dgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_dgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the circuit back to a DGS file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+            <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">comment</span> <span class="o">+=</span> <span class="s2">&quot;* Created with VeraGrid</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">comment</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">comment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ELEMENT_CLASSES</span><span class="p">:</span>
+                <span class="n">objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DGSElement</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CLASS_TO_LIST</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;$$&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">element_type</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">dgs_type</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">properties_list</span>
+                    <span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="k">for</span> <span class="n">prp</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">properties_list</span><span class="p">:</span>
+                        <span class="n">comment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">prp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prp</span><span class="o">.</span><span class="n">dgs_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prp</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                    <span class="n">comment</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">comment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">to_dgs_line</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DgsCircuit.from_api">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_circuit.DgsCircuit.from_api">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">study_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pf_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate this (empty) PfCircuit from an active PowerFactory application.</span>
+<span class="sd">        Assumes:</span>
+<span class="sd">        - self is empty (no existing elements)</span>
+<span class="sd">        - schema registries (_ELEMENT_CLASSES, _CLASS_TO_LIST) are complete</span>
+<span class="sd">        :param study_case_name: case name if any</span>
+<span class="sd">        :param pf_path: PowerFactory path</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pf_path</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">pf_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;C:\Program Files\DIgSILENT\PowerFactory 2025 SP1&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pf_path</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span>
+        <span class="n">python_folder</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">minor</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">module_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pf_path</span><span class="p">,</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span> <span class="n">python_folder</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">module_folder</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PowerFactory path for the compatible module not found: </span><span class="si">{</span><span class="n">module_folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add the pf path to the system path</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pf_path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_folder</span><span class="p">)</span>
+
+        <span class="c1"># Obtain PowerFactory application ------------------------------------------------------------------------------</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">powerfactory</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pf</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;loaded PowerFactory version </span><span class="si">{</span><span class="n">pf</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PowerFactory Python module not available. &quot;</span>
+                  <span class="s2">&quot;Ensure this is executed inside a PowerFactory Python environment.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">GetApplicationExt</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">pf</span><span class="o">.</span><span class="n">ExitError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;error.code = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">error</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to obtain PowerFactory application. &quot;</span>
+                  <span class="s2">&quot;Ensure PowerFactory is running and a project is open.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Activate study case  -----------------------------------------------------------------------------------------</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">project</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetActiveProject</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No active PowerFactory project.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No active PowerFactory project.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Fetch all study cases</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cases</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">GetContents</span><span class="p">(</span><span class="s2">&quot;*.IntCase&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to retrieve study cases.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cases</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No study cases found in the project.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">active_case</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">study_case_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">case</span><span class="o">.</span><span class="n">loc_name</span> <span class="o">==</span> <span class="n">study_case_name</span><span class="p">:</span>
+                    <span class="n">active_case</span> <span class="o">=</span> <span class="n">case</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">active_case</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Study case &#39;</span><span class="si">{</span><span class="n">study_case_name</span><span class="si">}</span><span class="s2">&#39; not found in project.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use currently active case, if any</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">active_case</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetActiveStudyCase</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                <span class="n">active_case</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">active_case</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No study case is active. Please specify study_case_name explicitly.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Activate selected case</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">active_case</span><span class="o">.</span><span class="n">Activate</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to activate study case &#39;</span><span class="si">{</span><span class="n">active_case</span><span class="o">.</span><span class="n">loc_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Iterate over all known DGSElement subclasses</span>
+        <span class="k">for</span> <span class="n">dgs_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ELEMENT_CLASSES</span><span class="p">:</span>
+            <span class="n">pf_class_name</span> <span class="o">=</span> <span class="n">dgs_cls</span><span class="o">.</span><span class="n">element_type</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pf_objects</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetCalcRelevantObjects</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*.</span><span class="si">{</span><span class="n">pf_class_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="n">pf_objects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">pf_objects</span><span class="p">:</span>
+                <span class="n">target_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CLASS_TO_LIST</span><span class="p">[</span><span class="n">dgs_cls</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">pf_obj</span> <span class="ow">in</span> <span class="n">pf_objects</span><span class="p">:</span>
+                    <span class="n">elem</span> <span class="o">=</span> <span class="n">_populate_from_pf_object</span><span class="p">(</span><span class="n">pf_obj</span><span class="p">,</span> <span class="n">dgs_cls</span><span class="p">)</span>
+                    <span class="n">target_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

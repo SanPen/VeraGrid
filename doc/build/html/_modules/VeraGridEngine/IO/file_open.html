@@ -1,0 +1,850 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.file_open &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.file_open</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.file_open</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multiverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiVerse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_data_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesDataParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesRecoveryMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.excel_interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">load_from_xls</span><span class="p">,</span> <span class="n">interpret_excel_v3</span><span class="p">,</span> <span class="n">interprete_excel_v2</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.pack_unpack</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">parse_veragrid_data</span><span class="p">,</span> <span class="n">parse_multiverse_data</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.legacy.matpower_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpret_data_v1</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.matpower_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatpowerCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.matpower_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">matpower_to_veragrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.dgs.dgs_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">dgs_to_circuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.dpx_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dpx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.ipa_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iPA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.json_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_json</span><span class="p">,</span> <span class="n">parse_json_data_v3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.raw_parser_writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_raw</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.raw_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">psse_to_veragrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.epc.epc_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerWorldParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cim16.cim_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIMImport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">cgmes_to_veragrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.zip_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_frames_from_zip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.sqlite_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_data_frames_from_sqlite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.h5_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_h5</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.rawx_parser_writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_rawx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.pypsa_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_pypsa_netcdf</span><span class="p">,</span> <span class="n">parse_pypsa_hdf5</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.pandapower_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panda2VeraGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.ucte_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_ucte_to_veragrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.rte_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">rte2veragrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.anarede</span><span class="w"> </span><span class="kn">import</span> <span class="n">PWFParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.iidm.iidm_parser_pypowsybl</span><span class="w"> </span><span class="kn">import</span> <span class="n">IidmParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CGMESVersions</span><span class="p">,</span> <span class="n">CgmesTopologyMode</span><span class="p">,</span> <span class="n">FileType</span>
+
+
+<div class="viewcode-block" id="FileOpenOptions">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.FileOpenOptions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileOpenOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is to store the extra stuff that needs to be passed to open more complex files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="c1"># General</span>
+                 <span class="n">file_type</span><span class="p">:</span> <span class="n">FileType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">crash_on_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="c1"># CGMEs</span>
+                 <span class="n">cgmes_version</span><span class="p">:</span> <span class="n">CGMESVersions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cgmes_map_areas_like_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">cgmes_try_to_map_dc_to_hvdc_line</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">cgmes_topology_mode</span><span class="p">:</span> <span class="n">CgmesTopologyMode</span> <span class="o">=</span> <span class="n">CgmesTopologyMode</span><span class="o">.</span><span class="n">Auto</span><span class="p">,</span>
+                 <span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">cgmes_recovery_mode</span><span class="p">:</span> <span class="n">CgmesRecoveryMode</span> <span class="o">=</span> <span class="n">CgmesRecoveryMode</span><span class="o">.</span><span class="n">Auto</span><span class="p">,</span>
+                 <span class="c1"># PSSe</span>
+                 <span class="n">psse_adjust_taps_to_discrete_positions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">psse_use_short_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">psse_flatten_virtual_taps</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="c1"># DGS</span>
+                 <span class="n">dgs_use_vsc_for_injections</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">dgs_use_dynamic_information</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param file_type: FileType to load, none is unsure</span>
+<span class="sd">        :param crash_on_errors: Mainly debug feature to allow finding the exact crash issue when loading files</span>
+<span class="sd">        :param cgmes_version: CGMES version to load</span>
+<span class="sd">        :param cgmes_map_areas_like_raw: If active the CGMEs mapping will be:</span>
+<span class="sd">                                            GeographicalRegion &lt;-&gt; Area</span>
+<span class="sd">                                            SubGeographicalRegion &lt;-&gt; Zone</span>
+<span class="sd">                                        Otherwise:</span>
+<span class="sd">                                            GeographicalRegion &lt;-&gt; Country</span>
+<span class="sd">                                            SubGeographicalRegion &lt;-&gt; Community</span>
+<span class="sd">        :param cgmes_try_to_map_dc_to_hvdc_line: Converters and DC lines in CGMES are attempted to be converted</span>
+<span class="sd">                                            to the simplified HvdcLine objects in VeraGrid</span>
+<span class="sd">        :param cgmes_topology_mode: CGMES topology conversion mode.</span>
+<span class="sd">                                    Auto: decide from model content.</span>
+<span class="sd">                                    ConnectivityNode: import node-breaker view.</span>
+<span class="sd">                                    TopologicalNode: import bus-branch view.</span>
+<span class="sd">        :param cgmes_create_busbar_section_for_every_connectivity_node: If true, create a BusBar for each</span>
+<span class="sd">                                                                         ConnectivityNode similarly to powsybl.</span>
+<span class="sd">        :param psse_adjust_taps_to_discrete_positions: Modify the tap angle and module to the discrete positions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># General</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span><span class="p">:</span> <span class="n">FileType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">file_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crash_on_errors</span> <span class="o">=</span> <span class="n">crash_on_errors</span>
+
+        <span class="c1"># CGMES options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">:</span> <span class="n">CGMESVersions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">cgmes_version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_map_areas_like_raw</span> <span class="o">=</span> <span class="n">cgmes_map_areas_like_raw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_try_to_map_dc_to_hvdc_line</span> <span class="o">=</span> <span class="n">cgmes_try_to_map_dc_to_hvdc_line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_topology_mode</span><span class="p">:</span> <span class="n">CgmesTopologyMode</span> <span class="o">=</span> <span class="n">cgmes_topology_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_recovery_mode</span><span class="p">:</span> <span class="n">CgmesRecoveryMode</span> <span class="o">=</span> <span class="n">cgmes_recovery_mode</span>
+
+        <span class="c1"># PSS/e options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psse_adjust_taps_to_discrete_positions</span> <span class="o">=</span> <span class="n">psse_adjust_taps_to_discrete_positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psse_use_short_names</span> <span class="o">=</span> <span class="n">psse_use_short_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psse_flatten_virtual_taps</span> <span class="o">=</span> <span class="n">psse_flatten_virtual_taps</span>
+
+        <span class="c1"># DGS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_use_vsc_for_injections</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">dgs_use_vsc_for_injections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_use_dynamic_information</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">dgs_use_dynamic_information</span></div>
+
+
+
+<div class="viewcode-block" id="open_cgmes">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.open_cgmes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_cgmes</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+               <span class="n">version</span><span class="p">:</span> <span class="n">CGMESVersions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">cgmes_map_areas_like_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">try_to_map_dc_to_hvdc_line</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">cgmes_topology_mode</span><span class="p">:</span> <span class="n">CgmesTopologyMode</span> <span class="o">=</span> <span class="n">CgmesTopologyMode</span><span class="o">.</span><span class="n">Auto</span><span class="p">,</span>
+               <span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">cgmes_logger</span><span class="p">:</span> <span class="n">DataLogger</span> <span class="o">=</span> <span class="n">DataLogger</span><span class="p">(),</span>
+               <span class="n">cgmes_recovery_mode</span><span class="p">:</span> <span class="n">CgmesRecoveryMode</span> <span class="o">=</span> <span class="n">CgmesRecoveryMode</span><span class="o">.</span><span class="n">Auto</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">CgmesCircuit</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load cgmes files</span>
+<span class="sd">    :param files: file or list of files</span>
+<span class="sd">    :param version:</span>
+<span class="sd">    :param cgmes_map_areas_like_raw:</span>
+<span class="sd">    :param try_to_map_dc_to_hvdc_line:</span>
+<span class="sd">    :param cgmes_topology_mode:</span>
+<span class="sd">    :param cgmes_create_busbar_section_for_every_connectivity_node:</span>
+<span class="sd">    :param text_func:</span>
+<span class="sd">    :param progress_func:</span>
+<span class="sd">    :param cgmes_logger:</span>
+<span class="sd">    :param cgmes_recovery_mode:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data_parser</span> <span class="o">=</span> <span class="n">CgmesDataParser</span><span class="p">(</span>
+        <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+        <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">cgmes_logger</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">data_parser</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">files</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">data_parser</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Onli file names or list of files are supported&quot;</span><span class="p">)</span>
+
+    <span class="n">cgmes_version</span> <span class="o">=</span> <span class="n">data_parser</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">version</span>
+    <span class="k">if</span> <span class="n">cgmes_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cgmes_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span>
+
+    <span class="n">cgmes_circuit</span> <span class="o">=</span> <span class="n">CgmesCircuit</span><span class="p">(</span>
+        <span class="n">cgmes_version</span><span class="o">=</span><span class="n">cgmes_version</span><span class="p">,</span>
+        <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+        <span class="n">cgmes_map_areas_like_raw</span><span class="o">=</span><span class="n">cgmes_map_areas_like_raw</span><span class="p">,</span>
+        <span class="n">cgmes_recovery_mode</span><span class="o">=</span><span class="n">cgmes_recovery_mode</span><span class="p">,</span>
+        <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">cgmes_logger</span>
+    <span class="p">)</span>
+    <span class="n">cgmes_circuit</span><span class="o">.</span><span class="n">parse_files</span><span class="p">(</span><span class="n">data_parser</span><span class="o">=</span><span class="n">data_parser</span><span class="p">)</span>
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">cgmes_to_veragrid</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_circuit</span><span class="p">,</span>
+        <span class="n">map_dc_to_hvdc_line</span><span class="o">=</span><span class="n">try_to_map_dc_to_hvdc_line</span><span class="p">,</span>
+        <span class="n">cgmes_topology_mode</span><span class="o">=</span><span class="n">cgmes_topology_mode</span><span class="p">,</span>
+        <span class="n">create_busbar_section_for_every_connectivity_node</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span>
+        <span class="p">),</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">cgmes_logger</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">cgmes_circuit</span></div>
+
+
+
+<div class="viewcode-block" id="open_ucte">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.open_ucte">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_ucte</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+              <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param files: files or list of files</span>
+<span class="sd">    :param text_func:</span>
+<span class="sd">    :param progress_func:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ucte_grid</span> <span class="o">=</span> <span class="n">UcteCircuit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ucte_grid</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">files</span><span class="p">],</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">ucte_grid</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only file names or list of files are supported&quot;</span><span class="p">)</span>
+
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">convert_ucte_to_veragrid</span><span class="p">(</span><span class="n">ucte_grid</span><span class="o">=</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circuit</span></div>
+
+
+
+<div class="viewcode-block" id="determine_file_type">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.determine_file_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">determine_file_type</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to determine the type of file</span>
+<span class="sd">    The result is stored in self.file_type</span>
+<span class="sd">    :param file_name: file path(s) with the extension</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+        <span class="n">looks_like_ucte</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+            <span class="c1"># Use only the final suffix. Joining all suffixes breaks normal</span>
+            <span class="c1"># dotted names such as &quot;case.4.10.gridcal&quot;.</span>
+            <span class="n">file_extension</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;.zip&#39;</span><span class="p">]:</span>
+                <span class="n">looks_like_ucte</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.ucte&#39;</span><span class="p">]:</span>
+                <span class="n">looks_like_ucte</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">looks_like_ucte</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">looks_like_ucte</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">UCTE</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># needs further clarification</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Use the final suffix for normal formats. Joining all suffixes breaks</span>
+        <span class="c1"># dotted names such as &quot;case.4.10.gridcal&quot;.</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">file_extension</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">suffixes</span> <span class="o">=</span> <span class="p">[</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">suffixes</span><span class="p">]</span>
+        <span class="n">compound_extension</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">suffixes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">suffixes</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">file_extension</span>
+        <span class="c1"># print(name, file_extension)</span>
+        <span class="k">if</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.xls&#39;</span><span class="p">,</span> <span class="s1">&#39;.xlsx&#39;</span><span class="p">]:</span>
+
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">generic_excel</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.gridcal&#39;</span><span class="p">,</span> <span class="s1">&#39;.veragrid&#39;</span><span class="p">]:</span>
+
+            <span class="c1"># open file content</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.dgridcal&#39;</span><span class="p">,</span> <span class="s1">&#39;.dveragrid&#39;</span><span class="p">]:</span>
+
+            <span class="c1"># open file content</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_delta</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.sqlite&#39;</span><span class="p">:</span>
+
+            <span class="c1"># open file content</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_sqlite</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.dgs&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DGS</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.gch5&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_h5</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.m&#39;</span><span class="p">,</span> <span class="s1">&#39;.matpower&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Matpower</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.dpx&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DPX</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.pwf&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PWF</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_json</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.ejson3&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_ejson3</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.raw&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_raw</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.rawx&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_rawx</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.epc&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">EPC</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;.zip&#39;</span><span class="p">]:</span>
+            <span class="c1"># inconclusive</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.hdf5&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PyPsa_h5</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.nc&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PyPsa</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.p&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PandaPower</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.uct&#39;</span> <span class="ow">or</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.ucte&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">UCTE</span>
+
+        <span class="k">elif</span> <span class="p">(</span><span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.iidm&#39;</span>
+              <span class="ow">or</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.xiidm&#39;</span>
+              <span class="ow">or</span> <span class="n">compound_extension</span> <span class="o">==</span> <span class="s1">&#39;.xiidm.bz2&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Iidm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="FileOpen">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.FileOpen">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileOpen</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    File open interface</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">file_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+                 <span class="n">previous_circuit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">options</span><span class="p">:</span> <span class="n">FileOpenOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        File open handler</span>
+<span class="sd">        :param file_name: name of the file</span>
+<span class="sd">        :param previous_circuit: previous circuit, to generate diffs</span>
+<span class="sd">        :param options: FileOpenOptions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">file_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="p">:</span> <span class="n">MultiVerse</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">:</span> <span class="n">FileOpenOptions</span> <span class="o">=</span> <span class="n">options</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">FileOpenOptions</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_circuit</span><span class="p">:</span> <span class="n">CgmesCircuit</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_files</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_logger</span> <span class="o">=</span> <span class="n">DataLogger</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_circuit</span> <span class="o">=</span> <span class="n">previous_circuit</span>
+
+        <span class="c1"># Determine if the file exists</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;File not found :( </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;File not found :( </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;file_name type not supported :( </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">))</span>
+
+        <span class="c1"># determine the file type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span><span class="p">:</span> <span class="n">FileType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">file_type</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Try to determine the type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">=</span> <span class="n">determine_file_type</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileOpen.open">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.FileOpen.open">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load VeraGrid compatible file</span>
+<span class="sd">        :param text_func: pointer to function that prints the names</span>
+<span class="sd">        :param progress_func: pointer to function that prints the progress 0~100</span>
+<span class="sd">        :return: MultiCircuit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="c1"># --- VeraGrid Core &amp; Excel Variants ---</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="c1"># open file content</span>
+                <span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">json_files</span><span class="p">,</span>
+                 <span class="n">has_multiverse_data</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_frames_from_zip</span><span class="p">(</span><span class="n">file_name_zip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                                            <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                            <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                            <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="c1"># interpret file content</span>
+                <span class="k">if</span> <span class="n">data_dictionary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">has_multiverse_data</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span> <span class="o">=</span> <span class="n">parse_multiverse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
+                                                                <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">json_files</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
+                                                                <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                                <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_model</span>
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
+                                                           <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                           <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                           <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Error while reading the file :(&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># --- VeraGrid Data Serialization ---</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_delta</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="c1"># open file content</span>
+                <span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">json_files</span><span class="p">,</span>
+                 <span class="n">has_multiverse_data</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_frames_from_zip</span><span class="p">(</span><span class="n">file_name_zip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                                            <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                            <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                            <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="c1"># interpret file content</span>
+                <span class="k">if</span> <span class="n">data_dictionary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">has_multiverse_data</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span> <span class="o">=</span> <span class="n">parse_multiverse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
+                                                                <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">json_files</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
+                                                                <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                                <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_model</span>
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
+                                                           <span class="n">previous_circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_circuit</span><span class="p">,</span>
+                                                           <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                           <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                           <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Error while reading the file :(&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_ejson3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_json_data_v3</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_xlsx1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data_dictionary</span> <span class="o">=</span> <span class="n">load_from_xls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">interpret_data_v1</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_xlsx2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data_dictionary</span> <span class="o">=</span> <span class="n">load_from_xls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">interprete_excel_v2</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_xlsx3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data_dictionary</span> <span class="o">=</span> <span class="n">load_from_xls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">interpret_excel_v3</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_xlsx4</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data_dictionary</span> <span class="o">=</span> <span class="n">load_from_xls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data_dictionary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
+                                                       <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                       <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                       <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Error while reading the file :(&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">generic_excel</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data_dictionary</span> <span class="o">=</span> <span class="n">load_from_xls</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="c1"># Pass the table-like data dictionary to objects in this circuit</span>
+                <span class="k">if</span> <span class="s1">&#39;version&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_dictionary</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">interpret_data_v1</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">data_dictionary</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">interprete_excel_v2</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">data_dictionary</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">3.0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">interpret_excel_v3</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">data_dictionary</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">4.0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">data_dictionary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
+                                                           <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                           <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                                           <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Error while reading the file :(&quot;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;The excel file could not be processed&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_sqlite</span><span class="p">:</span>
+            <span class="c1"># open file content</span>
+            <span class="n">data_dictionary</span> <span class="o">=</span> <span class="n">open_data_frames_from_sqlite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                                           <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                           <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+            <span class="c1"># interpret file content</span>
+            <span class="k">if</span> <span class="n">data_dictionary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Error while reading the file :(&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_h5</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">open_h5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span> <span class="n">prog_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_json</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="c1"># --- Common Power Flow Formats ---</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Matpower</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">m_grid</span> <span class="o">=</span> <span class="n">MatpowerCircuit</span><span class="p">()</span>
+                <span class="n">m_grid</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">matpower_to_veragrid</span><span class="p">(</span><span class="n">m_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DPX</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">log</span> <span class="o">=</span> <span class="n">load_dpx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">+=</span> <span class="n">log</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PWF</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">parser</span> <span class="o">=</span> <span class="n">PWFParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_veragrid</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">+=</span> <span class="n">parser</span><span class="o">.</span><span class="n">logger</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">EPC</span><span class="p">:</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">PowerWorldParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">circuit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">+=</span> <span class="n">parser</span><span class="o">.</span><span class="n">logger</span>
+
+        <span class="c1"># --- Python Modeling Frameworks ---</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PyPsa</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_pypsa_netcdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PyPsa_h5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parse_pypsa_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PandaPower</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">Panda2VeraGrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span><span class="o">.</span><span class="n">get_multicircuit</span><span class="p">()</span>
+
+        <span class="c1"># --- Commercial &amp; Industrial Standards ---</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_raw</span><span class="p">:</span>
+            <span class="n">pss_grid</span> <span class="o">=</span> <span class="n">read_raw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">psse_to_veragrid</span><span class="p">(</span>
+                <span class="n">psse_circuit</span><span class="o">=</span><span class="n">pss_grid</span><span class="p">,</span>
+                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                <span class="n">adjust_taps_to_discrete_positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">psse_adjust_taps_to_discrete_positions</span><span class="p">,</span>
+                <span class="n">use_short_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">psse_use_short_names</span><span class="p">,</span>
+                <span class="n">flatten_virtual_taps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">psse_flatten_virtual_taps</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_rawx</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">pss_grid</span> <span class="o">=</span> <span class="n">parse_rawx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">psse_to_veragrid</span><span class="p">(</span>
+                    <span class="n">psse_circuit</span><span class="o">=</span><span class="n">pss_grid</span><span class="p">,</span>
+                    <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                    <span class="n">adjust_taps_to_discrete_positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">psse_adjust_taps_to_discrete_positions</span><span class="p">,</span>
+                    <span class="n">use_short_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">psse_use_short_names</span><span class="p">,</span>
+                    <span class="n">flatten_virtual_taps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">psse_flatten_virtual_taps</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DGS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">dgs_to_circuit</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                    <span class="n">logger_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                    <span class="n">use_vsc_for_injections</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_use_vsc_for_injections</span><span class="p">,</span>
+                    <span class="n">use_dynamic_information</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_use_dynamic_information</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># --- European Grid Standards &amp; RTE ---</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Iidm</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">parser</span> <span class="o">=</span> <span class="n">IidmParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">CGMES</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_circuit</span> <span class="o">=</span> <span class="n">open_cgmes</span><span class="p">(</span>
+                <span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">,</span>  <span class="c1"># will be determined inside if possible</span>
+                <span class="n">cgmes_map_areas_like_raw</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_map_areas_like_raw</span><span class="p">,</span>
+                <span class="n">try_to_map_dc_to_hvdc_line</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_try_to_map_dc_to_hvdc_line</span><span class="p">,</span>
+                <span class="n">cgmes_topology_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_topology_mode</span><span class="p">,</span>
+                <span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span><span class="o">=</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_create_busbar_section_for_every_connectivity_node</span>
+                <span class="p">),</span>
+                <span class="n">cgmes_recovery_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">cgmes_recovery_mode</span><span class="p">,</span>
+                <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                <span class="n">cgmes_logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cgmes_logger</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">UCTE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">open_ucte</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                     <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                     <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                     <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">RTE_xml</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">is_valid_rte</span> <span class="o">=</span> <span class="n">rte2veragrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">CIM</span><span class="p">:</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">CIMImport</span><span class="p">(</span><span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span> <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">load_cim_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">+=</span> <span class="n">parser</span><span class="o">.</span><span class="n">logger</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">IPA</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">load_iPA</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This acts as a safety net if a new member is added to the Enum later</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span></div>
+
+
+<div class="viewcode-block" id="FileOpen.check_json_type">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.IO.html#VeraGridEngine.IO.file_open.FileOpen.check_json_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_json_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the json file type from its internal data</span>
+<span class="sd">        :param file_name: file path</span>
+<span class="sd">        :return: data[&#39;type&#39;] | &#39;Not json file&#39; | &#39;Unknown json file&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;Not json file&#39;</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="s1">&#39;Unknown json file&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">&quot;File name is not a string&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;Not json file&#39;</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

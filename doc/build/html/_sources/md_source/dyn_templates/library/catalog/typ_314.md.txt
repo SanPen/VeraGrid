@@ -1,0 +1,53 @@
+# Limit (parameter) (complex)
+
+This is Basic Block Catalog type `314` (`Limit [p] (complex)`). It processes real and imaginary components of complex-valued signals.
+
+<!-- veragrid-block-introduction:start -->
+**Limit (parameter) (complex)** represents a nonlinear control constraint or piecewise characteristic. Limits, deadbands, rate bounds, and hysteresis reproduce actuator capability and protection logic that a purely linear model cannot represent. The active branch can change when a threshold is crossed.
+
+## Typical use
+
+- Use it to model physical saturation, insensitive regions, slew limits, or bounded commands.
+- Choose thresholds in consistent units and inspect behavior exactly at switching boundaries.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Complex / Operations`.
+- Inputs: 2.
+- Outputs: 2.
+- Declared states: 0.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (Limit [p] (complex)_{mag} - \sqrt{d \cdot d + q \cdot q})
+$$
+
+$$
+0 = (Limit [p] (complex)_{rescale\_factor} - (proc_{select\_0} \cdot \frac{Limit [p] (complex)_{mag}}{MAG_{MAX}} + (1 - proc_{select\_0}) \cdot 1))
+$$
+
+$$
+0 = (yo_{d} - \frac{d}{Limit [p] (complex)_{rescale\_factor}})
+$$
+
+$$
+0 = (yo_{q} - \frac{q}{Limit [p] (complex)_{rescale\_factor}})
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `d` | Input signal consumed by the block | model-dependent |
+| Input | `q` | Input signal consumed by the block | model-dependent |
+| Output | `yo_d` | Output signal produced by the block | model-dependent |
+| Output | `yo_q` | Output signal produced by the block | model-dependent |
+| Parameter | `MAG_MAX` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

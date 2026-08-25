@@ -1,0 +1,513 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to VeraGrid’s documentation! &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="_static/style.css?v=ba3a54df" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="💽 Installation" href="md_source/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to VeraGrid’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-veragrid-s-documentation">
+<h1>Welcome to VeraGrid’s documentation!<a class="headerlink" href="#welcome-to-veragrid-s-documentation" title="Link to this heading"></a></h1>
+<figure class="align-default">
+<img alt="VeraGrid banner" src="_images/VeraGrid_banner.png" />
+</figure>
+<p>VeraGrid is a top tier power systems planning and simulation software. As
+such it has all the static analysis studies that you can think of, plus
+linear and non-linear optimization functions. Some of these functions
+are well known, while others you may have never heard of as they are a
+product of cutting-edge research.</p>
+<figure class="align-default">
+<img alt="VeraGrid main figure" src="_images/VeraGrid_yt.png" />
+</figure>
+<p><a class="reference external" href="https://www.bestpractices.dev/projects/13016"><img alt="OpenSSF Best Practices" src="https://www.bestpractices.dev/projects/13016/badge" /></a> <a class="reference external" href="https://github.com/SanPen/VeraGrid/actions/workflows/dependabot/update-graph"><img alt="Dependency Graph" src="https://github.com/SanPen/VeraGrid/actions/workflows/dependabot/update-graph/badge.svg" /></a> <a class="reference external" href="https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml"><img alt="Scorecard Supply-Chain Security" src="https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml/badge.svg" /></a> <a class="reference external" href="https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql"><img alt="CodeQL" src="https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql/badge.svg" /></a></p>
+<p><a class="reference external" href="https://veragrid.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/veragrid/badge/?version=latest" /></a> <a class="reference external" href="https://travis-ci.org/SanPen/VeraGrid"><img alt="Build Status" src="https://travis-ci.org/SanPen/VeraGrid.svg?branch=master" /></a> <a class="reference external" href="https://www.zenodo.org/badge/latestdoi/49583206"><img alt="DOI" src="https://www.zenodo.org/badge/49583206.svg" /></a> <a class="reference external" href="https://pepy.tech/project/veragrid"><img alt="Downloads" src="https://static.pepy.tech/personalized-badge/veragrid?period=total&amp;units=abbreviation&amp;left_color=grey&amp;right_color=green&amp;left_text=Downloads" /></a> <a class="reference external" href="https://matrix.to/#/#veragrid:matrix.org"><img alt="Chat" src="https://img.shields.io/badge/join-chat-green" /></a></p>
+<p>VeraGrid started in 2015 with a clear objective: create a solid
+programming library and a user-friendly interface. This straightforward
+approach sparked many innovations — some driven by the necessity for
+commercial use, and others fueled by curiosity and research.</p>
+<p>Whether you’re a pro needing free tools, a researcher wanting a
+real-world tested platform, a teacher sharing commercial-grade software
+insights, or a student diving into practical algorithms, VeraGrid’s got
+your back. It’s a high quality product made for all of us now and for
+the future generations.</p>
+<p>🎥 Watch the spotlight series videos:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=4ZDyWIX8_VE">1 - introduction</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=d9dTyO4wels">2 - Power flow</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=o6oXBJ1Efqc">3 - Optimal power flow</a></p></li>
+<li><p><a class="reference external" href="https://youtu.be/3VI_mxPlixs?si=rd1eWqLJkXbEDF3N">4 - Contingency Analysis</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=wVdAtnvQ7s8">5 - Time series modelling</a></p></li>
+</ul>
+</section>
+<section id="contact">
+<h1>Contact<a class="headerlink" href="#contact" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p>Join the <a class="reference external" href="https://matrix.to/#/#veragrid:matrix.org">VeraGrid chat
+channel</a> for a friendly
+chat, or quick question.</p></li>
+<li><p>Submit bugs or requests in the
+<a class="reference external" href="https://github.com/SanPen/VeraGrid/issues">Issues</a> section.</p></li>
+</ul>
+</section>
+<section id="contents">
+<h1>Contents<a class="headerlink" href="#contents" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="md_source/installation.html">💽 Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#standalone-setup">Standalone setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#package-installation">Package installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#install-into-an-environment">Install into an environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#run-the-graphical-user-interface">Run the graphical user interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#install-only-the-engine">Install only the engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#additional-packages-for-local-ai">Additional packages for local AI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/installation.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/user_interface.html">📊 User interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#diagram-view">Diagram View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#tabular-database-editor">Tabular database editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#compiled-arrays">Compiled Arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#scripting">Scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#data-analysis-dashboard">Data analysis dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/user_interface.html#comments-editor">Comments editor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/grid_analysis.html">🔎 Grid analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_analysis.html#what-the-analysis-does">What the analysis does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_analysis.html#severity-classes">Severity classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_analysis.html#dashboard-score">Dashboard score</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_analysis.html#sigma-contribution">Sigma contribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_analysis.html#final-score-and-grade">Final score and grade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_analysis.html#safe-fixes">Safe fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/structure.html">🌁 Structure of VeraGrid</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/structure.html#snapshot-vs-time-series">Snapshot vs. time series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/structure.html#from-tables-to-objects-the-entry-level-barrier">From tables to objects: The entry level barrier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/structure.html#registered-result-properties">Registered Result Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/modelling.html">📐 Grid Modelling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#bus">Bus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#busbar">BusBar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#voltagelevel">VoltageLevel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#substation">Substation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#country">Country</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#community">Community</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#region">Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#municipality">Municipality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#area">Area</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#zone">Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#generator">Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#battery">Battery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#load">Load</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#shunt">Shunt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#controllableshunt">ControllableShunt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#currentinjection">CurrentInjection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#staticgenerator">StaticGenerator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#externalgrid">ExternalGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#line">Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#dcline">DcLine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#winding">Winding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#transformer2w">Transformer2W</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#transformer3w">Transformer3W</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#transformernw">TransformerNW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#seriesreactance">SeriesReactance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#hvdcline">HvdcLine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#vsc">VSC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#upfc">UPFC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#switch">Switch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#wire">Wire</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#overheadlinetype">OverheadLineType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#undergroundlinetype">UndergroundLineType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#sequencelinetype">SequenceLineType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#transformertype">TransformerType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#branchgroup">BranchGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#facility">Facility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#modellingauthority">ModellingAuthority</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#technology">Technology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fuel">Fuel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#emissiongas">EmissionGas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#owner">Owner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#contingencygroup">ContingencyGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#contingency">Contingency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#remedialactiongroup">RemedialActionGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#remedialaction">RemedialAction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#shortcircuitevent">ShortCircuitEvent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#investmentsgroup">InvestmentsGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#investment">Investment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fluidnode">FluidNode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fluidpath">FluidPath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fluidturbine">FluidTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fluidpump">FluidPump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fluidp2x">FluidP2x</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#rmseventsgroup">RmsEventsGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#rmsevent">RmsEvent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#emteventsgroup">EmtEventsGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#emtevent">EmtEvent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#rmsmodeltemplate">RmsModelTemplate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#emtmodeltemplate">EmtModelTemplate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#fmutemplate">FmuTemplate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#pimeasurement">PiMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#qimeasurement">QiMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#pfmeasurement">PfMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#qfmeasurement">QfMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#ifmeasurement">IfMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#ptmeasurement">PtMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#qtmeasurement">QtMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#itmeasurement">ItMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#vmmeasurement">VmMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#vameasurement">VaMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#pgmeasurement">PgMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#qgmeasurement">QgMeasurement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#distribution-grid-example-in-the-sequence-reference-frame">Distribution Grid Example in the Sequence Reference Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/modelling.html#power-flow-on-the-5-node-example-grid">Power Flow on the 5-Node Example Grid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/model_debugging.html">🪲 Model debugging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/model_debugging.html#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/file_operations.html">💾 File loading and saving</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/file_operations.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/file_operations.html#conversion-assumptions">Conversion assumptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/topology.html">🌵 Topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/topology.html#other-topology-functions">Other topology functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/topology.html#theory">Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/topology.html#registered-result-properties">Registered Result Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/clustering.html">🎳 Clustering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/clustering.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/clustering.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/clustering.html#theory">Theory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/grid_reduction.html">👾 Grid Reduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_reduction.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_reduction.html#theory">Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/grid_reduction.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/procedural_grid.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/procedural_grid.html#methodology">Methodology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/procedural_grid.html#user-guide">User guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/power_flow.html">🔥 Power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/power_flow.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/power_flow.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/power_flow.html#benchmark">Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/power_flow.html#three-phase-unbalanced-power-flow">Three-phase Unbalanced Power Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/linear_analysis.html">📏 Linear analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/linear_analysis.html#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/linear_analysis.html#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/linear_analysis.html#theory">Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/linear_analysis.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/linear_analysis.html#benchmark">Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/linear_analysis.html#registered-result-properties">Registered Result Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/optimal_power_flow.html">🏁 Optimal power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/optimal_power_flow.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/optimal_power_flow.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/optimal_power_flow.html#theory">Theory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/short_circuit.html">⚡ Short-Circuit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/short_circuit.html#short-circuit-in-the-phase-reference-frame">Short-Circuit in the Phase Reference Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/short_circuit.html#short-circuit-in-the-sequence-components">Short-Circuit in the Sequence Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/short_circuit.html#registered-result-properties">Registered Result Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#where-the-uncertainty-comes-from">Where The Uncertainty Comes From</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#sampling-modes">Sampling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#main-parameters">Main Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#reported-results">Reported Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#distribution-views">Distribution Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#additional-helper-methods">Additional Helper Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/stochastic_power_flow.html#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/continuation_power_flow.html">➿ Continuation power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/continuation_power_flow.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/continuation_power_flow.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/continuation_power_flow.html#theory">Theory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/sigma_analysis.html">🌘 Sigma analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/sigma_analysis.html#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/sigma_analysis.html#theory">Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/sigma_analysis.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/sigma_analysis.html#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/solar_wizard.html">☀️ Solar power wizard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#usage-from-the-graphical-interface">Usage from the graphical interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#example-python-code">Example Python code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#what-the-wizard-generates">What the wizard generates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#theory">Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#realistic-profiles-and-limitations">Realistic profiles and limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#quality-checks">Quality checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/solar_wizard.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/contingency_analysis.html">💥 Contingency analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/contingency_analysis.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/contingency_analysis.html#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/investment_optimization.html">🏦 Investment optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/investment_optimization.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/investment_optimization.html#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/investment_optimization.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/investment_optimization.html#search-alternatives">Search Alternatives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/investment_optimization.html#available-problems">Available Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/investment_optimization.html#theory">Theory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/cascading.html">🎢 Cascading</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#how-the-cascade-advances">How The Cascade Advances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#branch-removal-logic">Branch Removal Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#stopping-criterion">Stopping Criterion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#result-object">Result Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/cascading.html#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/net_transfer_capacity.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/net_transfer_capacity.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/net_transfer_capacity.html#theory">Theory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/nodal_hosting_capacity.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/nodal_hosting_capacity.html#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/reliability.html">🚧 Reliability</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#reliability-inputs">Reliability Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#reported-metrics">Reported Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/reliability.html#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/state_estimation.html">🌀 State estimation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#what-the-study-evaluates">What The Study Evaluates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#supported-measurements">Supported Measurements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#observability">Observability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#pseudo-measurements">Pseudo-Measurements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#main-options">Main Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#result-object">Result Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/state_estimation.html#practical-guidance">Practical Guidance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/dynamic_simulations.html">🧲 Dynamic simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/development.html">💻 Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/development.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/development.html#testing-with-pytest">Testing with pytest</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/plugins.html">🧩 Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/plugins.html#installation-of-a-plugin">Installation of a plugin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/license.html">📜 License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/license.html#license-of-the-dependencies">License of the dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/license.html#dependency-map">Dependency map</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="md_source/data_models.html">Data Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="md_source/data_models.html#veragrid">VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="md_source/data_models.html#cgmes">CGMES</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rst_source/api/auto/modules.html">VeraGrid</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rst_source/api/auto/VeraGridEngine.html">VeraGridEngine package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="disclaimer">
+<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Link to this heading"></a></h2>
+<p>All trademarks mentioned in the documentation or the source code belong
+to their respective owners.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="md_source/installation.html" class="btn btn-neutral float-right" title="💽 Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

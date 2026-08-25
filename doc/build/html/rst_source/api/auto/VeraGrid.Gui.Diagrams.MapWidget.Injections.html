@@ -1,0 +1,705 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.MapWidget.Injections package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.Diagrams.MapWidget.Substation package" href="VeraGrid.Gui.Diagrams.MapWidget.Substation.html" />
+    <link rel="prev" title="VeraGrid.Gui.Diagrams.MapWidget.Branches package" href="VeraGrid.Gui.Diagrams.MapWidget.Branches.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.html">VeraGrid.Gui.Diagrams package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.MapWidget.html">VeraGrid.Gui.Diagrams.MapWidget package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.MapWidget.Injections package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-diagrams-mapwidget-injections-package">
+<h1>VeraGrid.Gui.Diagrams.MapWidget.Injections package<a class="headerlink" href="#veragrid-gui-diagrams-mapwidget-injections-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics">
+<span id="veragrid-gui-diagrams-mapwidget-injections-map-battery-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.</span></span><span class="sig-name descname"><span class="pre">MapBatteryGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapInjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.edit_emt">
+<span class="sig-name descname"><span class="pre">edit_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem.edit_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.edit_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the EMT dynamic model editor for this generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.edit_q_curve">
+<span class="sig-name descname"><span class="pre">edit_q_curve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem.edit_q_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.edit_q_curve" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.edit_rms">
+<span class="sig-name descname"><span class="pre">edit_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem.edit_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.edit_rms" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.enable_disable_control_toggle">
+<span class="sig-name descname"><span class="pre">enable_disable_control_toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem.enable_disable_control_toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.enable_disable_control_toggle" title="Link to this definition"></a></dt>
+<dd><p>Enable / Disable device voltage control</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_battery_graphics.html#MapBatteryGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics.MapBatteryGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the battery editor using the generator editor implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics">
+<span id="veragrid-gui-diagrams-mapwidget-injections-map-external-grid-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.</span></span><span class="sig-name descname"><span class="pre">MapExternalGridGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_external_grid_graphics.html#MapExternalGridGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapInjectionTemplateGraphicItem</span></code></a></p>
+<p>ExternalGrid graphic item</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_external_grid_graphics.html#MapExternalGridGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.edit_emt">
+<span class="sig-name descname"><span class="pre">edit_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_external_grid_graphics.html#MapExternalGridGraphicItem.edit_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.edit_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the EMT dynamic model editor for this load.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.edit_rms">
+<span class="sig-name descname"><span class="pre">edit_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_external_grid_graphics.html#MapExternalGridGraphicItem.edit_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics.MapExternalGridGraphicItem.edit_rms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics">
+<span id="veragrid-gui-diagrams-mapwidget-injections-map-generator-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.</span></span><span class="sig-name descname"><span class="pre">MapGeneratorGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapInjectionTemplateGraphicItem</span></code></a></p>
+<p>GeneratorGraphicItem</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.clear_regulation_bus">
+<span class="sig-name descname"><span class="pre">clear_regulation_bus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.clear_regulation_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.clear_regulation_bus" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.clear_regulation_cn">
+<span class="sig-name descname"><span class="pre">clear_regulation_cn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.clear_regulation_cn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.clear_regulation_cn" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_dynamic">
+<span class="sig-name descname"><span class="pre">edit_dynamic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.edit_dynamic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_dynamic" title="Link to this definition"></a></dt>
+<dd><p>Open the unified dynamic editor workspace for this map generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_emt">
+<span class="sig-name descname"><span class="pre">edit_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.edit_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the EMT dynamic model editor for this generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_generator">
+<span class="sig-name descname"><span class="pre">edit_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.edit_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_generator" title="Link to this definition"></a></dt>
+<dd><p>Open the full generator editor dialogue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_q_curve">
+<span class="sig-name descname"><span class="pre">edit_q_curve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.edit_q_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_q_curve" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_rms">
+<span class="sig-name descname"><span class="pre">edit_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.edit_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.edit_rms" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.enable_disable_control_toggle">
+<span class="sig-name descname"><span class="pre">enable_disable_control_toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.enable_disable_control_toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.enable_disable_control_toggle" title="Link to this definition"></a></dt>
+<dd><p>Enable / Disable device voltage control</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.mouseDoubleClickEvent" title="Link to this definition"></a></dt>
+<dd><p>Open the generator editor on double click.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the generator editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.set_regulation_bus">
+<span class="sig-name descname"><span class="pre">set_regulation_bus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.set_regulation_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.set_regulation_bus" title="Link to this definition"></a></dt>
+<dd><p>Set regulation bus
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.solar_pv_wizard">
+<span class="sig-name descname"><span class="pre">solar_pv_wizard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.solar_pv_wizard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.solar_pv_wizard" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.to_battery">
+<span class="sig-name descname"><span class="pre">to_battery</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.to_battery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.to_battery" title="Link to this definition"></a></dt>
+<dd><p>Convert this generator to a battery</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.wind_farm_wizard">
+<span class="sig-name descname"><span class="pre">wind_farm_wizard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_generator_graphics.html#MapGeneratorGraphicItem.wind_farm_wizard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics.MapGeneratorGraphicItem.wind_farm_wizard" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics">
+<span id="veragrid-gui-diagrams-mapwidget-injections-map-injections-template-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">MapInjectionTemplateGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">INJECTION_DEVICE_TYPES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.Substation.html#VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template.NodeTemplate" title="VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template.NodeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeTemplate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsEllipseItem</span></code></p>
+<p>InjectionTemplateGraphicItem</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.consolidate_coordinates">
+<span class="sig-name descname"><span class="pre">consolidate_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.consolidate_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.consolidate_coordinates" title="Link to this definition"></a></dt>
+<dd><p>Consolidate coordinates in to the DB</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.delete" title="Link to this definition"></a></dt>
+<dd><p>Remove this element
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.editor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">editor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.editor" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_base_context_menu">
+<span class="sig-name descname"><span class="pre">get_base_context_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QMenu</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.get_base_context_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_base_context_menu" title="Link to this definition"></a></dt>
+<dd><p>Generate the base menu for injections
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_xc">
+<span class="sig-name descname"><span class="pre">get_xc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.get_xc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_xc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_yc">
+<span class="sig-name descname"><span class="pre">get_yc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.get_yc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_yc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseDoubleClickEvent" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseMoveEvent" title="Link to this definition"></a></dt>
+<dd><p>Event handler for mouse move events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>Event handler for mouse press events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseReleaseEvent" title="Link to this definition"></a></dt>
+<dd><p>Event handler for mouse release events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the default map-injection editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot API objects profiles</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.refresh" title="Link to this definition"></a></dt>
+<dd><p>This function refreshes the x, y coordinates of the graphic item
+Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.set_api_object_color">
+<span class="sig-name descname"><span class="pre">set_api_object_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QColor</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.set_api_object_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.set_api_object_color" title="Link to this definition"></a></dt>
+<dd><p>Sets whatever colour is in the API object property</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.set_size">
+<span class="sig-name descname"><span class="pre">set_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.set_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.set_size" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r</strong> – radius in pixels</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.update_position_at_the_diagram">
+<span class="sig-name descname"><span class="pre">update_position_at_the_diagram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_injections_template_graphics.html#MapInjectionTemplateGraphicItem.update_position_at_the_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.update_position_at_the_diagram" title="Link to this definition"></a></dt>
+<dd><p>Updates the element position in the diagram (to save)
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics">
+<span id="veragrid-gui-diagrams-mapwidget-injections-map-load-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.</span></span><span class="sig-name descname"><span class="pre">MapLoadGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_load_graphics.html#MapLoadGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapInjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_load_graphics.html#MapLoadGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.edit_emt">
+<span class="sig-name descname"><span class="pre">edit_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_load_graphics.html#MapLoadGraphicItem.edit_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.edit_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the EMT dynamic model editor for this load.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.edit_rms">
+<span class="sig-name descname"><span class="pre">edit_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_load_graphics.html#MapLoadGraphicItem.edit_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.edit_rms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.load_profile_wizard">
+<span class="sig-name descname"><span class="pre">load_profile_wizard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_load_graphics.html#MapLoadGraphicItem.load_profile_wizard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.load_profile_wizard" title="Link to this definition"></a></dt>
+<dd><p>Open the load profile composition wizard and apply the generated profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_load_graphics.html#MapLoadGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics.MapLoadGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the load editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics">
+<span id="veragrid-gui-diagrams-mapwidget-injections-map-static-generator-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.</span></span><span class="sig-name descname"><span class="pre">MapStaticGeneratorGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.MapWidget.html#VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget" title="VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget.GridMapWidget"><span class="pre">GridMapWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_static_generator_graphics.html#MapStaticGeneratorGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapInjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_static_generator_graphics.html#MapStaticGeneratorGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.edit_emt">
+<span class="sig-name descname"><span class="pre">edit_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_static_generator_graphics.html#MapStaticGeneratorGraphicItem.edit_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.edit_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the EMT dynamic model editor for this generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.edit_rms">
+<span class="sig-name descname"><span class="pre">edit_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/MapWidget/Injections/map_static_generator_graphics.html#MapStaticGeneratorGraphicItem.edit_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics.MapStaticGeneratorGraphicItem.edit_rms" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.MapWidget.Injections">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.MapWidget.Injections" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.Diagrams.MapWidget.Branches.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.Diagrams.MapWidget.Branches package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.Diagrams.MapWidget.Substation.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.Diagrams.MapWidget.Substation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

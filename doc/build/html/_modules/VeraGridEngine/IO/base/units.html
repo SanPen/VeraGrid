@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.base.units &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.base.units</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.base.units</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="UnitSymbol">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitSymbol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnitSymbol</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unit symbol</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VA</span> <span class="o">=</span> <span class="s1">&#39;VA&#39;</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="s1">&#39;W&#39;</span>
+    <span class="n">VAr</span> <span class="o">=</span> <span class="s1">&#39;VAr&#39;</span>
+    <span class="n">VAh</span> <span class="o">=</span> <span class="s1">&#39;VAh&#39;</span>
+    <span class="n">Wh</span> <span class="o">=</span> <span class="s1">&#39;WH&#39;</span>
+    <span class="n">VArh</span> <span class="o">=</span> <span class="s1">&#39;VArh&#39;</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="s1">&#39;V&#39;</span>
+    <span class="n">ohm</span> <span class="o">=</span> <span class="s1">&#39;ohm&#39;</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="s1">&#39;H&#39;</span>
+    <span class="n">degC</span> <span class="o">=</span> <span class="s1">&#39;degC&#39;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
+    <span class="n">minutes</span> <span class="o">=</span> <span class="s1">&#39;min&#39;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span>
+    <span class="n">rad</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="s1">&#39;J&#39;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="s1">&#39;N&#39;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+    <span class="n">none</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+    <span class="n">Hz</span> <span class="o">=</span> <span class="s1">&#39;Hz&#39;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span>
+    <span class="n">Pa</span> <span class="o">=</span> <span class="s1">&#39;Pa&#39;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="s1">&#39;m2&#39;</span>
+    <span class="n">m3</span> <span class="o">=</span> <span class="s1">&#39;m3&#39;</span>
+    <span class="n">pu</span> <span class="o">=</span> <span class="s1">&#39;p.u.&#39;</span>  <span class="c1"># Not in the CIM standard, but makes sense to exist here</span>
+    <span class="n">PerCent</span> <span class="o">=</span> <span class="s2">&quot;%&quot;</span>
+    <span class="n">Money</span> <span class="o">=</span> <span class="s2">&quot;€&quot;</span>
+    <span class="n">kVperMVAr</span> <span class="o">=</span> <span class="s2">&quot;kV/MVAr&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="s2">&quot;t&quot;</span>  <span class="c1"># ton</span>
+    <span class="n">kg</span> <span class="o">=</span> <span class="s1">&#39;kg&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;UnitSymbol.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UnitSymbol.argparse">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitSymbol.argparse">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">argparse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSymbol</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="UnitSymbol.list">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitSymbol.list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UnitMultiplier">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitMultiplier">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnitMultiplier</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unit multiplier</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="s1">&#39;p&#39;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;n&#39;</span>
+    <span class="n">micro</span> <span class="o">=</span> <span class="s1">&#39;micro&#39;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="s1">&#39;d&#39;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="s1">&#39;G&#39;</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="s1">&#39;T&#39;</span>
+    <span class="n">none</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;UnitMultiplier.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UnitMultiplier.argparse">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitMultiplier.argparse">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">argparse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitMultiplier</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="UnitMultiplier.list">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitMultiplier.list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="UnitMultiplier.toNum">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitMultiplier.toNum">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toNum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">UnitMultiplier2num</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UnitMultiplier2num">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.UnitMultiplier2num">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">UnitMultiplier2num</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">UnitMultiplier</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert unit multiplier to the corresponding number</span>
+<span class="sd">    :param val:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-12</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-9</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">micro</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-6</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-3</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">c</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-2</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">d</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-1</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e3</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">M</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e6</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">G</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e9</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e12</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span></div>
+
+
+
+<div class="viewcode-block" id="Unit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Unit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    General unit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">multiplier</span><span class="p">:</span> <span class="n">UnitMultiplier</span> <span class="o">=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
+                 <span class="n">symbol</span><span class="p">:</span> <span class="n">UnitSymbol</span> <span class="o">=</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span>
+
+<div class="viewcode-block" id="Unit.has_unit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.has_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Has units?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">!=</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_unit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">==</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">!=</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">!=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># this should be wrong...</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">!=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">!=</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_kv">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_kv">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_kv</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">V</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_km">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_km">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_km</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">m</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_pu">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_pu">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pu</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">pu</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_ohm">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_ohm">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ohm</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">ohm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_deg">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_deg">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_deg</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_rad">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_rad">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rad</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_percent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_percent">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_percent</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">PerCent</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_a">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_a">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_a</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">A</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_kw">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_kw">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_kw</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">W</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_mw">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_mw">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mw</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">W</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_mva">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_mva">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mva</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">VA</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit.get_mvar">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit.get_mvar">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mvar</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">VAr</span><span class="p">)</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

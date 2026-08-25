@@ -1,0 +1,75 @@
+# (H0w0/Q)s/(w0^2+sw0/Q+s^2)
+
+This is Basic Block Catalog type `117` (`(H0w0/Q)s/(w0^2+sw0/Q+s^2)`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**(H0w0/Q)s/(w0^2+sw0/Q+s^2)** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 2.
+- Configurable parameters: 3.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x1}{dt} = x2
+$$
+
+$$
+\frac{d x2}{dt} = (yi - \frac{(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{w0}}{(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{Q}} \cdot x2 - (H0w0/Q)s/(w0^2+sw0/Q+s^2)_{w0} \cdot (H0w0/Q)s/(w0^2+sw0/Q+s^2)_{w0} \cdot x1)
+$$
+
+$$
+0 = (yo - \frac{H0}{(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{Q}} \cdot (H0w0/Q)s/(w0^2+sw0/Q+s^2)_{w0} \cdot x2)
+$$
+
+$$
+yo(t_0) = (\frac{H0}{(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{Q}} \cdot (H0w0/Q)s/(w0^2+sw0/Q+s^2)_{w0} \cdot x2)
+$$
+
+$$
+(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{F0}(t_0) = \sqrt{Fhigh \cdot Flow}
+$$
+
+$$
+(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{w0}(t_0) = ((H0w0/Q)s/(w0^2+sw0/Q+s^2)_{F0} \cdot 2 \cdot 3.14159)
+$$
+
+$$
+(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{Q}(t_0) = (\frac{(H0w0/Q)s/(w0^2+sw0/Q+s^2)_{F0}}{Fhigh - Flow})
+$$
+
+$$
+x1(t_0) = (\frac{yi}{4 \cdot 3.14159 \cdot 3.14159 \cdot (H0w0/Q)s/(w0^2+sw0/Q+s^2)_{F0} \cdot (H0w0/Q)s/(w0^2+sw0/Q+s^2)_{F0}})
+$$
+
+$$
+x2(t_0) = 0
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `(H0w0/Q)s/(w0^2+sw0/Q+s^2)__x1` | Internal dynamic state | model-dependent |
+| State | `(H0w0/Q)s/(w0^2+sw0/Q+s^2)__x2` | Internal dynamic state | model-dependent |
+| Parameter | `Flow` | Configurable model parameter | model-dependent |
+| Parameter | `Fhigh` | Configurable model parameter | model-dependent |
+| Parameter | `H0` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

@@ -2,9 +2,6 @@ __pycache__
 __pycache_jit__
 .pytest_cache
 *.swp
-/doc/build
-/doc/_build
-/doc/_static
 
 
 /**/.idea/*

@@ -1,0 +1,76 @@
+# Limit (3 parameter inputs)] (complex with prio)
+
+This is Basic Block Catalog type `319` (`Limit [ppp] (complex with prio)`). It processes real and imaginary components of complex-valued signals.
+
+<!-- veragrid-block-introduction:start -->
+**Limit (3 parameter inputs)] (complex with prio)** represents a nonlinear control constraint or piecewise characteristic. Limits, deadbands, rate bounds, and hysteresis reproduce actuator capability and protection logic that a purely linear model cannot represent. The active branch can change when a threshold is crossed.
+
+## Typical use
+
+- Use it to model physical saturation, insensitive regions, slew limits, or bounded commands.
+- Choose thresholds in consistent units and inspect behavior exactly at switching boundaries.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Complex / Operations`.
+- Inputs: 3.
+- Outputs: 2.
+- Declared states: 0.
+- Configurable parameters: 3.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (Limit [ppp] (complex with prio)_{iXref\_prio} - (proc_{select\_0} \cdot d + (1 - proc_{select\_0}) \cdot q))
+$$
+
+$$
+0 = (Limit [ppp] (complex with prio)_{iXref\_nonprio} - (proc_{select\_1} \cdot q + (1 - proc_{select\_1}) \cdot d))
+$$
+
+$$
+0 = (Limit [ppp] (complex with prio)_{max\_prio} - ((proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert)\right))))
+$$
+
+$$
+0 = (Limit [ppp] (complex with prio)_{y\_prio} - (-Limit [ppp] (complex with prio)_{max\_prio} + (Limit [ppp] (complex with prio)_{iXref\_prio} - -Limit [ppp] (complex with prio)_{max\_prio}) \cdot \Theta\left(Limit [ppp] (complex with prio)_{iXref\_prio} - -Limit [ppp] (complex with prio)_{max\_prio}\right) - (Limit [ppp] (complex with prio)_{iXref\_prio} - Limit [ppp] (complex with prio)_{max\_prio}) \cdot \Theta\left(Limit [ppp] (complex with prio)_{iXref\_prio} - Limit [ppp] (complex with prio)_{max\_prio}\right)))
+$$
+
+$$
+0 = (Limit [ppp] (complex with prio)_{remainder} - \sqrt{\lvertMAG_{MAX} \cdot MAG_{MAX} - Limit [ppp] (complex with prio)_{y\_prio} \cdot Limit [ppp] (complex with prio)_{y\_prio}\rvert})
+$$
+
+$$
+0 = (Limit [ppp] (complex with prio)_{max\_nonprio} - (((proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert)\right))) \cdot \Theta\left(Limit [ppp] (complex with prio)_{remainder} - ((proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert)\right)))\right) + Limit [ppp] (complex with prio)_{remainder} \cdot (1 - \Theta\left(Limit [ppp] (complex with prio)_{remainder} - ((proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_3}) \cdot \lvertD_{MAX}\rvert)\right)))\right))))
+$$
+
+$$
+0 = (Limit [ppp] (complex with prio)_{y\_nonprio} - (-Limit [ppp] (complex with prio)_{max\_nonprio} + (Limit [ppp] (complex with prio)_{iXref\_nonprio} - -Limit [ppp] (complex with prio)_{max\_nonprio}) \cdot \Theta\left(Limit [ppp] (complex with prio)_{iXref\_nonprio} - -Limit [ppp] (complex with prio)_{max\_nonprio}\right) - (Limit [ppp] (complex with prio)_{iXref\_nonprio} - Limit [ppp] (complex with prio)_{max\_nonprio}) \cdot \Theta\left(Limit [ppp] (complex with prio)_{iXref\_nonprio} - Limit [ppp] (complex with prio)_{max\_nonprio}\right)))
+$$
+
+$$
+0 = (yo_{d} - (proc_{select\_4} \cdot Limit [ppp] (complex with prio)_{y\_prio} + (1 - proc_{select\_4}) \cdot Limit [ppp] (complex with prio)_{y\_nonprio}))
+$$
+
+$$
+0 = (yo_{q} - (proc_{select\_5} \cdot Limit [ppp] (complex with prio)_{y\_nonprio} + (1 - proc_{select\_5}) \cdot Limit [ppp] (complex with prio)_{y\_prio}))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `d` | Input signal consumed by the block | model-dependent |
+| Input | `q` | Input signal consumed by the block | model-dependent |
+| Input | `PRIORITISE_AXIS` | Input signal consumed by the block | model-dependent |
+| Output | `yo_d` | Output signal produced by the block | model-dependent |
+| Output | `yo_q` | Output signal produced by the block | model-dependent |
+| Parameter | `D_MAX` | Configurable model parameter | model-dependent |
+| Parameter | `Q_MAX` | Configurable model parameter | model-dependent |
+| Parameter | `MAG_MAX` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

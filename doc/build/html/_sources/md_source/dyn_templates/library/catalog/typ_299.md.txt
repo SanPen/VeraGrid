@@ -1,0 +1,49 @@
+# (1+sTld)/(1+sTlg) and sx
+
+This is Basic Block Catalog type `299` (`(1+sTld)/(1+sTlg) and sx`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**(1+sTld)/(1+sTlg) and sx** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 2.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x}{dt} = (1+sTld)/(1+sTlg) and sx_{dx}
+$$
+
+$$
+0 = ((1+sTld)/(1+sTlg) and sx_{dx} - (proc_{selfix\_0} \cdot \frac{yi - x}{Tlg} + (1 - proc_{selfix\_0}) \cdot \frac{yi - x}{0.01}))
+$$
+
+$$
+0 = (yo - (x + Tld \cdot (1+sTld)/(1+sTlg) and sx_{dx}))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `(1+sTld)/(1+sTlg) and sx__x` | Internal dynamic state | model-dependent |
+| Parameter | `Tld` | Configurable model parameter | model-dependent |
+| Parameter | `Tlg` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

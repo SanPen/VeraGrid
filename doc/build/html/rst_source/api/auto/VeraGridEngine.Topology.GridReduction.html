@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Topology.GridReduction package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Topology.Procedural package" href="VeraGridEngine.Topology.Procedural.html" />
+    <link rel="prev" title="VeraGridEngine.Topology package" href="VeraGridEngine.Topology.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Topology.GridReduction package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Topology.GridReduction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-topology-gridreduction-package">
+<h1>VeraGridEngine.Topology.GridReduction package<a class="headerlink" href="#veragridengine-topology-gridreduction-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction">
+<span id="veragridengine-topology-gridreduction-di-shi-grid-reduction-module"></span><h2>VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction module<a class="headerlink" href="#module-VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.create_new_boundary_branches">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">create_new_boundary_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_buses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yeq_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csc_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ybbp_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csc_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_linear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#create_new_boundary_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.create_new_boundary_branches" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong></p></li>
+<li><p><strong>b_buses</strong></p></li>
+<li><p><strong>Yeq_1</strong></p></li>
+<li><p><strong>Ybbp_1</strong></p></li>
+<li><p><strong>tol</strong></p></li>
+<li><p><strong>use_linear</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.di_shi_reduction">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">di_shi_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CxVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#di_shi_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.di_shi_reduction" title="Link to this definition"></a></dt>
+<dd><p>In-place Grid reduction using the Di-Shi equivalent model
+from: Power System Network Reduction for Engineering and Economic Analysis by Di Shi, 2012
+and Optimal Generation Investment Planning: Pt 1: Network Equivalents
+:param grid: MultiCircuit
+:param reduction_bus_indices: Bus indices of the buses to delete
+:param V0: Array of voltages for the non-reduced system
+:param tol: Tolerance, any equivalent power value under this is omitted</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.find_gen_relocation">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">find_gen_relocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#find_gen_relocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.find_gen_relocation" title="Link to this definition"></a></dt>
+<dd><p>Relocate generators
+:param grid: MultiCircuit
+:param reduction_bus_indices: array of bus indices to reduce (external set)
+:return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.get_reduction_sets_1">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">get_reduction_sets_1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit" title="VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit"><span class="pre">NumericalCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">IntVec</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IntVec</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IntVec</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IntVec</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#get_reduction_sets_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.get_reduction_sets_1" title="Link to this definition"></a></dt>
+<dd><p>Generate the set of bus indices for grid reduction
+:param nc: NumericalCircuit
+:param reduction_bus_indices: array of bus indices to reduce (external set)
+:return: external, boundary, internal, boundary_branches</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.ward_reduction_linear">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ward_reduction_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ybus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csc_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_buses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_buses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_buses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#ward_reduction_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.ward_reduction_linear" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ybus</strong></p></li>
+<li><p><strong>e_buses</strong></p></li>
+<li><p><strong>b_buses</strong></p></li>
+<li><p><strong>i_buses</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.ward_reduction_linear2">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ward_reduction_linear2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ybus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csc_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_buses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_buses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#ward_reduction_linear2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.ward_reduction_linear2" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ybus</strong></p></li>
+<li><p><strong>e_buses</strong></p></li>
+<li><p><strong>i_buses</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.ward_reduction_non_linear">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ward_reduction_non_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit" title="VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit"><span class="pre">NumericalCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_buses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_buses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_buses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CxVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sbus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CxVec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/di_shi_grid_reduction.html#ward_reduction_non_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction.ward_reduction_non_linear" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc</strong></p></li>
+<li><p><strong>e_buses</strong></p></li>
+<li><p><strong>b_buses</strong></p></li>
+<li><p><strong>i_buses</strong></p></li>
+<li><p><strong>voltage</strong></p></li>
+<li><p><strong>Sbus</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction">
+<span id="veragridengine-topology-gridreduction-ptdf-grid-reduction-module"></span><h2>VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction module<a class="headerlink" href="#module-VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.compact_devices_after_reduction">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">compact_devices_after_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">relocated_device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compensation_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'compensated'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#compact_devices_after_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.compact_devices_after_reduction" title="Link to this definition"></a></dt>
+<dd><p>Compact devices on each bus after PTDF reduction.</p>
+<p>Per bus, keeps original devices individual and collapses:
+- External + compensation loads into one collapsed load
+- External + compensation non-SRAP gens into one collapsed generator
+- External + compensation SRAP gens into one collapsed generator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> – MultiCircuit (modified in place)</p></li>
+<li><p><strong>relocated_device_ids</strong> – Set of device idtags that were relocated from external buses</p></li>
+<li><p><strong>compensation_prefix</strong> – Prefix used to identify compensation devices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logger with info about collapsed devices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pgen">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">get_Pgen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Vec</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Vec</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#get_Pgen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pgen" title="Link to this definition"></a></dt>
+<dd><p>Get the complex bus power Injections due to the generation with and without srap
+:return: (nbus) [MW] no-srap generation, srap-generation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pgen_ts">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">get_Pgen_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Mat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Mat</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#get_Pgen_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pgen_ts" title="Link to this definition"></a></dt>
+<dd><p>Get the complex bus power Injections due to the generation with and without srap
+:return: (nbus) [MW] no-srap generation, srap-generation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pload">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">get_Pload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Vec</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#get_Pload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pload" title="Link to this definition"></a></dt>
+<dd><p>Get the complex bus power Injections due to the load with sign
+:return: (nbus) [MW ]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pload_ts">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">get_Pload_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Mat</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#get_Pload_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_Pload_ts" title="Link to this definition"></a></dt>
+<dd><p>Get the complex bus power Injections due to the load with sign
+:return: (nbus) [MW ]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_reduction_sets">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">get_reduction_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_vsc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_hvdc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_switch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">IntVec</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IntVec</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IntVec</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#get_reduction_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_reduction_sets" title="Link to this definition"></a></dt>
+<dd><p>Generate the set of bus indices for grid reduction
+:param grid: MultiCircuit
+:param reduction_bus_indices: array of bus indices to reduce (external set)
+:param add_vsc: Include the list of VSC?
+:param add_hvdc: Include the list of HvdcLine?
+:param add_switch: Include the list of Switch?
+:return: external, boundary, internal, boundary_branches</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ptdf_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#ptdf_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction" title="Link to this definition"></a></dt>
+<dd><p>In-place Grid reduction using the PTDF injection mirroring
+This is the same concept as the Di-Shi reduction but using the PTDF matrix instead.
+:param grid: MultiCircuit
+:param reduction_bus_indices: Bus indices of the buses to delete
+:param tol: Tolerance, any equivalent power value under this is omitted</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction_projected">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ptdf_reduction_projected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribute_slack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compact_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#ptdf_reduction_projected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction_projected" title="Link to this definition"></a></dt>
+<dd><p>In-place Grid reduction using the PTDF injection by projecting
+the generation and loads from the removed buses into the PTDF-sensitive buses
+:param grid: MultiCircuit
+:param reduction_bus_indices: Bus indices of the buses to delete
+:param tol: Tolerance, any equivalent power value under this is omitted
+:param distribute_slack: Distribute the slack?
+:param compact_devices: Collapse relocated and compensation devices after reduction</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction_ree_bad">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ptdf_reduction_ree_bad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#ptdf_reduction_ree_bad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction_ree_bad" title="Link to this definition"></a></dt>
+<dd><p>In-place Grid reduction using the PTDF injection mirroring
+No theory available
+:param grid: MultiCircuit
+:param reduction_bus_indices: Bus indices of the buses to delete
+:param tol: Tolerance, any equivalent power value under this is omitted</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction_ree_less_bad">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">ptdf_reduction_ree_less_bad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#ptdf_reduction_ree_less_bad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.ptdf_reduction_ree_less_bad" title="Link to this definition"></a></dt>
+<dd><p>In-place Grid reduction using the PTDF injection mirroring
+No theory available
+:param grid: MultiCircuit
+:param reduction_bus_indices: Bus indices of the buses to delete
+:param tol: Tolerance, any equivalent power value under this is omitted</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.relocate_injections">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.</span></span><span class="sig-name descname"><span class="pre">relocate_injections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ptdf_grid_reduction.html#relocate_injections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.relocate_injections" title="Link to this definition"></a></dt>
+<dd><p>Relocate injection devices (generators, loads, etc.) from external buses to internal buses
+:param grid: MultiCircuit
+:param reduction_bus_indices: array of bus indices to reduce (external set)
+:return: Set of relocated device idtags</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Topology.GridReduction.ward_equivalents">
+<span id="veragridengine-topology-gridreduction-ward-equivalents-module"></span><h2>VeraGridEngine.Topology.GridReduction.ward_equivalents module<a class="headerlink" href="#module-VeraGridEngine.Topology.GridReduction.ward_equivalents" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ward_equivalents.get_reduction_sets_1">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ward_equivalents.</span></span><span class="sig-name descname"><span class="pre">get_reduction_sets_1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit" title="VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit"><span class="pre">NumericalCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ward_equivalents.html#get_reduction_sets_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ward_equivalents.get_reduction_sets_1" title="Link to this definition"></a></dt>
+<dd><p>Generate the set of bus indices for grid reduction
+:param nc: NumericalCircuit
+:param reduction_bus_indices: array of bus indices to reduce (external set)
+:return: external, boundary, internal, boundary_branches</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Topology.GridReduction.ward_equivalents.ward_standard_reduction">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Topology.GridReduction.ward_equivalents.</span></span><span class="sig-name descname"><span class="pre">ward_standard_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_bus_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CxVec</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Topology/GridReduction/ward_equivalents.html#ward_standard_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Topology.GridReduction.ward_equivalents.ward_standard_reduction" title="Link to this definition"></a></dt>
+<dd><p>Ward standard reduction according to:
+REVIEW OF THE WARD CLASS OF EXTERNAL EQUIVALENTS FOR POWER SYSTEMS
+by J.W. Bandler, M.A. El-Kady and G. Centkowski, October 1983
+:param grid: MultiCircuit
+:param reduction_bus_indices: Indices of the buses to reduce
+:param V0: Initial power flow voltages
+:return: Modified (in-place) MultiCircuit</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Topology.GridReduction">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Topology.GridReduction" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Topology.html" class="btn btn-neutral float-left" title="VeraGridEngine.Topology package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Topology.Procedural.html" class="btn btn-neutral float-right" title="VeraGridEngine.Topology.Procedural package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1636 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">EraSvdSolverType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.options_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsTemplate</span>
+
+
+<div class="viewcode-block" id="EraMatrixPencilBand">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilBand">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EraMatrixPencilBand</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Immutable-looking light wrapper for one analysis band.</span>
+
+<span class="sd">    The class exposes explicit getters and setters because the EMT modal</span>
+<span class="sd">    workflow needs predictable state inspection when debugging numerical</span>
+<span class="sd">    conditioning problems.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_low_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_high_hz&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one frequency band definition.</span>
+
+<span class="sd">        :param low_hz: Lower edge in Hz.</span>
+<span class="sd">        :param high_hz: Upper edge in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># The setters centralize all validation so every construction path</span>
+        <span class="c1"># uses the exact same band sanitization rules.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_low_hz</span><span class="p">(</span><span class="n">low_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_high_hz</span><span class="p">(</span><span class="n">high_hz</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilBand.get_low_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilBand.get_low_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_low_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the lower analysis frequency.</span>
+
+<span class="sd">        :return: Lower edge in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_hz</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilBand.set_low_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilBand.set_low_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_low_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the lower analysis frequency.</span>
+
+<span class="sd">        :param value: Requested lower edge in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># The lower edge must be non-negative because negative frequencies are</span>
+        <span class="c1"># represented by the conjugate pole pair in the real-valued signal.</span>
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_hz</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_hz</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilBand.get_high_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilBand.get_high_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_high_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the upper analysis frequency.</span>
+
+<span class="sd">        :return: Upper edge in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_hz</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilBand.set_high_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilBand.set_high_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_high_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the upper analysis frequency.</span>
+
+<span class="sd">        :param value: Requested upper edge in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># The upper edge must stay strictly positive so the band carries a</span>
+        <span class="c1"># meaningful oscillatory window for the matrix pencil subspace.</span>
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_high_hz</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_high_hz</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">low_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid style compatibility.</span>
+
+<span class="sd">        :return: Lower edge in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_low_hz</span><span class="p">()</span>
+
+    <span class="nd">@low_hz</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">low_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid style compatibility.</span>
+
+<span class="sd">        :param value: Requested lower edge in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_low_hz</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">high_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid style compatibility.</span>
+
+<span class="sd">        :return: Upper edge in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_high_hz</span><span class="p">()</span>
+
+    <span class="nd">@high_hz</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">high_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid style compatibility.</span>
+
+<span class="sd">        :param value: Requested upper edge in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_high_hz</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilBand.to_tuple">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilBand.to_tuple">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export the band as a plain tuple.</span>
+
+<span class="sd">        :return: Two-float tuple ``(low_hz, high_hz)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_hz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_hz</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="create_default_era_analysis_bands">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.create_default_era_analysis_bands">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_default_era_analysis_bands</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the default multi-band plan for EMT modal zooming.</span>
+
+<span class="sd">    :return: Tuple of default analysis bands.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bands_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># The first band targets super-synchronous control modes after the</span>
+    <span class="c1"># fundamental notch suppresses the overwhelming 50/60 Hz component.</span>
+    <span class="n">bands_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EraMatrixPencilBand</span><span class="p">(</span><span class="n">low_hz</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">high_hz</span><span class="o">=</span><span class="mf">250.0</span><span class="p">))</span>
+
+    <span class="c1"># The second band targets inverter ripple, PLL interactions and other</span>
+    <span class="c1"># higher-frequency EMT control artifacts.</span>
+    <span class="n">bands_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EraMatrixPencilBand</span><span class="p">(</span><span class="n">low_hz</span><span class="o">=</span><span class="mf">250.0</span><span class="p">,</span> <span class="n">high_hz</span><span class="o">=</span><span class="mf">2000.0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bands_list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_era_analysis_bands_from_pairs">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.build_era_analysis_bands_from_pairs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_era_analysis_bands_from_pairs</span><span class="p">(</span>
+        <span class="n">band_limits</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert raw tuple pairs into validated analysis-band objects.</span>
+
+<span class="sd">    :param band_limits: Optional tuple of ``(low_hz, high_hz)`` pairs.</span>
+<span class="sd">    :return: Sanitized tuple of :class:`EraMatrixPencilBand` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bands_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">band_limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_limits</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pair_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_pairs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_limits</span><span class="p">)</span>
+
+        <span class="c1"># The conversion is explicit so every band is independently validated</span>
+        <span class="c1"># and invalid ranges can be ignored without corrupting the whole plan.</span>
+        <span class="k">while</span> <span class="n">pair_index</span> <span class="o">&lt;</span> <span class="n">n_pairs</span><span class="p">:</span>
+            <span class="n">current_pair</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">band_limits</span><span class="p">[</span><span class="n">pair_index</span><span class="p">]</span>
+            <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">current_pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">current_pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">high_hz</span> <span class="o">&gt;</span> <span class="n">low_hz</span><span class="p">:</span>
+                <span class="n">bands_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EraMatrixPencilBand</span><span class="p">(</span><span class="n">low_hz</span><span class="o">=</span><span class="n">low_hz</span><span class="p">,</span> <span class="n">high_hz</span><span class="o">=</span><span class="n">high_hz</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">pair_index</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">default_bands</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_default_era_analysis_bands</span><span class="p">()</span>
+        <span class="n">band_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_default_bands</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">default_bands</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">band_index</span> <span class="o">&lt;</span> <span class="n">n_default_bands</span><span class="p">:</span>
+            <span class="n">default_band</span><span class="p">:</span> <span class="n">EraMatrixPencilBand</span> <span class="o">=</span> <span class="n">default_bands</span><span class="p">[</span><span class="n">band_index</span><span class="p">]</span>
+            <span class="n">bands_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">EraMatrixPencilBand</span><span class="p">(</span>
+                    <span class="n">low_hz</span><span class="o">=</span><span class="n">default_band</span><span class="o">.</span><span class="n">get_low_hz</span><span class="p">(),</span>
+                    <span class="n">high_hz</span><span class="o">=</span><span class="n">default_band</span><span class="o">.</span><span class="n">get_high_hz</span><span class="p">(),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">band_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sanitized_bands</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bands_list</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sanitized_bands</span> <span class="o">=</span> <span class="n">create_default_era_analysis_bands</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">sanitized_bands</span></div>
+
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EraMatrixPencilOptions</span><span class="p">(</span><span class="n">OptionsTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration object for the EMT frequency-zooming matrix pencil engine.</span>
+
+<span class="sd">    The class keeps the legacy public API while adding the numerical controls</span>
+<span class="sd">    required by the multi-band forward-backward TLS formulation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_decimation_factor&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_svd_solver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_tol_deflation&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_max_modes&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_t_ringdown&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_verbose&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_nominal_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_use_notch_filtering&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_notch_quality_factor&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_decimation_safety_factor&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_anti_alias_filter_order&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_use_zero_phase_filtering&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_block_rows_ratio&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_minimum_block_rows&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_minimum_samples_per_band&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_use_forward_backward&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_use_exponential_detrending&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_maximum_observables&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_min_mode_energy_ratio&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_frequency_merge_tolerance_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_real_part_merge_tolerance&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_principal_log_tolerance_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_condition_number_limit&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_analysis_bands&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;decimation_factor&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;svd_solver&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">EraSvdSolverType</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;tol_deflation&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;max_modes&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;t_ringdown&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;nominal_frequency_hz&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;use_notch_filtering&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;notch_quality_factor&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;decimation_safety_factor&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;anti_alias_filter_order&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;use_zero_phase_filtering&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;block_rows_ratio&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;minimum_block_rows&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;minimum_samples_per_band&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;use_forward_backward&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;use_exponential_detrending&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;maximum_observables&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;min_mode_energy_ratio&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;frequency_merge_tolerance_hz&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;real_part_merge_tolerance&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;principal_log_tolerance_hz&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition_number_limit&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">decimation_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">svd_solver</span><span class="p">:</span> <span class="n">EraSvdSolverType</span> <span class="o">=</span> <span class="n">EraSvdSolverType</span><span class="o">.</span><span class="n">FullSvd</span><span class="p">,</span>
+                 <span class="n">tol_deflation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                 <span class="n">max_modes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+                 <span class="n">t_ringdown</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">use_notch_filtering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">notch_quality_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span><span class="p">,</span>
+                 <span class="n">decimation_safety_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+                 <span class="n">anti_alias_filter_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">use_zero_phase_filtering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">block_rows_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.35</span><span class="p">,</span>
+                 <span class="n">minimum_block_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">minimum_samples_per_band</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+                 <span class="n">use_forward_backward</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">use_exponential_detrending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">maximum_observables</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">min_mode_energy_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">frequency_merge_tolerance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">real_part_merge_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">principal_log_tolerance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+                 <span class="n">condition_number_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span>
+                 <span class="n">analysis_bands</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the ERA/Matrix Pencil options.</span>
+
+<span class="sd">        :param decimation_factor: Legacy manual cap for the dynamic decimator.</span>
+<span class="sd">        :param svd_solver: SVD backend selection.</span>
+<span class="sd">        :param tol_deflation: Numerical singular-value floor.</span>
+<span class="sd">        :param max_modes: Global maximum number of modes to keep.</span>
+<span class="sd">        :param t_ringdown: EMT ringdown simulation time horizon in seconds.</span>
+<span class="sd">        :param verbose: Verbosity level.</span>
+<span class="sd">        :param nominal_frequency_hz: Explicit nominal frequency. ``0.0`` means auto.</span>
+<span class="sd">        :param use_notch_filtering: Enable the strict fundamental notch.</span>
+<span class="sd">        :param notch_quality_factor: Notch quality factor.</span>
+<span class="sd">        :param decimation_safety_factor: Oversampling safety factor after band isolation.</span>
+<span class="sd">        :param anti_alias_filter_order: Butterworth filter order used before decimation.</span>
+<span class="sd">        :param use_zero_phase_filtering: Use zero-phase filtering when feasible.</span>
+<span class="sd">        :param block_rows_ratio: Ratio used to size the block-Hankel matrix.</span>
+<span class="sd">        :param minimum_block_rows: Minimum block rows for the Hankel matrix.</span>
+<span class="sd">        :param minimum_samples_per_band: Minimum samples required to solve one band.</span>
+<span class="sd">        :param use_forward_backward: Enable forward-backward pencil symmetrization.</span>
+<span class="sd">        :param use_exponential_detrending: Enable exponential DC-offset removal.</span>
+<span class="sd">        :param maximum_observables: Optional cap on the number of channels. ``0`` means all.</span>
+<span class="sd">        :param min_mode_energy_ratio: Minimum modal-energy ratio to keep one mode.</span>
+<span class="sd">        :param frequency_merge_tolerance_hz: Frequency tolerance for modal fusion.</span>
+<span class="sd">        :param real_part_merge_tolerance: Real-part tolerance for modal fusion.</span>
+<span class="sd">        :param principal_log_tolerance_hz: Tolerance used while validating band consistency.</span>
+<span class="sd">        :param condition_number_limit: Numerical conditioning ceiling.</span>
+<span class="sd">        :param analysis_bands: Optional tuple of explicit band limits.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">OptionsTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;EraMatrixPencilOptions&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Every field is initialized before validation so the setters always</span>
+        <span class="c1"># operate on already allocated state, which keeps debugging predictable.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_svd_solver</span><span class="p">:</span> <span class="n">EraSvdSolverType</span> <span class="o">=</span> <span class="n">EraSvdSolverType</span><span class="o">.</span><span class="n">FullSvd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tol_deflation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_modes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t_ringdown</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_notch_filtering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notch_quality_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_safety_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anti_alias_filter_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_zero_phase_filtering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_block_rows_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.35</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_block_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_samples_per_band</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_forward_backward</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_exponential_detrending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_observables</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_mode_energy_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_merge_tolerance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_real_part_merge_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_principal_log_tolerance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_condition_number_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e12</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_bands</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_default_era_analysis_bands</span><span class="p">()</span>
+
+        <span class="c1"># The public setters keep the numeric constraints centralized.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_decimation_factor</span><span class="p">(</span><span class="n">decimation_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_svd_solver</span><span class="p">(</span><span class="n">svd_solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tol_deflation</span><span class="p">(</span><span class="n">tol_deflation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_max_modes</span><span class="p">(</span><span class="n">max_modes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_t_ringdown</span><span class="p">(</span><span class="n">t_ringdown</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_nominal_frequency_hz</span><span class="p">(</span><span class="n">nominal_frequency_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_notch_filtering</span><span class="p">(</span><span class="n">use_notch_filtering</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_notch_quality_factor</span><span class="p">(</span><span class="n">notch_quality_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_decimation_safety_factor</span><span class="p">(</span><span class="n">decimation_safety_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_anti_alias_filter_order</span><span class="p">(</span><span class="n">anti_alias_filter_order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_zero_phase_filtering</span><span class="p">(</span><span class="n">use_zero_phase_filtering</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_block_rows_ratio</span><span class="p">(</span><span class="n">block_rows_ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_minimum_block_rows</span><span class="p">(</span><span class="n">minimum_block_rows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_minimum_samples_per_band</span><span class="p">(</span><span class="n">minimum_samples_per_band</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_forward_backward</span><span class="p">(</span><span class="n">use_forward_backward</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_exponential_detrending</span><span class="p">(</span><span class="n">use_exponential_detrending</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_maximum_observables</span><span class="p">(</span><span class="n">maximum_observables</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_min_mode_energy_ratio</span><span class="p">(</span><span class="n">min_mode_energy_ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_frequency_merge_tolerance_hz</span><span class="p">(</span><span class="n">frequency_merge_tolerance_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_real_part_merge_tolerance</span><span class="p">(</span><span class="n">real_part_merge_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_principal_log_tolerance_hz</span><span class="p">(</span><span class="n">principal_log_tolerance_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_condition_number_limit</span><span class="p">(</span><span class="n">condition_number_limit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_analysis_bands</span><span class="p">(</span><span class="n">analysis_bands</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_decimation_factor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_decimation_factor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_decimation_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the legacy manual cap for dynamic decimation.</span>
+
+<span class="sd">        :return: Positive decimation cap.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_factor</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_decimation_factor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_decimation_factor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_decimation_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the legacy manual cap for dynamic decimation.</span>
+
+<span class="sd">        :param value: Requested cap.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_factor</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_factor</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decimation_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive decimation cap.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_decimation_factor</span><span class="p">()</span>
+
+    <span class="nd">@decimation_factor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decimation_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested cap.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_decimation_factor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_svd_solver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_svd_solver">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_svd_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EraSvdSolverType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the configured SVD backend.</span>
+
+<span class="sd">        :return: SVD backend enum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_svd_solver</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_svd_solver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_svd_solver">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_svd_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">EraSvdSolverType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the configured SVD backend.</span>
+
+<span class="sd">        :param value: Requested SVD backend.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">EraSvdSolverType</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_svd_solver</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_svd_solver</span> <span class="o">=</span> <span class="n">EraSvdSolverType</span><span class="o">.</span><span class="n">FullSvd</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">svd_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EraSvdSolverType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: SVD backend enum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_svd_solver</span><span class="p">()</span>
+
+    <span class="nd">@svd_solver</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">svd_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">EraSvdSolverType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested SVD backend.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_svd_solver</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_tol_deflation">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_tol_deflation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tol_deflation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the singular-value numerical floor.</span>
+
+<span class="sd">        :return: Positive floor value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol_deflation</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_tol_deflation">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_tol_deflation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tol_deflation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the singular-value numerical floor.</span>
+
+<span class="sd">        :param value: Requested floor.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tol_deflation</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tol_deflation</span> <span class="o">=</span> <span class="mf">1e-12</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tol_deflation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive floor value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tol_deflation</span><span class="p">()</span>
+
+    <span class="nd">@tol_deflation</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tol_deflation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested floor.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tol_deflation</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_max_modes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_max_modes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_max_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the global maximum number of retained modes.</span>
+
+<span class="sd">        :return: Positive mode cap.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_modes</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_max_modes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_max_modes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_max_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the global maximum number of retained modes.</span>
+
+<span class="sd">        :param value: Requested mode cap.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_modes</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_modes</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive mode cap.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_modes</span><span class="p">()</span>
+
+    <span class="nd">@max_modes</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested mode cap.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_max_modes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_t_ringdown">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_t_ringdown">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_t_ringdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the EMT ringdown simulation horizon.</span>
+
+<span class="sd">        :return: Time horizon in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t_ringdown</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_t_ringdown">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_t_ringdown">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_t_ringdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the EMT ringdown simulation horizon.</span>
+
+<span class="sd">        :param value: Requested time horizon in seconds.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_t_ringdown</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_t_ringdown</span> <span class="o">=</span> <span class="mf">0.5</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">t_ringdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Time horizon in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_t_ringdown</span><span class="p">()</span>
+
+    <span class="nd">@t_ringdown</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">t_ringdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested time horizon in seconds.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_t_ringdown</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_verbose">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_verbose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the verbosity level.</span>
+
+<span class="sd">        :return: Verbosity level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_verbose">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_verbose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the verbosity level.</span>
+
+<span class="sd">        :param value: Requested verbosity level.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Verbosity level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_verbose</span><span class="p">()</span>
+
+    <span class="nd">@verbose</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested verbosity level.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_nominal_frequency_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_nominal_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_nominal_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the explicit nominal-frequency override.</span>
+
+<span class="sd">        :return: Frequency in Hz. ``0.0`` means auto-detect from the grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nominal_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_nominal_frequency_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_nominal_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_nominal_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the explicit nominal-frequency override.</span>
+
+<span class="sd">        :param value: Frequency in Hz. ``0.0`` means auto.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nominal_frequency_hz</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nominal_frequency_hz</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nominal_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Frequency in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nominal_frequency_hz</span><span class="p">()</span>
+
+    <span class="nd">@nominal_frequency_hz</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nominal_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested frequency in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_nominal_frequency_hz</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_use_notch_filtering">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_use_notch_filtering">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_use_notch_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the notch-filter activation flag.</span>
+
+<span class="sd">        :return: ``True`` when the fundamental notch is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_notch_filtering</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_use_notch_filtering">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_use_notch_filtering">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_use_notch_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the notch-filter activation flag.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_notch_filtering</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_notch_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: ``True`` when the fundamental notch is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_use_notch_filtering</span><span class="p">()</span>
+
+    <span class="nd">@use_notch_filtering</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_notch_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_notch_filtering</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_notch_quality_factor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_notch_quality_factor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_notch_quality_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the notch quality factor.</span>
+
+<span class="sd">        :return: Positive quality factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notch_quality_factor</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_notch_quality_factor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_notch_quality_factor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_notch_quality_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the notch quality factor.</span>
+
+<span class="sd">        :param value: Requested quality factor.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notch_quality_factor</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notch_quality_factor</span> <span class="o">=</span> <span class="mf">30.0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notch_quality_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive quality factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_notch_quality_factor</span><span class="p">()</span>
+
+    <span class="nd">@notch_quality_factor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notch_quality_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested quality factor.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_notch_quality_factor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_decimation_safety_factor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_decimation_safety_factor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_decimation_safety_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the post-band oversampling safety factor.</span>
+
+<span class="sd">        :return: Positive oversampling factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_safety_factor</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_decimation_safety_factor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_decimation_safety_factor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_decimation_safety_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the post-band oversampling safety factor.</span>
+
+<span class="sd">        :param value: Requested oversampling factor.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mf">2.5</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_safety_factor</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_decimation_safety_factor</span> <span class="o">=</span> <span class="mf">10.0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decimation_safety_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive oversampling factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_decimation_safety_factor</span><span class="p">()</span>
+
+    <span class="nd">@decimation_safety_factor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decimation_safety_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested oversampling factor.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_decimation_safety_factor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_anti_alias_filter_order">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_anti_alias_filter_order">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_anti_alias_filter_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the Butterworth anti-alias filter order.</span>
+
+<span class="sd">        :return: Positive filter order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anti_alias_filter_order</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_anti_alias_filter_order">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_anti_alias_filter_order">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_anti_alias_filter_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the Butterworth anti-alias filter order.</span>
+
+<span class="sd">        :param value: Requested filter order.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_anti_alias_filter_order</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_anti_alias_filter_order</span> <span class="o">=</span> <span class="mi">8</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">anti_alias_filter_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive filter order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_anti_alias_filter_order</span><span class="p">()</span>
+
+    <span class="nd">@anti_alias_filter_order</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">anti_alias_filter_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested filter order.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_anti_alias_filter_order</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_use_zero_phase_filtering">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_use_zero_phase_filtering">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_use_zero_phase_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the zero-phase filtering flag.</span>
+
+<span class="sd">        :return: ``True`` when zero-phase filtering is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_zero_phase_filtering</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_use_zero_phase_filtering">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_use_zero_phase_filtering">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_use_zero_phase_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the zero-phase filtering flag.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_zero_phase_filtering</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_zero_phase_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: ``True`` when zero-phase filtering is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_use_zero_phase_filtering</span><span class="p">()</span>
+
+    <span class="nd">@use_zero_phase_filtering</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_zero_phase_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_zero_phase_filtering</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_block_rows_ratio">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_block_rows_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_block_rows_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the block-Hankel sizing ratio.</span>
+
+<span class="sd">        :return: Ratio in the interval ``(0, 1)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_rows_ratio</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_block_rows_ratio">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_block_rows_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_block_rows_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the block-Hankel sizing ratio.</span>
+
+<span class="sd">        :param value: Requested ratio.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="mf">0.05</span> <span class="o">&lt;</span> <span class="n">sanitized_value</span> <span class="o">&lt;</span> <span class="mf">0.75</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_block_rows_ratio</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_block_rows_ratio</span> <span class="o">=</span> <span class="mf">0.35</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block_rows_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Ratio in the interval ``(0, 1)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_block_rows_ratio</span><span class="p">()</span>
+
+    <span class="nd">@block_rows_ratio</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block_rows_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested ratio.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_block_rows_ratio</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_minimum_block_rows">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_minimum_block_rows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_minimum_block_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the minimum block-Hankel depth.</span>
+
+<span class="sd">        :return: Minimum block rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_block_rows</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_minimum_block_rows">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_minimum_block_rows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_minimum_block_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the minimum block-Hankel depth.</span>
+
+<span class="sd">        :param value: Requested minimum block rows.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_block_rows</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_block_rows</span> <span class="o">=</span> <span class="mi">8</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimum_block_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Minimum block rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_minimum_block_rows</span><span class="p">()</span>
+
+    <span class="nd">@minimum_block_rows</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimum_block_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested minimum block rows.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_minimum_block_rows</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_minimum_samples_per_band">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_minimum_samples_per_band">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_minimum_samples_per_band</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the minimum number of samples required for one band.</span>
+
+<span class="sd">        :return: Minimum number of samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_samples_per_band</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_minimum_samples_per_band">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_minimum_samples_per_band">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_minimum_samples_per_band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the minimum number of samples required for one band.</span>
+
+<span class="sd">        :param value: Requested minimum number of samples.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_samples_per_band</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_samples_per_band</span> <span class="o">=</span> <span class="mi">64</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimum_samples_per_band</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Minimum number of samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_minimum_samples_per_band</span><span class="p">()</span>
+
+    <span class="nd">@minimum_samples_per_band</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimum_samples_per_band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested minimum number of samples.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_minimum_samples_per_band</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_use_forward_backward">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_use_forward_backward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_use_forward_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the forward-backward matrix-pencil flag.</span>
+
+<span class="sd">        :return: ``True`` when FBMP is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_forward_backward</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_use_forward_backward">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_use_forward_backward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_use_forward_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the forward-backward matrix-pencil flag.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_forward_backward</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_forward_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: ``True`` when FBMP is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_use_forward_backward</span><span class="p">()</span>
+
+    <span class="nd">@use_forward_backward</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_forward_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_forward_backward</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_use_exponential_detrending">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_use_exponential_detrending">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_use_exponential_detrending</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the exponential detrending flag.</span>
+
+<span class="sd">        :return: ``True`` when exponential detrending is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_exponential_detrending</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_use_exponential_detrending">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_use_exponential_detrending">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_use_exponential_detrending</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the exponential detrending flag.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_exponential_detrending</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_exponential_detrending</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: ``True`` when exponential detrending is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_use_exponential_detrending</span><span class="p">()</span>
+
+    <span class="nd">@use_exponential_detrending</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_exponential_detrending</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_use_exponential_detrending</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_maximum_observables">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_maximum_observables">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_maximum_observables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the optional cap on the number of observed channels.</span>
+
+<span class="sd">        :return: ``0`` means all channels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_observables</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_maximum_observables">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_maximum_observables">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_maximum_observables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the optional cap on the number of observed channels.</span>
+
+<span class="sd">        :param value: Requested cap. ``0`` means all channels.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_observables</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_observables</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maximum_observables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: ``0`` means all channels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_maximum_observables</span><span class="p">()</span>
+
+    <span class="nd">@maximum_observables</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maximum_observables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested cap.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_maximum_observables</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_min_mode_energy_ratio">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_min_mode_energy_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_min_mode_energy_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the minimum retained modal-energy ratio.</span>
+
+<span class="sd">        :return: Positive energy threshold.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_mode_energy_ratio</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_min_mode_energy_ratio">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_min_mode_energy_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_min_mode_energy_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the minimum retained modal-energy ratio.</span>
+
+<span class="sd">        :param value: Requested energy threshold.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">sanitized_value</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_min_mode_energy_ratio</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_min_mode_energy_ratio</span> <span class="o">=</span> <span class="mf">0.01</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_mode_energy_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive energy threshold.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_min_mode_energy_ratio</span><span class="p">()</span>
+
+    <span class="nd">@min_mode_energy_ratio</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_mode_energy_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested energy threshold.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_min_mode_energy_ratio</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_frequency_merge_tolerance_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_frequency_merge_tolerance_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_merge_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the frequency tolerance used while merging poles.</span>
+
+<span class="sd">        :return: Frequency tolerance in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_merge_tolerance_hz</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_frequency_merge_tolerance_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_frequency_merge_tolerance_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency_merge_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the frequency tolerance used while merging poles.</span>
+
+<span class="sd">        :param value: Requested tolerance in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_merge_tolerance_hz</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_merge_tolerance_hz</span> <span class="o">=</span> <span class="mf">0.5</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frequency_merge_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Frequency tolerance in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frequency_merge_tolerance_hz</span><span class="p">()</span>
+
+    <span class="nd">@frequency_merge_tolerance_hz</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frequency_merge_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested tolerance in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_frequency_merge_tolerance_hz</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_real_part_merge_tolerance">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_real_part_merge_tolerance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_real_part_merge_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the real-part tolerance used while merging poles.</span>
+
+<span class="sd">        :return: Real-part tolerance in 1/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_real_part_merge_tolerance</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_real_part_merge_tolerance">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_real_part_merge_tolerance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_real_part_merge_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the real-part tolerance used while merging poles.</span>
+
+<span class="sd">        :param value: Requested tolerance in 1/s.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_real_part_merge_tolerance</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_real_part_merge_tolerance</span> <span class="o">=</span> <span class="mf">0.5</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">real_part_merge_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Real-part tolerance in 1/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_real_part_merge_tolerance</span><span class="p">()</span>
+
+    <span class="nd">@real_part_merge_tolerance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">real_part_merge_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested tolerance in 1/s.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_real_part_merge_tolerance</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_principal_log_tolerance_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_principal_log_tolerance_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_principal_log_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the tolerance used while validating principal-log frequencies.</span>
+
+<span class="sd">        :return: Frequency tolerance in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_principal_log_tolerance_hz</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_principal_log_tolerance_hz">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_principal_log_tolerance_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_principal_log_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the tolerance used while validating principal-log frequencies.</span>
+
+<span class="sd">        :param value: Requested tolerance in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_principal_log_tolerance_hz</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_principal_log_tolerance_hz</span> <span class="o">=</span> <span class="mf">2.0</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">principal_log_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Frequency tolerance in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_principal_log_tolerance_hz</span><span class="p">()</span>
+
+    <span class="nd">@principal_log_tolerance_hz</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">principal_log_tolerance_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested tolerance in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_principal_log_tolerance_hz</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_condition_number_limit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_condition_number_limit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_condition_number_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the numerical conditioning ceiling.</span>
+
+<span class="sd">        :return: Positive condition-number limit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_condition_number_limit</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_condition_number_limit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_condition_number_limit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_condition_number_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the numerical conditioning ceiling.</span>
+
+<span class="sd">        :param value: Requested condition-number limit.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sanitized_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sanitized_value</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_condition_number_limit</span> <span class="o">=</span> <span class="n">sanitized_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_condition_number_limit</span> <span class="o">=</span> <span class="mf">1e12</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">condition_number_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :return: Positive condition-number limit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_condition_number_limit</span><span class="p">()</span>
+
+    <span class="nd">@condition_number_limit</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">condition_number_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property wrapper for VeraGrid schema access.</span>
+
+<span class="sd">        :param value: Requested condition-number limit.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_condition_number_limit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.set_analysis_bands">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.set_analysis_bands">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_analysis_bands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band_limits</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace the complete analysis-band plan.</span>
+
+<span class="sd">        :param band_limits: Optional tuple of ``(low_hz, high_hz)`` pairs.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_bands</span> <span class="o">=</span> <span class="n">build_era_analysis_bands_from_pairs</span><span class="p">(</span><span class="n">band_limits</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_analysis_bands">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_analysis_bands">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_analysis_bands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">EraMatrixPencilBand</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the configured analysis-band plan.</span>
+
+<span class="sd">        :return: Tuple of :class:`EraMatrixPencilBand` objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_bands</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilOptions.get_analysis_band_limits">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options.EraMatrixPencilOptions.get_analysis_band_limits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_analysis_band_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the analysis-band plan as plain tuples.</span>
+
+<span class="sd">        :return: Tuple of ``(low_hz, high_hz)`` pairs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">limits_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">band_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_bands</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analysis_bands</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">band_index</span> <span class="o">&lt;</span> <span class="n">n_bands</span><span class="p">:</span>
+            <span class="n">current_band</span><span class="p">:</span> <span class="n">EraMatrixPencilBand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_bands</span><span class="p">[</span><span class="n">band_index</span><span class="p">]</span>
+            <span class="n">limits_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_band</span><span class="o">.</span><span class="n">to_tuple</span><span class="p">())</span>
+            <span class="n">band_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">limits_list</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.Topology.node_groups_driver &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.Topology.node_groups_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.Topology.node_groups_driver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">DBSCAN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Normalizer</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.LinearFactors.linear_analysis_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearAnalysisResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationTypes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Topology.node_groups_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">NodeGroupsResults</span>
+
+
+<div class="viewcode-block" id="NodeGroupsDriver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Topology.html#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NodeGroupsDriver</span><span class="p">(</span><span class="n">DriverTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NodeGroupsDriver</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;sigmas&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;min_group_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;use_ptdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ptdf_results&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Node groups&#39;</span>
+    <span class="n">tpe</span> <span class="o">=</span> <span class="n">SimulationTypes</span><span class="o">.</span><span class="n">NodeGrouping_run</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+            <span class="n">sigmas</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">min_group_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">ptdf_results</span><span class="p">:</span> <span class="n">LinearAnalysisResults</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the node grouping driver.</span>
+
+<span class="sd">        :param grid: MultiCircuit instance to analyse.</span>
+<span class="sd">        :param sigmas: Clustering distance threshold.</span>
+<span class="sd">        :param min_group_size: Minimum number of elements required in a group.</span>
+<span class="sd">        :param ptdf_results: Linear analysis results used to build the feature</span>
+<span class="sd">            matrix when PTDF-based grouping is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">DriverTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigmas</span> <span class="o">=</span> <span class="n">sigmas</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_group_size</span> <span class="o">=</span> <span class="n">min_group_size</span>
+
+        <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_ptdf</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ptdf_results</span> <span class="o">=</span> <span class="n">ptdf_results</span>
+
+        <span class="c1"># The result object is allocated during construction so the driver uses</span>
+        <span class="c1"># the same persistence and session interfaces as the other studies.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span> <span class="n">NodeGroupsResults</span> <span class="o">=</span> <span class="n">NodeGroupsResults</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NodeGroupsDriver.build_weighted_graph">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Topology.html#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.build_weighted_graph">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_weighted_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the topology graph used by the Dijkstra-based distance mode.</span>
+
+<span class="sd">        :return: Weighted graph whose nodes are bus indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+
+        <span class="c1"># The bus to index map is created explicitly because the branch</span>
+        <span class="c1"># traversal works with bus objects while the graph works with indices.</span>
+        <span class="n">bus_dictionary</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">bus_index</span><span class="p">,</span> <span class="n">bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()):</span>
+            <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus_index</span>
+
+        <span class="k">for</span> <span class="n">branch_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branch_lists</span><span class="p">(</span><span class="n">add_vsc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_hvdc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">branch_list</span><span class="p">:</span>
+                <span class="c1"># if branch.active:</span>
+                <span class="n">from_bus_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
+                <span class="n">to_bus_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
+                <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">get_weight</span><span class="p">()</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">from_bus_index</span><span class="p">,</span> <span class="n">to_bus_index</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">graph</span></div>
+
+
+<div class="viewcode-block" id="NodeGroupsDriver.run">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Topology.html#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the node grouping study.</span>
+
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">()</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">NodeGroupsResults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ptdf</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Analyzing PTDF...&#39;</span><span class="p">)</span>
+
+            <span class="c1"># The PTDF matrix is normalized before clustering so the DBSCAN</span>
+            <span class="c1"># distance threshold is applied on a comparable feature scale.</span>
+            <span class="n">normalized_training_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Normalizer</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptdf_results</span><span class="o">.</span><span class="n">PTDF</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">set_training_matrix</span><span class="p">(</span><span class="n">normalized_training_matrix</span><span class="p">)</span>
+
+            <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;euclidean&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Exploring Dijkstra distances...&#39;</span><span class="p">)</span>
+            <span class="c1"># The weighted grid graph is explored to obtain the pairwise bus</span>
+            <span class="c1"># distances that will act as a precomputed clustering metric.</span>
+            <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_weighted_graph</span><span class="p">()</span>
+            <span class="n">iteration_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">source_bus_index</span><span class="p">,</span> <span class="n">distances_dict</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">all_pairs_dijkstra_path_length</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">target_bus_index</span><span class="p">,</span> <span class="n">distance</span> <span class="ow">in</span> <span class="n">distances_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">X_train</span><span class="p">[</span><span class="n">source_bus_index</span><span class="p">,</span> <span class="n">target_bus_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">report_progress2</span><span class="p">(</span><span class="n">iteration_index</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+                <span class="n">iteration_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="s1">&#39;precomputed&#39;</span>
+
+        <span class="c1"># The global distance spread is preserved because callers may use it to</span>
+        <span class="c1"># understand how aggressive the grouping threshold was.</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">set_sigma</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_training_matrix</span><span class="p">())))</span>
+        <span class="n">max_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigmas</span>
+
+        <span class="c1"># The clustering stage transforms the distance representation into</span>
+        <span class="c1"># explicit group assignments for each bus.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Building groups with DBSCAN...&#39;</span><span class="p">)</span>
+
+        <span class="n">model</span><span class="p">:</span> <span class="n">DBSCAN</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">max_distance</span><span class="p">,</span>
+                               <span class="n">min_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_group_size</span><span class="p">,</span>
+                               <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+
+        <span class="n">db</span><span class="p">:</span> <span class="n">DBSCAN</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_training_matrix</span><span class="p">())</span>
+
+        <span class="c1"># Noise labels are discarded because the GUI only colours buses that</span>
+        <span class="c1"># belong to actual clusters.</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({</span><span class="n">label</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">labels_</span> <span class="k">if</span> <span class="n">label</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>
+        <span class="n">groups_by_name</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">groups_by_index</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">groups_by_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">())</span>
+            <span class="n">groups_by_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">())</span>
+
+        <span class="c1"># Each bus is placed in the cluster bucket that matches the DBSCAN</span>
+        <span class="c1"># label so the names and indices stay aligned for downstream consumers.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">labels_</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">group_idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">groups_by_name</span><span class="p">[</span><span class="n">group_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">groups_by_index</span><span class="p">[</span><span class="n">group_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">set_groups</span><span class="p">(</span><span class="n">groups_by_name</span><span class="o">=</span><span class="n">groups_by_name</span><span class="p">,</span> <span class="n">groups_by_index</span><span class="o">=</span><span class="n">groups_by_index</span><span class="p">)</span>
+
+        <span class="c1"># The driver finishes only after the results object contains the final</span>
+        <span class="c1"># group assignments used by the session and GUI layers.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_done</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

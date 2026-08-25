@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QAbstractItemView</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QDialogButtonBox</span><span class="p">,</span>
+                             <span class="n">QGroupBox</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span>
+                             <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="p">,</span> <span class="n">QSpacerItem</span><span class="p">,</span>
+                             <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditableDevice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">DynamicSimulationMode</span><span class="p">,</span> <span class="n">FmuTemplateDomain</span>
+
+
+
+<span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;application/x-veragrid-dynamic-editor-tab&quot;</span>
+
+
+
+<div class="viewcode-block" id="get_available_dynamic_modes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.get_available_dynamic_modes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_dynamic_modes</span><span class="p">(</span><span class="n">api_object</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DynamicSimulationMode</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the modes that can be opened for one API object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">DynamicSimulationMode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">device_type</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span>
+
+    <span class="k">if</span> <span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">RMS</span><span class="p">,)</span>
+    <span class="k">if</span> <span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">EMT</span><span class="p">,)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">api_object</span><span class="o">.</span><span class="n">rms_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">RMS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">api_object</span><span class="o">.</span><span class="n">emt_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">EMT</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">modes</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_dynamic_editor_title">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.build_dynamic_editor_title">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_dynamic_editor_title</span><span class="p">(</span><span class="n">api_object</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the tab/window title for one dynamic editor session.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="build_dynamic_editor_entry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.build_dynamic_editor_entry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_dynamic_editor_entry</span><span class="p">(</span><span class="n">api_object</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicEditorEntry</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one dynamic editor picker entry or return None when the object has no dynamic editor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">available_modes</span> <span class="o">=</span> <span class="n">get_available_dynamic_modes</span><span class="p">(</span><span class="n">api_object</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_modes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api_object</span><span class="p">,</span> <span class="n">EditableDevice</span><span class="p">):</span>
+        <span class="n">key_base</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">api_object</span><span class="o">.</span><span class="n">idtag</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">type_label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">display_name</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">key_base</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dynamic-object:</span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">api_object</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">type_label</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">api_object</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">display_name</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">return</span> <span class="n">DynamicEditorEntry</span><span class="p">(</span>
+        <span class="n">api_object</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">available_modes</span><span class="o">=</span><span class="n">available_modes</span><span class="p">,</span>
+        <span class="n">display_name</span><span class="o">=</span><span class="n">display_name</span><span class="p">,</span>
+        <span class="n">type_label</span><span class="o">=</span><span class="n">type_label</span><span class="p">,</span>
+        <span class="n">key_base</span><span class="o">=</span><span class="n">key_base</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="iter_dynamic_editor_entries">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.iter_dynamic_editor_entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iter_dynamic_editor_entries</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DynamicEditorEntry</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yield every circuit object that can be opened in the unified Dynamic Editor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">seen_keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">api_object</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="k">for</span> <span class="n">api_object</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_injection_devices</span><span class="p">(),</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_branches</span><span class="p">()):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="n">build_dynamic_editor_entry</span><span class="p">(</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">entry</span><span class="o">.</span><span class="n">key_base</span> <span class="ow">in</span> <span class="n">seen_keys</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">seen_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">key_base</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">entry</span></div>
+
+
+
+<div class="viewcode-block" id="get_templates_for_entry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.get_templates_for_entry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_templates_for_entry</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="n">DynamicEditorEntry</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the template list that should be exposed in the editor library for one entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">api_object</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">api_object</span>
+    <span class="n">device_type</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span>
+
+    <span class="k">if</span> <span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_dynamic_templates_by_domain</span><span class="p">(</span><span class="n">FmuTemplateDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_dynamic_templates_by_domain</span><span class="p">(</span><span class="n">FmuTemplateDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">RMS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="get_block_for_entry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.get_block_for_entry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_block_for_entry</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="n">DynamicEditorEntry</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the block edited by one entry and mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">api_object</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">api_object</span>
+    <span class="n">device_type</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span>
+
+    <span class="k">if</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">,</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">api_object</span><span class="o">.</span><span class="n">block</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">RMS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">api_object</span><span class="o">.</span><span class="n">rms_model</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">api_object</span><span class="o">.</span><span class="n">emt_model</span></div>
+
+
+<div class="viewcode-block" id="DynamicEditorEntry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorEntry">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicEditorEntry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One selectable/openable Dynamic Editor entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">api_object</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                 <span class="n">circuit</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                 <span class="n">available_modes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DynamicSimulationMode</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                 <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">type_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">key_base</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span> <span class="o">=</span> <span class="n">api_object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">available_modes</span> <span class="o">=</span> <span class="n">available_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_label</span> <span class="o">=</span> <span class="n">type_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_base</span> <span class="o">=</span> <span class="n">key_base</span>
+
+<div class="viewcode-block" id="DynamicEditorEntry.session_key">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorEntry.session_key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">session_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_base</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DynamicEditorPickerDialog">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorPickerDialog">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicEditorPickerDialog</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modal dialog used by the workspace `+` button to open another dynamic editor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">DynamicEditorEntry</span><span class="p">],</span>
+                 <span class="n">current_entry</span><span class="p">:</span> <span class="n">DynamicEditorEntry</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">current_mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;DynamicEditorPickerDialog&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">720</span><span class="p">,</span> <span class="mi">520</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">DynamicEditorEntry</span><span class="p">]</span> <span class="o">=</span> <span class="n">entries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">DynamicEditorEntry</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span><span class="p">:</span> <span class="n">DynamicEditorEntry</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quick_entry</span><span class="p">:</span> <span class="n">DynamicEditorEntry</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">current_entry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quick_mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span> <span class="o">=</span> <span class="n">QGroupBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Quick Open&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutQuick</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenLabel</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Open the current block in the other mode.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenLabel</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutQuick</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quickOpenLabel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenButton</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Open&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutQuick</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quickOpenButton</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">searchLineEdit</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">searchLineEdit</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Search dynamic editors&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">searchLineEdit</span><span class="o">.</span><span class="n">setClearButtonEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchLineEdit</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span> <span class="o">=</span> <span class="n">QTableWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectionBehavior</span><span class="o">.</span><span class="n">SelectRows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectionMode</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setEditTriggers</span><span class="p">(</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditTrigger</span><span class="o">.</span><span class="n">NoEditTriggers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">setStretchLastSection</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">ResizeMode</span><span class="o">.</span><span class="n">Stretch</span><span class="p">)</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">ResizeMode</span><span class="o">.</span><span class="n">ResizeToContents</span><span class="p">)</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">ResizeMode</span><span class="o">.</span><span class="n">ResizeToContents</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Modes&quot;</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutMode</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeLabel</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutMode</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modeLabel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutMode</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalSpacer</span> <span class="o">=</span> <span class="n">QSpacerItem</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Policy</span><span class="o">.</span><span class="n">Expanding</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Policy</span><span class="o">.</span><span class="n">Minimum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutMode</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontalSpacer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontalLayoutMode</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span> <span class="o">=</span> <span class="n">QDialogButtonBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Cancel</span> <span class="o">|</span> <span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Open</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">searchLineEdit</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">itemSelectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_selection_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">itemDoubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accept_selected_entry</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_mode_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accept_quick_open</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">accepted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accept_selected_entry</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">rejected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure_quick_open</span><span class="p">(</span><span class="n">current_entry</span><span class="o">=</span><span class="n">current_entry</span><span class="p">,</span> <span class="n">current_mode</span><span class="o">=</span><span class="n">current_mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_filter</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure_quick_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">current_entry</span><span class="p">:</span> <span class="n">DynamicEditorEntry</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">current_mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current_entry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">current_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">alternate_modes</span> <span class="o">=</span> <span class="p">[</span><span class="n">mode</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">current_entry</span><span class="o">.</span><span class="n">available_modes</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">!=</span> <span class="n">current_mode</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alternate_modes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quick_mode</span> <span class="o">=</span> <span class="n">alternate_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenGroupBox</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Open the current block in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_quick_mode</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quickOpenButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Open </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_quick_mode</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">needle</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">needle</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">entry</span>
+                <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span>
+                <span class="k">if</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="ow">or</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">type_label</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="ow">or</span> <span class="n">needle</span> <span class="ow">in</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">available_modes</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">display_name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">type_label</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="s2">&quot; / &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">available_modes</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">selectRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">current_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entriesTableWidget</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">current_row</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">current_row</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_entries</span><span class="p">[</span><span class="n">current_row</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span><span class="o">.</span><span class="n">available_modes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">currentData</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeComboBox</span><span class="o">.</span><span class="n">currentData</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_accept_quick_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quick_entry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quick_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quick_entry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quick_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_accept_selected_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DynamicEditorPickerDialog.get_selection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorPickerDialog.get_selection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DynamicEditorEntry</span><span class="p">,</span> <span class="n">DynamicSimulationMode</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_entry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_mode</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="DynamicEditorAddButton">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorAddButton">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicEditorAddButton</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QToolButton</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Corner button used as both the add-entry action and a reattach drop target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tabWidgetDropRequested</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAutoRaise</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Open another Dynamic Editor&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynamicEditorAddButton.dragEnterEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorAddButton.dragEnterEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDragEnterEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">):</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DynamicEditorAddButton.dragMoveEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorAddButton.dragMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDragMoveEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">):</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DynamicEditorAddButton.dropEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DynamicEditorAddButton.dropEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDropEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidgetDropRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">toPoint</span><span class="p">()))</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DetachableEditorTabBar">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabBar">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetachableEditorTabBar</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTabBar</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tab bar that supports drag-out detach and drag-in reattach between workspaces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">detachDragIgnored</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span>
+    <span class="n">tabDropRequested</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_start_pos</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setExpanding</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DetachableEditorTabBar.mousePressEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabBar.mousePressEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_start_pos</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabAt</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_start_pos</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabBar.mouseMoveEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabBar.mouseMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_start_pos</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_start_pos</span><span class="p">)</span><span class="o">.</span><span class="n">manhattanLength</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">startDragDistance</span><span class="p">():</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">tab_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tab_widget</span><span class="p">,</span> <span class="n">DetachableEditorTabWidget</span><span class="p">):</span>
+            <span class="n">drag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDrag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QMimeData</span><span class="p">()</span>
+            <span class="n">mime</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;dynamic-editor-tab&quot;</span><span class="p">)</span>
+            <span class="n">drag</span><span class="o">.</span><span class="n">setMimeData</span><span class="p">(</span><span class="n">mime</span><span class="p">)</span>
+            <span class="n">drag</span><span class="o">.</span><span class="n">setHotSpot</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabRect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span><span class="p">)</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
+            <span class="n">tab_widget</span><span class="o">.</span><span class="n">prepare_tab_drag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">drag</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DropAction</span><span class="o">.</span><span class="n">MoveAction</span><span class="p">)</span>
+            <span class="n">tab_widget</span><span class="o">.</span><span class="n">finish_tab_drag</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_start_pos</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drag_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabBar.dragEnterEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabBar.dragEnterEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDragEnterEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">):</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabBar.dragMoveEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabBar.dragMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDragMoveEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">):</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabBar.dropEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabBar.dropEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDropEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">):</span>
+            <span class="n">target_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabAt</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">toPoint</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabDropRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">toPoint</span><span class="p">()),</span> <span class="n">target_index</span><span class="p">)</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DetachableEditorTabWidget">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabWidget">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetachableEditorTabWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    QTabWidget wrapper used by the Dynamic Editor workspace.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tabDragStarted</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">detachRequested</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span>
+    <span class="n">reattachRequested</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tab_bar</span> <span class="o">=</span> <span class="n">DetachableEditorTabBar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_drag_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTabBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tab_bar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTabsClosable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setDocumentMode</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tab_bar</span><span class="o">.</span><span class="n">detachDragIgnored</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_detach_drag_ignored</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tab_bar</span><span class="o">.</span><span class="n">tabDropRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reattachRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DetachableEditorTabWidget.prepare_tab_drag">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabWidget.prepare_tab_drag">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_tab_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_drag_index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabDragStarted</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabWidget.finish_tab_drag">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabWidget.finish_tab_drag">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finish_tab_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DropAction</span><span class="p">,</span> <span class="n">global_pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_drag_index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DropAction</span><span class="o">.</span><span class="n">MoveAction</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">detachRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">global_pos</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_drag_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabWidget.dragEnterEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabWidget.dragEnterEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDragEnterEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">)</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">+</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabWidget.dragMoveEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabWidget.dragMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDragMoveEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">)</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">+</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DetachableEditorTabWidget.dropEvent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine.DetachableEditorTabWidget.dropEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDropEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasFormat</span><span class="p">(</span><span class="n">DYNAMIC_EDITOR_TAB_MIME</span><span class="p">)</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">+</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">target_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">tabAt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">mapFrom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">toPoint</span><span class="p">()))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reattachRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">()</span><span class="o">.</span><span class="n">toPoint</span><span class="p">()),</span> <span class="n">target_index</span><span class="p">)</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_detach_drag_ignored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detachRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">global_pos</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

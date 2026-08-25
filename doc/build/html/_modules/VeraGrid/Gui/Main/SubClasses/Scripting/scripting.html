@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Main.SubClasses.Scripting.scripting &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Main.SubClasses.Scripting.scripting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Main.SubClasses.Scripting.scripting</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">scripts_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Main.SubClasses.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">IoMain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomFileSystemModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">error_msg</span><span class="p">,</span> <span class="n">yes_no_question</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_create_veragrid_folder</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+
+<div class="viewcode-block" id="ScriptingMain">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScriptingMain</span><span class="p">(</span><span class="n">IoMain</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Diagrams Main</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        @param parent:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create main window</span>
+        <span class="n">IoMain</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_console_vars</span><span class="p">()</span>
+
+        <span class="c1"># scripts tree view --------------------------------------------------------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">python_fs_model</span> <span class="o">=</span> <span class="n">CustomFileSystemModel</span><span class="p">(</span><span class="n">root_path</span><span class="o">=</span><span class="n">scripts_path</span><span class="p">(),</span> <span class="n">ext_filter</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*.py&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_fs_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">setRootIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_fs_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">scripts_path</span><span class="p">()))</span>
+
+        <span class="c1"># actions ------------------------------------------------------------------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionReset_console</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_console</span><span class="p">)</span>
+
+        <span class="c1"># button clicks ------------------------------------------------------------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">runSourceCodeButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_source_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">saveSourceCodeButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_source_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">clearSourceCodeButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clear_source_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">clearConsoleButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_console</span><span class="p">)</span>
+
+        <span class="c1"># double clicked -----------------------------------------------------------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">doubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_code_tree_clicked</span><span class="p">)</span>
+
+        <span class="c1"># context menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_source_code_tree_context_menu</span><span class="p">)</span>
+
+        <span class="c1"># Set context menu policy to CustomContextMenu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ContextMenuPolicy</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ScriptingMain.clear_console">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.clear_console">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_console</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear console output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.reset_console">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.reset_console">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_console</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset console</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_console_vars</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.print_console_help">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.print_console_help">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_console_help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;VeraGrid internal commands.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;If a command is unavailable is because the study has not been executed yet.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">clc():</span><span class="se">\t</span><span class="s1">clear the console.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">App functions:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.new_project(): Clear all.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.open_file(): Prompt to load VeraGrid compatible file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.save_file(): Prompt to save VeraGrid file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.export_diagram(): Prompt to export the diagram in png.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.create_schematic_from_api(): Create the schematic from the circuit information.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.adjust_all_node_width(): Adjust the width of all the nodes according to their name.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.numerical_circuit: get compilation of the assets.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.islands: get compilation of the assets split into the topological islands.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Circuit functions:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.circuit.plot_graph(): Plot a graph in a Matplotlib window. Call plt.show() after.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Power flow results:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.voltage:</span><span class="se">\t</span><span class="s1"> the nodal voltages in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.current:</span><span class="se">\t</span><span class="s1"> the branch currents in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.loading:</span><span class="se">\t</span><span class="s1"> the branch loading in %&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.losses:</span><span class="se">\t</span><span class="s1"> the branch losses in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.power:</span><span class="se">\t</span><span class="s1"> the nodal power Injections in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.Sf:</span><span class="se">\t</span><span class="s1"> the branch power Injections in per unit at the &quot;from&quot; side&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow.St:</span><span class="se">\t</span><span class="s1"> the branch power Injections in per unit at the &quot;to&quot; side&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Short circuit results:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.voltage:</span><span class="se">\t</span><span class="s1"> the nodal voltages in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.current:</span><span class="se">\t</span><span class="s1"> the branch currents in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.loading:</span><span class="se">\t</span><span class="s1"> the branch loading in %&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.losses:</span><span class="se">\t</span><span class="s1"> the branch losses in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.power:</span><span class="se">\t</span><span class="s1"> the nodal power Injections in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.power_from:</span><span class="se">\t</span><span class="s1"> the branch power Injections in per unit at the &quot;from&quot; side&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.power_to:</span><span class="se">\t</span><span class="s1"> the branch power Injections in per unit at the &quot;to&quot; side&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.short_circuit.short_circuit_power:</span><span class="se">\t</span><span class="s1"> Short circuit power in MVA of the grid nodes&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Optimal power flow results:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.optimal_power_flow.voltage:</span><span class="se">\t</span><span class="s1"> the nodal voltages angles in rad&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.optimal_power_flow.load_shedding:</span><span class="se">\t</span><span class="s1"> the branch loading in %&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.optimal_power_flow.losses:</span><span class="se">\t</span><span class="s1"> the branch losses in per unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.optimal_power_flow.Sbus:</span><span class="se">\t</span><span class="s1"> the nodal power Injections in MW&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.optimal_power_flow.Sf:</span><span class="se">\t</span><span class="s1"> the branch power Sf&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Time series power flow results:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.time:</span><span class="se">\t</span><span class="s1"> Profiles time index (pandas DateTimeIndex object)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.load_profiles:</span><span class="se">\t</span><span class="s1"> Load profiles matrix (row: time, col: node)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.gen_profiles:</span><span class="se">\t</span><span class="s1"> Generation profiles matrix (row: time, col: node)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.voltages:</span><span class="se">\t</span><span class="s1"> nodal voltages results matrix (row: time, col: node)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.currents:</span><span class="se">\t</span><span class="s1"> Branches currents results matrix (row: time, col: branch)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.loadings:</span><span class="se">\t</span><span class="s1"> Branches loadings results matrix (row: time, col: branch)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.power_flow_ts.losses:</span><span class="se">\t</span><span class="s1"> Branches losses results matrix (row: time, col: branch)&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Voltage stability power flow results:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.continuation_power_flow.voltage:</span><span class="se">\t</span><span class="s1"> Voltage values for every power multiplication factor.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.continuation_power_flow.lambda:</span><span class="se">\t</span><span class="s1"> Value of power multiplication factor applied&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.continuation_power_flow.Sf:</span><span class="se">\t</span><span class="s1"> Power values for every power multiplication factor.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Monte Carlo power flow results:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.V_avg:</span><span class="se">\t</span><span class="s1"> nodal voltage average result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.I_avg:</span><span class="se">\t</span><span class="s1"> branch current average result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.Loading_avg:</span><span class="se">\t</span><span class="s1"> branch loading average result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.Losses_avg:</span><span class="se">\t</span><span class="s1"> branch losses average result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.V_std:</span><span class="se">\t</span><span class="s1"> nodal voltage standard deviation result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.I_std:</span><span class="se">\t</span><span class="s1"> branch current standard deviation result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.Loading_std:</span><span class="se">\t</span><span class="s1"> branch loading standard deviation result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.Losses_std:</span><span class="se">\t</span><span class="s1"> branch losses standard deviation result.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.V_avg_series:</span><span class="se">\t</span><span class="s1"> nodal voltage average series.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.V_std_series:</span><span class="se">\t</span><span class="s1"> branch current standard deviation series.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">app.session.stochastic_power_flow.error_series:</span><span class="se">\t</span><span class="s1"> Monte Carlo error series (the convergence value).&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s1">&#39;The same for app.latin_hypercube_sampling&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.add_console_vars">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.add_console_vars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_console_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add vars to the console</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_editor</span><span class="p">]:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;hlp&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_console_help</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="n">np</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;pd&quot;</span><span class="p">,</span> <span class="n">pd</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;plt&quot;</span><span class="p">,</span> <span class="n">plt</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;vg&quot;</span><span class="p">,</span> <span class="n">vg</span><span class="p">)</span>  <span class="c1"># veragrid as a library</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;circuit&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;user_folder&#39;</span><span class="p">,</span> <span class="n">get_create_veragrid_folder</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;clc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">clear</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.append_output">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.append_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add some text to the output</span>
+<span class="sd">        :param text: text to append</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.run_source_code">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.run_source_code">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the source code in the IPython console</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">source_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_editor</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">source_code</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">:</span>
+            <span class="n">source_code</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">source_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append_output</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt; &quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.source_code_tree_clicked">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.source_code_tree_clicked">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_code_tree_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On double click on a source code tree item, load the source code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_fs_model</span><span class="o">.</span><span class="n">filePath</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pth</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">code_editor</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeNameLineEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_msg</span><span class="p">(</span><span class="n">pth</span> <span class="o">+</span> <span class="s1">&#39; does not exists :/&#39;</span><span class="p">,</span> <span class="s1">&#39;Open script&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.clear_source_code">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.clear_source_code">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear source code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="n">yes_no_question</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;Are you sure you want to clear source code?&#39;</span><span class="p">,</span>
+                             <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Clear Source Code&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeNameLineEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">code_editor</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.save_source_code">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.save_source_code">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the source code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeNameLineEdit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.py&#39;</span>
+            <span class="n">pth</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scripts_path</span><span class="p">(),</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code_editor</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_msg</span><span class="p">(</span><span class="s2">&quot;Please enter a name for the script&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Save script&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.delete_source_code">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.delete_source_code">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the selected file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="n">pth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_fs_model</span><span class="o">.</span><span class="n">filePath</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pth</span><span class="p">):</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="n">yes_no_question</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Do you want to delete_with_dialogue </span><span class="si">{}</span><span class="s2">?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pth</span><span class="p">),</span>
+                                 <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Delete source code file&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_msg</span><span class="p">(</span><span class="n">pth</span> <span class="o">+</span> <span class="s1">&#39; does not exists :/&#39;</span><span class="p">,</span> <span class="s2">&quot;Delete source code file&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScriptingMain.show_source_code_tree_context_menu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain.show_source_code_tree_context_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_source_code_tree_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show source code tree view context menu</span>
+<span class="sd">        :param pos: Relative click position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">context_menu</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">diagramsListView</span><span class="p">)</span>
+
+        <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                          <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span>
+                          <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/delete_with_dialogue.png&quot;</span><span class="p">,</span>
+                          <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delete_source_code</span><span class="p">)</span>
+
+        <span class="c1"># Convert global position to local position of the list widget</span>
+        <span class="n">mapped_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sourceCodeTreeView</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">context_menu</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">mapped_pos</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+# (ss+ww)/(ss+sB+ww) (bypass)
+
+This is Basic Block Catalog type `199` (`(ss+ww)/(ss+sB+ww) _bypass`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**(ss+ww)/(ss+sB+ww) (bypass)** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 2.
+- Configurable parameters: 2.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x1}{dt} = (ss+ww)/(ss+sB+ww) _{bypass\_dx1}
+$$
+
+$$
+\frac{d x2}{dt} = (ss+ww)/(ss+sB+ww) _{bypass\_dx2}
+$$
+
+$$
+0 = ((ss+ww)/(ss+sB+ww) _{bypass\_dx1} - (proc_{selfix\_0} \cdot 0 + (1 - proc_{selfix\_0}) \cdot x2))
+$$
+
+$$
+0 = ((ss+ww)/(ss+sB+ww) _{bypass\_dx2} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot (yi - B \cdot x2 - w \cdot w \cdot x1)))
+$$
+
+$$
+0 = (yo - (proc_{selfix\_2} \cdot yi + (1 - proc_{selfix\_2}) \cdot ((ss+ww)/(ss+sB+ww) _{bypass\_dx2} + x1 \cdot w \cdot w)))
+$$
+
+$$
+(ss+ww)/(ss+sB+ww) _{bypass\_triv}(t_0) = (\Theta\left(0 - \lvertB\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertw\rvert + 1 \times 10^{-6}\right))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `(ss+ww)/(ss+sB+ww) _bypass__x1` | Internal dynamic state | model-dependent |
+| State | `(ss+ww)/(ss+sB+ww) _bypass__x2` | Internal dynamic state | model-dependent |
+| Parameter | `B` | Configurable model parameter | model-dependent |
+| Parameter | `w` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

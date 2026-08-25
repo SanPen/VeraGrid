@@ -1,0 +1,1187 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.others.plx_parser &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.others.plx_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.others.plx_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xml.etree</span><span class="w"> </span><span class="kn">import</span> <span class="n">cElementTree</span> <span class="k">as</span> <span class="n">ElementTree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Load</span><span class="p">,</span> <span class="n">Transformer2W</span><span class="p">,</span> <span class="n">Line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+
+
+<div class="viewcode-block" id="XmlDictConfig">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.XmlDictConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">XmlDictConfig</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Note: need to add a root into if no exising</span>
+<span class="sd">    Example usage:</span>
+<span class="sd">    &gt;&gt;&gt; tree = ElementTree.parse(&#39;your_file.xml&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; root = tree.getroot()</span>
+<span class="sd">    &gt;&gt;&gt; xmldict = XmlDictConfig(root)</span>
+<span class="sd">    Or, if you want to use an XML string:</span>
+<span class="sd">    &gt;&gt;&gt; root = ElementTree.XML(xml_string)</span>
+<span class="sd">    &gt;&gt;&gt; xmldict = XmlDictConfig(root)</span>
+<span class="sd">    And then use xmldict for what it is... a dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_element</span><span class="p">,</span> <span class="n">text_to_remove</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent_element:</span>
+<span class="sd">        :param text_to_remove:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_to_remove</span> <span class="o">=</span> <span class="n">text_to_remove</span>
+
+        <span class="k">if</span> <span class="n">parent_element</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_shim</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">parent_element</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">parent_element</span><span class="p">:</span>
+
+            <span class="n">tag</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text_to_remove</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
+
+                <span class="n">a_dict</span> <span class="o">=</span> <span class="n">XmlDictConfig</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_to_remove</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_shim</span><span class="p">({</span><span class="n">tag</span><span class="p">:</span> <span class="n">a_dict</span><span class="p">})</span>
+
+            <span class="k">elif</span> <span class="n">element</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># items() is especialy for attributes</span>
+
+                <span class="n">element_attrib</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                    <span class="n">element_attrib</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tag</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>  <span class="c1"># add tag:text if there exist</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_shim</span><span class="p">({</span><span class="n">tag</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">element_attrib</span><span class="p">)})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_shim</span><span class="p">({</span><span class="n">tag</span><span class="p">:</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="p">})</span>
+
+<div class="viewcode-block" id="XmlDictConfig.update_shim">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.XmlDictConfig.update_shim">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_shim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param a_dict:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">og_key</span> <span class="ow">in</span> <span class="n">a_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># keys() includes tag and attributes</span>
+
+            <span class="n">key</span> <span class="o">=</span> <span class="n">og_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text_to_remove</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="n">list_of_dicts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                    <span class="n">list_of_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">list_of_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">list_of_dicts</span><span class="p">})</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">a_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]})</span>  <span class="c1"># it was self.update(aDict)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PlxBusMode">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxBusMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxBusMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">PQ</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">PV</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">REF</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">STO_DISPATCH</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Storage dispatch, in practice it is the same as REF</span></div>
+
+
+
+<div class="viewcode-block" id="PlxElement">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxElement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxElement</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generic element constructor</span>
+<span class="sd">        :param name: Name of the element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+
+
+
+<div class="viewcode-block" id="PlxNode">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxNode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxNode</span><span class="p">(</span><span class="n">PlxElement</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">zone</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">voltage</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="n">PlxElement</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">region</span> <span class="o">=</span> <span class="n">region</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">voltage</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">latitude</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">longitude</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batteries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># usually the PSS/e key...</span>
+
+        <span class="c1"># get the PSS/e name if that&#39;d be there (PSSNODE_NAME_KV)</span>
+        <span class="k">if</span> <span class="s1">&#39;_&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># try to set it as an integer value</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="PlxGenerator">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxGenerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxGenerator</span><span class="p">(</span><span class="n">PlxElement</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">p_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">PlxElement</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">category</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="n">p_max</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="n">p_min</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_factor_prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_fixed_prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">must_run_units_prof</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="PlexosBattery">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlexosBattery">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlexosBattery</span><span class="p">(</span><span class="n">PlxGenerator</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param name:</span>
+<span class="sd">        :param category:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PlxGenerator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PlxLine">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxLine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxLine</span><span class="p">(</span><span class="n">PlxElement</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">node_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">node_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rate_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rate_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param name:</span>
+<span class="sd">        :param units: number of active units (if 0, then the line is not active)</span>
+<span class="sd">        :param node_from:</span>
+<span class="sd">        :param node_to:</span>
+<span class="sd">        :param r:</span>
+<span class="sd">        :param x:</span>
+<span class="sd">        :param rate_max:</span>
+<span class="sd">        :param rate_min:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PlxElement</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_from</span> <span class="o">=</span> <span class="n">node_from</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_to</span> <span class="o">=</span> <span class="n">node_to</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_max</span> <span class="o">=</span> <span class="n">rate_max</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_min</span> <span class="o">=</span> <span class="n">rate_min</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_max_prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_min_prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="PlxLine.get_key">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxLine.get_key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split the name in the plexos way to get the new key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">vals</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">vals</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="PlxLine.get_highest_voltage">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxLine.get_highest_voltage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_highest_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the highest voltage at which this line is connected</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_from</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_to</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlxLine.delete_zero_coordinates">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxLine.delete_zero_coordinates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_zero_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># delete_with_dialogue coordinates with zeros</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">b</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlxLine.get_coordinates">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxLine.get_coordinates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get polyline of coordinates</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">locations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">locations</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">node_from</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_from</span><span class="o">.</span><span class="n">longitude</span><span class="p">],</span>
+                         <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node_to</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_to</span><span class="o">.</span><span class="n">longitude</span><span class="p">]]</span>
+
+        <span class="c1"># delete_with_dialogue coordinates with zeros</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">locations</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">locations</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">locations</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PlxTransformer">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxTransformer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxTransformer</span><span class="p">(</span><span class="n">PlxLine</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">PlxLine</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PlxZone">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxZone">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxZone</span><span class="p">(</span><span class="n">PlxElement</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">PlxElement</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PlxRegion">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxRegion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxRegion</span><span class="p">(</span><span class="n">PlxElement</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">PlxElement</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PlxModel">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlxModel</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">load_profiles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prog_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plexos model</span>
+<span class="sd">        :param fname: plexos file name (either .zip or .xml)</span>
+<span class="sd">        :param load_profiles: load profiles associated</span>
+<span class="sd">        :param text_func: function pointer to print text</span>
+<span class="sd">        :param prog_func: function pointer to show the progress</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># name of the project file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_profiles</span> <span class="o">=</span> <span class="n">load_profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="o">=</span> <span class="n">text_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prog_func</span> <span class="o">=</span> <span class="n">prog_func</span>
+
+        <span class="c1"># directory of this project</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="c1"># name of this instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># dictionary of nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of generators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of batteries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batteries</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of transformers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of lines and transformers all together</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of zones</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of regions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of transformers od/or lines. dict[&#39;line&#39;][&#39;line name&#39;]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of data profiles. The profiles are loaded on the fly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_profiles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># load the project file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_project_file</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PlxModel.load_project_file">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.load_project_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_project_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a PLEXOS project file</span>
+<span class="sd">        :param fname: name of the plexos project file (*.zip, *.xml, *.xlsx)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># split the file name path into name and extension</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+        <span class="c1"># parse the file information</span>
+        <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.xlsx&#39;</span><span class="p">:</span>
+            <span class="n">objects2</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_excel</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.xml&#39;</span><span class="p">:</span>
+            <span class="n">objects2</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+            <span class="n">objects2</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_zip</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;File type not supported: &#39;</span> <span class="o">+</span> <span class="n">fname</span><span class="p">)</span>
+
+        <span class="c1"># convert the xml data into objects for this class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_data</span><span class="p">(</span><span class="n">objects</span><span class="o">=</span><span class="n">objects2</span><span class="p">,</span>
+                        <span class="n">memberships</span><span class="o">=</span><span class="n">memberships2</span><span class="p">,</span>
+                        <span class="n">properties</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                        <span class="n">zip_file_pointer</span><span class="o">=</span><span class="n">zip_file_pointer</span><span class="p">)</span>
+
+        <span class="c1"># close the zip file</span>
+        <span class="k">if</span> <span class="n">zip_file_pointer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.load_profile">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.load_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">zip_file_pointer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempt loading the profile</span>
+<span class="sd">        :param path: relative or absolute path</span>
+<span class="sd">        :param zip_file_pointer: pointer to open zip file is the file ins inside a zip file</span>
+<span class="sd">        :return: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">zip_file_pointer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># create a buffer to read the file</span>
+            <span class="n">path2</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="n">final_path</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path2</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">final_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">df</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+                <span class="n">final_path</span> <span class="o">=</span> <span class="n">path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">final_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">final_path</span><span class="p">):</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">final_path</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">df</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">final_path</span><span class="p">,</span> <span class="s1">&#39;not found :(&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.load_profile_if_necessary">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.load_profile_if_necessary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_profile_if_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">zip_file_pointer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a profile is necessary</span>
+<span class="sd">        :param key: object property type</span>
+<span class="sd">        :param path: relative or absolute path where to find the file</span>
+<span class="sd">        :param zip_file_pointer: pointer to open zip file is the file ins inside a zip file</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_profiles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">zip_file_pointer</span><span class="o">=</span><span class="n">zip_file_pointer</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_profiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+                <span class="k">return</span> <span class="n">df</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># the profile does not exist</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># the profile exists</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_profiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.parse_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.parse_zip">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse zip file with the plexos xml and the profiles utilized</span>
+<span class="sd">        :param fname: zip file name</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># open the zip file</span>
+        <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+        <span class="c1"># search for the xml file</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+        <span class="n">xml_file_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">):</span>
+                <span class="n">xml_file_name</span> <span class="o">=</span> <span class="n">name</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">xml_file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># parse the xml and read the data profiles</span>
+            <span class="n">objects2</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">(</span><span class="n">xml_file_name</span><span class="p">,</span> <span class="n">zip_file_pointer</span><span class="o">=</span><span class="n">zip_file_pointer</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No xml file was found in the zip file&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">objects2</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">zip_file_pointer</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.parse_excel">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.parse_excel">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_excel</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse excel export of the plexos file</span>
+<span class="sd">        :param fname: complete path to the file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">excel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading objects...&#39;</span><span class="p">)</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Objects&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Memberships...&#39;</span><span class="p">)</span>
+        <span class="n">memberships</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Memberships&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Properties...&#39;</span><span class="p">)</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Properties&#39;</span><span class="p">)</span>
+        <span class="n">properties</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">})</span>
+        <span class="n">excel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># file_dict = {row[&#39;child_object&#39;]: row[&#39;filename&#39;] for i, row in properties.iterrows()}</span>
+
+        <span class="k">return</span> <span class="n">objects</span><span class="p">,</span> <span class="n">memberships</span><span class="p">,</span> <span class="n">properties</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.parse_xml">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.parse_xml">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">zip_file_pointer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse PLEXOS file</span>
+<span class="sd">        :param fname: xml PLEXOS file name</span>
+<span class="sd">        :param zip_file_pointer: pointer to a zip file, if not none, the file will be read from within a zip file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing plexos xml&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Parsing plexos xml &#39;</span> <span class="o">+</span> <span class="n">fname</span><span class="p">)</span>
+
+        <span class="c1"># read xml tree from file or from zip-file pointer</span>
+        <span class="k">if</span> <span class="n">zip_file_pointer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="n">xtree</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xtree</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+        <span class="c1"># get xml root node</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">xtree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+        <span class="c1"># text to delete: {http://tempuri.org/MasterDataSet.xsd}</span>
+        <span class="c1"># this is a very annoying text that is present in all the xml nodes</span>
+        <span class="n">text_to_remove</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="p">[</span><span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span><span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># pass the XML file to a dictionary</span>
+        <span class="n">xmldict</span> <span class="o">=</span> <span class="n">XmlDictConfig</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">text_to_remove</span><span class="o">=</span><span class="n">text_to_remove</span><span class="p">)</span>
+
+        <span class="c1"># pass the dictionaries to Pandas DataFrames</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_class&#39;</span><span class="p">])</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_category&#39;</span><span class="p">])</span>
+        <span class="n">collections</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_collection&#39;</span><span class="p">])</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        objects </span>
+<span class="sd">        class	GUID	name	category</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_object&#39;</span><span class="p">])</span>
+        <span class="n">objects2</span> <span class="o">=</span> <span class="n">objects</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">objects2</span><span class="p">[</span><span class="s1">&#39;class_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">objects2</span><span class="p">[</span><span class="s1">&#39;class_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;class_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">objects2</span><span class="p">[</span><span class="s1">&#39;category_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">objects2</span><span class="p">[</span><span class="s1">&#39;category_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;category_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">objects2</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;class_id&#39;</span><span class="p">:</span> <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;category_id&#39;</span><span class="p">:</span> <span class="s1">&#39;category&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Membership</span>
+<span class="sd">        parent_class	child_class	   collection	parent_object	child_object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">memberships</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_membership&#39;</span><span class="p">])</span>
+
+        <span class="n">memberships2</span> <span class="o">=</span> <span class="n">memberships</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;parent_class_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;parent_class_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;class_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;child_class_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;child_class_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;class_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;parent_object_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;parent_object_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">objects</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;object_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;child_object_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;child_object_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">objects</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;object_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;collection_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">memberships2</span><span class="p">[</span><span class="s1">&#39;collection_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">collections</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;collection_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">memberships2</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;parent_class_id&#39;</span><span class="p">:</span> <span class="s1">&#39;parent_class&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;child_class_id&#39;</span><span class="p">:</span> <span class="s1">&#39;child_class&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;parent_object_id&#39;</span><span class="p">:</span> <span class="s1">&#39;parent_object&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;child_object_id&#39;</span><span class="p">:</span> <span class="s1">&#39;child_object&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;collection_id&#39;</span><span class="p">:</span> <span class="s1">&#39;collection&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Properties</span>
+<span class="sd">        parent_class	child_class	collection	parent_object	child_object	property	band_id	value	units	</span>
+<span class="sd">        date_from	date_to	pattern	action	expression	filename	scenario	memo	period_type_id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_attribute&#39;</span><span class="p">])</span>
+        <span class="n">attribute_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_attribute_data&#39;</span><span class="p">])</span>
+        <span class="c1"># attributes = pd.merge(attribute, attribute_data, on=&#39;attribute_id&#39;)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_data&#39;</span><span class="p">])</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_tag&#39;</span><span class="p">])</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_text&#39;</span><span class="p">])</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">xmldict</span><span class="p">[</span><span class="s1">&#39;t_property&#39;</span><span class="p">])</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;membership_id&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;data_id&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;data_id&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;property_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;property_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">properties</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;property_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">objects</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;object_id&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;property_id&#39;</span><span class="p">:</span> <span class="s1">&#39;property&#39;</span><span class="p">,</span> <span class="s1">&#39;object_id&#39;</span><span class="p">:</span> <span class="s1">&#39;filename&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">objects2</span><span class="p">,</span> <span class="n">memberships2</span><span class="p">,</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.parse_data">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.parse_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">,</span> <span class="n">memberships</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">zip_file_pointer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pass the loaded DataFrames to model objects</span>
+<span class="sd">        :param objects: Objects DataFrame</span>
+<span class="sd">        :param memberships: Memberships DataFrame</span>
+<span class="sd">        :param properties: Properties DataFrame</span>
+<span class="sd">        :param zip_file_pointer: zip file pointer. If not None the data will be read from a zip file</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create the objects</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading plexos xml file...&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Reading plexos xml file... &#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">objects</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Generator&#39;</span><span class="p">:</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">PlxGenerator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">category</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Node&#39;</span><span class="p">:</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">PlxNode</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">zone</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Line&#39;</span><span class="p">:</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">PlxLine</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Transformer&#39;</span><span class="p">:</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">PlxTransformer</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">transformers</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Zone&#39;</span><span class="p">:</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">PlxZone</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Region&#39;</span><span class="p">:</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">PlxRegion</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+        <span class="c1"># store the Branches by type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="s1">&#39;Transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformers</span>
+
+        <span class="c1"># parse the memberships (node of the elements, region of the nodes, etc...)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">memberships</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;parent_class&#39;</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;parent_object&#39;</span><span class="p">]</span>
+            <span class="n">member</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;child_object&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">,</span> <span class="s1">&#39;Transformer&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Node From&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">node_from</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">member</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Node To&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">node_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">member</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="bp">cls</span> <span class="o">==</span> <span class="s1">&#39;Node&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Region&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">region</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">[</span><span class="n">member</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Zone&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="n">member</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="bp">cls</span> <span class="o">==</span> <span class="s1">&#39;Generator&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Schema&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">member</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">member</span><span class="p">]</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+        <span class="c1"># make dictionary of file objects -&gt; file paths</span>
+        <span class="n">files_info</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;child_class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Data File&#39;</span><span class="p">]</span>
+        <span class="n">file_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;child_object&#39;</span><span class="p">]:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">files_info</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()}</span>
+
+        <span class="c1"># parse the properties of the objects</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># show progress</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Parsing properties&#39;</span><span class="p">)</span>
+
+        <span class="n">used_profiles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;child_class&#39;</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;child_object&#39;</span><span class="p">]</span>
+            <span class="n">prop</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;property&#39;</span><span class="p">]</span>
+            <span class="n">file_obj</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_obj</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">file_obj</span><span class="p">):</span>
+                    <span class="n">file_obj</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="bp">cls</span> <span class="o">==</span> <span class="s1">&#39;Node&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Voltage&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Fixed Load&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">load</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                    <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">load_prof</span> <span class="o">=</span> <span class="n">file_obj</span>
+                        <span class="n">used_profiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">,</span> <span class="s1">&#39;Transformer&#39;</span><span class="p">]:</span>
+
+                <span class="k">if</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Units&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Resistance&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Reactance&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Max Flow&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rate_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                    <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rate_max_prof</span> <span class="o">=</span> <span class="n">file_obj</span>
+                        <span class="n">used_profiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Min Flow&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rate_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                    <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">branches_by_type</span><span class="p">[</span><span class="bp">cls</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rate_min_prof</span> <span class="o">=</span> <span class="n">file_obj</span>
+                        <span class="n">used_profiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">cls</span> <span class="o">==</span> <span class="s1">&#39;Generator&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Max Capacity&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Min Stable Level&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Rating Factor&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rating_factor_prof</span> <span class="o">=</span> <span class="n">file_obj</span>
+                        <span class="n">used_profiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Aux Fixed&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rating_factor_prof</span> <span class="o">=</span> <span class="n">file_obj</span>
+                        <span class="n">used_profiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">prop</span> <span class="o">==</span> <span class="s1">&#39;Must-Run Units&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">rating_factor_prof</span> <span class="o">=</span> <span class="n">file_obj</span>
+                        <span class="n">used_profiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prog_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog_func</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">properties</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># load the profiles that are used</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_profiles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Loading input profiles&#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file_obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">used_profiles</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_if_necessary</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">file_obj</span><span class="p">,</span>
+                                               <span class="n">path</span><span class="o">=</span><span class="n">file_dict</span><span class="p">[</span><span class="n">file_obj</span><span class="p">],</span>
+                                               <span class="n">zip_file_pointer</span><span class="o">=</span><span class="n">zip_file_pointer</span><span class="p">)</span>
+                <span class="c1"># show progress</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prog_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">prog_func</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">used_profiles</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Skipping input profiles&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.get_buses_dictionary">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.get_buses_dictionary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_buses_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get dictionary relating the bus name to the latitude, longitude, voltage and name</span>
+<span class="sd">        &gt;&gt;&gt; bus_dict[name]</span>
+<span class="sd">        &gt;&gt;&gt; latitude, longitude, voltage, name</span>
+<span class="sd">        :return: dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">b</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.get_all_branches_dictionary">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.get_all_branches_dictionary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_branches_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a dictionary with all the Branches by the name</span>
+<span class="sd">        :return: dictionary name -&gt; object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># start with x&#39;s keys and values</span>
+        <span class="n">z</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z</span></div>
+
+
+<div class="viewcode-block" id="PlxModel.get_branch_ratings">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.PlxModel.get_branch_ratings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_branch_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get DataFrame with the dynamic branch ratings</span>
+<span class="sd">        :param n: number of time steps to extrapolate the profile</span>
+<span class="sd">        :return: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        plexos index</span>
+<span class="sd">        M1-D1-P1</span>
+<span class="sd">        M4-D1-P1</span>
+
+<span class="sd">        M1-3</span>
+<span class="sd">        M4-5</span>
+<span class="sd">        M6-8</span>
+<span class="sd">        M9-10</span>
+<span class="sd">        M11-12</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># merge the max rating profiles for each of the Branches with profiles</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_branches_dictionary</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">branch</span><span class="o">.</span><span class="n">rate_max_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_profiles</span><span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">rate_max_prof</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Pattern&#39;</span><span class="p">)</span>
+                <span class="n">new_df</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[[</span><span class="n">name</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">new_df</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">new_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+
+        <span class="c1"># generate dates from the stupid plexos index</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># generate new index according to the number of elements n</span>
+        <span class="n">new_index</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+        <span class="c1"># forward fill...</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">new_index</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">df2</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_st_generation_sent_out">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.get_st_generation_sent_out">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_st_generation_sent_out</span><span class="p">(</span><span class="n">plexos_results_folder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the generation auxiliary use from a PLEXOS results folder</span>
+<span class="sd">    :param plexos_results_folder: PLEXOS results folder</span>
+<span class="sd">    :return: pandas DataFrame with the generation dispatch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plexos_results_folder</span><span class="p">,</span> <span class="s1">&#39;Interval&#39;</span><span class="p">,</span> <span class="s1">&#39;ST Generator.Generation Sent Out.csv&#39;</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;DATETIME&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;DATETIME&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="get_st_node_load">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.get_st_node_load">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_st_node_load</span><span class="p">(</span><span class="n">plexos_results_folder</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the node load use from a PLEXOS results folder</span>
+<span class="sd">    :param plexos_results_folder: PLEXOS results folder</span>
+<span class="sd">    :param parse_dates: Parse the dates?</span>
+<span class="sd">    :return: pandas DataFrame with the node load</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plexos_results_folder</span><span class="p">,</span> <span class="s1">&#39;Interval&#39;</span><span class="p">,</span> <span class="s1">&#39;ST Node.Load.csv&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parse_dates</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;DATETIME&#39;</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;DATETIME&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="plx_to_veragrid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.plx_parser.plx_to_veragrid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plx_to_veragrid</span><span class="p">(</span><span class="n">mdl</span><span class="p">:</span> <span class="n">PlxModel</span><span class="p">,</span> <span class="n">plexos_results_folder</span><span class="p">,</span> <span class="n">time_indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prog_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads plexos model with results and creates a VeraGrid model</span>
+<span class="sd">    :param mdl: Plexos model instance</span>
+<span class="sd">    :param plexos_results_folder: plexos results folder</span>
+<span class="sd">    :param time_indices: time indices to sample</span>
+<span class="sd">    :param text_func:</span>
+<span class="sd">    :param prog_func:</span>
+<span class="sd">    :return: MultiCircuit instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gen_df</span> <span class="o">=</span> <span class="n">get_st_generation_sent_out</span><span class="p">(</span><span class="n">plexos_results_folder</span><span class="o">=</span><span class="n">plexos_results_folder</span><span class="p">)</span>
+    <span class="n">load_df</span> <span class="o">=</span> <span class="n">get_st_node_load</span><span class="p">(</span><span class="n">plexos_results_folder</span><span class="o">=</span><span class="n">plexos_results_folder</span><span class="p">)</span>
+    <span class="n">rating_df</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">get_branch_ratings</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">load_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">()</span>
+    <span class="n">circuit</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Grid from PLEXOS model&#39;</span>
+    <span class="n">circuit</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="s1">&#39;Grid from PLEXOS model&#39;</span>
+    <span class="c1"># keep the time profile</span>
+
+    <span class="k">if</span> <span class="s1">&#39;DATETIME&#39;</span> <span class="ow">in</span> <span class="n">gen_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">gen_df</span><span class="p">[</span><span class="s1">&#39;DATETIME&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">gen_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">time_indices</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span> <span class="o">=</span> <span class="n">t</span>
+
+    <span class="n">n_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">generators</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
+    <span class="n">nn</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># add the buses and the loads (in plexos there is only one load per bus)</span>
+    <span class="n">bus_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                  <span class="n">latitude</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                  <span class="n">longitude</span><span class="o">=-</span><span class="n">elm</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                  <span class="n">area</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                  <span class="n">zone</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">zone</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># add the bus to the buses dictionary</span>
+        <span class="n">bus_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus</span>
+
+        <span class="c1"># add the bus to the circuit</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+
+        <span class="c1"># add the load and its profile if it is not zero</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">load_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">load_profile</span> <span class="o">=</span> <span class="n">load_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">time_indices</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">load_profile</span> <span class="o">=</span> <span class="n">load_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">load_profile</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">load</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Load@&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+                            <span class="n">P</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">load</span><span class="p">,</span>
+                            <span class="n">Q</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">load</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span> <span class="p">)</span>
+                <span class="n">load</span><span class="o">.</span><span class="n">P_prof</span> <span class="o">=</span> <span class="n">load_profile</span>
+                <span class="n">load</span><span class="o">.</span><span class="n">Q_prof</span> <span class="o">=</span> <span class="n">load_profile</span> <span class="o">*</span> <span class="mf">0.8</span>
+                <span class="n">load</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">load</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Creating VeraGrid model: Buses&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prog_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prog_func</span><span class="p">((</span><span class="n">nn</span> <span class="o">/</span> <span class="n">n_total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">nn</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># add the generators</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">gen_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gen_profile</span> <span class="o">=</span> <span class="n">gen_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">time_indices</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gen_profile</span> <span class="o">=</span> <span class="n">gen_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">Pmin</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">p_min</span><span class="p">,</span>
+                            <span class="n">Pmax</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">p_max</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">P_prof</span> <span class="o">=</span> <span class="n">gen_profile</span>
+            <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Creating VeraGrid model: Buses&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prog_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prog_func</span><span class="p">((</span><span class="n">nn</span> <span class="o">/</span> <span class="n">n_total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">nn</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># add the lines</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">node_from</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">node_to</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">rating_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="n">rating_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">rating</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rating</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_max</span>
+
+        <span class="n">br</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                  <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                  <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                  <span class="n">active</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+                  <span class="n">r</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                  <span class="n">x</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                  <span class="n">rate</span><span class="o">=</span><span class="n">rating</span><span class="p">)</span>
+        <span class="n">br</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="n">profile</span>
+        <span class="n">br</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">br</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Creating VeraGrid model: Buses&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prog_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prog_func</span><span class="p">(</span><span class="n">nn</span> <span class="o">/</span> <span class="n">n_total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">nn</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># add the transformers</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">node_from</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">node_to</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">rating_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="n">rating_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">rating</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rating</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_max</span>
+
+        <span class="n">br</span> <span class="o">=</span> <span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                           <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                           <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                           <span class="n">active</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+                           <span class="n">r</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                           <span class="n">x</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                           <span class="n">rate</span><span class="o">=</span><span class="n">rating</span><span class="p">)</span>
+        <span class="n">br</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="n">profile</span>
+        <span class="n">br</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">br</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Creating VeraGrid model: Buses&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prog_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prog_func</span><span class="p">(</span><span class="n">nn</span> <span class="o">/</span> <span class="n">n_total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">nn</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">circuit</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

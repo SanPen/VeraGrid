@@ -1,0 +1,761 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Branches.tap_changer &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Branches.tap_changer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Branches.tap_changer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_closest_number</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">TapChangerTypes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+
+<div class="viewcode-block" id="TapChanger">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TapChanger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tap changer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_asymmetry_angle&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_total_positions&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_dV&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_neutral_position&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_normal_position&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_tap_position&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_tc_type&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_low_step&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_negative_low&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_ndv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_tau_array&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_m_array&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_k_re_array&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_k_im_array&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">total_positions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                 <span class="n">neutral_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+                 <span class="n">normal_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+                 <span class="n">dV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">asymmetry_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">90.0</span><span class="p">,</span>
+                 <span class="n">tc_type</span><span class="p">:</span> <span class="n">TapChangerTypes</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tap changer</span>
+<span class="sd">        :param total_positions: Total number of positions</span>
+<span class="sd">        :param neutral_position: Neutral position</span>
+<span class="sd">        :param dV: per unit of voltage increment (p.u.)</span>
+<span class="sd">        :param asymmetry_angle: Asymmetry angle (deg)</span>
+<span class="sd">        :param tc_type: Tap changer type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">neutral_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">neutral_position</span><span class="p">)</span>
+        <span class="n">total_positions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">neutral_position</span> <span class="o">&gt;=</span> <span class="n">total_positions</span><span class="p">:</span>
+            <span class="n">neutral_position</span> <span class="o">=</span> <span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Neutral position exceeding the total positions </span><span class="si">{</span><span class="n">neutral_position</span><span class="si">}</span><span class="s2"> &gt;= </span><span class="si">{</span><span class="n">total_positions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># asymmetry angle (Theta)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetry_angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">asymmetry_angle</span><span class="p">)</span>
+
+        <span class="c1"># total number of positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_positions</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_positions</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+
+        <span class="c1"># voltage increment in p.u.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dV</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dV</span><span class="p">)</span>
+
+        <span class="c1"># neutral position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_neutral_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">neutral_position</span><span class="p">)</span>
+
+        <span class="c1"># normal position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normal_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">normal_position</span><span class="p">)</span>
+
+        <span class="c1"># index with respect to the neutral position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">neutral_position</span><span class="p">)</span>
+
+        <span class="c1"># tap changer mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tc_type</span><span class="p">:</span> <span class="n">TapChangerTypes</span> <span class="o">=</span> <span class="n">tc_type</span>
+
+        <span class="c1"># original CGMES low step, when this tap changer comes from CGMES</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># for CGMES compatibility we store if the low step is negative</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Calculated arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># increment of voltage positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># tap phase positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># tap module positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># impedance correction positions (real)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># impedance correction positions (imag)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TapChanger.copy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TapChanger&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">TapChanger</span><span class="p">(</span>
+            <span class="n">total_positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">,</span>
+            <span class="n">neutral_position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_neutral_position</span><span class="p">,</span>
+            <span class="n">normal_position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_normal_position</span><span class="p">,</span>
+            <span class="n">dV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dV</span><span class="p">,</span>
+            <span class="n">asymmetry_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_asymmetry_angle</span><span class="p">,</span>
+            <span class="n">tc_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc_type</span>
+        <span class="p">)</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">_negative_low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">_tap_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">elm</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asymmetry_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetry_angle</span>
+
+    <span class="nd">@asymmetry_angle</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">asymmetry_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asymmetry_angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetry_angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">asymmetry_angle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dV</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dV</span>
+
+    <span class="nd">@dV</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dV</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dV</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dV</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normal_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_position</span>
+
+    <span class="nd">@normal_position</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normal_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normal_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normal_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">normal_position</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tc_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TapChangerTypes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc_type</span>
+
+    <span class="nd">@tc_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tc_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc_type</span><span class="p">:</span> <span class="n">TapChangerTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tc_type</span> <span class="o">=</span> <span class="n">tc_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tap changer total number of positions</span>
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span>
+
+    <span class="nd">@total_positions</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Expected int but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tap position</span>
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span>
+
+    <span class="nd">@tap_position</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the tap position (zero indexing)</span>
+<span class="sd">        :param val: tap value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max tap changer value exceeded </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">neutral_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the neutral position</span>
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neutral_position</span>
+
+    <span class="nd">@neutral_position</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">neutral_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the neutral position</span>
+<span class="sd">        :param val: neutral position value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_neutral_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_modules_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tap modules array</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_angles_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">impedance_correction_imag_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the imaginary impedance correction factors per tap position.</span>
+<span class="sd">        A value of 1.0 at every position means no correction (default).</span>
+<span class="sd">        :return: array of length total_positions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span>
+
+<div class="viewcode-block" id="TapChanger.resize">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.resize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resize and recalc the tap positions array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.recalc">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.recalc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recalc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recalculate the phase and modules corresponding to each tap position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span> <span class="o">=</span> <span class="p">(</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.to_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a dictionary representation of the tap</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;asymmetry_angle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span><span class="p">,</span>
+            <span class="s2">&quot;total_positions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">,</span>
+            <span class="s2">&quot;dV&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dV</span><span class="p">,</span>
+            <span class="s2">&quot;neutral_position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span><span class="p">,</span>
+            <span class="s2">&quot;normal_position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span><span class="p">,</span>
+            <span class="s2">&quot;tap_position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span><span class="p">),</span>
+            <span class="s2">&quot;low_step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span><span class="p">,</span>
+            <span class="s2">&quot;negative_low&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span><span class="p">,</span>
+            <span class="s2">&quot;impedance_correction_real&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;impedance_correction_imag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.parse">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the tap data</span>
+<span class="sd">        :param data: dictionary representation of the tap</span>
+<span class="sd">        :param logger: logger instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;asymmetry_angle&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_positions&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dV</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dV&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;neutral_position&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;normal_position&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tap_position&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+        <span class="n">low_step</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;low_step&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">low_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">negative_low</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;negative_low&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span> <span class="k">if</span> <span class="n">negative_low</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">low_step</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">&lt;</span> <span class="mi">0</span>
+
+        <span class="c1"># parse the impedance correction factors</span>
+
+        <span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;impedance_correction_real&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_k_re_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_k_re_array</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_k_re_array</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Incorrect impedance table length&quot;</span><span class="p">)</span>
+
+        <span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;impedance_correction_imag&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_k_im_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_k_im_array</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_k_im_array</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Incorrect impedance table length&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.to_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.to_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get DaraFrame of the values</span>
+<span class="sd">        :return: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;Steps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span><span class="p">,</span>
+            <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">,</span>
+            <span class="s1">&#39;m&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">,</span>
+            <span class="s1">&#39;impedance_correction_real&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="p">,</span>
+            <span class="s1">&#39;impedance_correction_imag&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="p">,</span>
+        <span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.reset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the tap changer to the neutral position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.tap_up">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.tap_up">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Go to the next upper tap position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.tap_down">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.tap_down">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_down</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Go to the next upper tap position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_phase2">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_phase2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_phase2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_position</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tap phase in radians</span>
+<span class="sd">        :return: phase in radians (single value or array)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tap_position</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tap position must be int or np.ndarray of int type&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tap_position</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tap position must be int or np.ndarray of int type&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span><span class="p">:</span>
+            <span class="n">ndu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span><span class="p">[</span><span class="n">tap_position</span><span class="p">]</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">ndu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">ndu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">alpha</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Symmetrical</span><span class="p">:</span>
+            <span class="n">ndu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span><span class="p">[</span><span class="n">tap_position</span><span class="p">]</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">ndu</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">alpha</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown tap phase type&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_module2">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_module2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_module2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_position</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tap voltage regulation module</span>
+<span class="sd">        :return: voltage regulation module (single value or array)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">1.0</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tap_position</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tap position must be int or np.ndarray of int type&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span><span class="p">:</span>
+            <span class="n">ndu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span><span class="p">[</span><span class="n">tap_position</span><span class="p">]</span>
+            <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">ndu</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span><span class="p">:</span>
+            <span class="n">ndu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span><span class="p">[</span><span class="n">tap_position</span><span class="p">]</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">ndu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">ndu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">rho</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Symmetrical</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">1.0</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_position</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tap_position</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tap position must be int or np.ndarray of int type&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown tap phase type&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_phase">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_phase">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tap phase in radians</span>
+<span class="sd">        :return: phase in radians</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tap position out of range&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_module">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_module">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_module</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tap voltage regulation module</span>
+<span class="sd">        :return: voltage regulation module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tap position out of range&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mf">1.0</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.set_tap_module">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.set_tap_module">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tap_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_module</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the tap position closest to the tap module</span>
+<span class="sd">        :param tap_module: float value of the tap module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">!=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">:</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">find_closest_number</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">tap_module</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="n">pos</span>
+            <span class="k">return</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.set_tap_phase">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.set_tap_phase">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tap_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_phase</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the tap position closest to the tap phase</span>
+<span class="sd">        :param tap_phase: float value of the tap phase</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">!=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">:</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">find_closest_number</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">tap_phase</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="n">pos</span>
+            <span class="k">return</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_module_min">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_module_min">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_module_min</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Min tap module, computed on the fly</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_module_max">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_module_max">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_module_max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Max tap module, computed on the fly</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_phase_min">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_phase_min">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_phase_min</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Min tap phase, computed on the fly</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_tap_phase_max">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_phase_max">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_phase_max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maximum tap phase (calculated)</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;TapChanger&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Equality check</span>
+<span class="sd">        :param other: TapChanger</span>
+<span class="sd">        :return: ok?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">asymmetry_angle</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dV</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">dV</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">neutral_position</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">normal_position</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">tap_position</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">tc_type</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Tap changer&quot;</span>
+
+<div class="viewcode-block" id="TapChanger.init_from_cgmes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.init_from_cgmes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_from_cgmes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">low</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">high</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">normal</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">neutral</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">stepVoltageIncrement</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">asymmetry_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">tc_type</span><span class="p">:</span> <span class="n">TapChangerTypes</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import TapChanger object from CGMES</span>
+
+<span class="sd">        :param low:</span>
+<span class="sd">        :param high:</span>
+<span class="sd">        :param normal:</span>
+<span class="sd">        :param neutral:</span>
+<span class="sd">        :param stepVoltageIncrement:</span>
+<span class="sd">        :param step:</span>
+<span class="sd">        :param asymmetry_angle:</span>
+<span class="sd">        :param tc_type:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span> <span class="o">&lt;</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">asymmetry_angle</span><span class="p">)</span>  <span class="c1"># asymmetry angle (Theta)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># total number of positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dV</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stepVoltageIncrement</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># voltage increment in p.u.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">neutral</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span>  <span class="c1"># zero-based neutral position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">normal</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span>  <span class="c1"># zero-based normal position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span>  <span class="c1"># zero-based tap position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">=</span> <span class="n">tc_type</span>  <span class="c1"># tap changer mode</span>
+
+        <span class="c1"># Calculated arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># impedance correction positions (real)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># impedance correction positions (imag)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_cgmes_values">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_cgmes_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cgmes_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns with values of a Tap Changer in CGMES</span>
+<span class="sd">        </span>
+<span class="sd">        :return: </span>
+<span class="sd">        :rtype: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span>
+        <span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">normal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span> <span class="o">+</span> <span class="n">low</span>
+        <span class="n">neutral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span> <span class="o">+</span> <span class="n">low</span>
+        <span class="n">sVI</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dV</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">+</span> <span class="n">low</span>
+
+        <span class="k">return</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">normal</span><span class="p">,</span> <span class="n">neutral</span><span class="p">,</span> <span class="n">sVI</span><span class="p">,</span> <span class="n">step</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

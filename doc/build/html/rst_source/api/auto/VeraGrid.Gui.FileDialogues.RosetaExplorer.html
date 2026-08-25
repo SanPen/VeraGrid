@@ -1,0 +1,534 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.FileDialogues.RosetaExplorer package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.FileDialogues.UcteDialogue package" href="VeraGrid.Gui.FileDialogues.UcteDialogue.html" />
+    <link rel="prev" title="VeraGrid.Gui.FileDialogues.PsseDialogue package" href="VeraGrid.Gui.FileDialogues.PsseDialogue.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.FileDialogues.html">VeraGrid.Gui.FileDialogues package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.FileDialogues.RosetaExplorer package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.FileDialogues.RosetaExplorer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-filedialogues-rosetaexplorer-package">
+<h1>VeraGrid.Gui.FileDialogues.RosetaExplorer package<a class="headerlink" href="#veragrid-gui-filedialogues-rosetaexplorer-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer">
+<span id="veragrid-gui-filedialogues-rosetaexplorer-rosetaexplorer-module"></span><h2>VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.</span></span><span class="sig-name descname"><span class="pre">RosetaExplorerGUI</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.LOCK">
+<span class="sig-name descname"><span class="pre">LOCK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.LOCK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.LOCK" title="Link to this definition"></a></dt>
+<dd><p>Lock the interface to prevent new simulation launches
+:param val:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.UNLOCK">
+<span class="sig-name descname"><span class="pre">UNLOCK</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.UNLOCK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.UNLOCK" title="Link to this definition"></a></dt>
+<dd><p>Unlock the interface</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.about">
+<span class="sig-name descname"><span class="pre">about</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.about"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.about" title="Link to this definition"></a></dt>
+<dd><p>Show the “about” dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.any_thread_running">
+<span class="sig-name descname"><span class="pre">any_thread_running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.any_thread_running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.any_thread_running" title="Link to this definition"></a></dt>
+<dd><p>Checks if any thread is running
+:return: True/False</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.copy_table_to_clipboard">
+<span class="sig-name descname"><span class="pre">copy_table_to_clipboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.copy_table_to_clipboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.copy_table_to_clipboard" title="Link to this definition"></a></dt>
+<dd><p>Copy objects model to the clipboard</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.create_console">
+<span class="sig-name descname"><span class="pre">create_console</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.create_console"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.create_console" title="Link to this definition"></a></dt>
+<dd><p>Create console</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.display_circuit">
+<span class="sig-name descname"><span class="pre">display_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trim_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.display_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.display_circuit" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trim_empty</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.dragEnterEvent">
+<span class="sig-name descname"><span class="pre">dragEnterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.dragEnterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.dragEnterEvent" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.dragMoveEvent">
+<span class="sig-name descname"><span class="pre">dragMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.dragMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.dragMoveEvent" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.filter_main_tree">
+<span class="sig-name descname"><span class="pre">filter_main_tree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.filter_main_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.filter_main_tree" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.filter_properties_table">
+<span class="sig-name descname"><span class="pre">filter_properties_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.filter_properties_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.filter_properties_table" title="Link to this definition"></a></dt>
+<dd><p>Action of filtering the main table data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.get_all_threads">
+<span class="sig-name descname"><span class="pre">get_all_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.get_all_threads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.get_all_threads" title="Link to this definition"></a></dt>
+<dd><p>Get all threads
+:return: list of all threads</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.get_process_threads">
+<span class="sig-name descname"><span class="pre">get_process_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.get_process_threads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.get_process_threads" title="Link to this definition"></a></dt>
+<dd><p>Get all threads that has to do with processing
+:return: list of process threads</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.new_rosetta_explorer">
+<span class="sig-name descname"><span class="pre">new_rosetta_explorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_circuit.PsseCircuit" title="VeraGridEngine.IO.raw.psse_circuit.PsseCircuit"><span class="pre">PsseCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_circuit.CgmesCircuit" title="VeraGridEngine.IO.cim.cgmes.cgmes_circuit.CgmesCircuit"><span class="pre">CgmesCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.new_rosetta_explorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.new_rosetta_explorer" title="Link to this definition"></a></dt>
+<dd><p>New roseta window
+:param model: (optional) the model to load
+:param logger: (optional) DataLogger to display</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_class_click">
+<span class="sig-name descname"><span class="pre">on_class_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.on_class_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_class_click" title="Link to this definition"></a></dt>
+<dd><p>On click on the classes list…</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_filter_combobox_changed">
+<span class="sig-name descname"><span class="pre">on_filter_combobox_changed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.on_filter_combobox_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_filter_combobox_changed" title="Link to this definition"></a></dt>
+<dd><p>Main property chooser for filtering table data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_tree_expanded">
+<span class="sig-name descname"><span class="pre">on_tree_expanded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.on_tree_expanded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_tree_expanded" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_tree_filter_combobox_changed">
+<span class="sig-name descname"><span class="pre">on_tree_filter_combobox_changed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.on_tree_filter_combobox_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.on_tree_filter_combobox_changed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.save_logs">
+<span class="sig-name descname"><span class="pre">save_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.save_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.save_logs" title="Link to this definition"></a></dt>
+<dd><p>Save logger content</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_grid_model">
+<span class="sig-name descname"><span class="pre">set_grid_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_circuit.CgmesCircuit" title="VeraGridEngine.IO.cim.cgmes.cgmes_circuit.CgmesCircuit"><span class="pre">CgmesCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_circuit.PsseCircuit" title="VeraGridEngine.IO.raw.psse_circuit.PsseCircuit"><span class="pre">PsseCircuit</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.set_grid_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_grid_model" title="Link to this definition"></a></dt>
+<dd><p>Set a grid Model
+:param circuit: circuit model passed
+:param</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_logger">
+<span class="sig-name descname"><span class="pre">set_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.set_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_logger" title="Link to this definition"></a></dt>
+<dd><p>Set the main logger
+:param logger: DataLogger object
+:param message: Open message if relevant</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_model_label">
+<span class="sig-name descname"><span class="pre">set_model_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.set_model_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.set_model_label" title="Link to this definition"></a></dt>
+<dd><p>Set the model label based on the model inner type</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.show_docs">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">show_docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.show_docs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.show_docs" title="Link to this definition"></a></dt>
+<dd><p>Show the docs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.show_objects_context_menu">
+<span class="sig-name descname"><span class="pre">show_objects_context_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.show_objects_context_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.show_objects_context_menu" title="Link to this definition"></a></dt>
+<dd><p>Show diagrams list view context menu
+:param pos: Relative click position</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;RosetaExplorerGUI&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QMainWindow&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.update_combo_boxes">
+<span class="sig-name descname"><span class="pre">update_combo_boxes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.update_combo_boxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.update_combo_boxes" title="Link to this definition"></a></dt>
+<dd><p>Properly update the combo boxes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.update_main_tree_on_click">
+<span class="sig-name descname"><span class="pre">update_main_tree_on_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#RosetaExplorerGUI.update_main_tree_on_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.RosetaExplorerGUI.update_main_tree_on_click" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.clear_qt_layout">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.</span></span><span class="sig-name descname"><span class="pre">clear_qt_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/RosetaExplorer.html#clear_qt_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer.clear_qt_layout" title="Link to this definition"></a></dt>
+<dd><p>Remove all widgets from a layout object
+:param layout:</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer">
+<span id="veragrid-gui-filedialogues-rosetaexplorer-roseta-explorer-module"></span><h2>VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.Ui_RosetaExplorer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.</span></span><span class="sig-name descname"><span class="pre">Ui_RosetaExplorer</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_explorer.html#Ui_RosetaExplorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.Ui_RosetaExplorer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.Ui_RosetaExplorer.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">RosetaExplorer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_explorer.html#Ui_RosetaExplorer.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.Ui_RosetaExplorer.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.Ui_RosetaExplorer.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">RosetaExplorer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_explorer.html#Ui_RosetaExplorer.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_explorer.Ui_RosetaExplorer.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model">
+<span id="veragrid-gui-filedialogues-rosetaexplorer-roseta-objects-model-module"></span><h2>VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.</span></span><span class="sig-name descname"><span class="pre">RosetaObjectsModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editable_headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_editable_attributes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary_of_lists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine" title="VeraGridEngine.Devices.Branches.dc_line.DcLine"><span class="pre">DcLine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine" title="VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine"><span class="pre">HvdcLine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.vsc.VSC" title="VeraGridEngine.Devices.Branches.vsc.VSC"><span class="pre">VSC</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.upfc.UPFC" title="VeraGridEngine.Devices.Branches.upfc.UPFC"><span class="pre">UPFC</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.winding.Winding" title="VeraGridEngine.Devices.Branches.winding.Winding"><span class="pre">Winding</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.switch.Switch" title="VeraGridEngine.Devices.Branches.switch.Switch"><span class="pre">Switch</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.series_reactance.SeriesReactance" title="VeraGridEngine.Devices.Branches.series_reactance.SeriesReactance"><span class="pre">SeriesReactance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath"><span class="pre">FluidPath</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x" title="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x"><span class="pre">FluidP2x</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine" title="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine"><span class="pre">FluidTurbine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump" title="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump"><span class="pre">FluidPump</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.busbar.BusBar" title="VeraGridEngine.Devices.Substation.busbar.BusBar"><span class="pre">BusBar</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.community.Community" title="VeraGridEngine.Devices.Aggregation.community.Community"><span class="pre">Community</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer3w.Transformer3W" title="VeraGridEngine.Devices.Branches.transformer3w.Transformer3W"><span class="pre">Transformer3W</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformerNw.TransformerNW" title="VeraGridEngine.Devices.Branches.transformerNw.TransformerNW"><span class="pre">TransformerNW</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.wire.Wire" title="VeraGridEngine.Devices.Branches.wire.Wire"><span class="pre">Wire</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer_type.TransformerType" title="VeraGridEngine.Devices.Branches.transformer_type.TransformerType"><span class="pre">TransformerType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.emission_gas.EmissionGas" title="VeraGridEngine.Devices.Associations.emission_gas.EmissionGas"><span class="pre">EmissionGas</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup" title="VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup"><span class="pre">BranchGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocations" title="VeraGridEngine.Devices.Branches.line_locations.LineLocations"><span class="pre">LineLocations</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocation" title="VeraGridEngine.Devices.Branches.line_locations.LineLocation"><span class="pre">LineLocation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority" title="VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority"><span class="pre">ModellingAuthority</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.fuel.Fuel" title="VeraGridEngine.Devices.Associations.fuel.Fuel"><span class="pre">Fuel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investment.Investment" title="VeraGridEngine.Devices.Aggregation.investment.Investment"><span class="pre">Investment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup" title="VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup"><span class="pre">InvestmentsGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency.Contingency" title="VeraGridEngine.Devices.Events.contingency.Contingency"><span class="pre">Contingency</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup" title="VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup"><span class="pre">ContingencyGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.remedial_action.RemedialAction" title="VeraGridEngine.Devices.Events.remedial_action.RemedialAction"><span class="pre">RemedialAction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.remedial_action_group.RemedialActionGroup" title="VeraGridEngine.Devices.Events.remedial_action_group.RemedialActionGroup"><span class="pre">RemedialActionGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.owner.Owner" title="VeraGridEngine.Devices.Associations.owner.Owner"><span class="pre">Owner</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate" title="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate"><span class="pre">RmsModelTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate" title="VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate"><span class="pre">EmtModelTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.fmu_template.FmuTemplate" title="VeraGridEngine.Devices.Dynamic.fmu_template.FmuTemplate"><span class="pre">FmuTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.rms_event.RmsEvent" title="VeraGridEngine.Devices.Events.rms_event.RmsEvent"><span class="pre">RmsEvent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.rms_events_group.RmsEventsGroup" title="VeraGridEngine.Devices.Events.rms_events_group.RmsEventsGroup"><span class="pre">RmsEventsGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.short_cirtcuit_event.ShortCircuitEvent" title="VeraGridEngine.Devices.Events.short_cirtcuit_event.ShortCircuitEvent"><span class="pre">ShortCircuitEvent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.IfMeasurement" title="VeraGridEngine.Devices.measurement.IfMeasurement"><span class="pre">IfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.ItMeasurement" title="VeraGridEngine.Devices.measurement.ItMeasurement"><span class="pre">ItMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QfMeasurement" title="VeraGridEngine.Devices.measurement.QfMeasurement"><span class="pre">QfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PfMeasurement" title="VeraGridEngine.Devices.measurement.PfMeasurement"><span class="pre">PfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QtMeasurement" title="VeraGridEngine.Devices.measurement.QtMeasurement"><span class="pre">QtMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PtMeasurement" title="VeraGridEngine.Devices.measurement.PtMeasurement"><span class="pre">PtMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QiMeasurement" title="VeraGridEngine.Devices.measurement.QiMeasurement"><span class="pre">QiMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PiMeasurement" title="VeraGridEngine.Devices.measurement.PiMeasurement"><span class="pre">PiMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VmMeasurement" title="VeraGridEngine.Devices.measurement.VmMeasurement"><span class="pre">VmMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VaMeasurement" title="VeraGridEngine.Devices.measurement.VaMeasurement"><span class="pre">VaMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PgMeasurement" title="VeraGridEngine.Devices.measurement.PgMeasurement"><span class="pre">PgMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QgMeasurement" title="VeraGridEngine.Devices.measurement.QgMeasurement"><span class="pre">QgMeasurement</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
+<p>Class to populate a Qt table view with the properties of objects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.attr_taken">
+<span class="sig-name descname"><span class="pre">attr_taken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.attr_taken"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.attr_taken" title="Link to this definition"></a></dt>
+<dd><p>Checks if the attribute value is taken
+:param attr:
+:param val:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.columnCount" title="Link to this definition"></a></dt>
+<dd><p>Get number of columns
+:param parent:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.copy_to_clipboard">
+<span class="sig-name descname"><span class="pre">copy_to_clipboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.copy_to_clipboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.copy_to_clipboard" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.copy_to_column">
+<span class="sig-name descname"><span class="pre">copy_to_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.copy_to_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.copy_to_column" title="Link to this definition"></a></dt>
+<dd><p>Copy the value pointed by the index to all the other cells in the column
+:param index: QModelIndex instance
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.data" title="Link to this definition"></a></dt>
+<dd><p>Get the data to display
+:param index:
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.data_raw">
+<span class="sig-name descname"><span class="pre">data_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.data_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.data_raw" title="Link to this definition"></a></dt>
+<dd><p>Get the data to display
+:param r: row index
+:param c: col index
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.data_with_type">
+<span class="sig-name descname"><span class="pre">data_with_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.data_with_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.data_with_type" title="Link to this definition"></a></dt>
+<dd><p>Get the data to display
+:param index:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.flags" title="Link to this definition"></a></dt>
+<dd><p>Get the display mode
+:param index:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.get_data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.headerData" title="Link to this definition"></a></dt>
+<dd><p>Get the headers to display
+:param section:
+:param orientation:
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.rowCount" title="Link to this definition"></a></dt>
+<dd><p>Get number of rows
+:param parent:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.setData">
+<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.setData" title="Link to this definition"></a></dt>
+<dd><p>Set data by simple editor (whatever text)
+:param index:
+:param value:
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.set_delegates">
+<span class="sig-name descname"><span class="pre">set_delegates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.set_delegates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.set_delegates" title="Link to this definition"></a></dt>
+<dd><p>Set the cell editor types depending on the attribute_types array
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;RosetaObjectsModel&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QAbstractTableModel&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/RosetaExplorer/roseta_objects_model.html#RosetaObjectsModel.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.RosetaExplorer.roseta_objects_model.RosetaObjectsModel.update" title="Link to this definition"></a></dt>
+<dd><p>update table</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.RosetaExplorer.update_gui_file">
+<span id="veragrid-gui-filedialogues-rosetaexplorer-update-gui-file-module"></span><h2>VeraGrid.Gui.FileDialogues.RosetaExplorer.update_gui_file module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.RosetaExplorer.update_gui_file" title="Link to this heading"></a></h2>
+<p>Script to update correctly the main GUI (.py) file from the Qt design (.ui) file</p>
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.RosetaExplorer">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.RosetaExplorer" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.FileDialogues.PsseDialogue.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.FileDialogues.PsseDialogue package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.FileDialogues.UcteDialogue.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.FileDialogues.UcteDialogue package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,842 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.iidm.iidm_parser_pypowsybl &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.iidm.iidm_parser_pypowsybl</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.iidm.iidm_parser_pypowsybl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020-2025, RTE (http://www.rte-france.com)</span>
+<span class="c1"># See AUTHORS.md</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, you can obtain one at http://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="c1"># This file is part of the deeac project.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShuntControlMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pypowsybl</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+
+    <span class="n">PYPOWSYBL_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">PYPOWSYBL_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="IidmParser">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.iidm.html#VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.IidmParser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IidmParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Xiidm file parser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param fname: xiidm file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">logger</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">PYPOWSYBL_AVAILABLE</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;pypowsybl not installed&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="IidmParser.parse">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.iidm.html#VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.IidmParser.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the PowSybl structures to  deeac</span>
+<span class="sd">        :return: Network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">grid</span>
+        <span class="k">else</span><span class="p">:</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            - Expected objects:   </span>
+<span class="sd">            - areas    </span>
+<span class="sd">            - buses (from bus view)    </span>
+<span class="sd">            - buses from bus/breaker view    </span>
+<span class="sd">            - lines    </span>
+<span class="sd">            - 2 windings transformers    </span>
+<span class="sd">            - 3 windings transformers    </span>
+<span class="sd">            - generators    </span>
+<span class="sd">            - loads    </span>
+<span class="sd">            - shunt compensators    </span>
+<span class="sd">            - dangling lines    </span>
+<span class="sd">            - LCC and VSC converters stations    </span>
+<span class="sd">            - static var compensators    </span>
+<span class="sd">            - switches    </span>
+<span class="sd">            - voltage levels    </span>
+<span class="sd">            - substations    </span>
+<span class="sd">            - busbar sections    </span>
+<span class="sd">            - HVDC lines    </span>
+<span class="sd">            - ratio and phase tap changer steps associated to a 2 windings transformers    </span>
+<span class="sd">            - identifiables that are all the equipment on the network    </span>
+<span class="sd">            - injections    </span>
+<span class="sd">            - branches (lines and two windings transformers)    </span>
+<span class="sd">            - terminals are a practical view of those objects </span>
+<span class="sd">              which are very important in the java implementation    </span>
+<span class="sd">            - DC nodes    </span>
+<span class="sd">            - DC lines    </span>
+<span class="sd">            - voltage source converters    </span>
+<span class="sd">            - DC grounds</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">substations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_substations</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">voltage_levels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">buses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_lines</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># branches = self.ps_grid.get_branches(all_attributes=True)</span>
+            <span class="n">switches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_switches</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">transformers2w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_2_windings_transformers</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">transformers3w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_3_windings_transformers</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_phase_tap_changers</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_phase_tap_changer_steps</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">hvdc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_hvdc_lines</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">loads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_loads</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">gens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_generators</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">capacitor_banks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_shunt_compensators</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">svc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_static_var_compensators</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">nominal_apparent_power</span>
+            <span class="n">is_in_pu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">per_unit</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Substation</span>
+<span class="sd">            0 = {str} &#39;name&#39;</span>
+<span class="sd">            1 = {str} &#39;TSO&#39;: To track to which Transmission System Operator the substation belongs</span>
+<span class="sd">            2 = {str} &#39;geo_tags&#39;: They make it possible to accurately locate the substation</span>
+<span class="sd">            3 = {str} &#39;country&#39;: To specify in which country the substation is located</span>
+<span class="sd">            4 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">country_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">se_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">substations</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+                <span class="n">country</span> <span class="o">=</span> <span class="n">country_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;country&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">country</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;country&quot;</span><span class="p">])</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_country</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">country</span><span class="p">)</span>
+                    <span class="n">country_dict</span><span class="p">[</span><span class="n">country</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">i</span>
+
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                    <span class="n">country</span><span class="o">=</span><span class="n">country</span>
+                <span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_substation</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+                <span class="n">se_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Voltage Level</span>
+<span class="sd">            0 = {str} &#39;name&#39;</span>
+<span class="sd">            1 = {str} &#39;substation_id&#39;</span>
+<span class="sd">            2 = {str} &#39;nominal_v&#39;: kV, Nominal base voltage</span>
+<span class="sd">            3 = {str} &#39;high_voltage_limit&#39; kV, Low voltage limit magnitude</span>
+<span class="sd">            4 = {str} &#39;low_voltage_limit&#39; kV, High voltage limit magnitude</span>
+<span class="sd">            </span>
+<span class="sd">            In the docs </span>
+<span class="sd">            (https://powsybl.readthedocs.io/projects/powsybl-core/en/stable/grid_model/network_subnetwork.html)</span>
+<span class="sd">            it says that topology_kind is required, but doesn&#39;t seem to be present</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">vl_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">voltage_levels</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">se</span> <span class="o">=</span> <span class="n">se_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;substation_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">se</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Substation not found&quot;</span><span class="p">,</span>
+                                          <span class="n">value</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;substation_id&quot;</span><span class="p">])</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">i</span>
+
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                    <span class="n">Vnom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;nominal_v&quot;</span><span class="p">]),</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se</span>
+                <span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+                <span class="n">vl_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">topology</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps_grid</span><span class="o">.</span><span class="n">get_node_breaker_topology</span><span class="p">(</span><span class="n">voltage_level_id</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">pp</span><span class="o">.</span><span class="n">PyPowsyblError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Bus</span>
+<span class="sd">            0 = {str} &#39;name&#39;</span>
+<span class="sd">            1 = {str} &#39;v_mag&#39;</span>
+<span class="sd">            2 = {str} &#39;v_angle&#39;</span>
+<span class="sd">            3 = {str} &#39;connected_component&#39;</span>
+<span class="sd">            4 = {str} &#39;synchronous_component&#39;</span>
+<span class="sd">            5 = {str} &#39;voltage_level_id&#39;</span>
+<span class="sd">            6 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">buses</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">vl</span> <span class="o">=</span> <span class="n">vl_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;voltage_level_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">vl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Voltage level not found&quot;</span><span class="p">,</span>
+                                          <span class="n">value</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;voltage_level_id&quot;</span><span class="p">])</span>
+
+                <span class="n">bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">idx</span><span class="p">,</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">Vnom</span><span class="o">=</span><span class="mi">10</span> <span class="k">if</span> <span class="n">vl</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vl</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                    <span class="n">Vm0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;v_mag&quot;</span><span class="p">]),</span>
+                    <span class="n">Va0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;v_angle&quot;</span><span class="p">]),</span>
+                    <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span>
+                <span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus</span><span class="p">)</span>
+                <span class="n">bus_dict</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Line</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;r&#39;</span>
+<span class="sd">            02 = {str} &#39;x&#39;</span>
+<span class="sd">            03 = {str} &#39;g1&#39;</span>
+<span class="sd">            04 = {str} &#39;b1&#39;</span>
+<span class="sd">            05 = {str} &#39;g2&#39;</span>
+<span class="sd">            06 = {str} &#39;b2&#39;</span>
+<span class="sd">            07 = {str} &#39;p1&#39;</span>
+<span class="sd">            08 = {str} &#39;q1&#39;</span>
+<span class="sd">            09 = {str} &#39;i1&#39;</span>
+<span class="sd">            10 = {str} &#39;p2&#39;</span>
+<span class="sd">            11 = {str} &#39;q2&#39;</span>
+<span class="sd">            12 = {str} &#39;i2&#39;</span>
+<span class="sd">            13 = {str} &#39;voltage_level1_id&#39;</span>
+<span class="sd">            14 = {str} &#39;voltage_level2_id&#39;</span>
+<span class="sd">            15 = {str} &#39;bus1_id&#39;</span>
+<span class="sd">            16 = {str} &#39;bus_breaker_bus1_id&#39;</span>
+<span class="sd">            17 = {str} &#39;node1&#39;</span>
+<span class="sd">            18 = {str} &#39;bus2_id&#39;</span>
+<span class="sd">            19 = {str} &#39;bus_breaker_bus2_id&#39;</span>
+<span class="sd">            20 = {str} &#39;node2&#39;</span>
+<span class="sd">            21 = {str} &#39;connected1&#39;</span>
+<span class="sd">            22 = {str} &#39;connected2&#39;</span>
+<span class="sd">            23 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            24 = {str} &#39;selected_limits_group_1&#39;</span>
+<span class="sd">            25 = {str} &#39;selected_limits_group_2&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">lines</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus1_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">bus2</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus2_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus from not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus to not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bus2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="n">Vn</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus2</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+                    <span class="n">Zbase</span> <span class="o">=</span> <span class="n">Vn</span> <span class="o">*</span> <span class="n">Vn</span> <span class="o">/</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span>
+                    <span class="n">Ybase</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Zbase</span>
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                        <span class="n">r</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">Zbase</span><span class="p">,</span>
+                        <span class="n">x</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">Zbase</span><span class="p">,</span>
+                        <span class="n">b</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;b1&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">Ybase</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Switch</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;kind&#39; {&#39;DISCONNECTOR&#39;, &#39;BREAKER&#39;}</span>
+<span class="sd">            02 = {str} &#39;open&#39;</span>
+<span class="sd">            03 = {str} &#39;retained&#39;</span>
+<span class="sd">            04 = {str} &#39;voltage_level_id&#39;</span>
+<span class="sd">            05 = {str} &#39;bus_breaker_bus1_id&#39;</span>
+<span class="sd">            06 = {str} &#39;bus_breaker_bus2_id&#39;</span>
+<span class="sd">            07 = {str} &#39;node1&#39;</span>
+<span class="sd">            08 = {str} &#39;node2&#39;</span>
+<span class="sd">            09 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># TODO: Unclear when these are available or how they&#39;re connected</span>
+            <span class="c1"># for i, row in switches.iterrows():</span>
+            <span class="c1">#     bus1: dev.Bus = bus_dict[row[&quot;bus_breaker_bus1_id&quot;]]</span>
+            <span class="c1">#     bus2: dev.Bus = bus_dict[row[&quot;bus_breaker_bus2_id&quot;]]</span>
+            <span class="c1">#</span>
+            <span class="c1">#     elm = dev.Switch(</span>
+            <span class="c1">#         name=row[&quot;name&quot;],</span>
+            <span class="c1">#         code = i,</span>
+            <span class="c1">#         bus_from=bus1,</span>
+            <span class="c1">#         bus_to=bus2,</span>
+            <span class="c1">#         retained=bool(row[&quot;retained&quot;]),</span>
+            <span class="c1">#         active=not bool(row[&quot;open&quot;])</span>
+            <span class="c1">#     )</span>
+            <span class="c1">#</span>
+            <span class="c1">#     grid.add_switch(obj=elm)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Transformer</span>
+<span class="sd">            https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/reference/api/pypowsybl.network.Network.get_2_windings_transformers.html#pypowsybl.network.Network.get_2_windings_transformers</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;r&#39;: the resistance of the transformer at its “2” side (in Ohm)</span>
+<span class="sd">            02 = {str} &#39;x&#39;: x: the reactance of the transformer at its “2” side (in Ohm)</span>
+<span class="sd">            03 = {str} &#39;g&#39;: b: the susceptance of transformer at its “2” side (in Siemens)</span>
+<span class="sd">            04 = {str} &#39;b&#39;: the conductance of transformer at its “2” side (in Siemens)</span>
+<span class="sd">            05 = {str} &#39;rated_u1&#39;: the rated voltage of the transformer at side 1 (in kV)</span>
+<span class="sd">            06 = {str} &#39;rated_u2&#39;: the rated voltage of the transformer at side 2 (in kV)</span>
+<span class="sd">            07 = {str} &#39;rated_s&#39;: the rated apparent power of the transformer (in MVA)</span>
+<span class="sd">            08 = {str} &#39;p1&#39;: the active flow on the transformer at its “1” side, NaN if no loadflow has been computed (in MW)</span>
+<span class="sd">            09 = {str} &#39;q1&#39;: the reactive flow on the transformer at its “1” side, NaN if no loadflow has been computed (in MVAr)</span>
+<span class="sd">            10 = {str} &#39;i1&#39;: the current on the transformer at its “1” side, NaN if no loadflow has been computed (in A)</span>
+<span class="sd">            11 = {str} &#39;p2&#39;</span>
+<span class="sd">            12 = {str} &#39;q2&#39;</span>
+<span class="sd">            13 = {str} &#39;i2&#39;</span>
+<span class="sd">            14 = {str} &#39;voltage_level1_id&#39;: voltage level where the transformer is connected, on side 1</span>
+<span class="sd">            15 = {str} &#39;voltage_level2_id&#39;: voltage level where the transformer is connected, on side 2</span>
+<span class="sd">            16 = {str} &#39;bus1_id&#39;: bus where this transformer is connected, on side 1</span>
+<span class="sd">            17 = {str} &#39;bus_breaker_bus1_id&#39; (optional): bus of the bus-breaker view where this transformer is connected, on side 1</span>
+<span class="sd">            18 = {str} &#39;node1&#39;: (optional): node where this transformer is connected on side 1, in node-breaker voltage levels</span>
+<span class="sd">            19 = {str} &#39;bus2_id&#39;: bus where this transformer is connected, on side 2</span>
+<span class="sd">            20 = {str} &#39;bus_breaker_bus2_id&#39;</span>
+<span class="sd">            21 = {str} &#39;node2&#39;</span>
+<span class="sd">            22 = {str} &#39;connected1&#39;: the side “1” of the transformer is connected to a bus</span>
+<span class="sd">            23 = {str} &#39;connected2&#39;: the side “2” of the transformer is connected to a bus</span>
+<span class="sd">            24 = {str} &#39;fictitious&#39;: the transformer is part of the model and not of the actual network</span>
+<span class="sd">            25 = {str} &#39;selected_limits_group_1&#39;: (optional): Name of the selected operational limits group selected for side 1</span>
+<span class="sd">            26 = {str} &#39;selected_limits_group_2&#39;: (optional): Name of the selected operational limits group selected for side 2</span>
+<span class="sd">            27 = {str} &#39;rho&#39;(optional): the voltage ratio of the transformer at current tap position</span>
+<span class="sd">            28 = {str} &#39;alpha&#39;(optional): the phase shift of the transformer at current tap position (in degree)</span>
+<span class="sd">            29 = {str} &#39;r_at_current_tap&#39;(optional): the resistance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            30 = {str} &#39;x_at_current_tap&#39;(optional): the reactance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            31 = {str} &#39;g_at_current_tap&#39;(optional): the susceptance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            32 = {str} &#39;b_at_current_tap&#39;(optional): the conductance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">transformers2w</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus1_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">bus2</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus2_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus from not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus to not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bus2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="n">rated_u1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;rated_u1&quot;</span><span class="p">])</span>
+                    <span class="n">rated_u2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;rated_u2&quot;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">rated_u1</span> <span class="o">&gt;</span> <span class="n">rated_u2</span><span class="p">:</span>
+                        <span class="n">HV</span> <span class="o">=</span> <span class="n">rated_u1</span>
+                        <span class="n">LV</span> <span class="o">=</span> <span class="n">rated_u2</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">HV</span> <span class="o">=</span> <span class="n">rated_u2</span>
+                        <span class="n">LV</span> <span class="o">=</span> <span class="n">rated_u1</span>
+
+                    <span class="n">Sn</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;rated_s&quot;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Sn</span><span class="p">):</span>
+                        <span class="n">Sn</span> <span class="o">=</span> <span class="mf">9999.0</span>
+
+                    <span class="c1"># The per unit is referred to the bus 2</span>
+                    <span class="n">Zbase</span> <span class="o">=</span> <span class="n">bus2</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">*</span> <span class="n">bus2</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">/</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span>
+                    <span class="n">Ybase</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Zbase</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">Zbase</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">Zbase</span>
+                    <span class="n">g</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">Ybase</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">Ybase</span>
+
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                        <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                        <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+                        <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+                        <span class="n">HV</span><span class="o">=</span><span class="n">HV</span><span class="p">,</span>
+                        <span class="n">LV</span><span class="o">=</span><span class="n">LV</span><span class="p">,</span>
+                        <span class="n">rate</span><span class="o">=</span><span class="n">Sn</span><span class="p">,</span>
+                        <span class="n">tap_module</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">]),</span>
+                        <span class="n">tap_phase</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]),</span>  <span class="c1"># TODO in deg or rad? we need rad</span>
+                    <span class="p">)</span>
+
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            rated_u0: the rated voltage of the transformer at middle point od the star model (in kV)</span>
+<span class="sd">            fictitious (optional): True if the transformer is part of the model and not of the actual network</span>
+<span class="sd">            r1: the leg 1 resistance of the transformer (in Ohm)</span>
+<span class="sd">            x1: the leg 1 reactance of the transformer (in Ohm)</span>
+<span class="sd">            b1: the leg 1 susceptance of transformer (in Siemens)</span>
+<span class="sd">            g1: the leg 1 conductance of transformer (in Siemens)</span>
+<span class="sd">            rated_u1: the leg 1 rated voltage of the transformer (in kV)</span>
+<span class="sd">            rated_s1: the leg 1 rated apparent power of the transformer (in MVA)</span>
+<span class="sd">            ratio_tap_position1: the leg 1 ratio tap changer current position</span>
+<span class="sd">            phase_tap_position1: the leg 1 phase tap changer current position</span>
+<span class="sd">            p1: the leg 1 active power flow on the transformer, NaN if no loadflow has been computed (in MW)</span>
+<span class="sd">            q1: the leg 1 reactive power flow on the transformer, NaN if no loadflow has been computed (in MVAr)</span>
+<span class="sd">            i1: the leg 1 current on the transformer, NaN if no loadflow has been computed (in A)</span>
+<span class="sd">            voltage_level1_id: the voltage level where the leg 1 of the transformer is connected</span>
+<span class="sd">            bus1_id: the bus where the leg 1 of the transformer is connected</span>
+<span class="sd">            bus_breaker_bus1_id (optional): the bus of the bus-breaker view where leg 1 of the transformer is connected</span>
+<span class="sd">            node1 (optional): the node where the leg 1 transformer is connected (only in node-breaker voltage levels)</span>
+<span class="sd">            connected1: True if the leg 1 of the transformer is connected to a bus</span>
+<span class="sd">            selected_limits_group_1 (optional): the name of the selected operational limits group selected for the leg 1 of the transformer</span>
+<span class="sd">            rho1 (optional): the leg 1 voltage ratio of the transformer at current tap position</span>
+<span class="sd">            alpha1 (optional): the leg 1 phase shift of the transformer at current tap position (in degree)</span>
+<span class="sd">            r1_at_current_tap (optional): the leg 1 resistance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            x1_at_current_tap (optional): the leg 1 reactance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            g1_at_current_tap (optional): the leg 1 susceptance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            b1_at_current_tap (optional): the leg 1 conductance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            r2: the leg 2 resistance of the transformer (in Ohm)</span>
+<span class="sd">            x2: the leg 2 reactance of the transformer (in Ohm)</span>
+<span class="sd">            b2: the leg 2 susceptance of transformer (in Siemens)</span>
+<span class="sd">            g2: the leg 2 conductance of transformer (in Siemens)</span>
+<span class="sd">            rated_u2: the leg 2 rated voltage of the transformer (in kV)</span>
+<span class="sd">            rated_s2: the leg 2 rated apparent power of the transformer (in MVA)</span>
+<span class="sd">            ratio_tap_position2: the leg 2 ratio tap changer current position</span>
+<span class="sd">            phase_tap_position2: the leg 2 phase tap changer current position</span>
+<span class="sd">            p2: the leg 2 active power flow on the transformer, NaN if no loadflow has been computed (in MW)</span>
+<span class="sd">            q2: the leg 2 reactive power flow on the transformer, NaN if no loadflow has been computed (in MVAr)</span>
+<span class="sd">            i2: the leg 2 current on the transformer, NaN if no loadflow has been computed (in A)</span>
+<span class="sd">            voltage_level2_id: the voltage level where the leg 2 of the transformer is connected</span>
+<span class="sd">            bus2_id: the bus where the leg 2 of the transformer is connected</span>
+<span class="sd">            bus_breaker_bus2_id (optional): the bus of the bus-breaker view where leg 2 of the transformer is connected</span>
+<span class="sd">            node2 (optional): the node where the leg 2 transformer is connected (only in node-breaker voltage levels)</span>
+<span class="sd">            connected2: True if the leg 2 of the transformer is connected to a bus</span>
+<span class="sd">            selected_limits_group_2 (optional): the name of the selected operational limits group selected for the leg 2 of the transformer</span>
+<span class="sd">            rho2 (optional): the leg 2 voltage ratio of the transformer at current tap position</span>
+<span class="sd">            alpha2 (optional): the leg 2 phase shift of the transformer at current tap position (in degree)</span>
+<span class="sd">            r2_at_current_tap (optional): the leg 2 resistance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            x2_at_current_tap (optional): the leg 2 reactance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            g2_at_current_tap (optional): the leg 2 susceptance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            b2_at_current_tap (optional): the leg 2 conductance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            r3: the leg 3 resistance of the transformer (in Ohm)</span>
+<span class="sd">            x3: the leg 3 reactance of the transformer (in Ohm)</span>
+<span class="sd">            b3: the leg 3 susceptance of transformer (in Siemens)</span>
+<span class="sd">            g3: the leg 3 conductance of transformer (in Siemens)</span>
+<span class="sd">            rated_u3: the leg 3 rated voltage of the transformer (in kV)</span>
+<span class="sd">            rated_s3: the leg 3 rated apparent power of the transformer (in MVA)</span>
+<span class="sd">            ratio_tap_position3: the leg 3 ratio tap changer current position</span>
+<span class="sd">            phase_tap_position3: the leg 3 phase tap changer current position</span>
+<span class="sd">            p3: the leg 3 active power flow on the transformer, NaN if no loadflow has been computed (in MW)</span>
+<span class="sd">            q3: the leg 3 reactive power flow on the transformer, NaN if no loadflow has been computed (in MVAr)</span>
+<span class="sd">            i3: the leg 3 current on the transformer, NaN if no loadflow has been computed (in A)</span>
+<span class="sd">            voltage_level3_id: the voltage level where the leg 3 of the transformer is connected</span>
+<span class="sd">            bus3_id: the bus where the leg 3 of the transformer is connected</span>
+<span class="sd">            bus_breaker_bus3_id (optional): the bus of the bus-breaker view where leg 3 of the transformer is connected</span>
+<span class="sd">            node3 (optional): the node where the leg 3 transformer is connected (only in node-breaker voltage levels)</span>
+<span class="sd">            connected3: True if the leg 3 of the transformer is connected to a bus</span>
+<span class="sd">            selected_limits_group_3 (optional): the name of the selected operational limits group selected for the leg 3 of the transformer</span>
+<span class="sd">            rho3 (optional): the leg 3 voltage ratio of the transformer at current tap position</span>
+<span class="sd">            alpha3 (optional): the leg 3 phase shift of the transformer at current tap position (in degree)</span>
+<span class="sd">            r3_at_current_tap (optional): the leg 3 resistance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            x3_at_current_tap (optional): the leg 3 reactance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            g3_at_current_tap (optional): the leg 3 susceptance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            b3_at_current_tap (optional): the leg 3 conductance of the transformer at current tap position (in Ohm)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">transformers3w</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="k">pass</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            HVDC</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;converters_mode&#39;</span>
+<span class="sd">            02 = {str} &#39;target_p&#39;</span>
+<span class="sd">            03 = {str} &#39;max_p&#39;</span>
+<span class="sd">            04 = {str} &#39;nominal_v&#39;</span>
+<span class="sd">            05 = {str} &#39;r&#39;</span>
+<span class="sd">            06 = {str} &#39;converter_station1_id&#39;</span>
+<span class="sd">            07 = {str} &#39;converter_station2_id&#39;</span>
+<span class="sd">            08 = {str} &#39;connected1&#39;</span>
+<span class="sd">            09 = {str} &#39;connected2&#39;</span>
+<span class="sd">            10 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;converter_station1_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">bus2</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;converter_station2_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus from not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus to not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bus2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">connected1</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;connected1&quot;</span><span class="p">])</span>
+                    <span class="n">connected2</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;connected2&quot;</span><span class="p">])</span>
+
+                    <span class="c1"># TODO, what is the content of converters_mode? PMODE1, PMODE3 stuff probably but investigate</span>
+
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">HvdcLine</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                        <span class="n">dc_link_voltage</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;nominal_v&quot;</span><span class="p">]),</span>
+                        <span class="n">Pset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;target_p&quot;</span><span class="p">]),</span>
+                        <span class="n">rate</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;max_p&quot;</span><span class="p">]),</span>
+                        <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]),</span>  <span class="c1"># TODO: Ohm?, we need Ohm</span>
+                        <span class="n">active</span><span class="o">=</span><span class="n">connected1</span> <span class="ow">and</span> <span class="n">connected2</span>
+                    <span class="p">)</span>
+
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_hvdc</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Load</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;type&#39;</span>
+<span class="sd">            02 = {str} &#39;p0&#39;</span>
+<span class="sd">            03 = {str} &#39;q0&#39;</span>
+<span class="sd">            04 = {str} &#39;p&#39;</span>
+<span class="sd">            05 = {str} &#39;q&#39;</span>
+<span class="sd">            06 = {str} &#39;i&#39;</span>
+<span class="sd">            07 = {str} &#39;voltage_level_id&#39;</span>
+<span class="sd">            08 = {str} &#39;bus_id&#39;</span>
+<span class="sd">            09 = {str} &#39;bus_breaker_bus_id&#39;</span>
+<span class="sd">            10 = {str} &#39;node&#39;</span>
+<span class="sd">            11 = {str} &#39;connected&#39;</span>
+<span class="sd">            12 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">loads</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Load&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">P1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]),</span>
+                        <span class="n">Q1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]),</span>
+                        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;connected&quot;</span><span class="p">])</span>
+                    <span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Generator</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;energy_source&#39;</span>
+<span class="sd">            02 = {str} &#39;target_p&#39; MW, The active power target</span>
+<span class="sd">            03 = {str} &#39;min_p&#39; MW, Minimum generator active power output</span>
+<span class="sd">            04 = {str} &#39;max_p&#39; MW, Maximum generator active power output</span>
+<span class="sd">            05 = {str} &#39;min_q&#39; MVAr</span>
+<span class="sd">            06 = {str} &#39;max_q&#39; MVAr</span>
+<span class="sd">            07 = {str} &#39;min_q_at_target_p&#39; </span>
+<span class="sd">            08 = {str} &#39;max_q_at_target_p&#39;</span>
+<span class="sd">            09 = {str} &#39;min_q_at_p&#39;</span>
+<span class="sd">            10 = {str} &#39;max_q_at_p&#39;</span>
+<span class="sd">            11 = {str} &#39;rated_s&#39; MVA, The rated nominal power</span>
+<span class="sd">            12 = {str} &#39;reactive_limits_kind&#39;</span>
+<span class="sd">            13 = {str} &#39;target_v&#39; kV, The voltage target at regulating terminal which can be remote or local</span>
+<span class="sd">            14 = {str} &#39;target_q&#39; MVAr, The reactive power target at local terminal</span>
+<span class="sd">            15 = {str} &#39;voltage_regulator_on&#39;</span>
+<span class="sd">            16 = {str} &#39;regulated_element_id&#39;</span>
+<span class="sd">            17 = {str} &#39;regulated_bus_id&#39;</span>
+<span class="sd">            18 = {str} &#39;regulated_bus_breaker_bus_id&#39;</span>
+<span class="sd">            19 = {str} &#39;p&#39;</span>
+<span class="sd">            20 = {str} &#39;q&#39;</span>
+<span class="sd">            21 = {str} &#39;i&#39;</span>
+<span class="sd">            22 = {str} &#39;voltage_level_id&#39;</span>
+<span class="sd">            23 = {str} &#39;bus_id&#39;</span>
+<span class="sd">            24 = {str} &#39;bus_breaker_bus_id&#39;</span>
+<span class="sd">            25 = {str} &#39;node&#39;</span>
+<span class="sd">            26 = {str} &#39;condenser&#39;</span>
+<span class="sd">            27 = {str} &#39;connected&#39;</span>
+<span class="sd">            28 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gens</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Generator&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])</span>
+                    <span class="n">q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">])</span>
+                    <span class="n">S</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">q</span>
+                    <span class="n">Sabs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">Sabs</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">pf</span> <span class="o">=</span> <span class="n">p</span> <span class="o">/</span> <span class="n">Sabs</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">pf</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">P</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span>
+                        <span class="n">power_factor</span><span class="o">=</span><span class="n">pf</span><span class="p">,</span>
+                        <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;target_v&quot;</span><span class="p">]),</span>
+                        <span class="n">Pmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;min_p&quot;</span><span class="p">]),</span>
+                        <span class="n">Pmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;max_p&quot;</span><span class="p">]),</span>
+                        <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;min_q&quot;</span><span class="p">]),</span>
+                        <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;max_q&quot;</span><span class="p">]),</span>
+                        <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;rated_s&quot;</span><span class="p">]),</span>
+                        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;connected&quot;</span><span class="p">]),</span>
+                        <span class="n">is_controlled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;voltage_regulator_on&quot;</span><span class="p">]),</span>
+                    <span class="p">)</span>
+                    <span class="n">elm</span><span class="o">.</span><span class="n">control_bus</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;regulated_bus_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Capacitor bank</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;g&#39;</span>
+<span class="sd">            02 = {str} &#39;b&#39;</span>
+<span class="sd">            03 = {str} &#39;model_type&#39;</span>
+<span class="sd">            04 = {str} &#39;max_section_count&#39;</span>
+<span class="sd">            05 = {str} &#39;section_count&#39;</span>
+<span class="sd">            06 = {str} &#39;solved_section_count&#39;</span>
+<span class="sd">            07 = {str} &#39;voltage_regulation_on&#39;</span>
+<span class="sd">            08 = {str} &#39;target_v&#39;</span>
+<span class="sd">            09 = {str} &#39;target_deadband&#39;</span>
+<span class="sd">            10 = {str} &#39;regulating_bus_id&#39;</span>
+<span class="sd">            11 = {str} &#39;p&#39;</span>
+<span class="sd">            12 = {str} &#39;q&#39;</span>
+<span class="sd">            13 = {str} &#39;i&#39;</span>
+<span class="sd">            14 = {str} &#39;voltage_level_id&#39;</span>
+<span class="sd">            15 = {str} &#39;bus_id&#39;</span>
+<span class="sd">            16 = {str} &#39;bus_breaker_bus_id&#39;</span>
+<span class="sd">            17 = {str} &#39;node&#39;</span>
+<span class="sd">            18 = {str} &#39;connected&#39;</span>
+<span class="sd">            19 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">capacitor_banks</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Capacitor Bank&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">G1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">]),</span>
+                        <span class="n">B1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]),</span>
+                        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;connected&quot;</span><span class="p">])</span>
+                    <span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            SVC</span>
+<span class="sd">            00 = {str} &#39;name&#39;</span>
+<span class="sd">            01 = {str} &#39;b_min&#39;</span>
+<span class="sd">            02 = {str} &#39;b_max&#39;</span>
+<span class="sd">            03 = {str} &#39;target_v&#39;</span>
+<span class="sd">            04 = {str} &#39;target_q&#39;</span>
+<span class="sd">            05 = {str} &#39;regulation_mode&#39;</span>
+<span class="sd">            06 = {str} &#39;regulating&#39;</span>
+<span class="sd">            07 = {str} &#39;regulated_element_id&#39;</span>
+<span class="sd">            08 = {str} &#39;regulated_bus_id&#39;</span>
+<span class="sd">            09 = {str} &#39;regulated_bus_breaker_bus_id&#39;</span>
+<span class="sd">            10 = {str} &#39;p&#39;</span>
+<span class="sd">            11 = {str} &#39;q&#39;</span>
+<span class="sd">            12 = {str} &#39;i&#39;</span>
+<span class="sd">            13 = {str} &#39;voltage_level_id&#39;</span>
+<span class="sd">            14 = {str} &#39;bus_id&#39;</span>
+<span class="sd">            15 = {str} &#39;bus_breaker_bus_id&#39;</span>
+<span class="sd">            16 = {str} &#39;node&#39;</span>
+<span class="sd">            17 = {str} &#39;connected&#39;</span>
+<span class="sd">            18 = {str} &#39;fictitious&#39;</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">svc</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">bus1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bus_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus not found&quot;</span><span class="p">,</span>
+                                          <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;SVC&quot;</span><span class="p">,</span>
+                                          <span class="n">device</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">ControllableShunt</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">G1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]),</span>  <span class="c1"># TODO: Make sure about the units</span>
+                        <span class="n">B1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]),</span>
+                        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;connected&quot;</span><span class="p">]),</span>
+                        <span class="n">Bmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;b_min&quot;</span><span class="p">]),</span>
+                        <span class="n">Bmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;b_max&quot;</span><span class="p">]),</span>
+                        <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;target_v&quot;</span><span class="p">]),</span>
+                        <span class="n">control_mode</span><span class="o">=</span><span class="n">ShuntControlMode</span><span class="o">.</span><span class="n">Continuous</span> <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;regulating&quot;</span><span class="p">])</span> <span class="k">else</span> <span class="n">ShuntControlMode</span><span class="o">.</span><span class="n">Locked</span>
+                    <span class="p">)</span>
+                    <span class="n">elm</span><span class="o">.</span><span class="n">control_bus</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;regulated_bus_id&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_controllable_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">grid</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

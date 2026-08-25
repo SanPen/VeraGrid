@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gcdev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">CGMES_ASSETS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_cgmes_reference_uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyOperationTypes</span>
+
+
+<div class="viewcode-block" id="parse_contingency_equipment_status">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies.parse_contingency_equipment_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_contingency_equipment_status</span><span class="p">(</span><span class="n">contingent_status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                                       <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span>
+                                       <span class="n">contingency_equipment</span><span class="p">:</span> <span class="n">CGMES_ASSETS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert NCP ``contingentStatus`` into VeraGrid contingency ``Active`` value.</span>
+
+<span class="sd">    :param contingent_status: NCP contingent status URI/text.</span>
+<span class="sd">    :param logger: Data logger.</span>
+<span class="sd">    :param contingency_equipment: Source NCP ContingencyEquipment object.</span>
+<span class="sd">    :return: Target ``Active`` value:</span>
+<span class="sd">             - 0.0 means outage (outOfService)</span>
+<span class="sd">             - 1.0 means explicit in-service</span>
+<span class="sd">             - None means unsupported status</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">contingent_status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">status_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">contingent_status</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;outofservice&quot;</span> <span class="ow">in</span> <span class="n">status_text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">elif</span> <span class="s2">&quot;inservice&quot;</span> <span class="ow">in</span> <span class="n">status_text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Unsupported contingency equipment status&#39;</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+            <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+            <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;contingentStatus&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">contingent_status</span><span class="p">,</span>
+            <span class="n">expected_value</span><span class="o">=</span><span class="s1">&#39;outOfService or inService&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="build_contingency_device_lookup">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies.build_contingency_device_lookup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_contingency_device_lookup</span><span class="p">(</span><span class="n">gcdev_model</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build lookup table for devices that can be targeted by contingencies.</span>
+
+<span class="sd">    :param gcdev_model: VeraGrid model.</span>
+<span class="sd">    :return: Dictionary keyed by canonical/normalized device idtag.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contingency_device_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">contingency_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">branch_device</span> <span class="ow">in</span> <span class="n">gcdev_model</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_vsc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_hvdc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">contingency_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch_device</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">injection_device</span> <span class="ow">in</span> <span class="n">gcdev_model</span><span class="o">.</span><span class="n">get_injection_devices</span><span class="p">():</span>
+        <span class="n">contingency_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">injection_device</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">contingency_device</span> <span class="ow">in</span> <span class="n">contingency_devices</span><span class="p">:</span>
+        <span class="n">contingency_device_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">contingency_device</span><span class="o">.</span><span class="n">idtag</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency_device_idtag</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">contingency_device_idtag</span> <span class="ow">in</span> <span class="n">contingency_device_lookup</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">contingency_device_lookup</span><span class="p">[</span><span class="n">contingency_device_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_device</span>
+
+            <span class="n">normalized_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">normalize_cgmes_reference_uuid</span><span class="p">(</span><span class="n">contingency_device_idtag</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">normalized_idtag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">normalized_idtag</span> <span class="ow">in</span> <span class="n">contingency_device_lookup</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">contingency_device_lookup</span><span class="p">[</span><span class="n">normalized_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_device</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">contingency_device_lookup</span></div>
+
+
+
+<div class="viewcode-block" id="get_ncp_contingency_objects">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies.get_ncp_contingency_objects">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ncp_contingency_objects</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collect NCP contingency objects from all supported contingency subclasses.</span>
+
+<span class="sd">    :param cgmes_model: CGMES model.</span>
+<span class="sd">    :return: De-duplicated contingency object list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contingency_objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">contingency_by_uuid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">contingency_lists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">contingency_lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">Contingency_list</span><span class="p">)</span>
+    <span class="n">contingency_lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">OrdinaryContingency_list</span><span class="p">)</span>
+    <span class="n">contingency_lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">ExceptionalContingency_list</span><span class="p">)</span>
+    <span class="n">contingency_lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">OutOfRangeContingency_list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">contingency_list</span> <span class="ow">in</span> <span class="n">contingency_lists</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">contingency_obj</span> <span class="ow">in</span> <span class="n">contingency_list</span><span class="p">:</span>
+            <span class="n">contingency_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">uuid</span>
+            <span class="k">if</span> <span class="n">contingency_uuid</span> <span class="ow">in</span> <span class="n">contingency_by_uuid</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">contingency_by_uuid</span><span class="p">[</span><span class="n">contingency_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_obj</span>
+
+    <span class="k">for</span> <span class="n">contingency_obj</span> <span class="ow">in</span> <span class="n">contingency_by_uuid</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">contingency_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contingency_obj</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">contingency_objects</span></div>
+
+
+
+<div class="viewcode-block" id="build_converter_to_dcline_lookup">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies.build_converter_to_dcline_lookup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_converter_to_dcline_lookup</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a mapping from CGMES converter UUID to paired DCLineSegment UUID.</span>
+
+<span class="sd">    The mapping is inferred through DC nodes:</span>
+<span class="sd">    ``CsConverter -&gt; ACDCConverterDCTerminal -&gt; DCNode &lt;- DCTerminal &lt;- DCLineSegment``.</span>
+
+<span class="sd">    :param cgmes_model: CGMES model.</span>
+<span class="sd">    :return: Dictionary keyed by converter UUID with value DCLineSegment UUID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">converter_to_dcnode_uuid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">dcnode_to_dcline_uuid_list</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">converter_to_dcline_uuid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">converter_terminal</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">ACDCConverterDCTerminal_list</span><span class="p">:</span>
+        <span class="n">converter_equipment</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">converter_terminal</span><span class="o">.</span><span class="n">DCConductingEquipment</span>
+        <span class="n">converter_dcnode</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">converter_terminal</span><span class="o">.</span><span class="n">DCNode</span>
+        <span class="k">if</span> <span class="n">converter_equipment</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">converter_equipment</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">converter_dcnode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">converter_dcnode</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">converter_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">converter_equipment</span><span class="o">.</span><span class="n">uuid</span>
+                <span class="n">dcnode_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">converter_dcnode</span><span class="o">.</span><span class="n">uuid</span>
+                <span class="n">converter_to_dcnode_uuid</span><span class="p">[</span><span class="n">converter_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcnode_uuid</span>
+
+    <span class="k">for</span> <span class="n">dc_terminal</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">DCTerminal_list</span><span class="p">:</span>
+        <span class="n">line_equipment</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">dc_terminal</span><span class="o">.</span><span class="n">DCConductingEquipment</span>
+        <span class="n">line_dcnode</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">dc_terminal</span><span class="o">.</span><span class="n">DCNode</span>
+        <span class="k">if</span> <span class="n">line_equipment</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line_equipment</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line_dcnode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line_dcnode</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line_equipment</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="s2">&quot;DCLineSegment&quot;</span><span class="p">:</span>
+                    <span class="n">dcnode_uuid</span> <span class="o">=</span> <span class="n">line_dcnode</span><span class="o">.</span><span class="n">uuid</span>
+                    <span class="n">line_uuid</span> <span class="o">=</span> <span class="n">line_equipment</span><span class="o">.</span><span class="n">uuid</span>
+                    <span class="n">line_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">dcnode_to_dcline_uuid_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dcnode_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">line_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">dcnode_to_dcline_uuid_list</span><span class="p">[</span><span class="n">dcnode_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">line_uuid</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">line_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_uuid</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">converter_uuid</span><span class="p">,</span> <span class="n">dcnode_uuid</span> <span class="ow">in</span> <span class="n">converter_to_dcnode_uuid</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">candidate_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">dcnode_to_dcline_uuid_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dcnode_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">candidate_lines</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unique_line_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">candidate_lines</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_line_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">converter_to_dcline_uuid</span><span class="p">[</span><span class="n">converter_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">candidate_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">converter_to_dcline_uuid</span></div>
+
+
+
+<div class="viewcode-block" id="get_gcdev_contingencies">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies.get_gcdev_contingencies">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_gcdev_contingencies</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                            <span class="n">gcdev_model</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                            <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert NCP contingencies to VeraGrid ContingencyGroup/Contingency objects.</span>
+
+<span class="sd">    :param cgmes_model: CGMES model.</span>
+<span class="sd">    :param gcdev_model: VeraGrid model.</span>
+<span class="sd">    :param logger: Data logger.</span>
+<span class="sd">    :return: Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contingency_objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_ncp_contingency_objects</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">)</span>
+    <span class="n">contingency_equipment_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">ContingencyEquipment_list</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency_objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">contingency_device_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_contingency_device_lookup</span><span class="p">(</span><span class="n">gcdev_model</span><span class="o">=</span><span class="n">gcdev_model</span><span class="p">)</span>
+    <span class="n">converter_to_dcline_uuid_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_converter_to_dcline_lookup</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">)</span>
+    <span class="n">contingency_group_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">ContingencyGroup</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">contingency_equipment_by_contingency</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">imported_contingency_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">skipped_contingency_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">skipped_empty_group_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">contingency_equipment</span> <span class="ow">in</span> <span class="n">contingency_equipment_list</span><span class="p">:</span>
+        <span class="n">contingency_obj</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">contingency_equipment</span><span class="o">.</span><span class="n">Contingency</span>
+        <span class="k">if</span> <span class="n">contingency_obj</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contingency_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;ContingencyEquipment without resolved Contingency reference&#39;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Contingency&#39;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">contingency_obj</span><span class="p">,</span>
+                <span class="n">expected_value</span><span class="o">=</span><span class="s1">&#39;resolved object&#39;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">contingency_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">uuid</span>
+            <span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">contingency_equipment_by_contingency</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">contingency_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">lst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">contingency_equipment_by_contingency</span><span class="p">[</span><span class="n">contingency_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">contingency_equipment</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contingency_equipment</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">contingency_obj</span> <span class="ow">in</span> <span class="n">contingency_objects</span><span class="p">:</span>
+        <span class="n">contingency_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">uuid</span>
+        <span class="n">contingency_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">contingency_equipment_by_contingency</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">contingency_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contingency_elements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">contingency_name_obj</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contingency_name_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">contingency_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">contingency_name_obj</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">contingency_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">contingency_name</span> <span class="o">=</span> <span class="n">contingency_uuid</span>
+
+            <span class="n">normal_must_study</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">normalMustStudy</span>
+            <span class="n">must_study</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">mustStudy</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">normal_must_study</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">contingency_group_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">normal_must_study</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">must_study</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">contingency_group_active</span> <span class="o">=</span> <span class="n">must_study</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">contingency_group_active</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Defer group creation until we import at least one valid contingency element.</span>
+            <span class="c1"># This avoids orphan groups that later break contingency analyses expecting group-&gt;contingency mapping.</span>
+            <span class="n">contingency_imported_for_group</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">for</span> <span class="n">contingency_equipment</span> <span class="ow">in</span> <span class="n">contingency_elements</span><span class="p">:</span>
+                <span class="n">equipment_obj</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">contingency_equipment</span><span class="o">.</span><span class="n">Equipment</span>
+                <span class="n">target_device</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">equipment_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">equipment_tpe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                <span class="k">if</span> <span class="n">equipment_obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">skipped_contingency_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                        <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;ContingencyEquipment without resolved Equipment reference&#39;</span><span class="p">,</span>
+                        <span class="n">device</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                        <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                        <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Equipment&#39;</span><span class="p">,</span>
+                        <span class="n">value</span><span class="o">=</span><span class="n">equipment_obj</span><span class="p">,</span>
+                        <span class="n">expected_value</span><span class="o">=</span><span class="s1">&#39;resolved object or UUID reference&#39;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">equipment_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">normalized_equipment_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">normalize_cgmes_reference_uuid</span><span class="p">(</span><span class="n">equipment_obj</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">normalized_equipment_uuid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">equipment_uuid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">equipment_uuid</span> <span class="o">=</span> <span class="n">normalized_equipment_uuid</span>
+                        <span class="n">equipment_tpe</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">equipment_uuid</span> <span class="o">=</span> <span class="n">equipment_obj</span><span class="o">.</span><span class="n">uuid</span>
+                        <span class="n">equipment_tpe</span> <span class="o">=</span> <span class="n">equipment_obj</span><span class="o">.</span><span class="n">tpe</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">equipment_uuid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">target_device</span> <span class="o">=</span> <span class="n">contingency_device_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">equipment_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                    <span class="c1"># Fallback mapping for simplified HVDC conversion:</span>
+                    <span class="c1"># CsConverter contingencies should target the merged DC/HVDC line device.</span>
+                    <span class="k">if</span> <span class="n">target_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">mapped_dcline_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">converter_to_dcline_uuid_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">equipment_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">mapped_dcline_uuid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">target_device</span> <span class="o">=</span> <span class="n">contingency_device_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mapped_dcline_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">target_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                    <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Contingency converter mapped to DC line but mapped device is not in VeraGrid lookup&#39;</span><span class="p">,</span>
+                                    <span class="n">device</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                                    <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                    <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Equipment.uuid&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">equipment_uuid</span><span class="p">,</span>
+                                    <span class="n">expected_value</span><span class="o">=</span><span class="n">mapped_dcline_uuid</span>
+                                <span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span>
+                                    <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Mapped contingency converter target to merged DC/HVDC line&#39;</span><span class="p">,</span>
+                                    <span class="n">device</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                                    <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                    <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Equipment.uuid&#39;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">equipment_uuid</span><span class="p">,</span>
+                                    <span class="n">expected_value</span><span class="o">=</span><span class="n">mapped_dcline_uuid</span>
+                                <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                    <span class="k">if</span> <span class="n">target_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">skipped_contingency_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Contingency target equipment not imported as a contingency-capable VeraGrid device&#39;</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                            <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                            <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Equipment.uuid&#39;</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="n">equipment_uuid</span><span class="p">,</span>
+                            <span class="n">expected_value</span><span class="o">=</span><span class="n">equipment_tpe</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">contingency_active_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_contingency_equipment_status</span><span class="p">(</span>
+                            <span class="n">contingent_status</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">contingentStatus</span><span class="p">,</span>
+                            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                            <span class="n">contingency_equipment</span><span class="o">=</span><span class="n">contingency_equipment</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">contingency_active_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">skipped_contingency_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">contingency_group</span><span class="p">:</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">ContingencyGroup</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">contingency_group_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                <span class="n">contingency_uuid</span><span class="p">,</span> <span class="kc">None</span>
+                            <span class="p">)</span>
+                            <span class="k">if</span> <span class="n">contingency_group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">contingency_group</span> <span class="o">=</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">ContingencyGroup</span><span class="p">(</span>
+                                    <span class="n">idtag</span><span class="o">=</span><span class="n">contingency_uuid</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">contingency_name</span><span class="p">,</span>
+                                    <span class="n">category</span><span class="o">=</span><span class="n">contingency_obj</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                    <span class="n">active</span><span class="o">=</span><span class="n">contingency_group_active</span>
+                                <span class="p">)</span>
+                                <span class="n">gcdev_model</span><span class="o">.</span><span class="n">add_contingency_group</span><span class="p">(</span><span class="n">contingency_group</span><span class="p">)</span>
+                                <span class="n">contingency_group_lookup</span><span class="p">[</span><span class="n">contingency_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_group</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">pass</span>
+
+                            <span class="n">contingency_description</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">contingency_obj</span><span class="o">.</span><span class="n">description</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contingency_description</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                <span class="n">contingency_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">contingency_description</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">contingency_comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                            <span class="n">target_code_raw</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">target_device</span><span class="o">.</span><span class="n">code</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_code_raw</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                <span class="n">target_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">target_code_raw</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">target_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                            <span class="n">target_name_raw</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">target_device</span><span class="o">.</span><span class="n">name</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_name_raw</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">target_name_raw</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">target_name</span> <span class="o">=</span> <span class="s2">&quot;device&quot;</span>
+
+                            <span class="n">gcdev_contingency</span> <span class="o">=</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">Contingency</span><span class="p">(</span>
+                                <span class="n">device</span><span class="o">=</span><span class="n">target_device</span><span class="p">,</span>
+                                <span class="n">idtag</span><span class="o">=</span><span class="n">contingency_equipment</span><span class="o">.</span><span class="n">uuid</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">contingency_name</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">code</span><span class="o">=</span><span class="n">target_code</span><span class="p">,</span>
+                                <span class="n">prop</span><span class="o">=</span><span class="n">ContingencyOperationTypes</span><span class="o">.</span><span class="n">Active</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">contingency_active_value</span><span class="p">,</span>
+                                <span class="n">group</span><span class="o">=</span><span class="n">contingency_group</span><span class="p">,</span>
+                                <span class="n">comment</span><span class="o">=</span><span class="n">contingency_comment</span>
+                            <span class="p">)</span>
+                            <span class="n">gcdev_model</span><span class="o">.</span><span class="n">add_contingency</span><span class="p">(</span><span class="n">gcdev_contingency</span><span class="p">)</span>
+                            <span class="n">imported_contingency_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="n">contingency_imported_for_group</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">contingency_imported_for_group</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">skipped_empty_group_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Skipped NCP contingency group because no valid contingency equipment could be imported&#39;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">contingency_obj</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                    <span class="n">device_class</span><span class="o">=</span><span class="n">contingency_obj</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                    <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Contingency&#39;</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">contingency_uuid</span>
+                <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">imported_contingency_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Imported NCP contingencies&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">imported_contingency_count</span><span class="p">,</span>
+            <span class="n">expected_value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">contingency_equipment_list</span><span class="p">),</span>
+            <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Skipped=</span><span class="si">{</span><span class="n">skipped_contingency_count</span><span class="si">}</span><span class="s2">; EmptyGroups=</span><span class="si">{</span><span class="n">skipped_empty_group_count</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">skipped_empty_group_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;No NCP contingencies imported&#39;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">skipped_contingency_count</span><span class="p">,</span>
+                <span class="n">expected_value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">contingency_equipment_list</span><span class="p">),</span>
+                <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;EmptyGroups=</span><span class="si">{</span><span class="n">skipped_empty_group_count</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+# P/omg -> Torque
+
+This is Basic Block Catalog type `406` (`P/omg -> Torque`). It represents a mechanical or drive-train relation used by rotating-machine models.
+
+<!-- veragrid-block-introduction:start -->
+**P/omg -> Torque** belongs to an electromechanical machine or prime-mover model. It links electrical torque and flux with rotor speed, angle, mechanical power, or actuator dynamics, making it central to frequency, voltage, and rotor-angle stability studies.
+
+## Typical use
+
+- Use it when electrical transients must interact with rotating mass or machine controls.
+- Initialize torque, power, flux, and speed consistently with the solved power flow.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Mechanical / Drive Train`.
+- Inputs: 2.
+- Outputs: 1.
+- Declared states: 0.
+- Configurable parameters: 0.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (Torque - \frac{Power}{omega} \cdot 1000)
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `Power` | Input signal consumed by the block | model-dependent |
+| Input | `omega` | Input signal consumed by the block | model-dependent |
+| Output | `Torque` | Output signal produced by the block | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

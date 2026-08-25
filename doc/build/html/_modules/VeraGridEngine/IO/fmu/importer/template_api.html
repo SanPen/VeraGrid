@@ -1,0 +1,904 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.importer.template_api &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.importer.template_api</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.fmu.importer.template_api</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.fmu_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DeviceType</span><span class="p">,</span>
+    <span class="n">FmuTemplateDomain</span><span class="p">,</span>
+    <span class="n">FmuTemplateMode</span><span class="p">,</span>
+    <span class="n">ParamPowerFlowRefferenceType</span><span class="p">,</span>
+    <span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.bindings</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuImportConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.device_config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_me_record_from_device_arguments</span><span class="p">,</span>
+    <span class="n">build_record_from_device_arguments</span><span class="p">,</span>
+    <span class="n">dump_fmu_cs_device_config</span><span class="p">,</span>
+    <span class="n">dump_fmu_me_device_config</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_cs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FmuCsDomain</span><span class="p">,</span>
+    <span class="n">FmuRefBinding</span><span class="p">,</span>
+    <span class="n">build_emt_fmu_cs_injection_template</span><span class="p">,</span>
+    <span class="n">build_rms_fmu_cs_injection_template</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_me</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FmuMeDomain</span><span class="p">,</span>
+    <span class="n">FmuMeIntegrationMethod</span><span class="p">,</span>
+    <span class="n">build_emt_fmu_me_injection_template</span><span class="p">,</span>
+    <span class="n">build_rms_fmu_me_injection_template</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.model_description</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FmuInterfaceMode</span><span class="p">,</span>
+    <span class="n">FmuModelDescription</span><span class="p">,</span>
+    <span class="n">FmuVariableDescription</span><span class="p">,</span>
+    <span class="n">read_fmu_model_description</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_identifier</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize one free-form FMU identifier for matching purposes.</span>
+
+<span class="sd">    :param text: Original identifier.</span>
+<span class="sd">    :return: Normalized identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">normalized_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^A-Za-z0-9_]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">normalized_text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sanitize_symbol_name</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one FMU variable name into a valid VeraGrid symbolic identifier.</span>
+
+<span class="sd">    :param text: Original FMU variable name.</span>
+<span class="sd">    :return: Valid symbolic identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">candidate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^A-Za-z0-9_]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="s2">&quot;fmu_signal&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">candidate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;fmu_</span><span class="si">{</span><span class="n">candidate</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">candidate</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_var_reference_aliases</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the alias map used to auto-match FMU variable names to VeraGrid references.</span>
+
+<span class="sd">    :return: Normalized alias map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aliases</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span>
+    <span class="k">for</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reference</span> <span class="o">==</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">NOTHING</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="n">_normalize_identifier</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">reference</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="n">_normalize_identifier</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span> <span class="o">=</span> <span class="n">reference</span>
+    <span class="k">return</span> <span class="n">aliases</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_param_reference_aliases</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamPowerFlowRefferenceType</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the alias map used to auto-match FMU parameter names to VeraGrid parameter references.</span>
+
+<span class="sd">    :return: Normalized alias map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aliases</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamPowerFlowRefferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">reference</span><span class="p">:</span> <span class="n">ParamPowerFlowRefferenceType</span>
+    <span class="k">for</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">ParamPowerFlowRefferenceType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reference</span> <span class="o">==</span> <span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">NOTHING</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="n">_normalize_identifier</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">reference</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="n">_normalize_identifier</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span> <span class="o">=</span> <span class="n">reference</span>
+    <span class="k">return</span> <span class="n">aliases</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_variable_reference</span><span class="p">(</span><span class="n">variable_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowRefferenceType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve one FMU variable name into a VeraGrid runtime reference when possible.</span>
+
+<span class="sd">    :param variable_name: FMU variable name.</span>
+<span class="sd">    :return: Matching VeraGrid reference when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aliases</span> <span class="o">=</span> <span class="n">_build_var_reference_aliases</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_normalize_identifier</span><span class="p">(</span><span class="n">variable_name</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_parameter_reference</span><span class="p">(</span><span class="n">variable_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamPowerFlowRefferenceType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve one FMU parameter name into a VeraGrid device-parameter reference when possible.</span>
+
+<span class="sd">    :param variable_name: FMU variable name.</span>
+<span class="sd">    :return: Matching VeraGrid parameter reference when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aliases</span> <span class="o">=</span> <span class="n">_build_param_reference_aliases</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_normalize_identifier</span><span class="p">(</span><span class="n">variable_name</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_list_input_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the declared FMU input variables.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Ordered input variables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">causality</span> <span class="o">==</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span>
+            <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_list_output_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the declared FMU output variables.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Ordered output variables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">causality</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span>
+            <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_list_parameter_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the declared FMU parameter variables.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Ordered parameter variables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">causality</span> <span class="o">==</span> <span class="s2">&quot;parameter&quot;</span><span class="p">:</span>
+            <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_auto_input_bindings</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Auto-discover FMU input bindings by matching FMU variable names to VeraGrid references.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Auto-discovered input bindings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bindings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">seen_references</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">_list_input_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">_resolve_variable_reference</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">seen_references</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bindings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">fmu_variable_name</span><span class="o">=</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="n">seen_references</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_auto_output_bindings</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Auto-discover FMU output bindings by matching FMU variable names to VeraGrid references.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Auto-discovered output bindings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bindings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">seen_references</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">_list_output_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">_resolve_variable_reference</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">seen_references</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bindings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">fmu_variable_name</span><span class="o">=</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="n">seen_references</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_numeric_start_value</span><span class="p">(</span><span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one FMU scalar start value into a numeric placeholder.</span>
+
+<span class="sd">    :param variable: FMU variable metadata.</span>
+<span class="sd">    :return: Numeric start value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lowered_text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">lowered_text</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">lowered_text</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mf">0.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_output_defaults</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">,</span>
+                           <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build default output values for the bound FMU output references.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :param output_bindings: Bound FMU output bindings.</span>
+<span class="sd">    :return: Default values indexed by VeraGrid reference.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">output_bindings</span><span class="p">:</span>
+        <span class="n">defaults</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_numeric_start_value</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">defaults</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_iter_block_symbol_names</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collect the symbolic names already used by one block.</span>
+
+<span class="sd">    :param block: Block to inspect.</span>
+<span class="sd">    :return: Used symbolic names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">block_item</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="k">for</span> <span class="n">block_item</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
+        <span class="n">variable_groups</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">block_item</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">,</span>
+            <span class="n">block_item</span><span class="o">.</span><span class="n">state_vars</span><span class="p">,</span>
+            <span class="n">block_item</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">,</span>
+            <span class="n">block_item</span><span class="o">.</span><span class="n">in_vars</span><span class="p">,</span>
+            <span class="n">block_item</span><span class="o">.</span><span class="n">out_vars</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">variables_list</span><span class="p">:</span> <span class="nb">list</span>
+        <span class="k">for</span> <span class="n">variables_list</span> <span class="ow">in</span> <span class="n">variable_groups</span><span class="p">:</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables_list</span><span class="p">:</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">parameter_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">parameter_var</span> <span class="ow">in</span> <span class="n">block_item</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parameter_var</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">event_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">event_var</span> <span class="ow">in</span> <span class="n">block_item</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">event_var</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">names</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_unique_symbol_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">used_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one unique symbolic identifier for a new FMU port or parameter.</span>
+
+<span class="sd">    :param base_name: Requested base name.</span>
+<span class="sd">    :param used_names: Names already used by the block.</span>
+<span class="sd">    :return: Unique symbolic name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sanitized_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_sanitize_symbol_name</span><span class="p">(</span><span class="n">base_name</span><span class="p">)</span>
+    <span class="n">candidate_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">sanitized_name</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">while</span> <span class="n">candidate_name</span> <span class="ow">in</span> <span class="n">used_names</span><span class="p">:</span>
+        <span class="n">candidate_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sanitized_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">suffix</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">used_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">candidate_name</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_output_parameter_name</span><span class="p">(</span><span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the event-parameter symbol name that backs one FMU output port.</span>
+
+<span class="sd">    :param output_name: Symbolic FMU output name.</span>
+<span class="sd">    :return: Event-parameter symbolic name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">output_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fmu_&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">output_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;fmu_&quot;</span><span class="p">,</span> <span class="s2">&quot;fmu_param_&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;fmu_param_</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rename_bound_output_ports</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                               <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                               <span class="n">used_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rename bound FMU output ports from internal names to their FMU variable names.</span>
+
+<span class="sd">    :param block: Symbolic FMU shell block.</span>
+<span class="sd">    :param output_bindings: Bound FMU output bindings.</span>
+<span class="sd">    :param used_names: Names already reserved by the block.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">binding</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_bindings</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">):</span>
+            <span class="n">output_var</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">old_output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">output_var</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">old_parameter_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_output_parameter_name</span><span class="p">(</span><span class="n">old_output_name</span><span class="p">)</span>
+            <span class="n">output_var</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">_build_unique_symbol_name</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">,</span> <span class="n">used_names</span><span class="p">)</span>
+
+            <span class="n">event_parameter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">event_parameter</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">event_parameter</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">old_parameter_name</span><span class="p">:</span>
+                    <span class="n">event_parameter</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">_build_output_parameter_name</span><span class="p">(</span><span class="n">output_var</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_var</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_visual_input_ports</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                               <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                               <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">,</span>
+                               <span class="n">input_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                               <span class="n">used_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add visual input ports for the declared FMU inputs.</span>
+
+<span class="sd">    :param block: Symbolic FMU shell block.</span>
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :param input_bindings: Auto-discovered runtime input bindings.</span>
+<span class="sd">    :param used_names: Names already reserved by the block.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bound_references</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">input_bindings</span><span class="p">:</span>
+        <span class="n">bound_references</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">binding</span><span class="o">.</span><span class="n">reference</span>
+
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">_list_input_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">bound_references</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">input_var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">_build_unique_symbol_name</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">used_names</span><span class="p">),</span>
+            <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_var</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_var</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_visual_parameter_entries</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                                     <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                                     <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">,</span>
+                                     <span class="n">used_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add editable parameter entries for the declared FMU parameters.</span>
+
+<span class="sd">    :param block: Symbolic FMU shell block.</span>
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :param used_names: Names already reserved by the block.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">_list_parameter_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="n">parameter_var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_build_unique_symbol_name</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">used_names</span><span class="p">))</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">parameter_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_parse_numeric_start_value</span><span class="p">(</span><span class="n">variable</span><span class="p">))</span>
+
+        <span class="n">parameter_reference</span> <span class="o">=</span> <span class="n">_resolve_parameter_reference</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parameter_reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">parameter_reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_var</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_unbound_output_ports</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                                 <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                                 <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">,</span>
+                                 <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                                 <span class="n">used_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add visual output ports for FMU outputs that are not auto-bound to VeraGrid references.</span>
+
+<span class="sd">    :param block: Symbolic FMU shell block.</span>
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :param output_bindings: Auto-discovered runtime output bindings.</span>
+<span class="sd">    :param used_names: Names already reserved by the block.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bound_output_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">output_bindings</span><span class="p">:</span>
+        <span class="n">bound_output_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">)</span>
+
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">_list_output_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">bound_output_names</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="n">_build_unique_symbol_name</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">used_names</span><span class="p">)</span>
+            <span class="n">output_var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">output_name</span><span class="p">)</span>
+            <span class="n">parameter_var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_build_output_parameter_name</span><span class="p">(</span><span class="n">output_name</span><span class="p">))</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_var</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_var</span> <span class="o">-</span> <span class="n">parameter_var</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_var</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">parameter_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">_parse_numeric_start_value</span><span class="p">(</span><span class="n">variable</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_refresh_block_var_mapping</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Refresh the block variable-name mapping after post-processing the FMU shell.</span>
+
+<span class="sd">    :param block: Symbolic FMU shell block.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">var_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decorate_template_block</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                             <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                             <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">,</span>
+                             <span class="n">input_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                             <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enrich the generated FMU shell block with visual ports and editable parameters.</span>
+
+<span class="sd">    :param block: Symbolic FMU shell block.</span>
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :param input_bindings: Auto-discovered runtime input bindings.</span>
+<span class="sd">    :param output_bindings: Auto-discovered runtime output bindings.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">used_names</span> <span class="o">=</span> <span class="n">_iter_block_symbol_names</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">_rename_bound_output_ports</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">,</span> <span class="n">used_names</span><span class="p">)</span>
+    <span class="n">_append_visual_input_ports</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">input_bindings</span><span class="p">,</span> <span class="n">used_names</span><span class="p">)</span>
+    <span class="n">_append_visual_parameter_entries</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">used_names</span><span class="p">)</span>
+    <span class="n">_append_unbound_output_ports</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">,</span> <span class="n">used_names</span><span class="p">)</span>
+    <span class="n">_refresh_block_var_mapping</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_mode_summary_line</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one human-readable line describing the supported FMI modes.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Supported modes summary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">supported_modes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_supports_co_simulation</span><span class="p">():</span>
+        <span class="n">supported_modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_supports_model_exchange</span><span class="p">():</span>
+        <span class="n">supported_modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">supported_modes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">supported_modes</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;none&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_variable_list_text</span><span class="p">(</span><span class="n">variables</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one compact text line from a list of FMU variable descriptors.</span>
+
+<span class="sd">    :param variables: Variable descriptors.</span>
+<span class="sd">    :return: Joined variable names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;none&quot;</span>
+
+
+<div class="viewcode-block" id="summarize_fmu_template_metadata">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.template_api.summarize_fmu_template_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_fmu_template_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the metadata text shown by the FMU template editor.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Human-readable metadata summary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_bindings</span> <span class="o">=</span> <span class="n">_build_auto_input_bindings</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="n">output_bindings</span> <span class="o">=</span> <span class="n">_build_auto_output_bindings</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="n">auto_input_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">input_bindings</span><span class="p">:</span>
+        <span class="n">auto_input_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="si">}</span><span class="s2">-&gt;</span><span class="si">{</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">auto_output_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">output_bindings</span><span class="p">:</span>
+        <span class="n">auto_output_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="si">}</span><span class="s2">-&gt;</span><span class="si">{</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">platforms_text</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">platforms</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">platforms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;none&quot;</span>
+    <span class="n">auto_inputs_text</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">auto_input_names</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">auto_input_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;none&quot;</span>
+    <span class="n">auto_outputs_text</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">auto_output_names</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">auto_output_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;none&quot;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Model: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;FMI version: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">fmi_version</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Supported modes: </span><span class="si">{</span><span class="n">_build_mode_summary_line</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Platforms: </span><span class="si">{</span><span class="n">platforms_text</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Inputs: </span><span class="si">{</span><span class="n">_build_variable_list_text</span><span class="p">(</span><span class="n">_list_input_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Outputs: </span><span class="si">{</span><span class="n">_build_variable_list_text</span><span class="p">(</span><span class="n">_list_output_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Parameters: </span><span class="si">{</span><span class="n">_build_variable_list_text</span><span class="p">(</span><span class="n">_list_parameter_variables</span><span class="p">(</span><span class="n">metadata</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Auto input bindings: </span><span class="si">{</span><span class="n">auto_inputs_text</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Auto output bindings: </span><span class="si">{</span><span class="n">auto_outputs_text</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_interface_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">FmuTemplateMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuInterfaceMode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one template mode into the importer runtime enum.</span>
+
+<span class="sd">    :param mode: Template mode.</span>
+<span class="sd">    :return: Importer interface mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported FMU template mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="configure_fmu_template">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.template_api.configure_fmu_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configure_fmu_template</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="n">FmuTemplate</span><span class="p">,</span>
+                           <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                           <span class="n">fmu_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+                           <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+                           <span class="n">domain</span><span class="p">:</span> <span class="n">FmuTemplateDomain</span><span class="p">,</span>
+                           <span class="n">mode</span><span class="p">:</span> <span class="n">FmuTemplateMode</span><span class="p">,</span>
+                           <span class="n">template_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Populate one reusable ``FmuTemplate`` from an FMU archive.</span>
+
+<span class="sd">    The function builds the symbolic shell block, exposes the FMU interface as visual</span>
+<span class="sd">    ports and parameters, and stores the serialized runtime configuration required by</span>
+<span class="sd">    the RMS or EMT import adapters.</span>
+
+<span class="sd">    :param template: Template instance to mutate.</span>
+<span class="sd">    :param var_factory: RMS variable factory owned by the current grid.</span>
+<span class="sd">    :param fmu_path: FMU archive selected by the user.</span>
+<span class="sd">    :param device_tpe: Target VeraGrid device type.</span>
+<span class="sd">    :param domain: Simulation domain where the template will be used.</span>
+<span class="sd">    :param mode: FMI interface mode required by the template.</span>
+<span class="sd">    :param template_name: Optional explicit template name.</span>
+<span class="sd">    :return: Configured template instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">normalized_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fmu_path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">read_fmu_model_description</span><span class="p">(</span><span class="n">normalized_path</span><span class="p">)</span>
+    <span class="n">template_config</span> <span class="o">=</span> <span class="n">FmuImportConfig</span><span class="p">(</span>
+        <span class="n">fmu_path</span><span class="o">=</span><span class="n">normalized_path</span><span class="p">,</span>
+        <span class="n">preferred_mode</span><span class="o">=</span><span class="n">_to_interface_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">input_bindings</span> <span class="o">=</span> <span class="n">_build_auto_input_bindings</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="n">output_bindings</span> <span class="o">=</span> <span class="n">_build_auto_output_bindings</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="n">output_defaults</span> <span class="o">=</span> <span class="n">_build_output_defaults</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">template_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resolved_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">model_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resolved_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">template_name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resolved_name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">resolved_name</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">model_name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="n">FmuTemplateDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">:</span>
+            <span class="n">shell_template</span> <span class="o">=</span> <span class="n">build_rms_fmu_cs_injection_template</span><span class="p">(</span>
+                <span class="n">vfactory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">resolved_name</span><span class="p">,</span>
+                <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+                <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_decorate_template_block</span><span class="p">(</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">input_bindings</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">)</span>
+            <span class="n">serialized_config</span> <span class="o">=</span> <span class="n">dump_fmu_cs_device_config</span><span class="p">(</span>
+                <span class="n">build_record_from_device_arguments</span><span class="p">(</span>
+                    <span class="n">domain</span><span class="o">=</span><span class="n">FmuCsDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                    <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                    <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                    <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                    <span class="n">block</span><span class="o">=</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">:</span>
+                <span class="n">shell_template</span> <span class="o">=</span> <span class="n">build_rms_fmu_me_injection_template</span><span class="p">(</span>
+                    <span class="n">vfactory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                    <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                    <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">resolved_name</span><span class="p">,</span>
+                    <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+                    <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                    <span class="n">integration_method</span><span class="o">=</span><span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">_decorate_template_block</span><span class="p">(</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">input_bindings</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">)</span>
+                <span class="n">serialized_config</span> <span class="o">=</span> <span class="n">dump_fmu_me_device_config</span><span class="p">(</span>
+                    <span class="n">build_me_record_from_device_arguments</span><span class="p">(</span>
+                        <span class="n">domain</span><span class="o">=</span><span class="n">FmuMeDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                        <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                        <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                        <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                        <span class="n">integration_method</span><span class="o">=</span><span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">block</span><span class="o">=</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported FMU template mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="n">FmuTemplateDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">:</span>
+                <span class="n">shell_template</span> <span class="o">=</span> <span class="n">build_emt_fmu_cs_injection_template</span><span class="p">(</span>
+                    <span class="n">vfactory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                    <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                    <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">resolved_name</span><span class="p">,</span>
+                    <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+                    <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">_decorate_template_block</span><span class="p">(</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">input_bindings</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">)</span>
+                <span class="n">serialized_config</span> <span class="o">=</span> <span class="n">dump_fmu_cs_device_config</span><span class="p">(</span>
+                    <span class="n">build_record_from_device_arguments</span><span class="p">(</span>
+                        <span class="n">domain</span><span class="o">=</span><span class="n">FmuCsDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                        <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                        <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                        <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                        <span class="n">block</span><span class="o">=</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">FmuTemplateMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">:</span>
+                    <span class="n">shell_template</span> <span class="o">=</span> <span class="n">build_emt_fmu_me_injection_template</span><span class="p">(</span>
+                        <span class="n">vfactory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                        <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                        <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">resolved_name</span><span class="p">,</span>
+                        <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+                        <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                        <span class="n">integration_method</span><span class="o">=</span><span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">_decorate_template_block</span><span class="p">(</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">input_bindings</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">)</span>
+                    <span class="n">serialized_config</span> <span class="o">=</span> <span class="n">dump_fmu_me_device_config</span><span class="p">(</span>
+                        <span class="n">build_me_record_from_device_arguments</span><span class="p">(</span>
+                            <span class="n">domain</span><span class="o">=</span><span class="n">FmuMeDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">,</span>
+                            <span class="n">config</span><span class="o">=</span><span class="n">template_config</span><span class="p">,</span>
+                            <span class="n">input_bindings</span><span class="o">=</span><span class="n">input_bindings</span><span class="p">,</span>
+                            <span class="n">output_bindings</span><span class="o">=</span><span class="n">output_bindings</span><span class="p">,</span>
+                            <span class="n">output_defaults</span><span class="o">=</span><span class="n">output_defaults</span><span class="p">,</span>
+                            <span class="n">integration_method</span><span class="o">=</span><span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                            <span class="n">block</span><span class="o">=</span><span class="n">shell_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported FMU template mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported FMU template domain </span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resolved_name</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">device_tpe</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">fmu_relative_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">normalized_path</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">serialized_config</span> <span class="o">=</span> <span class="n">serialized_config</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">shell_template</span><span class="o">.</span><span class="n">block</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

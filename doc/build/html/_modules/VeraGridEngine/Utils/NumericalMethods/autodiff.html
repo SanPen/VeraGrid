@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.NumericalMethods.autodiff &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.NumericalMethods.autodiff</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.NumericalMethods.autodiff</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span> <span class="k">as</span> <span class="n">csc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">lil_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span>
+
+
+<div class="viewcode-block" id="unpack">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.autodiff.unpack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpack</span><span class="p">(</span><span class="n">ret</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unpack the returning vector depending if ret is the vector or a tuple including the vector</span>
+<span class="sd">    :param ret: Tuple with the vector or vector directly</span>
+<span class="sd">    :return: Vector</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="n">ret</span>
+    <span class="k">return</span> <span class="n">f0</span></div>
+
+
+
+<div class="viewcode-block" id="calc_autodiff_jacobian_f_obj">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.autodiff.calc_autodiff_jacobian_f_obj">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_autodiff_jacobian_f_obj</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="p">(),</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Jacobian matrix of `func` at `x` using finite differences.</span>
+<span class="sd">    This considers that the output is a single value, such as is the case of the objective function f</span>
+<span class="sd">    :param func: objective function accepting `x` and `arg` and returning a float.</span>
+<span class="sd">    :param x: Point at which to evaluate the Jacobian (numpy array).</span>
+<span class="sd">    :param arg: Tuple of arguments to call func aside from x [func(x, *arg)]</span>
+<span class="sd">    :param h: Small step for finite difference.</span>
+<span class="sd">    :return: Jacobian as a vector, because the objective function is a single value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">f0</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="n">jac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+        <span class="n">x_plus_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_plus_h</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+        <span class="n">f_plus_h</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_plus_h</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+        <span class="n">jac</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_plus_h</span> <span class="o">-</span> <span class="n">f0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+
+    <span class="k">return</span> <span class="n">jac</span></div>
+
+
+
+<div class="viewcode-block" id="calc_autodiff_jacobian">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.autodiff.calc_autodiff_jacobian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_autodiff_jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="p">(),</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csc</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Jacobian matrix of `func` at `x` using finite differences.</span>
+
+<span class="sd">    :param func: function accepting a vector x and args, and returning either a vector or a</span>
+<span class="sd">                 tuple where the first argument is a vector and the second.</span>
+<span class="sd">    :param x: Point at which to evaluate the Jacobian (numpy array).</span>
+<span class="sd">    :param arg: Tuple of arguments to call func aside from x [func(x, *arg)]</span>
+<span class="sd">    :param h: Small step for finite difference.</span>
+<span class="sd">    :return: Jacobian matrix as a CSC matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">f0</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">))</span>
+
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f0</span><span class="p">)</span>
+
+    <span class="n">jac</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+        <span class="n">x_plus_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_plus_h</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+        <span class="n">f_plus_h</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x_plus_h</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">))</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_plus_h</span> <span class="o">-</span> <span class="n">f0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">jac</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="calc_autodiff_hessian_f_obj">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.autodiff.calc_autodiff_hessian_f_obj">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_autodiff_hessian_f_obj</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="p">(),</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csc</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Hessian matrix of `func` at `x` using finite differences.</span>
+<span class="sd">    This considers that the output is a single value, such as is the case of the objective function f</span>
+
+<span class="sd">    :param func: objective function accepting `x` and `arg` and returning a float.</span>
+<span class="sd">    :param x: Point at which to evaluate the Hessian (numpy array).</span>
+<span class="sd">    :param arg: Tuple of arguments to call func aside from x [func(x, *arg)]</span>
+<span class="sd">    :param h: Small step for finite difference.</span>
+<span class="sd">    :return: Hessian matrix as a CSC matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">hessian</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">x_ijp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x_ijp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">x_ijp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">f_ijp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_ijp</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+
+            <span class="n">x_ijm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x_ijm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">x_ijm</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+            <span class="n">f_ijm</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_ijm</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+
+            <span class="n">x_jim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x_jim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+            <span class="n">x_jim</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">f_jim</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_jim</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+
+            <span class="n">x_jjm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x_jjm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+            <span class="n">x_jjm</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+            <span class="n">f_jjm</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_jjm</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+
+            <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ijp</span> <span class="o">-</span> <span class="n">f_ijm</span> <span class="o">-</span> <span class="n">f_jim</span> <span class="o">+</span> <span class="n">f_jjm</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">hessian</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+
+    <span class="k">return</span> <span class="n">hessian</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="calc_autodiff_hessian">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.autodiff.calc_autodiff_hessian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_autodiff_hessian</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+                          <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">mult</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="p">(),</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csc</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Hessian matrix of `func` at `x` using finite differences.</span>
+
+<span class="sd">    :param func: function accepting a vector x and args, and returning either a vector or a</span>
+<span class="sd">                 tuple where the first argument is a vector and the second.</span>
+<span class="sd">    :param x: Point at which to evaluate the Hessian (numpy array).</span>
+<span class="sd">    :param mult: Array of multipliers associated with the functions. The objective function passes value 1 (no action)</span>
+<span class="sd">    :param arg: Tuple of arguments to call func aside from x [func(x, *arg)]</span>
+<span class="sd">    :param h: Small step for finite difference.</span>
+<span class="sd">    :return: Hessian matrix as a CSC matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">const</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">)))</span>  <span class="c1"># For objective function, it will be passed as 1. The MULT will be 1 aswell.</span>
+    <span class="n">hessians</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">const</span><span class="p">):</span>
+        <span class="n">hessian</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">x_ijp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">x_ijp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+                <span class="n">x_ijp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+                <span class="n">f_ijp</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x_ijp</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">))[</span><span class="n">eq</span><span class="p">]</span>
+
+                <span class="n">x_ijm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">x_ijm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+                <span class="n">x_ijm</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+                <span class="n">f_ijm</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x_ijm</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">))[</span><span class="n">eq</span><span class="p">]</span>
+
+                <span class="n">x_jim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">x_jim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+                <span class="n">x_jim</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+                <span class="n">f_jim</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x_jim</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">))[</span><span class="n">eq</span><span class="p">]</span>
+
+                <span class="n">x_jjm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">x_jjm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+                <span class="n">x_jjm</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+                <span class="n">f_jjm</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x_jjm</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">))[</span><span class="n">eq</span><span class="p">]</span>
+
+                <span class="n">a</span> <span class="o">=</span> <span class="n">mult</span><span class="p">[</span><span class="n">eq</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_ijp</span> <span class="o">-</span> <span class="n">f_ijm</span> <span class="o">-</span> <span class="n">f_jim</span> <span class="o">+</span> <span class="n">f_jjm</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">hessian</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+
+        <span class="n">hessians</span> <span class="o">+=</span> <span class="n">hessian</span>
+
+    <span class="k">return</span> <span class="n">hessians</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

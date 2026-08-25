@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cim16.cim_circuit &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cim16.cim_circuit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cim16.cim_circuit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">EnumMeta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">chardet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cim16.cim_devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cimdev</span>
+
+
+<div class="viewcode-block" id="CIMCircuit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CIMCircuit</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CIM circuit constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_objects_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="o">=</span> <span class="n">text_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="o">=</span> <span class="n">progress_func</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;GeneralContainer&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">IdentifiedObject</span><span class="p">,</span>
+                           <span class="s1">&#39;Terminal&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">Terminal</span><span class="p">,</span>
+                           <span class="s1">&#39;BaseVoltage&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">BaseVoltage</span><span class="p">,</span>
+                           <span class="s1">&#39;TopologicalNode&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">TopologicalNode</span><span class="p">,</span>
+                           <span class="s1">&#39;BusbarSection&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">BusbarSection</span><span class="p">,</span>
+                           <span class="s1">&#39;BusNameMarker&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">BusNameMarker</span><span class="p">,</span>
+                           <span class="s1">&#39;Substation&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+                           <span class="s1">&#39;ConnectivityNode&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ConnectivityNode</span><span class="p">,</span>
+                           <span class="s1">&#39;OperationalLimitSet&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">OperationalLimitSet</span><span class="p">,</span>
+                           <span class="s1">&#39;OperationalLimitType&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">OperationalLimitType</span><span class="p">,</span>
+                           <span class="s1">&#39;GeographicalRegion&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">GeographicalRegion</span><span class="p">,</span>
+                           <span class="s1">&#39;SubGeographicalRegion&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">SubGeographicalRegion</span><span class="p">,</span>
+                           <span class="s1">&#39;VoltageLevel&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span>
+                           <span class="s1">&#39;CurrentLimit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">CurrentLimit</span><span class="p">,</span>
+                           <span class="s1">&#39;VoltageLimit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">VoltageLimit</span><span class="p">,</span>
+                           <span class="s1">&#39;EquivalentInjection&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">EquivalentInjection</span><span class="p">,</span>
+                           <span class="s1">&#39;EquivalentNetwork&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">EquivalentNetwork</span><span class="p">,</span>
+                           <span class="s1">&#39;ControlArea&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ControlArea</span><span class="p">,</span>
+                           <span class="s1">&#39;Breaker&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">Breaker</span><span class="p">,</span>
+                           <span class="s1">&#39;Switch&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">Switch</span><span class="p">,</span>
+                           <span class="s2">&quot;LoadBreakSwitch&quot;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">LoadBreakSwitch</span><span class="p">,</span>
+                           <span class="s1">&#39;Line&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">Line</span><span class="p">,</span>
+                           <span class="s1">&#39;ACLineSegment&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ACLineSegment</span><span class="p">,</span>
+                           <span class="s1">&#39;PowerTransformerEnd&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">PowerTransformerEnd</span><span class="p">,</span>
+                           <span class="s1">&#39;PowerTransformer&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">PowerTransformer</span><span class="p">,</span>
+                           <span class="c1"># &#39;Winding&#39;: cimdev.Winding,</span>
+                           <span class="s1">&#39;EnergyConsumer&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">EnergyConsumer</span><span class="p">,</span>
+                           <span class="s1">&#39;EnergyArea&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">EnergyArea</span><span class="p">,</span>
+                           <span class="s1">&#39;ConformLoad&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ConformLoad</span><span class="p">,</span>
+                           <span class="s1">&#39;NonConformLoad&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">NonConformLoad</span><span class="p">,</span>
+                           <span class="s1">&#39;LoadResponseCharacteristic&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">LoadResponseCharacteristic</span><span class="p">,</span>
+                           <span class="s1">&#39;LoadGroup&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">LoadGroup</span><span class="p">,</span>
+                           <span class="s1">&#39;RegulatingControl&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">RegulatingControl</span><span class="p">,</span>
+                           <span class="s1">&#39;RatioTapChanger&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">RatioTapChanger</span><span class="p">,</span>
+                           <span class="s1">&#39;GeneratingUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">GeneratingUnit</span><span class="p">,</span>
+                           <span class="s1">&#39;SynchronousMachine&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">SynchronousMachine</span><span class="p">,</span>
+                           <span class="s1">&#39;HydroPump&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">HydroPump</span><span class="p">,</span>
+                           <span class="s1">&#39;RotatingMachine&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">RotatingMachine</span><span class="p">,</span>
+                           <span class="s1">&#39;HydroGenerationUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">HydroGeneratingUnit</span><span class="p">,</span>  <span class="c1"># todo: should this exist?</span>
+                           <span class="s1">&#39;HydroGeneratingUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">HydroGeneratingUnit</span><span class="p">,</span>
+                           <span class="s1">&#39;HydroPowerPlant&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">HydroPowerPlant</span><span class="p">,</span>
+                           <span class="s1">&#39;LinearShuntCompensator&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">LinearShuntCompensator</span><span class="p">,</span>
+                           <span class="s1">&#39;NuclearGeneratingUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">NuclearGeneratingUnit</span><span class="p">,</span>
+                           <span class="s1">&#39;RatioTapChangerTable&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">RatioTapChangerTable</span><span class="p">,</span>
+                           <span class="s1">&#39;RatioTapChangerTablePoint&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">RatioTapChangerTablePoint</span><span class="p">,</span>
+                           <span class="s1">&#39;ReactiveCapabilityCurve&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ReactiveCapabilityCurve</span><span class="p">,</span>
+                           <span class="s1">&#39;StaticVarCompensator&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">StaticVarCompensator</span><span class="p">,</span>
+                           <span class="s1">&#39;TapChangerControl&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">TapChangerControl</span><span class="p">,</span>
+                           <span class="s1">&#39;ThermalGenerationUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ThermalGeneratingUnit</span><span class="p">,</span>  <span class="c1"># todo: should this exist?</span>
+                           <span class="s1">&#39;ThermalGeneratingUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">ThermalGeneratingUnit</span><span class="p">,</span>
+                           <span class="s1">&#39;WindGenerationUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">WindGeneratingUnit</span><span class="p">,</span>  <span class="c1"># todo: should this exist?</span>
+                           <span class="s1">&#39;WindGeneratingUnit&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">WindGeneratingUnit</span><span class="p">,</span>
+                           <span class="s1">&#39;FullModel&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">FullModel</span><span class="p">,</span>
+                           <span class="s1">&#39;TieFlow&#39;</span><span class="p">:</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">TieFlow</span><span class="p">}</span>
+
+        <span class="c1"># classes to read, theo others are ignored</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">va</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+<div class="viewcode-block" id="CIMCircuit.emit_text">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.emit_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.emit_progress">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.emit_progress">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.clear">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.clear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear the circuit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_objects_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.check_type">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.check_type">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_type</span><span class="p">(</span><span class="n">xml</span><span class="p">,</span> <span class="n">class_types</span><span class="p">,</span> <span class="n">starter</span><span class="o">=</span><span class="s1">&#39;&lt;cim:&#39;</span><span class="p">,</span> <span class="n">ender</span><span class="o">=</span><span class="s1">&#39;&lt;/cim:&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if we are starting an object of the predefined types</span>
+<span class="sd">        :param xml: some text</span>
+<span class="sd">        :param class_types: list of CIM types</span>
+<span class="sd">        :param starter string to add prior to the class when opening an object</span>
+<span class="sd">        :param ender string to add prior to a class when closing an object</span>
+<span class="sd">        :return: start_recording, end_recording, the found type or None if no one was found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># for each type</span>
+        <span class="k">for</span> <span class="n">tpe</span> <span class="ow">in</span> <span class="n">class_types</span><span class="p">:</span>
+
+            <span class="c1"># if the starter token is found: this is the beginning of an object</span>
+            <span class="k">if</span> <span class="n">starter</span> <span class="o">+</span> <span class="n">tpe</span> <span class="o">+</span> <span class="s1">&#39; rdf:ID&#39;</span> <span class="ow">in</span> <span class="n">xml</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tpe</span>
+
+            <span class="c1"># if the starter token is found: this is the beginning of an object (only in the topology definition)</span>
+            <span class="k">elif</span> <span class="n">starter</span> <span class="o">+</span> <span class="n">tpe</span> <span class="o">+</span> <span class="s1">&#39; rdf:about&#39;</span> <span class="ow">in</span> <span class="n">xml</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tpe</span>
+
+            <span class="c1"># if the ender token is found: this is the end of an object</span>
+            <span class="k">elif</span> <span class="n">ender</span> <span class="o">+</span> <span class="n">tpe</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span> <span class="ow">in</span> <span class="n">xml</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tpe</span>
+
+        <span class="c1"># otherwise, this is neither the beginning nor the end of an object</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.find_references">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.find_references">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_references</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replaces the references in the &quot;actual&quot; properties of the objects</span>
+<span class="sd">        :return: Nothing, it is done in place</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">found_classes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># find cross-references</span>
+        <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">elements</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>  <span class="c1"># for every element of the type</span>
+
+                <span class="c1"># check the declared properties</span>
+                <span class="k">for</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">cim_prop</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                    <span class="c1"># try to get the property value, else, fill with None</span>
+                    <span class="c1"># at this point val is always the string that came in the XML</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">parsed_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">property_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                        <span class="k">if</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+                            <span class="c1"># set the referenced object in the property</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">,</span> <span class="n">EnumMeta</span><span class="p">):</span>
+
+                            <span class="n">chunks</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                            <span class="n">value2</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">enum_val</span> <span class="o">=</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">(</span><span class="n">value2</span><span class="p">)</span>
+                                <span class="nb">setattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">enum_val</span><span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Could not convert Enum&#39;</span><span class="p">,</span>
+                                                      <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                      <span class="n">value</span><span class="o">=</span><span class="n">value2</span> <span class="o">+</span> <span class="s2">&quot; (value)&quot;</span><span class="p">,</span>
+                                                      <span class="n">expected_value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">))</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># search for the reference, if not found -&gt; return None</span>
+                            <span class="n">referenced_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_objects_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">referenced_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if the reference was found ...</span>
+
+                                <span class="c1"># set the referenced object in the property</span>
+                                <span class="nb">setattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">referenced_object</span><span class="p">)</span>
+
+                                <span class="c1"># register the inverse reference</span>
+                                <span class="n">referenced_object</span><span class="o">.</span><span class="n">add_reference</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+                                <span class="c1"># check that the type matches the expected type</span>
+                                <span class="k">if</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">cimdev</span><span class="o">.</span><span class="n">ConnectivityNodeContainer</span><span class="p">,</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">IdentifiedObject</span><span class="p">]:</span>
+                                    <span class="c1"># the container class is too generic...</span>
+                                    <span class="k">pass</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">referenced_object</span><span class="p">,</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">)</span> <span class="ow">and</span> \
+                                            <span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span> <span class="o">!=</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">EquipmentContainer</span><span class="p">:</span>
+                                        <span class="c1"># if the class specification does not match but the</span>
+                                        <span class="c1"># required type is also not a generic polymorphic object ...</span>
+                                        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cim_prop</span><span class="o">.</span><span class="n">class_type</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Object type different from expected&#39;</span><span class="p">,</span>
+                                                              <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                              <span class="n">value</span><span class="o">=</span><span class="n">referenced_object</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                                              <span class="n">expected_value</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+
+                                <span class="c1"># I want to know that it was not found</span>
+                                <span class="n">element</span><span class="o">.</span><span class="n">missing_references</span><span class="p">[</span><span class="n">property_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+                                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="s1">&#39;rdfid&#39;</span><span class="p">):</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Reference not found&#39;</span><span class="p">,</span>
+                                                          <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                          <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Not found&#39;</span><span class="p">,</span>
+                                                          <span class="n">expected_value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Reference not found for (debugger error)&#39;</span><span class="p">,</span>
+                                                          <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                          <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Not found&#39;</span><span class="p">,</span>
+                                                          <span class="n">expected_value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">out_of_the_standard</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Property supported but out of the standard&#39;</span><span class="p">,</span>
+                                                    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                    <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                                    <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">cim_prop</span><span class="o">.</span><span class="n">mandatory</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Required property not provided&#39;</span><span class="p">,</span>
+                                                  <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                  <span class="n">value</span><span class="o">=</span><span class="s1">&#39;not provided&#39;</span><span class="p">,</span>
+                                                  <span class="n">expected_value</span><span class="o">=</span><span class="n">property_name</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                            <span class="c1"># if not cim_prop.out_of_the_standard:</span>
+                            <span class="c1">#     self.logger.add_warning(msg=&#39;Optional property not provided&#39;,</span>
+                            <span class="c1">#                             device=element.rdfid,</span>
+                            <span class="c1">#                             device_class=class_name,</span>
+                            <span class="c1">#                             device_property=property_name,</span>
+                            <span class="c1">#                             value=&#39;not provided&#39;,</span>
+                            <span class="c1">#                             expected_value=property_name)</span>
+
+                <span class="c1"># check those properties that were parsed but are not recognised</span>
+                <span class="k">for</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">parsed_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                    <span class="k">if</span> <span class="n">property_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">declared_properties</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Unsupported property provided&#39;</span><span class="p">,</span>
+                                                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">property_name</span><span class="p">),</span>
+                                                <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                <span class="c1"># check the object rules</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.parse_xml_text">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.parse_xml_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_xml_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_lines</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the XML into the objects</span>
+<span class="sd">        :param text_lines:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span>
+
+        <span class="c1"># add the classes that may be missing from the classes dict</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">classes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+
+        <span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">disabled</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">n_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_lines</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">xml_line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text_lines</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="s1">&#39;&lt;!--&#39;</span> <span class="ow">in</span> <span class="n">xml_line</span><span class="p">:</span>
+                <span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">disabled</span><span class="p">:</span>
+
+                <span class="c1"># determine if the line opens or closes and object</span>
+                <span class="c1"># and of which type of the ones pre-specified</span>
+                <span class="n">start_rec</span><span class="p">,</span> <span class="n">end_rec</span><span class="p">,</span> <span class="n">tpe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">xml_line</span><span class="p">,</span> <span class="n">classes</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">tpe</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="c1"># a recognisable object was found</span>
+
+                    <span class="k">if</span> <span class="n">start_rec</span><span class="p">:</span>
+                        <span class="nb">id</span> <span class="o">=</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">index_find</span><span class="p">(</span><span class="n">xml_line</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                        <span class="c1"># start recording object</span>
+                        <span class="n">CLS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">cimdev</span><span class="o">.</span><span class="n">IdentifiedObject</span><span class="p">)</span>
+                        <span class="c1"># if tpe in class_dict.keys():</span>
+                        <span class="c1">#     CLS = class_dict[tpe]</span>
+                        <span class="c1"># else:</span>
+                        <span class="c1">#     CLS = cimdev.GeneralContainer</span>
+                        <span class="n">element</span> <span class="o">=</span> <span class="n">CLS</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">tpe</span><span class="p">)</span>
+
+                        <span class="n">recording</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="k">if</span> <span class="n">end_rec</span><span class="p">:</span>
+                        <span class="c1"># stop recording object</span>
+                        <span class="k">if</span> <span class="n">recording</span><span class="p">:</span>
+
+                            <span class="n">found_element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_objects_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">found_element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">found_element</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">all_objects_dict</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+                                <span class="k">if</span> <span class="n">tpe</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span><span class="p">[</span><span class="n">tpe</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+                                <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span><span class="p">[</span><span class="n">tpe</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+                            <span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># process line</span>
+                    <span class="k">if</span> <span class="n">recording</span><span class="p">:</span>
+                        <span class="n">element</span><span class="o">.</span><span class="n">parse_line</span><span class="p">(</span><span class="n">xml_line</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># the line is a comment</span>
+                <span class="k">if</span> <span class="s1">&#39;--&gt;&#39;</span> <span class="ow">in</span> <span class="n">xml_line</span><span class="p">:</span>
+                    <span class="n">disabled</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit_progress</span><span class="p">((</span><span class="n">line_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_lines</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.parse_file">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.parse_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse CIM file and add all the recognised objects</span>
+<span class="sd">        :param file_name:  file name or path</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make a guess of the file encoding</span>
+        <span class="n">detection</span> <span class="o">=</span> <span class="n">chardet</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="c1"># Read text file line by line</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">detection</span><span class="p">[</span><span class="s1">&#39;encoding&#39;</span><span class="p">])</span> <span class="k">as</span> <span class="n">file_pointer</span><span class="p">:</span>
+            <span class="n">text_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">file_pointer</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml_text</span><span class="p">(</span><span class="n">text_lines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.get_data_frames_dictionary">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.get_data_frames_dictionary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_frames_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get dictionary of DataFrames</span>
+<span class="sd">        :return: dictionary of DataFrames</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dfs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">elements</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+                <span class="n">dfs</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error making DataFrame out of&#39;</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dfs</span></div>
+
+
+<div class="viewcode-block" id="CIMCircuit.to_excel">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cim16.html#VeraGridEngine.IO.cim.cim16.cim_circuit.CIMCircuit.to_excel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_excel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param fname:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Saving to excel&#39;</span><span class="p">)</span>
+
+        <span class="n">dfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_frames_dictionary</span><span class="p">()</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dfs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>  <span class="c1"># pylint: disable=abstract-class-instantiated</span>
+            <span class="k">for</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">class_name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error exporting&#39;</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This code was originally published by the following individuals for use with</span>
+<span class="sd">Scilab:</span>
+<span class="sd">    Copyright (C) 2012 - 2013 - Michael Baudin</span>
+<span class="sd">    Copyright (C) 2012 - Maria Christopoulou</span>
+<span class="sd">    Copyright (C) 2010 - 2011 - INRIA - Michael Baudin</span>
+<span class="sd">    Copyright (C) 2009 - Yann Collette</span>
+<span class="sd">    Copyright (C) 2009 - CEA - Jean-Marc Martinez</span>
+
+<span class="sd">    website: forge.scilab.org/index.php/p/scidoe/sourcetree/master/macros</span>
+
+<span class="sd">Much thanks goes to these individuals. It has been converted to Python by</span>
+<span class="sd">Abraham Lee.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Mat</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lhs&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="lhs">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Stochastic.html#VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling.lhs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lhs</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">samples</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mat</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">criterion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span><span class="p">,</span>
+        <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a latin-hypercube design</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The number of factors to generate samples for</span>
+<span class="sd">    samples : int</span>
+<span class="sd">        The number of samples to generate for each factor (Default: n)</span>
+<span class="sd">    criterion : str</span>
+<span class="sd">        Allowable values are &quot;center&quot; or &quot;c&quot;, &quot;maximin&quot; or &quot;m&quot;,</span>
+<span class="sd">        &quot;centermaximin&quot; or &quot;cm&quot;, and &quot;correlation&quot; or &quot;corr&quot;. If no value</span>
+<span class="sd">        given, the design is simply randomized.</span>
+<span class="sd">    iterations : int</span>
+<span class="sd">        The number of iterations in the maximin and correlations algorithms</span>
+<span class="sd">        (Default: 5).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    H : 2d-array</span>
+<span class="sd">        An n-by-samples design matrix that has been normalized so factor values</span>
+<span class="sd">        are uniformly spaced between zero and one.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    A 3-factor design (defaults to 3 samples)::</span>
+
+<span class="sd">        &gt;&gt;&gt; lhs(3)</span>
+<span class="sd">        array([[ 0.40069325,  0.08118402,  0.69763298],</span>
+<span class="sd">               [ 0.19524568,  0.41383587,  0.29947106],</span>
+<span class="sd">               [ 0.85341601,  0.75460699,  0.360024  ]])</span>
+
+<span class="sd">    A 4-factor design with 6 samples::</span>
+
+<span class="sd">        &gt;&gt;&gt; lhs(4, samples=6)</span>
+<span class="sd">        array([[ 0.27226812,  0.02811327,  0.62792445,  0.91988196],</span>
+<span class="sd">               [ 0.76945538,  0.43501682,  0.01107457,  0.09583358],</span>
+<span class="sd">               [ 0.45702981,  0.76073773,  0.90245401,  0.18773015],</span>
+<span class="sd">               [ 0.99342115,  0.85814198,  0.16996665,  0.65069309],</span>
+<span class="sd">               [ 0.63092013,  0.22148567,  0.33616859,  0.36332478],</span>
+<span class="sd">               [ 0.05276917,  0.5819198 ,  0.67194243,  0.78703262]])</span>
+
+<span class="sd">    A 2-factor design with 5 centered samples::</span>
+
+<span class="sd">        &gt;&gt;&gt; lhs(2, samples=5, criterion=&#39;center&#39;)</span>
+<span class="sd">        array([[ 0.3,  0.5],</span>
+<span class="sd">               [ 0.7,  0.9],</span>
+<span class="sd">               [ 0.1,  0.3],</span>
+<span class="sd">               [ 0.9,  0.1],</span>
+<span class="sd">               [ 0.5,  0.7]])</span>
+
+<span class="sd">    A 3-factor design with 4 samples where the minimum distance between</span>
+<span class="sd">    all samples has been maximized::</span>
+
+<span class="sd">        &gt;&gt;&gt; lhs(3, samples=4, criterion=&#39;maximin&#39;)</span>
+<span class="sd">        array([[ 0.02642564,  0.55576963,  0.50261649],</span>
+<span class="sd">               [ 0.51606589,  0.88933259,  0.34040838],</span>
+<span class="sd">               [ 0.98431735,  0.0380364 ,  0.01621717],</span>
+<span class="sd">               [ 0.40414671,  0.33339132,  0.84845707]])</span>
+
+<span class="sd">    A 4-factor design with 5 samples where the samples are as uncorrelated</span>
+<span class="sd">    as possible (within 10 iterations)::</span>
+
+<span class="sd">        &gt;&gt;&gt; lhs(4, samples=5, criterion=&#39;correlate&#39;, iterations=10)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">n</span>
+
+    <span class="k">if</span> <span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">criterion</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;maximin&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;centermaximin&#39;</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">,</span> <span class="s1">&#39;correlation&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;corr&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid value for &quot;criterion&quot;: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">criterion</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">_lhsclassic</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+
+    <span class="c1"># if criterion is None:</span>
+    <span class="c1">#     criterion = &#39;center&#39;</span>
+    <span class="c1">#</span>
+    <span class="c1"># if iterations is None:</span>
+    <span class="c1">#     iterations = 5</span>
+
+    <span class="k">if</span> <span class="n">H</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">criterion</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">):</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">_lhscentered</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">criterion</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;maximin&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">):</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">_lhsmaximin</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">iterations</span><span class="p">,</span> <span class="s1">&#39;maximin&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">criterion</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;centermaximin&#39;</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">):</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">_lhsmaximin</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">iterations</span><span class="p">,</span> <span class="s1">&#39;centermaximin&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">criterion</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;correlate&#39;</span><span class="p">,</span> <span class="s1">&#39;corr&#39;</span><span class="p">):</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">_lhscorrelate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid value for &quot;criterion&quot;: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">criterion</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">H</span></div>
+
+
+
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lhsclassic</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param n:</span>
+<span class="sd">    :param samples:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Generate the intervals</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Fill points uniformly in each interval</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">cut</span><span class="p">[:</span><span class="n">samples</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">cut</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">samples</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">rdpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">rdpoints</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span>
+
+    <span class="c1"># Make the random pairings</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rdpoints</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+        <span class="n">H</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdpoints</span><span class="p">[</span><span class="n">order</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">H</span>
+
+
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lhscentered</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param n:</span>
+<span class="sd">    :param samples:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Generate the intervals</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Fill points uniformly in each interval</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">cut</span><span class="p">[:</span><span class="n">samples</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">cut</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">samples</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">_center</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># Make the random pairings</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">H</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">_center</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">H</span>
+
+
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lhsmaximin</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">iterations</span><span class="p">,</span> <span class="n">lhstype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param n:</span>
+<span class="sd">    :param samples:</span>
+<span class="sd">    :param iterations:</span>
+<span class="sd">    :param lhstype:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">maxdist</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Maximize the minimum distance between points</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">lhstype</span> <span class="o">==</span> <span class="s1">&#39;maximin&#39;</span><span class="p">:</span>
+            <span class="n">Hcandidate</span> <span class="o">=</span> <span class="n">_lhsclassic</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Hcandidate</span> <span class="o">=</span> <span class="n">_lhscentered</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="n">_pdist</span><span class="p">(</span><span class="n">Hcandidate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">maxdist</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">maxdist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">Hcandidate</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">H</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot compute H&quot;</span><span class="p">)</span>
+
+
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lhscorrelate</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param n:</span>
+<span class="sd">    :param samples:</span>
+<span class="sd">    :param iterations:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mincorr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="c1"># Minimize the components correlation coefficients</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+        <span class="c1"># Generate a random LHS</span>
+        <span class="n">Hcandidate</span> <span class="o">=</span> <span class="n">_lhsclassic</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">Hcandidate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">R</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="n">mincorr</span><span class="p">:</span>
+            <span class="n">mincorr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;new candidate solution found with max,abs corrcoef = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mincorr</span><span class="p">))</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">Hcandidate</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">H</span>
+
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not compute H&quot;</span><span class="p">)</span>
+
+
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pdist</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the pair-wise point distances of a matrix</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2d-array</span>
+<span class="sd">        An m-by-n array of scalars, where there are m points in n dimensions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : array</span>
+<span class="sd">        A 1-by-b array of scalars, where b = m*(m - 1)/2. This array contains</span>
+<span class="sd">        all the pair-wise point distances, arranged in the order (1, 0),</span>
+<span class="sd">        (2, 0), ..., (m-1, 0), (2, 1), ..., (m-1, 1), ..., (m-1, m-2).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        &gt;&gt;&gt; x = np.array([[0.1629447, 0.8616334],</span>
+<span class="sd">        ...               [0.5811584, 0.3826752],</span>
+<span class="sd">        ...               [0.2270954, 0.4442068],</span>
+<span class="sd">        ...               [0.7670017, 0.7264718],</span>
+<span class="sd">        ...               [0.8253975, 0.1937736]])</span>
+<span class="sd">        &gt;&gt;&gt; _pdist(x)</span>
+<span class="sd">        array([ 0.6358488,  0.4223272,  0.6189940,  0.9406808,  0.3593699,</span>
+<span class="sd">                0.3908118,  0.3087661,  0.6092392,  0.6486001,  0.5358894])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Input array must be 2d-dimensional&#39;</span><span class="p">)</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">sum</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

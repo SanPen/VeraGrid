@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.Topology package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Templates package" href="VeraGridEngine.Templates.html" />
+    <link rel="prev" title="VeraGridEngine.Simulations.Stochastic package" href="VeraGridEngine.Simulations.Stochastic.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.Topology package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Simulations.Topology.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-simulations-topology-package">
+<h1>VeraGridEngine.Simulations.Topology package<a class="headerlink" href="#veragridengine-simulations-topology-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Simulations.Topology.node_groups_driver">
+<span id="veragridengine-simulations-topology-node-groups-driver-module"></span><h2>VeraGridEngine.Simulations.Topology.node_groups_driver module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Topology.node_groups_driver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.node_groups_driver.</span></span><span class="sig-name descname"><span class="pre">NodeGroupsDriver</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_driver.html#NodeGroupsDriver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.build_weighted_graph">
+<span class="sig-name descname"><span class="pre">build_weighted_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_driver.html#NodeGroupsDriver.build_weighted_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.build_weighted_graph" title="Link to this definition"></a></dt>
+<dd><p>Build the topology graph used by the Dijkstra-based distance mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Weighted graph whose nodes are bus indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.min_group_size">
+<span class="sig-name descname"><span class="pre">min_group_size</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.min_group_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Node</span> <span class="pre">groups'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.ptdf_results">
+<span class="sig-name descname"><span class="pre">ptdf_results</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.ptdf_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_driver.html#NodeGroupsDriver.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the node grouping study.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.sigmas">
+<span class="sig-name descname"><span class="pre">sigmas</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.sigmas" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Node</span> <span class="pre">groups'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.use_ptdf">
+<span class="sig-name descname"><span class="pre">use_ptdf</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_driver.NodeGroupsDriver.use_ptdf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Topology.node_groups_results">
+<span id="veragridengine-simulations-topology-node-groups-results-module"></span><h2>VeraGridEngine.Simulations.Topology.node_groups_results module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Topology.node_groups_results" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.node_groups_results.</span></span><span class="sig-name descname"><span class="pre">NodeGroupsResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_template.ResultsTemplate" title="VeraGridEngine.Simulations.results_template.ResultsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsTemplate</span></code></a></p>
+<p>Store the reusable data produced by the node grouping simulation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.CLASS_DATA_VARIABLES">
+<span class="sig-name descname"><span class="pre">CLASS_DATA_VARIABLES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'X_train':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'groups_by_index':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'groups_by_name':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'sigma':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.CLASS_DATA_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.CLASS_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.CLASS_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.LOCAL_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.LOCAL_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.X_train">
+<span class="sig-name descname"><span class="pre">X_train</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.X_train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_groups_by_index">
+<span class="sig-name descname"><span class="pre">get_groups_by_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.get_groups_by_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_groups_by_index" title="Link to this definition"></a></dt>
+<dd><p>Get the bus groups represented by bus indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bus groups represented by bus indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_groups_by_name">
+<span class="sig-name descname"><span class="pre">get_groups_by_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.get_groups_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_groups_by_name" title="Link to this definition"></a></dt>
+<dd><p>Get the bus groups represented by bus names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bus groups represented by bus names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_sigma">
+<span class="sig-name descname"><span class="pre">get_sigma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.get_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_sigma" title="Link to this definition"></a></dt>
+<dd><p>Get the characteristic distance scale of the training matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Standard deviation of the training matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_training_matrix">
+<span class="sig-name descname"><span class="pre">get_training_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.get_training_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.get_training_matrix" title="Link to this definition"></a></dt>
+<dd><p>Get the matrix used by the clustering algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Training matrix prepared for DBSCAN.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.groups_by_index">
+<span class="sig-name descname"><span class="pre">groups_by_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.groups_by_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.groups_by_name">
+<span class="sig-name descname"><span class="pre">groups_by_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.groups_by_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.mdl">
+<span class="sig-name descname"><span class="pre">mdl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.mdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.mdl" title="Link to this definition"></a></dt>
+<dd><p>Build a tabular representation of the stored results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>result_type</strong> – Unused result type placeholder kept for API
+compatibility with the rest of the simulations package.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code> because no table view is defined for this study yet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.set_groups">
+<span class="sig-name descname"><span class="pre">set_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups_by_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups_by_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.set_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.set_groups" title="Link to this definition"></a></dt>
+<dd><p>Store the resulting bus group assignments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>groups_by_name</strong> – Bus groups represented by bus names.</p></li>
+<li><p><strong>groups_by_index</strong> – Bus groups represented by bus indices.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.set_sigma">
+<span class="sig-name descname"><span class="pre">set_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.set_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.set_sigma" title="Link to this definition"></a></dt>
+<dd><p>Store the characteristic distance scale of the training matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sigma</strong> – Standard deviation of the training matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.set_training_matrix">
+<span class="sig-name descname"><span class="pre">set_training_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/node_groups_results.html#NodeGroupsResults.set_training_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.set_training_matrix" title="Link to this definition"></a></dt>
+<dd><p>Store the matrix used by the clustering algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>training_matrix</strong> – Training matrix prepared for DBSCAN.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.node_groups_results.NodeGroupsResults.sigma" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Topology.topology_reduction_driver">
+<span id="veragridengine-simulations-topology-topology-reduction-driver-module"></span><h2>VeraGridEngine.Simulations.Topology.topology_reduction_driver module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Topology.topology_reduction_driver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">DeleteAndReduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sel_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#DeleteAndReduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.buses_merged">
+<span class="sig-name descname"><span class="pre">buses_merged</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.buses_merged" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#DeleteAndReduce.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.cancel" title="Link to this definition"></a></dt>
+<dd><p>Cancel the simulation
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#DeleteAndReduce.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.run" title="Link to this definition"></a></dt>
+<dd><p>Run the monte carlo simulation
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.sel_idx">
+<span class="sig-name descname"><span class="pre">sel_idx</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.sel_idx" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#DeleteAndReduce.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.DeleteAndReduce.start" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">TopologyReduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#TopologyReduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.br_to_remove">
+<span class="sig-name descname"><span class="pre">br_to_remove</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.br_to_remove" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#TopologyReduction.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.cancel" title="Link to this definition"></a></dt>
+<dd><p>Cancel the simulation
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#TopologyReduction.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.run" title="Link to this definition"></a></dt>
+<dd><p>Run the monte carlo simulation
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Topology</span> <span class="pre">reduction'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReduction.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">TopologyReductionOptions</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#TopologyReductionOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions.rx_criteria">
+<span class="sig-name descname"><span class="pre">rx_criteria</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions.rx_criteria" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions.rx_threshold">
+<span class="sig-name descname"><span class="pre">rx_threshold</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions.rx_threshold" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions.selected_type">
+<span class="sig-name descname"><span class="pre">selected_type</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.TopologyReductionOptions.selected_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.get_branches_of_bus">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">get_branches_of_bus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#get_branches_of_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.get_branches_of_bus" title="Link to this definition"></a></dt>
+<dd><p>Get the indices of the Branches connected to the bus j
+:param B: Branch-bus CSC matrix
+:param j: bus index
+:return: list of Branches in the bus</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.reduce_buses">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">reduce_buses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">buses_to_reduce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prog_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#reduce_buses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.reduce_buses" title="Link to this definition"></a></dt>
+<dd><p>Reduce the uses in the grid
+This function removes the buses but whenever a bus is removed, the devices connected to it
+are inherited by the bus of higher voltage that is connected.
+If the bus is isolated, those devices are lost.
+:param circuit: MultiCircuit instance
+:param buses_to_reduce: list of Bus objects
+:param text_func:
+:param prog_func:
+:return: Nothing</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.reduce_grid_brute">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">reduce_grid_brute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_br_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#reduce_grid_brute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.reduce_grid_brute" title="Link to this definition"></a></dt>
+<dd><p>Remove the first branch found to be removed.
+this function is meant to be called until it returns false
+Args:</p>
+<blockquote>
+<div><p>circuit: Circuit to modify in-place
+removed_br_idx: branch index</p>
+</div></blockquote>
+<p>Returns: Nothing</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Topology.topology_reduction_driver.select_branches_to_reduce">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Topology.topology_reduction_driver.</span></span><span class="sig-name descname"><span class="pre">select_branches_to_reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rx_criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rx_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">branch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Topology/topology_reduction_driver.html#select_branches_to_reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Topology.topology_reduction_driver.select_branches_to_reduce" title="Link to this definition"></a></dt>
+<dd><p>Find Branches to delete
+Args:</p>
+<blockquote>
+<div><p>circuit: Circuit to modify in-place
+rx_criteria: use the r+x threshold to select Branches?
+rx_threshold: r+x threshold
+selected_types: branch types to select</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Topology">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Simulations.Topology" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Simulations.Stochastic.html" class="btn btn-neutral float-left" title="VeraGridEngine.Simulations.Stochastic package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Templates.html" class="btn btn-neutral float-right" title="VeraGridEngine.Templates package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

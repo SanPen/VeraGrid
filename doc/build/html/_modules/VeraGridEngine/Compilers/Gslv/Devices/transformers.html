@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Compilers.Gslv.Devices.transformers &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Compilers.Gslv.Devices.transformers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Compilers.Gslv.Devices.transformers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.branch_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer3w</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer3W</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.activation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">pg</span><span class="p">,</span>
+    <span class="n">tap_module_control_mode_dict</span><span class="p">,</span>
+    <span class="n">tap_phase_control_mode_dict</span><span class="p">,</span>
+    <span class="n">winding_type_dict</span><span class="p">,</span>
+    <span class="n">windings_connection_dict</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">fill_profile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="convert_transformer">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.transformers.convert_transformer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_transformer</span><span class="p">(</span><span class="n">elm</span><span class="p">:</span> <span class="n">Transformer2W</span><span class="p">,</span>
+                        <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;pg.Bus&quot;</span><span class="p">],</span>
+                        <span class="n">branch_groups_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">BranchGroup</span><span class="p">,</span> <span class="s2">&quot;pg.BranchGroup&quot;</span><span class="p">],</span>
+                        <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">use_time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">time_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">override_controls</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                        <span class="n">add_three_phase_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pg.Transformer2W&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one VeraGrid two-winding transformer into one GSLV transformer.</span>
+
+<span class="sd">    :param elm: VeraGrid transformer.</span>
+<span class="sd">    :param bus_dict: Bus lookup by VeraGrid id tag.</span>
+<span class="sd">    :param branch_groups_dict: Branch-group lookup.</span>
+<span class="sd">    :param n_time: Number of exported time steps.</span>
+<span class="sd">    :param use_time_series: Whether the export is time-series based.</span>
+<span class="sd">    :param time_indices: Optional time-series selection.</span>
+<span class="sd">    :param override_controls: Whether transformer control modes must be forced to fixed.</span>
+<span class="sd">    :param add_three_phase_data: Export sequence parameters and winding connections.</span>
+<span class="sd">    :return: GSLV transformer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tr2</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span>
+        <span class="n">nt</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">idtag</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">),</span>
+        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+        <span class="n">HV</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">HV</span><span class="p">,</span>
+        <span class="n">LV</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">LV</span><span class="p">,</span>
+        <span class="n">nominal_power</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Sn</span><span class="p">,</span>
+        <span class="n">copper_losses</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pcu</span><span class="p">,</span>
+        <span class="n">iron_losses</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pfe</span><span class="p">,</span>
+        <span class="n">no_load_current</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">I0</span><span class="p">,</span>
+        <span class="n">short_circuit_voltage</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vsc</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+        <span class="n">rate</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span> <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="mf">9999.0</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+        <span class="n">g</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+        <span class="n">tap_module</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span><span class="p">,</span>
+        <span class="n">tap_module_max</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_max</span><span class="p">,</span>
+        <span class="n">tap_module_min</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_min</span><span class="p">,</span>
+        <span class="n">tap_phase</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">,</span>
+        <span class="n">tap_phase_max</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_max</span><span class="p">,</span>
+        <span class="n">tap_phase_min</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_min</span><span class="p">,</span>
+        <span class="n">tolerance</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+        <span class="n">cost</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Cost</span><span class="p">,</span>
+        <span class="n">mttf</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">mttf</span><span class="p">,</span>
+        <span class="n">mttr</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">mttr</span><span class="p">,</span>
+        <span class="n">vset</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">vset</span><span class="p">,</span>
+        <span class="n">Pset</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pset</span><span class="p">,</span>
+        <span class="n">Qset</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Qset</span><span class="p">,</span>
+        <span class="n">temp_base</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">temp_base</span><span class="p">,</span>
+        <span class="n">temp_oper</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">temp_oper</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">tap_module_control_mode</span><span class="o">=</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">],</span>
+        <span class="n">tap_phase_control_mode</span><span class="o">=</span><span class="n">tap_phase_control_mode_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">],</span>
+        <span class="n">contingency_factor</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span><span class="p">,</span>
+        <span class="n">protection_rating_factor</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span>
+        <span class="n">monitor_loading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">r0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span>
+        <span class="n">x0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span>
+        <span class="n">g0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">G0</span><span class="p">,</span>
+        <span class="n">b0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">B0</span><span class="p">,</span>
+        <span class="n">r2</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R2</span><span class="p">,</span>
+        <span class="n">x2</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X2</span><span class="p">,</span>
+        <span class="n">g2</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">G2</span><span class="p">,</span>
+        <span class="n">b2</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">B2</span><span class="p">,</span>
+        <span class="n">conn</span><span class="o">=</span><span class="n">windings_connection_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">conn</span><span class="p">],</span>
+        <span class="n">capex</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">capex</span><span class="p">,</span>
+        <span class="n">opex</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">opex</span><span class="p">,</span>
+        <span class="n">build_status</span><span class="o">=</span><span class="n">pg</span><span class="o">.</span><span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">,</span>
+        <span class="n">tc_total_positions</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">_tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">,</span>
+        <span class="n">tc_neutral_position</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">_tap_changer</span><span class="o">.</span><span class="n">neutral_position</span><span class="p">,</span>
+        <span class="n">tc_normal_position</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">_tap_changer</span><span class="o">.</span><span class="n">normal_position</span><span class="p">,</span>
+        <span class="n">tc_dV</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">_tap_changer</span><span class="o">.</span><span class="n">dV</span><span class="p">,</span>
+        <span class="n">tc_asymmetry_angle</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">_tap_changer</span><span class="o">.</span><span class="n">asymmetry_angle</span><span class="p">,</span>
+        <span class="n">tc_type</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span><span class="p">,</span>
+        <span class="c1"># template=None,</span>
+        <span class="c1"># design_rate=0.0,</span>
+        <span class="c1"># contingency_enabled=True,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">add_three_phase_data</span><span class="p">:</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">conn_f</span> <span class="o">=</span> <span class="n">winding_type_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">conn_f</span><span class="p">]</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">conn_t</span> <span class="o">=</span> <span class="n">winding_type_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">conn_t</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">regulation_bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">branch_groups_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">group</span><span class="p">]</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">contingency_factor</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">cost</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Cost_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Cost</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">Pset</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pset_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pset</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">Qset</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Qset_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Qset</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">vset</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">vset_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">vset</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">temp_oper</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">temp_oper_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">temp_oper</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_control_mode_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">tap_module</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span><span class="p">)</span>
+
+    <span class="n">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="o">=</span><span class="n">tr2</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_control_mode_prof</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                 <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">)</span>
+
+    <span class="c1"># control vars</span>
+    <span class="k">if</span> <span class="n">override_controls</span><span class="p">:</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">TapModuleControl</span><span class="o">.</span><span class="n">fixed</span><span class="p">)</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">fixed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">tr2</span></div>
+
+
+
+<div class="viewcode-block" id="add_transformers">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.transformers.add_transformers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_transformers</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">gslv_grid</span><span class="p">:</span> <span class="s2">&quot;pg.MultiCircuit&quot;</span><span class="p">,</span>
+                     <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;pg.Bus&quot;</span><span class="p">],</span>
+                     <span class="n">branch_groups_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">BranchGroup</span><span class="p">,</span> <span class="s2">&quot;pg.BranchGroup&quot;</span><span class="p">],</span>
+                     <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                     <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">override_controls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">add_three_phase_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param gslv_grid: GSLV circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to GSLV bus object</span>
+<span class="sd">    :param branch_groups_dict: dictionary of branch grous converetd</span>
+<span class="sd">    :param n_time: number of time steps</span>
+<span class="sd">    :param time_indices: Array of time indices</span>
+<span class="sd">    :param override_controls: If true the controls are set to Fix</span>
+<span class="sd">    :param add_three_phase_data: Export sequence parameters and winding connections.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">transformers2w</span><span class="p">):</span>
+        <span class="n">tr2</span> <span class="o">=</span> <span class="n">convert_transformer</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                  <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+                                  <span class="n">branch_groups_dict</span><span class="o">=</span><span class="n">branch_groups_dict</span><span class="p">,</span>
+                                  <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                                  <span class="n">use_time_series</span><span class="o">=</span><span class="n">time_series</span><span class="p">,</span>
+                                  <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                                  <span class="n">override_controls</span><span class="o">=</span><span class="n">override_controls</span><span class="p">,</span>
+                                  <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">)</span>
+        <span class="n">gslv_grid</span><span class="o">.</span><span class="n">add_transformer</span><span class="p">(</span><span class="n">tr2</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

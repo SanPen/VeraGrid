@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.exporter.pf_validation &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.exporter.pf_validation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.fmu.exporter.pf_validation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+
+<span class="k">if</span> <span class="n">__package__</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">}:</span>
+    <span class="n">_REPO_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">_REPO_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">_REPO_ROOT</span><span class="p">))</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_fmu</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportConfig</span><span class="p">,</span> <span class="n">detect_target_platform</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter.real_pilots</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_powerfactory_pilot_model</span><span class="p">,</span> <span class="n">pilot_output_path</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_fmu</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportConfig</span><span class="p">,</span> <span class="n">detect_target_platform</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.real_pilots</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_powerfactory_pilot_model</span><span class="p">,</span> <span class="n">pilot_output_path</span>
+
+
+<span class="n">IDE_PLAY_DEFAULTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;pilot&quot;</span><span class="p">:</span> <span class="s2">&quot;rms&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;Project_prueba&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;study_case&quot;</span><span class="p">:</span> <span class="s2">&quot;Caso Base&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;agent_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;output_dir&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;tests&quot;</span> <span class="o">/</span> <span class="s2">&quot;artifacts&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;configure&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;allow_engine&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_ide_argv</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;pilot&quot;</span><span class="p">])]</span>
+    <span class="n">argv</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--project&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">])])</span>
+    <span class="n">argv</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--study-case&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;study_case&quot;</span><span class="p">])])</span>
+    <span class="n">argv</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--agent-name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;agent_name&quot;</span><span class="p">])])</span>
+    <span class="n">argv</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">])])</span>
+    <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;configure&quot;</span><span class="p">]):</span>
+        <span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--configure&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;execute&quot;</span><span class="p">]):</span>
+        <span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--execute&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">IDE_PLAY_DEFAULTS</span><span class="p">[</span><span class="s2">&quot;allow_engine&quot;</span><span class="p">]):</span>
+        <span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--allow-engine&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">argv</span>
+
+
+<div class="viewcode-block" id="candidate_powerfactory_python_dirs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.candidate_powerfactory_python_dirs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">candidate_powerfactory_python_dirs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\Program Files\DIgSILENT&quot;</span><span class="p">)</span>
+    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">candidates</span>
+    <span class="k">for</span> <span class="n">version_dir</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;PowerFactory*&quot;</span><span class="p">)):</span>
+        <span class="n">python_dir</span> <span class="o">=</span> <span class="n">version_dir</span> <span class="o">/</span> <span class="s2">&quot;Python&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">minor</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">python_dir</span> <span class="o">/</span> <span class="s2">&quot;powerfactory.pyd&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">python_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">candidates</span></div>
+
+
+
+<div class="viewcode-block" id="load_powerfactory_module">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.load_powerfactory_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_powerfactory_module</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">candidate_powerfactory_python_dirs</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">powerfactory</span>
+
+            <span class="k">return</span> <span class="n">powerfactory</span><span class="p">,</span> <span class="n">directory</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span><span class="s2">&quot;Could not locate a compatible PowerFactory Python module for this Python version&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_application</span><span class="p">(</span><span class="n">powerfactory_module</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_engine</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">method_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GetApplication&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">allow_engine</span><span class="p">:</span>
+        <span class="n">method_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;GetApplicationExt&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">method_names</span><span class="p">:</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">powerfactory_module</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">method</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">app</span><span class="p">,</span> <span class="n">method_name</span>
+    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="list_powerfactory_projects">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.list_powerfactory_projects">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_powerfactory_projects</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetCurrentUser</span><span class="p">()</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">GetContents</span><span class="p">(</span><span class="s2">&quot;*.IntPrj&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">({</span><span class="nb">getattr</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">projects</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)})</span></div>
+
+
+
+<div class="viewcode-block" id="activate_project">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.activate_project">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">activate_project</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="n">available_projects</span> <span class="o">=</span> <span class="n">list_powerfactory_projects</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">project_name</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ActivateProject</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not activate PowerFactory project </span><span class="si">{</span><span class="n">project_name</span><span class="si">!r}</span><span class="s2">; return code </span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetActiveProject</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">project</span><span class="p">,</span> <span class="n">available_projects</span></div>
+
+
+
+<div class="viewcode-block" id="activate_study_case">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.activate_study_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">activate_study_case</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">study_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[]</span>
+    <span class="n">study_cases</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">GetContents</span><span class="p">(</span><span class="s2">&quot;*.IntCase&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">available_cases</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">study_cases</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">study_case_name</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">study_cases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">study_case_name</span><span class="p">:</span>
+                <span class="k">case</span><span class="o">.</span><span class="n">Activate</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">case</span><span class="p">,</span> <span class="n">available_cases</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find study case </span><span class="si">{</span><span class="n">study_case_name</span><span class="si">!r}</span><span class="s2"> in project </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;loc_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">active_case</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">active_case</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">GetContents</span><span class="p">(</span><span class="s2">&quot;*.IntCase&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">study_cases</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">active_case</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">active_case</span><span class="o">.</span><span class="n">Activate</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">active_case</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">active_case</span><span class="p">,</span> <span class="n">available_cases</span></div>
+
+
+
+<div class="viewcode-block" id="inspect_cosimulation_objects">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.inspect_cosimulation_objects">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inspect_cosimulation_objects</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="n">report</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cosim</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetFromStudyCase</span><span class="p">(</span><span class="s2">&quot;ComCosim&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;warning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">report</span>
+    <span class="k">if</span> <span class="n">cosim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;present&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">report</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;present&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cosim</span><span class="p">)</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;cfmu&quot;</span><span class="p">:</span> <span class="n">cosim</span><span class="o">.</span><span class="n">GetAttribute</span><span class="p">(</span><span class="s2">&quot;cfmu&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;cfmuOutserv&quot;</span><span class="p">:</span> <span class="n">cosim</span><span class="o">.</span><span class="n">GetAttribute</span><span class="p">(</span><span class="s2">&quot;cfmuOutserv&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;cfmuSimMod&quot;</span><span class="p">:</span> <span class="n">cosim</span><span class="o">.</span><span class="n">GetAttribute</span><span class="p">(</span><span class="s2">&quot;cfmuSimMod&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;iopt_type&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="s2">&quot;iopt_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;task&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">report</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_pf_attribute</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">setter</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;SetAttribute&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setter</span><span class="p">):</span>
+        <span class="n">setter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_active_grid</span><span class="p">(</span><span class="n">project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="n">networks</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">GetContents</span><span class="p">(</span><span class="s2">&quot;*.ElmNet&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">networks</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No ElmNet grid object was found in the active PowerFactory project&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">networks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_or_create_agent</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">agent_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">existing</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">GetContents</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agent_name</span><span class="si">}</span><span class="s2">.ElmAgent&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">existing</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">existing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">False</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">CreateObject</span><span class="p">(</span><span class="s2">&quot;ElmAgent&quot;</span><span class="p">,</span> <span class="n">agent_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not create ElmAgent </span><span class="si">{</span><span class="n">agent_name</span><span class="si">!r}</span><span class="s2"> under grid </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;loc_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">agent</span><span class="p">,</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_other_agents_out_of_service</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="n">selected_agent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">disabled</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="p">(</span><span class="n">cosim</span><span class="o">.</span><span class="n">GetAttribute</span><span class="p">(</span><span class="s2">&quot;cfmu&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">selected_agent</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">_set_pf_attribute</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;outserv&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">_set_pf_attribute</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;outserv&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">disabled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">disabled</span>
+
+
+<div class="viewcode-block" id="configure_powerfactory_cosimulation">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.configure_powerfactory_cosimulation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configure_powerfactory_cosimulation</span><span class="p">(</span>
+    <span class="n">app</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">fmu_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">study_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">agent_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">execute</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="n">project</span><span class="p">,</span> <span class="n">available_projects</span> <span class="o">=</span> <span class="n">activate_project</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
+    <span class="n">study_case</span><span class="p">,</span> <span class="n">available_cases</span> <span class="o">=</span> <span class="n">activate_study_case</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">study_case_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">study_case</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;An active PowerFactory project and study case are required&quot;</span><span class="p">)</span>
+
+    <span class="n">cosim</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">GetFromStudyCase</span><span class="p">(</span><span class="s2">&quot;ComCosim&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cosim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ComCosim was not found in the active study case&quot;</span><span class="p">)</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">_get_active_grid</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">agent</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">_find_or_create_agent</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">agent_name</span><span class="p">)</span>
+
+    <span class="n">_set_pf_attribute</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">fmu_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()))</span>
+    <span class="n">_set_pf_attribute</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;outserv&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">_set_pf_attribute</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="s2">&quot;iopt_type&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">_set_pf_attribute</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">disabled_agents</span> <span class="o">=</span> <span class="n">_set_other_agents_out_of_service</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
+
+    <span class="n">execution_result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">execution_error</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">execute</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">execution_result</span> <span class="o">=</span> <span class="n">cosim</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">execution_error</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;active_project&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;active_study_case&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">study_case</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;available_projects&quot;</span><span class="p">:</span> <span class="n">available_projects</span><span class="p">,</span>
+        <span class="s2">&quot;available_study_cases&quot;</span><span class="p">:</span> <span class="n">available_cases</span><span class="p">,</span>
+        <span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;agent_created&quot;</span><span class="p">:</span> <span class="n">created</span><span class="p">,</span>
+        <span class="s2">&quot;disabled_agents&quot;</span><span class="p">:</span> <span class="n">disabled_agents</span><span class="p">,</span>
+        <span class="s2">&quot;agent_path&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;cosim_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">cosim</span><span class="p">),</span>
+        <span class="s2">&quot;iopt_type&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="s2">&quot;iopt_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;task&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cosim</span><span class="p">,</span> <span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;cfmu&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">cosim</span><span class="o">.</span><span class="n">GetAttribute</span><span class="p">(</span><span class="s2">&quot;cfmu&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[])],</span>
+        <span class="s2">&quot;execute_requested&quot;</span><span class="p">:</span> <span class="n">execute</span><span class="p">,</span>
+        <span class="s2">&quot;execute_result&quot;</span><span class="p">:</span> <span class="n">execution_result</span><span class="p">,</span>
+        <span class="s2">&quot;execute_error&quot;</span><span class="p">:</span> <span class="n">execution_error</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="probe_powerfactory">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.probe_powerfactory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">probe_powerfactory</span><span class="p">(</span><span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">study_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_engine</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="n">report</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;python_dirs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">candidate_powerfactory_python_dirs</span><span class="p">()],</span>
+        <span class="s2">&quot;module_loaded&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;license_available&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">powerfactory</span><span class="p">,</span> <span class="n">module_dir</span> <span class="o">=</span> <span class="n">load_powerfactory_module</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">report</span>
+
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;module_loaded&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;module_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">module_dir</span><span class="p">)</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;module&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">powerfactory</span><span class="p">,</span> <span class="s2">&quot;__file__&quot;</span><span class="p">,</span> <span class="s2">&quot;powerfactory&quot;</span><span class="p">)</span>
+
+    <span class="n">app</span><span class="p">,</span> <span class="n">acquisition_method</span> <span class="o">=</span> <span class="n">_get_application</span><span class="p">(</span><span class="n">powerfactory</span><span class="p">,</span> <span class="n">allow_engine</span><span class="o">=</span><span class="n">allow_engine</span><span class="p">)</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;application_method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acquisition_method</span>
+    <span class="n">report</span><span class="p">[</span><span class="s2">&quot;license_available&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Could not obtain a PowerFactory application handle; open PowerFactory first or pass --allow-engine&quot;</span>
+        <span class="k">return</span> <span class="n">report</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span><span class="p">,</span> <span class="n">available_projects</span> <span class="o">=</span> <span class="n">activate_project</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;available_projects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">available_projects</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;active_project&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">study_case</span><span class="p">,</span> <span class="n">available_cases</span> <span class="o">=</span> <span class="n">activate_study_case</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">study_case_name</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;available_study_cases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">available_cases</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;active_study_case&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">study_case</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">study_case</span><span class="p">,</span> <span class="s2">&quot;loc_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;cosimulation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inspect_cosimulation_objects</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">report</span></div>
+
+
+
+<div class="viewcode-block" id="export_pilot_for_powerfactory">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.export_pilot_for_powerfactory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_pilot_for_powerfactory</span><span class="p">(</span><span class="n">pilot_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="n">pilot</span> <span class="o">=</span> <span class="n">get_powerfactory_pilot_model</span><span class="p">(</span><span class="n">pilot_name</span><span class="p">)</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">pilot_output_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">pilot</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">export_fmu</span><span class="p">(</span>
+        <span class="n">pilot</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">ExportConfig</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">pilot</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+            <span class="n">target_platform</span><span class="o">=</span><span class="n">detect_target_platform</span><span class="p">(),</span>
+            <span class="n">compile_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="powerfactory_manual_checklist">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.powerfactory_manual_checklist">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">powerfactory_manual_checklist</span><span class="p">(</span><span class="n">fmu_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">study_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;Abre PowerFactory con licencia activa.&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">project_name</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Activa el proyecto `</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">`.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Activa el proyecto de pruebas que quieras usar.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">study_case_name</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Activa el estudio `</span><span class="si">{</span><span class="n">study_case_name</span><span class="si">}</span><span class="s2">`.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Activa el study case donde vayas a probar el FMU.&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;Importa el FMU `</span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">` como bloque de Co-Simulation FMI 2.0.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Conecta las entradas/salidas del piloto a fuentes/medidas simples del caso de estudio.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Ejecuta una simulacion RMS o EMT segun el piloto exportado y verifica que las magnitudes cambian de forma coherente.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Si PowerFactory rechaza el FMU, guarda el mensaje exacto para ajustar el wrapper/import path.&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">lines</span></div>
+
+
+
+<div class="viewcode-block" id="build_parser">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.build_parser">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Prepare and probe PowerFactory validation for VeraGrid FMU pilots&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;pilot&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;rms&quot;</span><span class="p">,</span> <span class="s2">&quot;emt&quot;</span><span class="p">],</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Pilot FMU to export for PowerFactory&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;dist&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--project&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;PowerFactory project to activate&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--study-case&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;PowerFactory study case to activate&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--agent-name&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;ElmAgent name to create or update inside PowerFactory&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--allow-engine&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Allow launching PowerFactory in engine mode if no GUI instance is attached&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--configure&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Configure ComCosim and the ElmAgent automatically&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--execute&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Execute ComCosim after configuring it&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.exporter.html#VeraGridEngine.IO.fmu.exporter.pf_validation.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">build_parser</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="n">_default_ide_argv</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">fmu_path</span> <span class="o">=</span> <span class="n">export_pilot_for_powerfactory</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">pilot</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">probe_powerfactory</span><span class="p">(</span><span class="n">project_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="n">study_case_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">study_case</span><span class="p">,</span> <span class="n">allow_engine</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">allow_engine</span><span class="p">)</span>
+    <span class="n">configuration</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">configure</span> <span class="ow">and</span> <span class="n">report</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license_available&quot;</span><span class="p">):</span>
+        <span class="n">powerfactory</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_powerfactory_module</span><span class="p">()</span>
+        <span class="n">app</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_application</span><span class="p">(</span><span class="n">powerfactory</span><span class="p">,</span> <span class="n">allow_engine</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">allow_engine</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">configuration</span> <span class="o">=</span> <span class="n">configure_powerfactory_cosimulation</span><span class="p">(</span>
+                <span class="n">app</span><span class="p">,</span>
+                <span class="n">fmu_path</span><span class="o">=</span><span class="n">fmu_path</span><span class="p">,</span>
+                <span class="n">project_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+                <span class="n">study_case_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">study_case</span><span class="p">,</span>
+                <span class="n">agent_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">agent_name</span><span class="p">,</span>
+                <span class="n">execute</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">execute</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fmu_path&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">fmu_path</span><span class="p">),</span>
+            <span class="s2">&quot;powerfactory&quot;</span><span class="p">:</span> <span class="n">report</span><span class="p">,</span>
+            <span class="s2">&quot;configuration&quot;</span><span class="p">:</span> <span class="n">configuration</span><span class="p">,</span>
+            <span class="s2">&quot;manual_checklist&quot;</span><span class="p">:</span> <span class="n">powerfactory_manual_checklist</span><span class="p">(</span><span class="n">fmu_path</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="n">study_case_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">study_case</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

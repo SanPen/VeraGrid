@@ -1,0 +1,67 @@
+# Kc+1/sTi (parameter input) [signal: hold/rst; param: K_p/T_p/theta_p+3; 1 state]
+
+This is Basic Block Catalog type `450` (`Kc+1/sTi [(p`). It processes measurement or control signals for use inside a dynamic control model.
+
+<!-- veragrid-block-introduction:start -->
+**Kc+1/sTi (parameter input) [signal: hold/rst; param: K_p/T_p/theta_p+3; 1 state]** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Control and Measurement / Controllers`.
+- Inputs: 3.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 6.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x}{dt} = (proc_{select\_11} \cdot 0 + (1 - proc_{select\_11}) \cdot \frac{1}{Kc+1/sTi [(p_{Ti}} \cdot yi)
+$$
+
+$$
+0 = (yo - (proc_{select\_13} \cdot proc_{lastvalue\_12} + (1 - proc_{select\_13}) \cdot (y_{min} + (Kc+1/sTi [(p_{Kc} \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{min}) \cdot \Theta\left(Kc+1/sTi [(p_{Kc} \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{min}\right) - (Kc+1/sTi [(p_{Kc} \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{max}) \cdot \Theta\left(Kc+1/sTi [(p_{Kc} \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{max}\right))))
+$$
+
+$$
+Kc+1/sTi [(p_{tau\_c}(t_0) = (proc_{selfix\_2} \cdot (0.1T_{p} \cdot \Theta\left(0.1T_{p} - 0.8theta_{p}\right) + 0.8theta_{p} \cdot (1 - \Theta\left(0.1T_{p} - 0.8theta_{p}\right))) + (1 - proc_{selfix\_2}) \cdot (proc_{selfix\_1} \cdot (1T_{p} \cdot \Theta\left(1T_{p} - 8theta_{p}\right) + 8theta_{p} \cdot (1 - \Theta\left(1T_{p} - 8theta_{p}\right))) + (1 - proc_{selfix\_1}) \cdot (proc_{selfix\_0} \cdot (10T_{p} \cdot \Theta\left(10T_{p} - 80theta_{p}\right) + 80theta_{p} \cdot (1 - \Theta\left(10T_{p} - 80theta_{p}\right))) + (1 - proc_{selfix\_0}) \cdot 0)))
+$$
+
+$$
+Kc+1/sTi [(p_{Kc}(t_0) = (proc_{selfix\_6} \cdot \frac{\frac{1}{K_{p}} \cdot T_{p}}{theta_{p} + Kc+1/sTi [(p_{tau\_c}} + (1 - proc_{selfix\_6}) \cdot (proc_{selfix\_5} \cdot \frac{\frac{1}{K_{p}} \cdot T_{p}}{theta_{p} + Kc+1/sTi [(p_{tau\_c}} + (1 - proc_{selfix\_5}) \cdot (proc_{selfix\_4} \cdot \frac{\frac{1}{K_{p}} \cdot T_{p}}{theta_{p} + Kc+1/sTi [(p_{tau\_c}} + (1 - proc_{selfix\_4}) \cdot (proc_{selfix\_3} \cdot \frac{0.586}{K_{p}} \cdot (\frac{T_{p}}{theta_{p} \cdot \Theta\left(theta_{p} - 1 \times 10^{-6}\right) + 1 \times 10^{-6}(1 - \Theta\left(theta_{p} - 1 \times 10^{-6}\right))})^{0.916} + (1 - proc_{selfix\_3}) \cdot \frac{0.859}{K_{p}} \cdot (\frac{T_{p}}{theta_{p} \cdot \Theta\left(theta_{p} - 1 \times 10^{-6}\right) + 1 \times 10^{-6}(1 - \Theta\left(theta_{p} - 1 \times 10^{-6}\right))})^{0.977}))))
+$$
+
+$$
+Kc+1/sTi [(p_{Ti}(t_0) = (proc_{selfix\_10} \cdot T_{p} + (1 - proc_{selfix\_10}) \cdot (proc_{selfix\_9} \cdot T_{p} + (1 - proc_{selfix\_9}) \cdot (proc_{selfix\_8} \cdot T_{p} + (1 - proc_{selfix\_8}) \cdot (proc_{selfix\_7} \cdot \frac{T_{p}}{1.03 - 0.165\frac{theta_{p} \cdot \Theta\left(theta_{p} - 1 \times 10^{-6}\right) + 1 \times 10^{-6}(1 - \Theta\left(theta_{p} - 1 \times 10^{-6}\right))}{T_{p}}} + (1 - proc_{selfix\_7}) \cdot \frac{T_{p}}{0.674} \cdot (\frac{theta_{p} \cdot \Theta\left(theta_{p} - 1 \times 10^{-6}\right) + 1 \times 10^{-6}(1 - \Theta\left(theta_{p} - 1 \times 10^{-6}\right))}{T_{p}})^{0.68}))))
+$$
+
+$$
+Kc+1/sTi [(p_{x\_init}(t_0) = x
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Input | `hold` | Input signal consumed by the block | model-dependent |
+| Input | `rst` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `Kc+1/sTi [(p__x` | Internal dynamic state | model-dependent |
+| Parameter | `K_p` | Configurable model parameter | model-dependent |
+| Parameter | `T_p` | Configurable model parameter | model-dependent |
+| Parameter | `theta_p` | Configurable model parameter | model-dependent |
+| Parameter | `ControlTuning` | Configurable model parameter | model-dependent |
+| Parameter | `y_max` | Configurable model parameter | model-dependent |
+| Parameter | `y_min` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

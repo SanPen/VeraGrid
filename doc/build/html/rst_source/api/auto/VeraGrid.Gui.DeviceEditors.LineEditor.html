@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.DeviceEditors.LineEditor package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.DeviceEditors.LoadDesigner package" href="VeraGrid.Gui.DeviceEditors.LoadDesigner.html" />
+    <link rel="prev" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard package" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.DeviceEditors.html">VeraGrid.Gui.DeviceEditors package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.DeviceEditors.LineEditor package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.DeviceEditors.LineEditor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-deviceeditors-lineeditor-package">
+<h1>VeraGrid.Gui.DeviceEditors.LineEditor package<a class="headerlink" href="#veragrid-gui-deviceeditors-lineeditor-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor">
+<span id="veragrid-gui-deviceeditors-lineeditor-line-device-editor-module"></span><h2>VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">EmbeddedLineDesignEditorWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_device_editor.html#EmbeddedLineDesignEditorWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor" title="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LineEditor</span></code></a></p>
+<p>Embedded line-design editor widget used inside <code class="docutils literal notranslate"><span class="pre">LineDeviceEditor</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_device_editor.html#EmbeddedLineDesignEditorWidget.accept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.accept" title="Link to this definition"></a></dt>
+<dd><p>Intercept dialog acceptance so the embedded widget does not close itself.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.apply_changes">
+<span class="sig-name descname"><span class="pre">apply_changes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_device_editor.html#EmbeddedLineDesignEditorWidget.apply_changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.apply_changes" title="Link to this definition"></a></dt>
+<dd><p>Apply current line-design fields to the API object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when values were successfully applied.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.design_applied">
+<span class="sig-name descname"><span class="pre">design_applied</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.design_applied" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;EmbeddedLineDesignEditorWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;LineEditor&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#41</span> <span class="pre">type=Signal,</span> <span class="pre">signature=design_applied(bool),</span> <span class="pre">parameters=bool</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">LineDeviceEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_device_editor.html#LineDeviceEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.html#VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor" title="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code></a></p>
+<p>Specialized line editor that extends <code class="docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor.api_object">
+<span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor.api_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor.line_design_widget">
+<span class="sig-name descname"><span class="pre">line_design_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget" title="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget"><span class="pre">EmbeddedLineDesignEditorWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor.line_design_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LineDeviceEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;TemplateDeviceEditor&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditorDialog">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">LineDeviceEditorDialog</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditorDialog" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor" title="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LineDeviceEditor</span></code></a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.bus_from_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">bus_from_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.bus_from_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.bus_to_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">bus_to_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.bus_to_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.circuit_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">circuit_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.circuit_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.dialog_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">dialog_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor" title="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor"><span class="pre">LineDeviceEditor</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.dialog_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.line_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">line_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.line_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.qt_app">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.</span></span><span class="sig-name descname"><span class="pre">qt_app</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QApplication</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.qt_app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.LineEditor.line_editor">
+<span id="veragrid-gui-deviceeditors-lineeditor-line-editor-module"></span><h2>VeraGrid.Gui.DeviceEditors.LineEditor.line_editor module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.LineEditor.line_editor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.</span></span><span class="sig-name descname"><span class="pre">LineEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Line editor controller backed by a Qt Designer <cite>.ui</cite> file.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.accept_click">
+<span class="sig-name descname"><span class="pre">accept_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.accept_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.accept_click" title="Link to this definition"></a></dt>
+<dd><p>Persist the current line design values into the model and close the dialog.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.current_template">
+<span class="sig-name descname"><span class="pre">current_template</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.current_template" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.frequency">
+<span class="sig-name descname"><span class="pre">frequency</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.frequency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.line">
+<span class="sig-name descname"><span class="pre">line</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.load_template">
+<span class="sig-name descname"><span class="pre">load_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.load_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.load_template" title="Link to this definition"></a></dt>
+<dd><p>Apply the selected template values to the editor widgets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>template</strong> – Template instance selected by the user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.load_template_btn_click">
+<span class="sig-name descname"><span class="pre">load_template_btn_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.load_template_btn_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.load_template_btn_click" title="Link to this definition"></a></dt>
+<dd><p>Load the currently selected catalogue template into the form.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.sbase">
+<span class="sig-name descname"><span class="pre">sbase</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.sbase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.selected_template">
+<span class="sig-name descname"><span class="pre">selected_template</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.selected_template" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LineEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.templates">
+<span class="sig-name descname"><span class="pre">templates</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.templates" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.update_max_circuits">
+<span class="sig-name descname"><span class="pre">update_max_circuits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.update_max_circuits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor.LineEditor.update_max_circuits" title="Link to this definition"></a></dt>
+<dd><p>Update circuit index bounds according to the current template selection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui">
+<span id="veragrid-gui-deviceeditors-lineeditor-line-editor-gui-module"></span><h2>VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.Ui_LineEditorDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.</span></span><span class="sig-name descname"><span class="pre">Ui_LineEditorDialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor_gui.html#Ui_LineEditorDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.Ui_LineEditorDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.Ui_LineEditorDialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LineEditorDialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor_gui.html#Ui_LineEditorDialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.Ui_LineEditorDialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.Ui_LineEditorDialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LineEditorDialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor_gui.html#Ui_LineEditorDialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui.Ui_LineEditorDialog.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.LineEditor.update_gui_file">
+<span id="veragrid-gui-deviceeditors-lineeditor-update-gui-file-module"></span><h2>VeraGrid.Gui.DeviceEditors.LineEditor.update_gui_file module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.LineEditor.update_gui_file" title="Link to this heading"></a></h2>
+<p>Script to update correctly the main GUI (.py) file from the Qt design (.ui) file</p>
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.LineEditor">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.LineEditor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.</span></span><span class="sig-name descname"><span class="pre">LineDeviceEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_device_editor.html#LineDeviceEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.html#VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor" title="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code></a></p>
+<p>Specialized line editor that extends <code class="docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor.api_object">
+<span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor.api_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor.line_design_widget">
+<span class="sig-name descname"><span class="pre">line_design_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget" title="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.EmbeddedLineDesignEditorWidget"><span class="pre">EmbeddedLineDesignEditorWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor.line_design_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LineDeviceEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;TemplateDeviceEditor&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditorDialog">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.</span></span><span class="sig-name descname"><span class="pre">LineDeviceEditorDialog</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineDeviceEditorDialog" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor" title="VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor.LineDeviceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LineDeviceEditor</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.LineEditor.</span></span><span class="sig-name descname"><span class="pre">LineEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Line editor controller backed by a Qt Designer <cite>.ui</cite> file.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.accept_click">
+<span class="sig-name descname"><span class="pre">accept_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.accept_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.accept_click" title="Link to this definition"></a></dt>
+<dd><p>Persist the current line design values into the model and close the dialog.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.current_template">
+<span class="sig-name descname"><span class="pre">current_template</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.current_template" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.frequency">
+<span class="sig-name descname"><span class="pre">frequency</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.frequency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.line">
+<span class="sig-name descname"><span class="pre">line</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.load_template">
+<span class="sig-name descname"><span class="pre">load_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.load_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.load_template" title="Link to this definition"></a></dt>
+<dd><p>Apply the selected template values to the editor widgets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>template</strong> – Template instance selected by the user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.load_template_btn_click">
+<span class="sig-name descname"><span class="pre">load_template_btn_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.load_template_btn_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.load_template_btn_click" title="Link to this definition"></a></dt>
+<dd><p>Load the currently selected catalogue template into the form.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.sbase">
+<span class="sig-name descname"><span class="pre">sbase</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.sbase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.selected_template">
+<span class="sig-name descname"><span class="pre">selected_template</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.selected_template" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LineEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.templates">
+<span class="sig-name descname"><span class="pre">templates</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.templates" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.update_max_circuits">
+<span class="sig-name descname"><span class="pre">update_max_circuits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/LineEditor/line_editor.html#LineEditor.update_max_circuits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.LineEditor.LineEditor.update_max_circuits" title="Link to this definition"></a></dt>
+<dd><p>Update circuit index bounds according to the current template selection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.DeviceEditors.LoadDesigner.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.DeviceEditors.LoadDesigner package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

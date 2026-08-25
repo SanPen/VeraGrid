@@ -1,0 +1,837 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Events.dynamic_plot_entry &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Events.dynamic_plot_entry</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Events.dynamic_plot_entry</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="c1"># from VeraGridEngine.Devices.types import ALL_DEV_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditableDevice</span><span class="p">,</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.dynamic_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicPlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.rms_events_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsEventsGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DeviceType</span><span class="p">,</span> <span class="n">SubObjectType</span><span class="p">,</span> <span class="n">PrpCat</span><span class="p">,</span> <span class="n">PlotSimulationType</span><span class="p">,</span>
+                                         <span class="n">DynamicPlotEntryKind</span><span class="p">,</span> <span class="n">DynamicPlotEntryRole</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DynamicPlotEntry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.dynamic_plot_entry.DynamicPlotEntry">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicPlotEntry</span><span class="p">(</span><span class="n">EditableDevice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Persistent dynamic plot curve reference.</span>
+
+<span class="sd">    The entry stores the semantic identity of one requested dynamic curve so it</span>
+<span class="sd">    can exist before simulation results are available and can later be rebound to</span>
+<span class="sd">    runtime result series. Stable identifiers such as event-group and device</span>
+<span class="sd">    idtags are preferred over visible names.</span>
+
+<span class="sd">    The legacy ``variable`` and ``group`` references are preserved as optional</span>
+<span class="sd">    compatibility hints, but the canonical identity is the explicit semantic</span>
+<span class="sd">    fields declared on this asset. Unresolved entries must remain stored in the</span>
+<span class="sd">    project so later simulations can try to bind them again.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;variable&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;plot&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;group&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;device&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_simulation_type&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_entry_kind&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_role&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_event_group_idtag&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_event_group_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_curve_device_type&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_device_idtag&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_device_name_hint&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_variable_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_result_path_kind&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_variable_custom_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_enabled&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_runtime_series_key_payload&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">VarType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;parameter that the event changes&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">DynamicPlotGroupDevice</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Plot group&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;group&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsEventsGroupDevice</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;RmsEvent group&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;simulation_type&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">PlotSimulationType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Simulation family for this persistent curve reference.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;entry_kind&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DynamicPlotEntryKind</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Whether this persistent entry references a dynamic variable or a model parameter.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;role&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DynamicPlotEntryRole</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Role played by this persistent entry inside the owning dynamic plot.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;event_group_idtag&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Stable event-group identifier preferred for result binding.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;event_group_name&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Event-group visible name used as display text and fallback binding hint.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;curve_device_type&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Device type that owns the referenced dynamic variable.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;device_idtag&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Stable device identifier preferred for result binding.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;device_name_hint&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Visible device-name hint used only for display and diagnostics.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;variable_name&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Dynamic variable name requested by the user.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;result_path_kind&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Result namespace such as values or diff_values.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;variable_custom_name&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Optional custom visible name remembered for this variable.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;enabled&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Whether this persistent curve definition is enabled.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;runtime_series_key_payload&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Optional cached runtime series identity payload used as an exact binding hint.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">variable</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">plot</span><span class="p">:</span> <span class="n">DynamicPlot</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">group</span><span class="p">:</span> <span class="n">RmsEventsGroup</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">device</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">simulation_type</span><span class="p">:</span> <span class="n">PlotSimulationType</span> <span class="o">=</span> <span class="n">PlotSimulationType</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span>
+                  <span class="n">entry_kind</span><span class="p">:</span> <span class="n">DynamicPlotEntryKind</span> <span class="o">=</span> <span class="n">DynamicPlotEntryKind</span><span class="o">.</span><span class="n">VARIABLE</span><span class="p">,</span>
+                  <span class="n">role</span><span class="p">:</span> <span class="n">DynamicPlotEntryRole</span> <span class="o">=</span> <span class="n">DynamicPlotEntryRole</span><span class="o">.</span><span class="n">CURVE</span><span class="p">,</span>
+                  <span class="n">event_group_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">event_group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">curve_device_type</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span><span class="p">,</span>
+                  <span class="n">device_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">device_name_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">variable_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">result_path_kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">variable_custom_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="n">runtime_series_key_payload</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                  <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RmsEvent&quot;</span><span class="p">,</span>
+                  <span class="n">code</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                  <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one persistent dynamic curve definition.</span>
+
+<span class="sd">        :param variable: Legacy symbolic variable hint, when still available.</span>
+<span class="sd">        :param plot: Persistent parent plot group.</span>
+<span class="sd">        :param group: Legacy RMS event-group hint.</span>
+<span class="sd">        :param device: Optional legacy device hint.</span>
+<span class="sd">        :param simulation_type: Simulation family identifier.</span>
+<span class="sd">        :param entry_kind: Semantic entry kind.</span>
+<span class="sd">        :param role: Semantic role within the owning plot.</span>
+<span class="sd">        :param event_group_idtag: Stable event-group identifier.</span>
+<span class="sd">        :param event_group_name: Visible event-group name.</span>
+<span class="sd">        :param curve_device_type: Device type that owns the curve.</span>
+<span class="sd">        :param device_idtag: Stable device identifier.</span>
+<span class="sd">        :param device_name_hint: Visible device-name hint.</span>
+<span class="sd">        :param variable_name: Variable name selected by the user.</span>
+<span class="sd">        :param result_path_kind: Result namespace such as ``values`` or ``diff_values``.</span>
+<span class="sd">        :param variable_custom_name: Optional remembered custom visible variable name.</span>
+<span class="sd">        :param enabled: ``True`` when the curve is enabled.</span>
+<span class="sd">        :param runtime_series_key_payload: Optional cached runtime exact-match payload.</span>
+<span class="sd">        :param idtag: Persistent entry identifier.</span>
+<span class="sd">        :param name: Entry name.</span>
+<span class="sd">        :param code: Secondary code.</span>
+<span class="sd">        :param comment: Optional user comment.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">EditableDevice</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">DynamicPlotEntry</span><span class="p">,</span>
+                                <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">:</span> <span class="n">RmsEventsGroup</span> <span class="o">=</span> <span class="n">group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">:</span> <span class="n">DynamicPlot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_type</span><span class="p">:</span> <span class="n">PlotSimulationType</span> <span class="o">=</span> <span class="n">PlotSimulationType</span><span class="o">.</span><span class="n">RMS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_entry_kind</span><span class="p">:</span> <span class="n">DynamicPlotEntryKind</span> <span class="o">=</span> <span class="n">DynamicPlotEntryKind</span><span class="o">.</span><span class="n">VARIABLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_role</span><span class="p">:</span> <span class="n">DynamicPlotEntryRole</span> <span class="o">=</span> <span class="n">DynamicPlotEntryRole</span><span class="o">.</span><span class="n">CURVE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_type</span> <span class="o">=</span> <span class="n">simulation_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entry_kind</span> <span class="o">=</span> <span class="n">entry_kind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">=</span> <span class="n">role</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_group_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">event_group_idtag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">event_group_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curve_device_type</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">curve_device_type</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve_device_type</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="k">else</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">device_idtag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_name_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">device_name_hint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result_path_kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_path_kind</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_custom_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">variable_custom_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_series_key_payload</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime_series_key_payload</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlotSimulationType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the simulation family identifier.</span>
+
+<span class="sd">        :return: Simulation family identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_type</span>
+
+    <span class="nd">@simulation_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">PlotSimulationType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the simulation family identifier.</span>
+
+<span class="sd">        :param val: Simulation family identifier.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">PlotSimulationType</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_type</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported plot simulation type&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event_group_idtag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the stable event-group identifier.</span>
+
+<span class="sd">        :return: Event-group idtag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_group_idtag</span>
+
+    <span class="nd">@event_group_idtag</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event_group_idtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the stable event-group identifier.</span>
+
+<span class="sd">        :param val: Event-group idtag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_group_idtag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">entry_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicPlotEntryKind</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the semantic kind of this persistent plot entry.</span>
+
+<span class="sd">        :return: Entry kind.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entry_kind</span>
+
+    <span class="nd">@entry_kind</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">entry_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">DynamicPlotEntryKind</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the semantic kind of this persistent plot entry.</span>
+
+<span class="sd">        :param val: Entry kind.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">DynamicPlotEntryKind</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_entry_kind</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported dynamic plot entry kind&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">role</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicPlotEntryRole</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the semantic role of this persistent plot entry.</span>
+
+<span class="sd">        :return: Entry role.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_role</span>
+
+    <span class="nd">@role</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">DynamicPlotEntryRole</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the semantic role of this persistent plot entry.</span>
+
+<span class="sd">        :param val: Entry role.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">DynamicPlotEntryRole</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_role</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported dynamic plot entry role&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event_group_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the visible event-group name.</span>
+
+<span class="sd">        :return: Event-group visible name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_group_name</span>
+
+    <span class="nd">@event_group_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event_group_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the visible event-group name.</span>
+
+<span class="sd">        :param val: Event-group visible name.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_group_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">curve_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the device type that owns the referenced variable.</span>
+
+<span class="sd">        :return: Device type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curve_device_type</span>
+
+    <span class="nd">@curve_device_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">curve_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the device type that owns the referenced variable.</span>
+
+<span class="sd">        :param val: Device type.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curve_device_type</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curve_device_type</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_idtag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the stable device identifier.</span>
+
+<span class="sd">        :return: Device idtag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_idtag</span>
+
+    <span class="nd">@device_idtag</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_idtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the stable device identifier.</span>
+
+<span class="sd">        :param val: Device idtag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_idtag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_name_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the visible device-name hint.</span>
+
+<span class="sd">        :return: Device-name hint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_name_hint</span>
+
+    <span class="nd">@device_name_hint</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_name_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the visible device-name hint.</span>
+
+<span class="sd">        :param val: Device-name hint.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_name_hint</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variable_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the requested variable name.</span>
+
+<span class="sd">        :return: Variable name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span>
+
+    <span class="nd">@variable_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variable_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the requested variable name.</span>
+
+<span class="sd">        :param val: Variable name.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">result_path_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the result namespace for this curve.</span>
+
+<span class="sd">        :return: Result namespace identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_path_kind</span>
+
+    <span class="nd">@result_path_kind</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">result_path_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the result namespace for this curve.</span>
+
+<span class="sd">        :param val: Result namespace identifier.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result_path_kind</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variable_custom_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the remembered custom visible variable name.</span>
+
+<span class="sd">        :return: Custom visible variable name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable_custom_name</span>
+
+    <span class="nd">@variable_custom_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variable_custom_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the remembered custom visible variable name.</span>
+
+<span class="sd">        :param val: Custom visible variable name.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_custom_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get whether the curve is enabled.</span>
+
+<span class="sd">        :return: ``True`` when enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span>
+
+    <span class="nd">@enabled</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set whether the curve is enabled.</span>
+
+<span class="sd">        :param val: Enabled state.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runtime_series_key_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the cached runtime exact-match payload.</span>
+
+<span class="sd">        :return: Serialized runtime series key payload.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_series_key_payload</span>
+
+    <span class="nd">@runtime_series_key_payload</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runtime_series_key_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the cached runtime exact-match payload.</span>
+
+<span class="sd">        :param val: Serialized runtime series key payload.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_series_key_payload</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compare_dynamic_plots">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.dynamic_plot_entry.compare_dynamic_plots">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_dynamic_plots</span><span class="p">(</span><span class="n">dyn_plots1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicPlot</span><span class="p">],</span>
+                          <span class="n">dyn_plots2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicPlot</span><span class="p">],</span>
+                          <span class="n">dyn_plots1_entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicPlotEntry</span><span class="p">],</span>
+                          <span class="n">dyn_plots2_entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicPlotEntry</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare persistent dynamic plot groups and entries after a save/load cycle.</span>
+
+<span class="sd">    The comparison validates both plot groups and their curve entries using the</span>
+<span class="sd">    registered persistence schema. Entry-to-plot references are compared through</span>
+<span class="sd">    the corresponding plot position so the check does not depend on Python object</span>
+<span class="sd">    identity after reloading the file.</span>
+
+<span class="sd">    :param dyn_plots1: Dynamic plot collection from the original grid.</span>
+<span class="sd">    :param dyn_plots2: Dynamic plot collection from the reloaded grid.</span>
+<span class="sd">    :param dyn_plots1_entries: Dynamic plot entry collection from the original grid.</span>
+<span class="sd">    :param dyn_plots2_entries: Dynamic plot entry collection from the reloaded grid.</span>
+<span class="sd">    :return: ``True`` when both persistent collections are exactly equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plot_count1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dyn_plots1</span><span class="p">)</span>
+    <span class="n">plot_count2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dyn_plots2</span><span class="p">)</span>
+    <span class="n">entry_count1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dyn_plots1_entries</span><span class="p">)</span>
+    <span class="n">entry_count2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dyn_plots2_entries</span><span class="p">)</span>
+
+    <span class="c1"># The plot collections must preserve their size and ordering because entries</span>
+    <span class="c1"># refer back to plots through this stable serialized structure.</span>
+    <span class="k">if</span> <span class="n">plot_count1</span> <span class="o">==</span> <span class="n">plot_count2</span><span class="p">:</span>
+        <span class="n">plot_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">plot_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">plot_count1</span><span class="p">):</span>
+            <span class="n">plot1</span><span class="p">:</span> <span class="n">DynamicPlot</span> <span class="o">=</span> <span class="n">dyn_plots1</span><span class="p">[</span><span class="n">plot_index</span><span class="p">]</span>
+            <span class="n">plot2</span><span class="p">:</span> <span class="n">DynamicPlot</span> <span class="o">=</span> <span class="n">dyn_plots2</span><span class="p">[</span><span class="n">plot_index</span><span class="p">]</span>
+
+            <span class="c1"># Comparing registered properties aligns the equality check with the</span>
+            <span class="c1"># exact fields that the serializer persists into the project file.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">compare_dynamic_plot</span><span class="p">(</span><span class="n">plot1</span><span class="o">=</span><span class="n">plot1</span><span class="p">,</span> <span class="n">plot2</span><span class="o">=</span><span class="n">plot2</span><span class="p">):</span>
+                <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># The entry collections must preserve both the per-entry payload and the link</span>
+    <span class="c1"># to the owning persistent plot group.</span>
+    <span class="k">if</span> <span class="n">entry_count1</span> <span class="o">==</span> <span class="n">entry_count2</span><span class="p">:</span>
+        <span class="n">entry_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">entry_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">entry_count1</span><span class="p">):</span>
+            <span class="n">entry1</span><span class="p">:</span> <span class="n">DynamicPlotEntry</span> <span class="o">=</span> <span class="n">dyn_plots1_entries</span><span class="p">[</span><span class="n">entry_index</span><span class="p">]</span>
+            <span class="n">entry2</span><span class="p">:</span> <span class="n">DynamicPlotEntry</span> <span class="o">=</span> <span class="n">dyn_plots2_entries</span><span class="p">[</span><span class="n">entry_index</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">compare_dynamic_plot_entry</span><span class="p">(</span><span class="n">entry1</span><span class="o">=</span><span class="n">entry1</span><span class="p">,</span>
+                                              <span class="n">entry2</span><span class="o">=</span><span class="n">entry2</span><span class="p">,</span>
+                                              <span class="n">dyn_plots1</span><span class="o">=</span><span class="n">dyn_plots1</span><span class="p">,</span>
+                                              <span class="n">dyn_plots2</span><span class="o">=</span><span class="n">dyn_plots2</span><span class="p">):</span>
+                <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">equal</span></div>
+
+
+
+<div class="viewcode-block" id="compare_dynamic_plot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.dynamic_plot_entry.compare_dynamic_plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_dynamic_plot</span><span class="p">(</span><span class="n">plot1</span><span class="p">:</span> <span class="n">DynamicPlot</span><span class="p">,</span> <span class="n">plot2</span><span class="p">:</span> <span class="n">DynamicPlot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two persistent dynamic plot groups.</span>
+
+<span class="sd">    The plot comparison uses the saved headers and saved values because those are</span>
+<span class="sd">    the fields that define the project persistence contract for the plot group.</span>
+
+<span class="sd">    :param plot1: Original plot group.</span>
+<span class="sd">    :param plot2: Reloaded plot group.</span>
+<span class="sd">    :return: ``True`` when the two plot groups are equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plot1</span><span class="o">.</span><span class="n">get_headers</span><span class="p">())</span>
+    <span class="n">headers2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plot2</span><span class="o">.</span><span class="n">get_headers</span><span class="p">())</span>
+    <span class="n">values1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plot1</span><span class="o">.</span><span class="n">get_save_data</span><span class="p">())</span>
+    <span class="n">values2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plot2</span><span class="o">.</span><span class="n">get_save_data</span><span class="p">())</span>
+    <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># The saved schema must match before individual fields can be trusted as a</span>
+    <span class="c1"># meaningful equality comparison.</span>
+    <span class="k">if</span> <span class="n">headers1</span> <span class="o">==</span> <span class="n">headers2</span><span class="p">:</span>
+        <span class="n">header_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">header_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">headers1</span><span class="p">)):</span>
+            <span class="n">header_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">headers1</span><span class="p">[</span><span class="n">header_index</span><span class="p">]</span>
+            <span class="n">value1</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">values1</span><span class="p">[</span><span class="n">header_index</span><span class="p">]</span>
+            <span class="n">value2</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">values2</span><span class="p">[</span><span class="n">header_index</span><span class="p">]</span>
+
+            <span class="c1"># The runtime merge-tracking object is not part of the serialized</span>
+            <span class="c1"># payload, so it must not participate in the persistence comparison.</span>
+            <span class="k">if</span> <span class="n">header_name</span> <span class="o">!=</span> <span class="s1">&#39;diff_changes&#39;</span><span class="p">:</span>
+                <span class="c1"># Plot groups otherwise store only simple persistent values, so</span>
+                <span class="c1"># direct equality keeps the logic easy to inspect.</span>
+                <span class="k">if</span> <span class="n">value1</span> <span class="o">!=</span> <span class="n">value2</span><span class="p">:</span>
+                    <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">equal</span></div>
+
+
+
+<div class="viewcode-block" id="compare_dynamic_plot_entry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.dynamic_plot_entry.compare_dynamic_plot_entry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_dynamic_plot_entry</span><span class="p">(</span><span class="n">entry1</span><span class="p">:</span> <span class="n">DynamicPlotEntry</span><span class="p">,</span>
+                               <span class="n">entry2</span><span class="p">:</span> <span class="n">DynamicPlotEntry</span><span class="p">,</span>
+                               <span class="n">dyn_plots1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicPlot</span><span class="p">],</span>
+                               <span class="n">dyn_plots2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicPlot</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two persistent dynamic plot entries.</span>
+
+<span class="sd">    The entry comparison checks all saved fields and also verifies that the two</span>
+<span class="sd">    entries point to the corresponding plot position in their owning plot lists.</span>
+<span class="sd">    This keeps the comparison exact without relying on Python object identity</span>
+<span class="sd">    across two separately loaded grids.</span>
+
+<span class="sd">    :param entry1: Original entry.</span>
+<span class="sd">    :param entry2: Reloaded entry.</span>
+<span class="sd">    :param dyn_plots1: Original plot collection.</span>
+<span class="sd">    :param dyn_plots2: Reloaded plot collection.</span>
+<span class="sd">    :return: ``True`` when the two entries are equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry1</span><span class="o">.</span><span class="n">get_headers</span><span class="p">())</span>
+    <span class="n">headers2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry2</span><span class="o">.</span><span class="n">get_headers</span><span class="p">())</span>
+    <span class="n">values1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry1</span><span class="o">.</span><span class="n">get_save_data</span><span class="p">())</span>
+    <span class="n">values2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">entry2</span><span class="o">.</span><span class="n">get_save_data</span><span class="p">())</span>
+    <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">plot_index1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">plot_index2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># The saved field layout must be the same before any per-field comparison is valid.</span>
+    <span class="k">if</span> <span class="n">headers1</span> <span class="o">==</span> <span class="n">headers2</span><span class="p">:</span>
+        <span class="n">header_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">header_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">headers1</span><span class="p">)):</span>
+            <span class="n">header_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">headers1</span><span class="p">[</span><span class="n">header_index</span><span class="p">]</span>
+            <span class="n">value1</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">values1</span><span class="p">[</span><span class="n">header_index</span><span class="p">]</span>
+            <span class="n">value2</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">values2</span><span class="p">[</span><span class="n">header_index</span><span class="p">]</span>
+
+            <span class="c1"># The runtime merge-tracking object is not part of the serialized</span>
+            <span class="c1"># payload, so it must not participate in the persistence comparison.</span>
+            <span class="k">if</span> <span class="n">header_name</span> <span class="o">!=</span> <span class="s1">&#39;diff_changes&#39;</span><span class="p">:</span>
+                <span class="c1"># Entry plot references are checked with the explicit plot-index</span>
+                <span class="c1"># logic below because the object itself belongs to a different</span>
+                <span class="c1"># in-memory graph after reloading the file.</span>
+                <span class="k">if</span> <span class="n">header_name</span> <span class="o">!=</span> <span class="s1">&#39;plot&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value1</span> <span class="o">!=</span> <span class="n">value2</span><span class="p">:</span>
+                        <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># The owning plot relation is part of the saved graph, therefore each entry</span>
+    <span class="c1"># must resolve to the corresponding plot position in its own grid instance.</span>
+    <span class="k">if</span> <span class="n">entry1</span><span class="o">.</span><span class="n">plot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plot_list_index1</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">plot_list_index1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dyn_plots1</span><span class="p">)):</span>
+            <span class="n">candidate_plot1</span><span class="p">:</span> <span class="n">DynamicPlot</span> <span class="o">=</span> <span class="n">dyn_plots1</span><span class="p">[</span><span class="n">plot_list_index1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">candidate_plot1</span> <span class="ow">is</span> <span class="n">entry1</span><span class="o">.</span><span class="n">plot</span><span class="p">:</span>
+                <span class="n">plot_index1</span> <span class="o">=</span> <span class="n">plot_list_index1</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plot_index1</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">entry2</span><span class="o">.</span><span class="n">plot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plot_list_index2</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">plot_list_index2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dyn_plots2</span><span class="p">)):</span>
+            <span class="n">candidate_plot2</span><span class="p">:</span> <span class="n">DynamicPlot</span> <span class="o">=</span> <span class="n">dyn_plots2</span><span class="p">[</span><span class="n">plot_list_index2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">candidate_plot2</span> <span class="ow">is</span> <span class="n">entry2</span><span class="o">.</span><span class="n">plot</span><span class="p">:</span>
+                <span class="n">plot_index2</span> <span class="o">=</span> <span class="n">plot_list_index2</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plot_index2</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">plot_index1</span> <span class="o">!=</span> <span class="n">plot_index2</span><span class="p">:</span>
+        <span class="n">equal</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">equal</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

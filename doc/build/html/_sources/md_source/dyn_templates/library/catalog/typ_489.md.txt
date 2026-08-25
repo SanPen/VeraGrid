@@ -1,0 +1,46 @@
+# Triangle Wave Generator
+
+This is Basic Block Catalog type `489` (`Triangle Wave Generator`). It generates or evaluates a time-dependent waveform.
+
+<!-- veragrid-block-introduction:start -->
+**Triangle Wave Generator** belongs to an electromechanical machine or prime-mover model. It links electrical torque and flux with rotor speed, angle, mechanical power, or actuator dynamics, making it central to frequency, voltage, and rotor-angle stability studies.
+
+## Typical use
+
+- Use it when electrical transients must interact with rotating mass or machine controls.
+- Initialize torque, power, flux, and speed consistently with the solved power flow.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Waveforms and Time / Signal Generators`.
+- Inputs: 0.
+- Outputs: 1.
+- Declared states: 0.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (yo - \lvert(glob_{time} - Triangle Wave Generator_{toffset}) \cdot f \cdot 2 - \lfloor\frac{(glob_{time} - Triangle Wave Generator_{toffset}) \cdot f \cdot 2}{2}\rfloor \cdot 2 - 1\rvert)
+$$
+
+$$
+yo(t_0) = 0
+$$
+
+$$
+Triangle Wave Generator_{toffset}(t_0) = (glob_{time} - \frac{1}{2f})
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| Parameter | `f` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

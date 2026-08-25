@@ -1,0 +1,1030 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Topology.VoltageLevels.single_bar &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Topology.VoltageLevels.single_bar</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Topology.VoltageLevels.single_bar</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BusGraphicType</span><span class="p">,</span> <span class="n">SwitchGraphicType</span>
+
+
+<div class="viewcode-block" id="connect_bar_segments">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.connect_bar_segments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bar_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param grid:</span>
+<span class="sd">    :param bar_buses:</span>
+<span class="sd">    :param name:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># connect the bar dots if that&#39;s the case</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bar_buses</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ln</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_section_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">bus_from</span><span class="o">=</span><span class="n">bar_buses</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">bus_to</span><span class="o">=</span><span class="n">bar_buses</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">ln</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_single_bar_with_disconnectors">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.create_single_bar_with_disconnectors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_single_bar_with_disconnectors</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">n_bays</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_nom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">substation</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+        <span class="n">country</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">offset_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">offset_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">vl0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single-bar voltage level without disconnectors</span>
+<span class="sd">    :param name: Voltage level name</span>
+<span class="sd">    :param grid: MultiCircuit to do the mods</span>
+<span class="sd">    :param n_bays: number of bays (positions)</span>
+<span class="sd">    :param v_nom: Nominal voltage</span>
+<span class="sd">    :param substation: Substation where it belongs</span>
+<span class="sd">    :param country: Country (Optional)</span>
+<span class="sd">    :param bar_by_segments: Split the bar into segments</span>
+<span class="sd">    :param offset_x: x ofsset (px)</span>
+<span class="sd">    :param offset_y: y ofsset (px)</span>
+<span class="sd">    :param vl0: Voltage level to reuse (optional)</span>
+<span class="sd">    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">vl0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vl0</span>
+
+    <span class="n">bus_width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">y_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">l_x_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">l_y_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                      <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                      <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># bar will be assigned inside</span>
+        <span class="n">bar</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bays</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar (</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                          <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                          <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                          <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                          <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                          <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                          <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">bar_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># bar was assigned before the loop</span>
+            <span class="k">pass</span>
+
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_bay_conn_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="mi">0</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">bus2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;LineBus2_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">bus3</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;LineBus3_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">dis1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis1_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                          <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                          <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">cb1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                         <span class="n">bus_from</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                         <span class="n">bus_to</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span>
+                         <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+
+        <span class="n">dis2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis2_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                          <span class="n">bus_from</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span>
+                          <span class="n">bus_to</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis2</span><span class="p">)</span>
+
+        <span class="n">conn_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+    <span class="c1"># connect the bar dots if that&#39;s the case</span>
+    <span class="k">if</span> <span class="n">bar_by_segments</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">offset_total_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_x_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_dist</span>
+    <span class="n">offset_total_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_y_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_dist</span>
+
+    <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span></div>
+
+
+
+<div class="viewcode-block" id="create_single_bar">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.create_single_bar">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_single_bar</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">n_bays</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_nom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">substation</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+        <span class="n">country</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">offset_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">offset_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">vl0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single-bar voltage level with disconnectors</span>
+<span class="sd">    :param name: Voltage level name</span>
+<span class="sd">    :param grid: MultiCircuit to do the mods</span>
+<span class="sd">    :param n_bays: number of bays (positions)</span>
+<span class="sd">    :param v_nom: Nominal voltage</span>
+<span class="sd">    :param substation: Substation where it belongs</span>
+<span class="sd">    :param country: Country (Optional)</span>
+<span class="sd">    :param bar_by_segments: Split the bar into segments</span>
+<span class="sd">    :param offset_x: x ofsset (px)</span>
+<span class="sd">    :param offset_y: y ofsset (px)</span>
+<span class="sd">    :param vl0: VoltageLevel to reuse (optional)</span>
+<span class="sd">    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">vl0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vl0</span>
+
+    <span class="n">bus_width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">y_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">l_x_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">l_y_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar&quot;</span><span class="p">,</span>
+                      <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                      <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                      <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                      <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                      <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                      <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                      <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                      <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># bar will be assigned inside the loop</span>
+        <span class="n">bar</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bays</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar (</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                          <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                          <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                          <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                          <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                          <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                          <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">bar_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># bar was assigned before the loop</span>
+            <span class="k">pass</span>
+
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_bay_conn_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">cb1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                         <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                         <span class="n">bus_to</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span>
+                         <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb1</span><span class="p">)</span>
+
+        <span class="n">conn_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+    <span class="c1"># connect the bar dots if that&#39;s the case</span>
+    <span class="k">if</span> <span class="n">bar_by_segments</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">offset_total_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_x_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_dist</span>
+    <span class="n">offset_total_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_y_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_dist</span>
+
+    <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span></div>
+
+
+
+<div class="viewcode-block" id="create_single_bar_with_bypass_with_disconnectors">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.create_single_bar_with_bypass_with_disconnectors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_single_bar_with_bypass_with_disconnectors</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">n_bays</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_nom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">substation</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+        <span class="n">country</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">offset_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">offset_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">vl0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single-bar with by-pass voltage level</span>
+<span class="sd">    :param name: Voltage level name</span>
+<span class="sd">    :param grid: MultiCircuit to do the mods</span>
+<span class="sd">    :param n_bays: number of bays (positions)</span>
+<span class="sd">    :param v_nom: Nominal voltage</span>
+<span class="sd">    :param substation: Substation where it belongs</span>
+<span class="sd">    :param country: Country (Optional)</span>
+<span class="sd">    :param bar_by_segments: Split the bar into segments</span>
+<span class="sd">    :param offset_x: x offset (px)</span>
+<span class="sd">    :param offset_y: y offset (px)</span>
+<span class="sd">    :param vl0: VoltageLevel to reuse (optional)</span>
+<span class="sd">    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">vl0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vl0</span>
+
+    <span class="n">bus_width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">y_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">l_x_pos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">l_y_pos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                      <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                      <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                      <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># bar will be assigned inside</span>
+        <span class="n">bar</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bays</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+            <span class="c1"># this is the dot in the bar</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar (</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                          <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                          <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                          <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                          <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                          <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                          <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">bar_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># bar was assigned before the loop</span>
+            <span class="k">pass</span>
+
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_bay_conn_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">bus2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;BayBus2_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">bus3</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;BayBus3_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">dis1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis1_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                          <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                          <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">cb1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                         <span class="n">bus_from</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                         <span class="n">bus_to</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span>
+                         <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+
+        <span class="n">dis2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis2_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                          <span class="n">bus_from</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span>
+                          <span class="n">bus_to</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">bypass_dis</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Bypass_Dis_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                                <span class="n">bus_to</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span>
+                                <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis2</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">bypass_dis</span><span class="p">)</span>
+
+        <span class="n">conn_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+    <span class="c1"># connect the bar dots if that&#39;s the case</span>
+    <span class="k">if</span> <span class="n">bar_by_segments</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">offset_total_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_x_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_dist</span>
+    <span class="n">offset_total_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_y_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_dist</span>
+
+    <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span></div>
+
+
+
+<div class="viewcode-block" id="create_single_bar_with_bypass">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.create_single_bar_with_bypass">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_single_bar_with_bypass</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">n_bays</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_nom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">substation</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+        <span class="n">country</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">offset_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">offset_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">vl0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single-bar with by-pass voltage level</span>
+<span class="sd">    :param name: Voltage level name</span>
+<span class="sd">    :param grid: MultiCircuit to do the mods</span>
+<span class="sd">    :param n_bays: number of bays (positions)</span>
+<span class="sd">    :param v_nom: Nominal voltage</span>
+<span class="sd">    :param substation: Substation where it belongs</span>
+<span class="sd">    :param country: Country (Optional)</span>
+<span class="sd">    :param bar_by_segments: Split the bar into segments</span>
+<span class="sd">    :param offset_x: x offset (px)</span>
+<span class="sd">    :param offset_y: y offset (px)</span>
+<span class="sd">    :param vl0: VoltageLevel to reuse (optional)</span>
+<span class="sd">    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">vl0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vl0</span>
+
+    <span class="n">bus_width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">y_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">l_x_pos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">l_y_pos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar&quot;</span><span class="p">,</span>
+                      <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                      <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                      <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                      <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">1</span><span class="p">,</span>
+                      <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                      <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># bar will be assigned inside the loop</span>
+        <span class="n">bar</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bays</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar (</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                          <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                          <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                          <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                          <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                          <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                          <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                          <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">bar_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># bar was assigned before the loop</span>
+            <span class="k">pass</span>
+
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_bay_conn_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+
+        <span class="n">cb1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                         <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                         <span class="n">bus_to</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span>
+                         <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+
+        <span class="n">bypass_dis</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Bypass_Dis_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                                <span class="n">bus_to</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span>
+                                <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">bypass_dis</span><span class="p">)</span>
+
+        <span class="n">conn_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+    <span class="c1"># connect the bar dots if that&#39;s the case</span>
+    <span class="k">if</span> <span class="n">bar_by_segments</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">offset_total_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_x_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_dist</span>
+    <span class="n">offset_total_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_y_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_dist</span>
+
+    <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span></div>
+
+
+
+<div class="viewcode-block" id="create_single_bar_with_splitter_with_disconnectors">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.create_single_bar_with_splitter_with_disconnectors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_single_bar_with_splitter_with_disconnectors</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">n_bays</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_nom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">substation</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+        <span class="n">country</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">offset_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">offset_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">vl0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single-bar with splitter breaker voltage level</span>
+<span class="sd">    :param name: Voltage level name</span>
+<span class="sd">    :param grid: MultiCircuit to do the mods</span>
+<span class="sd">    :param n_bays: number of bays (positions)</span>
+<span class="sd">    :param v_nom: Nominal voltage</span>
+<span class="sd">    :param substation: Substation where it belongs</span>
+<span class="sd">    :param country: Country (Optional)</span>
+<span class="sd">    :param bar_by_segments: Split the bar into segments</span>
+<span class="sd">    :param offset_x: x ofsset (px)</span>
+<span class="sd">    :param offset_y: y ofsset (px)</span>
+<span class="sd">    :param vl0: VoltageLevel to reuse (Optional)</span>
+<span class="sd">    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">vl0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vl0</span>
+
+    <span class="n">bus_width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">y_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">bar_2_x_offset</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.2</span>
+    <span class="n">bar_2_y_offset</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.2</span>
+    <span class="n">l_x_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">l_y_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar1_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar2_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">n_bays_bar_1</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">n_bays_bar_2</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">-</span> <span class="n">n_bays_bar_1</span>
+
+    <span class="n">width_bar_1</span> <span class="o">=</span> <span class="n">n_bays_bar_1</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays_bar_1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">width_bar_2</span> <span class="o">=</span> <span class="n">n_bays_bar_2</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays_bar_2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="n">bar1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar 1&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">width_bar_1</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">bar1_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="p">)</span>
+
+        <span class="n">bar2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar 2&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">width_bar_2</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">width_bar_1</span> <span class="o">+</span> <span class="n">bar_2_x_offset</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">bar_2_y_offset</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar2</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">bar2_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar2</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># bar will be assigned inside</span>
+        <span class="n">bar1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">bar2</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bays</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_bays_bar_1</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+                <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar1 (</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                              <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                              <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                              <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                              <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                              <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                              <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                              <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                              <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+                <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+                <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+                <span class="n">bar1_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bar</span> <span class="o">=</span> <span class="n">bar1</span>
+                <span class="n">x_offset</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">y_offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+                <span class="n">bar</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar2 (</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                              <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                              <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                              <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                              <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                              <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span>
+                              <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span><span class="p">,</span>
+                              <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                              <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+                <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+                <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+                <span class="n">bar2_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bar</span> <span class="o">=</span> <span class="n">bar2</span>
+                <span class="n">x_offset</span> <span class="o">=</span> <span class="n">bar_2_x_offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">bus_width</span>
+                <span class="n">y_offset</span> <span class="o">=</span> <span class="n">bar_2_y_offset</span>
+
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_bay_conn_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+        <span class="n">bus2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LineBus2_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+        <span class="n">bus3</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LineBus3_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                       <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span>
+                       <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span>
+                       <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span>
+                       <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+        <span class="n">dis1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis1_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span> <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+        <span class="n">cb1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span> <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+        <span class="n">dis2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis2_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span> <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus3</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis2</span><span class="p">)</span>
+
+        <span class="n">conn_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar1_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar1_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar2_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar2_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># add the coupling switch</span>
+        <span class="n">cb_bars</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_bars&quot;</span><span class="p">,</span>
+                             <span class="n">bus_from</span><span class="o">=</span><span class="n">bar1</span><span class="p">,</span>
+                             <span class="n">bus_to</span><span class="o">=</span><span class="n">bar2</span><span class="p">,</span>
+                             <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb_bars</span><span class="p">)</span>
+
+    <span class="n">offset_total_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_x_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_dist</span>
+    <span class="n">offset_total_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_y_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_dist</span>
+
+    <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span></div>
+
+
+
+<div class="viewcode-block" id="create_single_bar_with_splitter">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.single_bar.create_single_bar_with_splitter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_single_bar_with_splitter</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">n_bays</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_nom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">substation</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span>
+        <span class="n">country</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">offset_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">offset_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">vl0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single-bar with splitter breaker voltage level</span>
+<span class="sd">    :param name: Voltage level name</span>
+<span class="sd">    :param grid: MultiCircuit to do the mods</span>
+<span class="sd">    :param n_bays: number of bays (positions)</span>
+<span class="sd">    :param v_nom: Nominal voltage</span>
+<span class="sd">    :param substation: Substation where it belongs</span>
+<span class="sd">    :param country: Country (Optional)</span>
+<span class="sd">    :param bar_by_segments: Split the bar into segments</span>
+<span class="sd">    :param offset_x: x ofsset (px)</span>
+<span class="sd">    :param offset_y: y ofsset (px)</span>
+<span class="sd">    :param vl0: VoltageLevel to reuse (optional)</span>
+<span class="sd">    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">vl0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vl0</span>
+
+    <span class="n">bus_width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">y_dist</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">bar_2_x_offset</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.2</span>
+    <span class="n">bar_2_y_offset</span> <span class="o">=</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mf">1.2</span>
+    <span class="n">l_x_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">l_y_pos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar1_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">bar2_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">n_bays_bar_1</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">n_bays_bar_2</span> <span class="o">=</span> <span class="n">n_bays</span> <span class="o">-</span> <span class="n">n_bays_bar_1</span>
+
+    <span class="n">width_bar_1</span> <span class="o">=</span> <span class="n">n_bays_bar_1</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays_bar_1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">width_bar_2</span> <span class="o">=</span> <span class="n">n_bays_bar_2</span> <span class="o">*</span> <span class="n">bus_width</span> <span class="o">+</span> <span class="n">bus_width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_dist</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bays_bar_2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">bar1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar 1&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                   <span class="n">width</span><span class="o">=</span><span class="n">width_bar_1</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">-</span> <span class="n">bus_width</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">1</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                   <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar1</span><span class="p">)</span>
+    <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="p">)</span>
+    <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">bar2</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> bar 2&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                   <span class="n">width</span><span class="o">=</span><span class="n">width_bar_2</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">width_bar_1</span> <span class="o">+</span> <span class="n">bar_2_x_offset</span><span class="p">,</span>
+                   <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">bar_2_y_offset</span><span class="p">,</span>
+                   <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bar2</span><span class="p">)</span>
+    <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bays</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_bays_bar_1</span><span class="p">:</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">bar1</span>
+            <span class="n">x_offset</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">y_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">bar2</span>
+            <span class="n">x_offset</span> <span class="o">=</span> <span class="n">bar_2_x_offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">bus_width</span>
+            <span class="n">y_offset</span> <span class="o">=</span> <span class="n">bar_2_y_offset</span>
+
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_bay_conn_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">v_nom</span><span class="p">,</span> <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+                       <span class="n">xpos</span><span class="o">=</span><span class="n">offset_x</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_dist</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="n">offset_y</span> <span class="o">+</span> <span class="n">y_dist</span> <span class="o">*</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">,</span>
+                       <span class="n">width</span><span class="o">=</span><span class="n">bus_width</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+                       <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span><span class="p">)</span>
+        <span class="n">cb1</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bar</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+        <span class="n">l_x_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">l_y_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb1</span><span class="p">)</span>
+
+        <span class="n">conn_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bar_by_segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar1_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar1_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar2_buses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">connect_bar_segments</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bar_buses</span><span class="o">=</span><span class="n">bar2_buses</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># add the coupling switch</span>
+        <span class="n">cb_bars</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_bars&quot;</span><span class="p">,</span>
+                             <span class="n">bus_from</span><span class="o">=</span><span class="n">bar1</span><span class="p">,</span>
+                             <span class="n">bus_to</span><span class="o">=</span><span class="n">bar2</span><span class="p">,</span>
+                             <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb_bars</span><span class="p">)</span>
+
+    <span class="n">offset_total_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_x_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_dist</span>
+    <span class="n">offset_total_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">l_y_pos</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_dist</span>
+
+    <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

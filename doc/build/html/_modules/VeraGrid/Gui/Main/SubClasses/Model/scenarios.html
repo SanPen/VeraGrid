@@ -1,0 +1,677 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Main.SubClasses.Model.scenarios &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Main.SubClasses.Model.scenarios</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Main.SubClasses.Model.scenarios</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QItemSelectionModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Main.SubClasses.Settings.configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigurationMain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.scenario_tree_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScenarioTreeModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui</span><span class="w"> </span><span class="kn">import</span> <span class="n">gui_functions</span> <span class="k">as</span> <span class="n">gf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_question</span><span class="p">,</span> <span class="n">warning_msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multiverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiVerse</span><span class="p">,</span> <span class="n">ScenarioNode</span>
+
+
+<div class="viewcode-block" id="ScenariosMain">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScenariosMain</span><span class="p">(</span><span class="n">ConfigurationMain</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scenarios Main</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Scenarios Main window.</span>
+
+<span class="sd">        :param parent: Parent widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create main window</span>
+        <span class="n">ConfigurationMain</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="p">)</span>
+
+        <span class="c1"># Disable editing on double-click, only allow editing via the rename menu option</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">setEditTriggers</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditTrigger</span><span class="o">.</span><span class="n">NoEditTriggers</span><span class="p">)</span>
+
+        <span class="c1"># Set context menu policy to CustomContextMenu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ContextMenuPolicy</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+
+        <span class="c1"># Connect context menu signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_scenario_tree_context_menu</span><span class="p">)</span>
+
+        <span class="c1"># Show the initially active scenario (root) in the label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">activeScenarioLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Property override: rebuilds MultiVerse and resets the scenario tree</span>
+    <span class="c1"># whenever a new grid is loaded, replacing the old root entirely.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_model</span>
+
+    <span class="nd">@circuit</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Rebuild the entire MultiVerse so the root node&#39;s data matches the new grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span> <span class="o">=</span> <span class="n">MultiVerse</span><span class="p">(</span><span class="n">current_model</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">activeScenarioLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ScenariosMain.get_selected_scenario_index">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.get_selected_scenario_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_selected_scenario_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the currently selected QModelIndex from the tree view.</span>
+
+<span class="sd">        :return: QModelIndex if a node is selected, None otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selection_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">selection_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">selected_indexes</span> <span class="o">=</span> <span class="n">selection_model</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_indexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">selected_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.get_selected_scenario_node">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.get_selected_scenario_node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_selected_scenario_node</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the currently selected ScenarioNode from the tree view.</span>
+
+<span class="sd">        :return: ScenarioNode if a node is selected, None otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.prompt_scenario_name">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.prompt_scenario_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prompt_scenario_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Scenario Name&quot;</span><span class="p">,</span> <span class="n">default_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;New Scenario&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prompt the user to enter a scenario name using a dialog.</span>
+
+<span class="sd">        :param title: Dialog title</span>
+<span class="sd">        :param default_name: Default name to display in the input field</span>
+<span class="sd">        :return: Entered name if accepted, None if cancelled</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">text</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QInputDialog</span><span class="o">.</span><span class="n">getText</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">title</span><span class="p">,</span>
+            <span class="s2">&quot;Enter scenario name:&quot;</span><span class="p">,</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="o">.</span><span class="n">EchoMode</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span>
+            <span class="n">default_name</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Scenario name cannot be empty&quot;</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.show_scenario_tree_context_menu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.show_scenario_tree_context_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_scenario_tree_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display context menu for scenario tree operations.</span>
+
+<span class="sd">        :param pos: Relative click position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">context_menu</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="p">)</span>
+
+        <span class="c1"># Get the selected index to determine which actions to enable</span>
+        <span class="n">selected_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+        <span class="n">has_selection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">selected_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span>
+
+        <span class="c1"># Add root scenario - always available</span>
+        <span class="c1"># gf.add_menu_entry(</span>
+        <span class="c1">#     menu=context_menu,</span>
+        <span class="c1">#     text=&quot;Add root scenario&quot;,</span>
+        <span class="c1">#     icon_path=&quot;:/Icons/icons/plus.png&quot;,</span>
+        <span class="c1">#     function_ptr=self.add_root_scenario</span>
+        <span class="c1"># )</span>
+
+        <span class="c1"># Add child scenario - only available if a node is selected</span>
+        <span class="k">if</span> <span class="n">has_selection</span><span class="p">:</span>
+            <span class="c1"># Set as the current scenario - only available if a node is selected</span>
+            <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span>
+                <span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Set as current scenario&quot;</span><span class="p">,</span>
+                <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/schematic.png&quot;</span><span class="p">,</span>
+                <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">set_as_current_scenario</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Rename scenario - only available if a node is selected</span>
+            <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span>
+                <span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Rename scenario&quot;</span><span class="p">,</span>
+                <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/edit.png&quot;</span><span class="p">,</span>
+                <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rename_scenario</span>
+            <span class="p">)</span>
+
+            <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span>
+                <span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Commit scenario&quot;</span><span class="p">,</span>
+                <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/save.png&quot;</span><span class="p">,</span>
+                <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_scenario</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Separator</span>
+            <span class="n">context_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span>
+                <span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Add child scenario&quot;</span><span class="p">,</span>
+                <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/plus.png&quot;</span><span class="p">,</span>
+                <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_child_scenario</span>
+            <span class="p">)</span>
+
+            <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span>
+                <span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Merge children into scenario&quot;</span><span class="p">,</span>
+                <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/fusion.png&quot;</span><span class="p">,</span>
+                <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_children_into_scenario</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Separator before delete</span>
+            <span class="n">context_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="c1"># Remove scenario - only available if a node is selected</span>
+            <span class="n">gf</span><span class="o">.</span><span class="n">add_menu_entry</span><span class="p">(</span>
+                <span class="n">menu</span><span class="o">=</span><span class="n">context_menu</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Remove scenario&quot;</span><span class="p">,</span>
+                <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/minus.png&quot;</span><span class="p">,</span>
+                <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_scenario</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Convert the global position to the local position of the tree view</span>
+            <span class="n">mapped_pos</span><span class="p">:</span> <span class="n">QPoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="n">context_menu</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">mapped_pos</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_warning_toast</span><span class="p">(</span><span class="s2">&quot;Select a scenario...&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># def add_root_scenario(self) -&gt; None:</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Add a new root scenario to the multiverse.</span>
+    <span class="c1">#     Prompts the user for a scenario name and creates a new MultiCircuit.</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     scenario_name: str | None = self.prompt_scenario_name(</span>
+    <span class="c1">#         title=&quot;Add Root Scenario&quot;,</span>
+    <span class="c1">#         default_name=f&quot;Scenario {self.multiverse.roots_number() + 1}&quot;</span>
+    <span class="c1">#     )</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if scenario_name is not None:</span>
+    <span class="c1">#         # Create a new MultiCircuit as a copy of the current model</span>
+    <span class="c1">#         new_circuit: MultiCircuit = self.circuit.copy()</span>
+    <span class="c1">#         new_circuit.name = scenario_name</span>
+    <span class="c1">#</span>
+    <span class="c1">#         # Add the root node through the model</span>
+    <span class="c1">#         node: ScenarioNode = self.scenario_tree_model.append_root(data=new_circuit)</span>
+    <span class="c1">#</span>
+    <span class="c1">#         self.show_info_toast(f&quot;Root scenario &#39;{scenario_name}&#39; added&quot;)</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         # User cancelled the operation</span>
+    <span class="c1">#         pass</span>
+
+<div class="viewcode-block" id="ScenariosMain.add_child_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.add_child_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_child_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a child scenario to the selected scenario node.</span>
+<span class="sd">        The child starts as a copy of the parent&#39;s composed circuit (delta chain applied).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">parent_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">parent_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Please select a parent scenario first&quot;</span><span class="p">,</span> <span class="s2">&quot;Add Child Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">parent_node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">parent_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">parent_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Invalid parent scenario selected&quot;</span><span class="p">,</span> <span class="s2">&quot;Add Child Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Count existing children for default naming</span>
+        <span class="n">child_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">parent_node</span><span class="o">.</span><span class="n">child_count</span><span class="p">()</span>
+        <span class="n">scenario_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_scenario_name</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Add Child Scenario&quot;</span><span class="p">,</span>
+            <span class="n">default_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parent_node</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> - Child </span><span class="si">{</span><span class="n">child_count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">scenario_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># The child must inherit the latest parent state, including diagrams.</span>
+            <span class="c1"># Commit first so parent-owned node storage reflects any pending edits.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">commit_current</span><span class="p">()</span>
+
+            <span class="c1"># Non-root nodes store a delta, not a full circuit.</span>
+            <span class="c1"># A brand-new child starts with an empty delta (no changes from parent yet).</span>
+            <span class="n">initial_delta</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">scenario_name</span><span class="p">)</span>
+
+            <span class="c1"># Add the child node through the model</span>
+            <span class="n">node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">append_child</span><span class="p">(</span>
+                <span class="n">parent_index</span><span class="o">=</span><span class="n">parent_index</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">initial_delta</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Activate the new child immediately</span>
+            <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">activate_scenario</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">node_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">refresh_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">activeScenarioLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reload_diagrams_for_active_scenario</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_date_dependent_combos</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_objects_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_available_results</span><span class="p">()</span>
+
+            <span class="c1"># Expand the parent node to show the new child</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">parent_index</span><span class="p">)</span>
+
+            <span class="c1"># Select the newly created child in the tree</span>
+            <span class="n">child_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span>
+                <span class="n">row</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span>
+                <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="n">parent_index</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">child_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">child_index</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                    <span class="n">child_index</span><span class="p">,</span>
+                    <span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">SelectionFlag</span><span class="o">.</span><span class="n">ClearAndSelect</span>
+                    <span class="o">|</span> <span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">SelectionFlag</span><span class="o">.</span><span class="n">Rows</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">scrollTo</span><span class="p">(</span><span class="n">child_index</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Child scenario &#39;</span><span class="si">{</span><span class="n">scenario_name</span><span class="si">}</span><span class="s2">&#39; added and activated&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># User cancelled the operation</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.remove_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.remove_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the selected scenario node and its subtree.</span>
+<span class="sd">        Asks for confirmation before removing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">selected_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Please select a scenario to remove&quot;</span><span class="p">,</span> <span class="s2">&quot;Remove Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Invalid scenario selected&quot;</span><span class="p">,</span> <span class="s2">&quot;Remove Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">circuit</span>
+        <span class="n">child_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">child_count</span><span class="p">()</span>
+
+        <span class="c1"># Build confirmation message</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Are you sure you want to remove scenario &#39;</span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;?&quot;</span>
+        <span class="k">if</span> <span class="n">child_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">This will also remove </span><span class="si">{</span><span class="n">child_count</span><span class="si">}</span><span class="s2"> child scenario(s).&quot;</span>
+
+        <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">yes_no_question</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s2">&quot;Remove Scenario&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="c1"># Deletion always falls back to the parent node, or to the first remaining root</span>
+            <span class="c1"># when a non-last root is deleted. Capture that target before mutating the tree.</span>
+            <span class="n">fallback_node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">fallback_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">remaining_roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span> <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">root_nodes</span> <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">node</span><span class="p">]</span>
+                <span class="n">fallback_node</span> <span class="o">=</span> <span class="n">remaining_roots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">remaining_roots</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="c1"># Remove the node through the model</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">warning_msg</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="s2">&quot;Remove Scenario&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="c1"># Keep the tree selection and the active circuit views aligned with the</span>
+                <span class="c1"># scenario that survived the deletion.</span>
+                <span class="k">if</span> <span class="n">fallback_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fallback_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">index_for_node</span><span class="p">(</span><span class="n">fallback_node</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">fallback_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">fallback_index</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                            <span class="n">fallback_index</span><span class="p">,</span>
+                            <span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">SelectionFlag</span><span class="o">.</span><span class="n">ClearAndSelect</span>
+                            <span class="o">|</span> <span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">SelectionFlag</span><span class="o">.</span><span class="n">Rows</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">scrollTo</span><span class="p">(</span><span class="n">fallback_index</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">activeScenarioLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reload_diagrams_for_active_scenario</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_date_dependent_combos</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view_objects_data</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_available_results</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario &#39;</span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; removed&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Failed to remove scenario&quot;</span><span class="p">,</span> <span class="s2">&quot;Remove Scenario&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># User cancelled the operation</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.merge_children_into_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.merge_children_into_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_children_into_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge all direct child scenarios into the selected scenario.</span>
+<span class="sd">        The selected node keeps the merged result and any grandchildren are</span>
+<span class="sd">        rebased directly under it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">selected_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Please select a scenario to merge into&quot;</span><span class="p">,</span> <span class="s2">&quot;Merge Children&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Invalid scenario selected&quot;</span><span class="p">,</span> <span class="s2">&quot;Merge Children&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">child_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">child_count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">child_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_warning_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; has no child scenarios&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">yes_no_question</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Merge </span><span class="si">{</span><span class="n">child_count</span><span class="si">}</span><span class="s2"> child scenario(s) into &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;?</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;This will remove the direct child scenarios after their changes are applied.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Merge Children&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">merge_children_into_parent</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Failed to merge child scenarios&quot;</span><span class="p">,</span> <span class="s2">&quot;Merge Children&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">merged_circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_model</span>
+
+        <span class="c1"># The merge target becomes the active scenario after the children disappear.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">activeScenarioLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">merged_circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reload_diagrams_for_active_scenario</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_date_dependent_combos</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_objects_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_available_results</span><span class="p">()</span>
+        <span class="n">parent_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">index_for_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">parent_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">parent_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                <span class="n">parent_index</span><span class="p">,</span>
+                <span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">SelectionFlag</span><span class="o">.</span><span class="n">ClearAndSelect</span>
+                <span class="o">|</span> <span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">SelectionFlag</span><span class="o">.</span><span class="n">Rows</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">scrollTo</span><span class="p">(</span><span class="n">parent_index</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merged </span><span class="si">{</span><span class="n">child_count</span><span class="si">}</span><span class="s2"> child scenario(s) into &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.reload_diagrams_for_active_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.reload_diagrams_for_active_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reload_diagrams_for_active_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rebuild the diagram widgets from the currently active scenario circuit.</span>
+
+<span class="sd">        This intentionally avoids assigning through ``self.circuit`` because that setter</span>
+<span class="sd">        rebuilds the whole MultiVerse.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_all_diagrams</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">has_diagrams</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_circuit_stored_diagrams</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_complete_bus_branch_diagram</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.rename_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.rename_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rename_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rename the selected scenario node.</span>
+<span class="sd">        Opens the tree view&#39;s inline editor for the selected item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">selected_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Please select a scenario to rename&quot;</span><span class="p">,</span> <span class="s2">&quot;Rename Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Use the tree view&#39;s built-in editing capability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">multiverseTreeView</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.commit_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.commit_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">commit_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Commit the currently active scenario node, persisting its edits into the stored</span>
+<span class="sd">        node representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">selected_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Please select a scenario to commit&quot;</span><span class="p">,</span> <span class="s2">&quot;Commit Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Invalid scenario selected&quot;</span><span class="p">,</span> <span class="s2">&quot;Commit Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_node</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Only the current scenario can be committed. Activate it first.&quot;</span><span class="p">,</span> <span class="s2">&quot;Commit Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">commit_current</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">refresh_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; committed&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScenariosMain.set_as_current_scenario">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.scenarios.ScenariosMain.set_as_current_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_as_current_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the selected scenario as the current working scenario.</span>
+<span class="sd">        Commits any unsaved edits on the current scenario first, then activates the selected one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_index</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_selected_scenario_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">selected_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Please select a scenario to set as current&quot;</span><span class="p">,</span> <span class="s2">&quot;Set Current Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">node</span><span class="p">:</span> <span class="n">ScenarioNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">selected_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Invalid scenario selected&quot;</span><span class="p">,</span> <span class="s2">&quot;Set Current Scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">current_node</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_warning_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is already the active scenario&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span><span class="o">.</span><span class="n">activate_scenario</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">node_id</span><span class="p">)</span>
+
+        <span class="c1"># set the session drivers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">drivers</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">drivers</span>
+
+        <span class="c1"># Refresh counts: commit_current() may have updated the previous node&#39;s delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tree_model</span><span class="o">.</span><span class="n">refresh_data</span><span class="p">()</span>
+
+        <span class="c1"># Update the UI label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">activeScenarioLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reload_diagrams_for_active_scenario</span><span class="p">()</span>
+
+        <span class="c1"># Update other UI elements that depend on the circuit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_date_dependent_combos</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_objects_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_available_results</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current scenario set to &#39;</span><span class="si">{</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

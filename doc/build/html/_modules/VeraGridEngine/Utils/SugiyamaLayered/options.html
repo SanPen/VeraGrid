@@ -1,0 +1,714 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.options &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.options</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.SugiyamaLayered.options</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;Option handling for the Sugiyama layered pipeline.</span>
+
+<span class="sd">The layout package keeps one explicit registry of supported options so the</span>
+<span class="sd">phases can resolve graph and element configuration deterministically.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="LayoutAlgorithm">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.LayoutAlgorithm">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LayoutAlgorithm</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported layout algorithms.&quot;&quot;&quot;</span>
+
+    <span class="n">LAYERED</span> <span class="o">=</span> <span class="s2">&quot;LAYERED&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="LayoutDirection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.LayoutDirection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LayoutDirection</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported layout directions.&quot;&quot;&quot;</span>
+
+    <span class="n">UNDEFINED</span> <span class="o">=</span> <span class="s2">&quot;UNDEFINED&quot;</span>
+    <span class="n">RIGHT</span> <span class="o">=</span> <span class="s2">&quot;RIGHT&quot;</span>
+    <span class="n">LEFT</span> <span class="o">=</span> <span class="s2">&quot;LEFT&quot;</span>
+    <span class="n">DOWN</span> <span class="o">=</span> <span class="s2">&quot;DOWN&quot;</span>
+    <span class="n">UP</span> <span class="o">=</span> <span class="s2">&quot;UP&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EdgeRoutingMode">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.EdgeRoutingMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EdgeRoutingMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported edge-routing modes.&quot;&quot;&quot;</span>
+
+    <span class="n">ORTHOGONAL</span> <span class="o">=</span> <span class="s2">&quot;ORTHOGONAL&quot;</span>
+    <span class="n">POLYLINE</span> <span class="o">=</span> <span class="s2">&quot;POLYLINE&quot;</span>
+    <span class="n">SPLINES</span> <span class="o">=</span> <span class="s2">&quot;SPLINES&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="LayeringStrategy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.LayeringStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LayeringStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported layering strategies.&quot;&quot;&quot;</span>
+
+    <span class="n">NETWORK_SIMPLEX</span> <span class="o">=</span> <span class="s2">&quot;NETWORK_SIMPLEX&quot;</span>
+    <span class="n">INTERACTIVE</span> <span class="o">=</span> <span class="s2">&quot;INTERACTIVE&quot;</span>
+    <span class="n">LONGEST_PATH</span> <span class="o">=</span> <span class="s2">&quot;LONGEST_PATH&quot;</span>
+    <span class="n">LONGEST_PATH_SOURCE</span> <span class="o">=</span> <span class="s2">&quot;LONGEST_PATH_SOURCE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="CycleBreakingStrategy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.CycleBreakingStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CycleBreakingStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported cycle-breaking strategies.&quot;&quot;&quot;</span>
+
+    <span class="n">GREEDY</span> <span class="o">=</span> <span class="s2">&quot;GREEDY&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="NodePlacementStrategy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.NodePlacementStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NodePlacementStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported node-placement strategies.&quot;&quot;&quot;</span>
+
+    <span class="n">BRANDES_KOEPF</span> <span class="o">=</span> <span class="s2">&quot;BRANDES_KOEPF&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FixedAlignment">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.FixedAlignment">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FixedAlignment</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported fixed-alignment modes for Brandes-Koepf.&quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span>
+    <span class="n">LEFT_UP</span> <span class="o">=</span> <span class="s2">&quot;LEFT_UP&quot;</span>
+    <span class="n">RIGHT_UP</span> <span class="o">=</span> <span class="s2">&quot;RIGHT_UP&quot;</span>
+    <span class="n">LEFT_DOWN</span> <span class="o">=</span> <span class="s2">&quot;LEFT_DOWN&quot;</span>
+    <span class="n">RIGHT_DOWN</span> <span class="o">=</span> <span class="s2">&quot;RIGHT_DOWN&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="CrossingMinimizationStrategy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.CrossingMinimizationStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CrossingMinimizationStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported crossing-minimization strategies.&quot;&quot;&quot;</span>
+
+    <span class="n">LAYER_SWEEP</span> <span class="o">=</span> <span class="s2">&quot;LAYER_SWEEP&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="PortConstraint">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.PortConstraint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortConstraint</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported port-constraint modes.&quot;&quot;&quot;</span>
+
+    <span class="n">UNDEFINED</span> <span class="o">=</span> <span class="s2">&quot;UNDEFINED&quot;</span>
+    <span class="n">FIXED_ORDER</span> <span class="o">=</span> <span class="s2">&quot;FIXED_ORDER&quot;</span>
+    <span class="n">FIXED_SIDE</span> <span class="o">=</span> <span class="s2">&quot;FIXED_SIDE&quot;</span>
+    <span class="n">FIXED_POS</span> <span class="o">=</span> <span class="s2">&quot;FIXED_POS&quot;</span>
+    <span class="n">FIXED_RATIO</span> <span class="o">=</span> <span class="s2">&quot;FIXED_RATIO&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="PortSide">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.PortSide">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortSide</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported port sides.&quot;&quot;&quot;</span>
+
+    <span class="n">UNDEFINED</span> <span class="o">=</span> <span class="s2">&quot;UNDEFINED&quot;</span>
+    <span class="n">WEST</span> <span class="o">=</span> <span class="s2">&quot;WEST&quot;</span>
+    <span class="n">EAST</span> <span class="o">=</span> <span class="s2">&quot;EAST&quot;</span>
+    <span class="n">NORTH</span> <span class="o">=</span> <span class="s2">&quot;NORTH&quot;</span>
+    <span class="n">SOUTH</span> <span class="o">=</span> <span class="s2">&quot;SOUTH&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="PortAlignment">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.PortAlignment">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortAlignment</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported port-alignment modes.&quot;&quot;&quot;</span>
+
+    <span class="n">BEGIN</span> <span class="o">=</span> <span class="s2">&quot;BEGIN&quot;</span>
+    <span class="n">CENTER</span> <span class="o">=</span> <span class="s2">&quot;CENTER&quot;</span>
+    <span class="n">END</span> <span class="o">=</span> <span class="s2">&quot;END&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ConsiderModelOrderStrategy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.ConsiderModelOrderStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConsiderModelOrderStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported model-order preference modes.&quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span>
+    <span class="n">NODES</span> <span class="o">=</span> <span class="s2">&quot;NODES&quot;</span>
+    <span class="n">NODES_AND_EDGES</span> <span class="o">=</span> <span class="s2">&quot;NODES_AND_EDGES&quot;</span>
+    <span class="n">PREFER_NODES</span> <span class="o">=</span> <span class="s2">&quot;PREFER_NODES&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="SelfLoopDistribution">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.SelfLoopDistribution">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SelfLoopDistribution</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Supported self-loop distribution policies.&quot;&quot;&quot;</span>
+
+    <span class="n">NORTH</span> <span class="o">=</span> <span class="s2">&quot;NORTH&quot;</span>
+    <span class="n">SOUTH</span> <span class="o">=</span> <span class="s2">&quot;SOUTH&quot;</span>
+    <span class="n">EAST</span> <span class="o">=</span> <span class="s2">&quot;EAST&quot;</span>
+    <span class="n">WEST</span> <span class="o">=</span> <span class="s2">&quot;WEST&quot;</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_enum_token</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize a string token so it can be matched against enum names.</span>
+
+<span class="sd">    :param value: Raw string token.</span>
+<span class="sd">    :type value: str</span>
+<span class="sd">    :return: Normalized enum token.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">normalized_value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_enum_member_from_value</span><span class="p">(</span><span class="n">enum_tpe</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Enum</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Enum</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve an enum member from a raw value.</span>
+
+<span class="sd">    :param enum_tpe: Enum type to resolve.</span>
+<span class="sd">    :type enum_tpe: type[Enum]</span>
+<span class="sd">    :param value: Raw candidate value.</span>
+<span class="sd">    :type value: Any</span>
+<span class="sd">    :return: Resolved enum member or ``None``.</span>
+<span class="sd">    :rtype: Enum | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Enum</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">normalized_token</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">enum_tpe</span><span class="p">):</span>
+        <span class="n">member</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">normalized_token</span> <span class="o">=</span> <span class="n">_normalize_enum_token</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">member</span> <span class="o">=</span> <span class="n">enum_tpe</span><span class="o">.</span><span class="n">__members__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">normalized_token</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">member</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">member</span>
+
+
+<div class="viewcode-block" id="coerce_enum_value">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.coerce_enum_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coerce_enum_value</span><span class="p">(</span><span class="n">enum_tpe</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Enum</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Enum</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Enum</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coerce one raw value to an enum member with fallback.</span>
+
+<span class="sd">    :param enum_tpe: Enum type to resolve.</span>
+<span class="sd">    :type enum_tpe: type[Enum]</span>
+<span class="sd">    :param value: Raw candidate value.</span>
+<span class="sd">    :type value: Any</span>
+<span class="sd">    :param default: Fallback enum member.</span>
+<span class="sd">    :type default: Enum</span>
+<span class="sd">    :return: Resolved enum member.</span>
+<span class="sd">    :rtype: Enum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Enum</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_enum_member_from_value</span><span class="p">(</span><span class="n">enum_tpe</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">resolved_member</span><span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="k">if</span> <span class="n">member</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resolved_member</span> <span class="o">=</span> <span class="n">member</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resolved_member</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="k">return</span> <span class="n">resolved_member</span></div>
+
+
+
+<div class="viewcode-block" id="OptionDefinition">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.OptionDefinition">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OptionDefinition</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One supported layout option definition.</span>
+
+<span class="sd">    :param identifier: Unique option identifier.</span>
+<span class="sd">    :type identifier: str</span>
+<span class="sd">    :param default: Default option value.</span>
+<span class="sd">    :type default: Any</span>
+<span class="sd">    :param value_type: Accepted Python type or tuple of types.</span>
+<span class="sd">    :type value_type: type | tuple[type, ...]</span>
+<span class="sd">    :param applies_to: Primitive kinds where the option is meaningful.</span>
+<span class="sd">    :type applies_to: tuple[str, ...]</span>
+<span class="sd">    :param enum_tpe: Optional enum type used to normalize the option value.</span>
+<span class="sd">    :type enum_tpe: type[Enum] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;_default&quot;</span><span class="p">,</span> <span class="s2">&quot;_value_type&quot;</span><span class="p">,</span> <span class="s2">&quot;_applies_to&quot;</span><span class="p">,</span> <span class="s2">&quot;_enum_tpe&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">default</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+            <span class="n">value_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+            <span class="n">applies_to</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+            <span class="n">enum_tpe</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Enum</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_applies_to</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">applies_to</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enum_tpe</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Enum</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">enum_tpe</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the option identifier.</span>
+
+<span class="sd">        :return: Option identifier.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the default option value.</span>
+
+<span class="sd">        :return: Default option value.</span>
+<span class="sd">        :rtype: Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the accepted Python type.</span>
+
+<span class="sd">        :return: Accepted type or tuple of types.</span>
+<span class="sd">        :rtype: type | tuple[type, ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">applies_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the supported primitive kinds.</span>
+
+<span class="sd">        :return: Supported primitive kinds.</span>
+<span class="sd">        :rtype: tuple[str, ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_applies_to</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enum_tpe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Enum</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the enum type used for normalization.</span>
+
+<span class="sd">        :return: Enum type or ``None``.</span>
+<span class="sd">        :rtype: type[Enum] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enum_tpe</span>
+
+<div class="viewcode-block" id="OptionDefinition.normalize_value">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.OptionDefinition.normalize_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize one raw option value.</span>
+
+<span class="sd">        :param value: Raw value to normalize.</span>
+<span class="sd">        :type value: Any</span>
+<span class="sd">        :return: Normalized value.</span>
+<span class="sd">        :rtype: Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalized_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">member</span><span class="p">:</span> <span class="n">Enum</span> <span class="o">|</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enum_tpe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">normalized_value</span> <span class="o">=</span> <span class="n">coerce_enum_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_enum_tpe</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">normalized_value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">normalized_value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="build_default_option_registry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.build_default_option_registry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_default_option_registry</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OptionDefinition</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the default option registry.</span>
+
+<span class="sd">    :return: Default option definitions indexed by identifier.</span>
+<span class="sd">    :rtype: dict[str, OptionDefinition]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OptionDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.algorithm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.algorithm&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">LayoutAlgorithm</span><span class="o">.</span><span class="n">LAYERED</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">LayoutAlgorithm</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">LayoutAlgorithm</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.direction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.direction&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">LayoutDirection</span><span class="o">.</span><span class="n">UNDEFINED</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">LayoutDirection</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">LayoutDirection</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.edgeRouting&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.edgeRouting&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">EdgeRoutingMode</span><span class="o">.</span><span class="n">ORTHOGONAL</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">EdgeRoutingMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">EdgeRoutingMode</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.spacing.nodeNode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.spacing.nodeNode&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.spacing.componentComponent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.spacing.componentComponent&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.spacing.nodeNodeBetweenLayers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.spacing.nodeNodeBetweenLayers&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.layering.strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.layering.strategy&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">LayeringStrategy</span><span class="o">.</span><span class="n">NETWORK_SIMPLEX</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">LayeringStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">LayeringStrategy</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.cycleBreaking.strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.cycleBreaking.strategy&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">CycleBreakingStrategy</span><span class="o">.</span><span class="n">GREEDY</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">CycleBreakingStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">CycleBreakingStrategy</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.nodePlacement.strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.nodePlacement.strategy&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">NodePlacementStrategy</span><span class="o">.</span><span class="n">BRANDES_KOEPF</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">NodePlacementStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">NodePlacementStrategy</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.nodePlacement.bk.fixedAlignment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.nodePlacement.bk.fixedAlignment&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">FixedAlignment</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">FixedAlignment</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">FixedAlignment</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.crossingMinimization.strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.crossingMinimization.strategy&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">CrossingMinimizationStrategy</span><span class="o">.</span><span class="n">LAYER_SWEEP</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">CrossingMinimizationStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">CrossingMinimizationStrategy</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.portConstraints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.portConstraints&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortConstraint</span><span class="o">.</span><span class="n">UNDEFINED</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortConstraint</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;node&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortConstraint</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.port.side&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.port.side&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortSide</span><span class="o">.</span><span class="n">UNDEFINED</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortSide</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortSide</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.default&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortAlignment</span><span class="o">.</span><span class="n">CENTER</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortAlignment</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortAlignment</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.west&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.west&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortAlignment</span><span class="o">.</span><span class="n">CENTER</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortAlignment</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortAlignment</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.east&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.east&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortAlignment</span><span class="o">.</span><span class="n">CENTER</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortAlignment</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortAlignment</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.north&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.north&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortAlignment</span><span class="o">.</span><span class="n">CENTER</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortAlignment</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortAlignment</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.south&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.portAlignment.south&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">PortAlignment</span><span class="o">.</span><span class="n">CENTER</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">PortAlignment</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">PortAlignment</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.strategy&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">ConsiderModelOrderStrategy</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">ConsiderModelOrderStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">ConsiderModelOrderStrategy</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.edgeRouting.selfLoopDistribution&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.edgeRouting.selfLoopDistribution&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SelfLoopDistribution</span><span class="o">.</span><span class="n">NORTH</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="n">SelfLoopDistribution</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+        <span class="n">enum_tpe</span><span class="o">=</span><span class="n">SelfLoopDistribution</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="s2">&quot;org.vera.sugiyama.layered.feedbackEdges&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptionDefinition</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;org.vera.sugiyama.layered.feedbackEdges&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">value_type</span><span class="o">=</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="n">applies_to</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">,),</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">registry</span></div>
+
+
+
+<div class="viewcode-block" id="SugiyamaOptionResolver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.SugiyamaOptionResolver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaOptionResolver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve and validate layered layout options.</span>
+
+<span class="sd">    :param registry: Optional custom option registry.</span>
+<span class="sd">    :type registry: dict[str, OptionDefinition] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_registry&quot;</span><span class="p">,)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OptionDefinition</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">registry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OptionDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_default_option_registry</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">registry</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SugiyamaOptionResolver.validate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.SugiyamaOptionResolver.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate one option value against the registry.</span>
+
+<span class="sd">        :param option_id: Option identifier to validate.</span>
+<span class="sd">        :type option_id: str</span>
+<span class="sd">        :param value: Candidate value.</span>
+<span class="sd">        :type value: Any</span>
+<span class="sd">        :return: ``True`` when the value is acceptable.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">definition</span><span class="p">:</span> <span class="n">OptionDefinition</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">option_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">definition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">enum_tpe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_enum_member_from_value</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">enum_tpe</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">value_type</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">definition</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaOptionResolver.resolve_for_element">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.options.SugiyamaOptionResolver.resolve_for_element">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_for_element</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">graph_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+            <span class="n">element_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve options for one graph element.</span>
+
+<span class="sd">        The algorithm starts from registry defaults, then applies graph-level</span>
+<span class="sd">        overrides, and finally element-specific overrides. The precedence must</span>
+<span class="sd">        be explicit because all phases inspect the resolved values repeatedly.</span>
+
+<span class="sd">        :param graph_options: Graph-level option overrides.</span>
+<span class="sd">        :type graph_options: dict[str, Any]</span>
+<span class="sd">        :param element_options: Element-specific option overrides.</span>
+<span class="sd">        :type element_options: dict[str, Any] | None</span>
+<span class="sd">        :return: Resolved option dictionary.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resolved</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">option_id</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">definition</span><span class="p">:</span> <span class="n">OptionDefinition</span>
+
+        <span class="k">for</span> <span class="n">option_id</span><span class="p">,</span> <span class="n">definition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">resolved</span><span class="p">[</span><span class="n">option_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="n">resolved</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">graph_options</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">element_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resolved</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">element_options</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">option_id</span><span class="p">,</span> <span class="n">definition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">resolved</span><span class="p">[</span><span class="n">option_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">normalize_value</span><span class="p">(</span><span class="n">resolved</span><span class="p">[</span><span class="n">option_id</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">resolved</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

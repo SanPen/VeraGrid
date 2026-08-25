@@ -1,0 +1,916 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.MIP.SimpleMip.lpmodel &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.MIP.SimpleMip.lpmodel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.MIP.SimpleMip.lpmodel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.MIP.SimpleMip.lpobjects</span><span class="w"> </span><span class="kn">import</span> <span class="n">LpExp</span><span class="p">,</span> <span class="n">LpCst</span><span class="p">,</span> <span class="n">LpVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.MIP.SimpleMip.highs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HIGHS_AVAILABLE</span><span class="p">,</span> <span class="n">solve_with_highs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIPSolvers</span>
+
+
+<div class="viewcode-block" id="get_available_mip_solvers">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.get_available_mip_solvers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_mip_solvers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of candidate solvers</span>
+<span class="sd">    :return: list of solver names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">HIGHS_AVAILABLE</span><span class="p">:</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;HIGHS&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="set_var_bounds">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.set_var_bounds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_var_bounds</span><span class="p">(</span><span class="n">var</span><span class="p">:</span> <span class="n">LpVar</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify the bounds of a variable</span>
+<span class="sd">    :param var: LpVar instance to modify</span>
+<span class="sd">    :param lb: lower bound value</span>
+<span class="sd">    :param ub: upper bound value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+        <span class="n">var</span><span class="o">.</span><span class="n">lower_bound</span> <span class="o">=</span> <span class="n">lb</span>
+        <span class="n">var</span><span class="o">.</span><span class="n">upper_bound</span> <span class="o">=</span> <span class="n">ub</span></div>
+
+
+
+<div class="viewcode-block" id="LpModel">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LpModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SimpleMIP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;solver_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;objective&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;constraints&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;variables&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;relaxed_slacks&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;originally_infeasible&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_is_minimize&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_is_mip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_col_value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_col_dual&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_row_value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_row_dual&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_objective_value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_is_optimal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;logger&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">OPTIMAL</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">INFINITY</span> <span class="o">=</span> <span class="mf">1e20</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver_type</span><span class="p">:</span> <span class="n">MIPSolvers</span> <span class="o">=</span> <span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">solver_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span><span class="p">]:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported solver </span><span class="si">{</span><span class="n">solver_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, falling back to highs.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver_type</span> <span class="o">=</span> <span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver_type</span> <span class="o">=</span> <span class="n">solver_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">:</span> <span class="n">LpExp</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LpCst</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LpVar</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relaxed_slacks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">originally_infeasible</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_minimize</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_mip</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># solution vars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_dual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_dual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_objective_value</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_optimal</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LpModel.is_minimize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.is_minimize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Minimize?</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_minimize</span></div>
+
+
+<div class="viewcode-block" id="LpModel.copy">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpModel&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deep copy of this</span>
+<span class="sd">        :param copy_results: copy the results too?</span>
+<span class="sd">        :return: LpModel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cpy</span> <span class="o">=</span> <span class="n">LpModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solver_type</span><span class="p">)</span>
+
+        <span class="n">cpy</span><span class="o">.</span><span class="n">_is_minimize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_minimize</span>
+        <span class="n">cpy</span><span class="o">.</span><span class="n">_is_mip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_mip</span>
+        <span class="n">cpy</span><span class="o">.</span><span class="n">objective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">cst</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cst</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">copy_results</span><span class="p">:</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">_col_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">_col_dual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_dual</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">_row_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_value</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">_row_dual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_dual</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">_objective_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objective_value</span>
+            <span class="n">cpy</span><span class="o">.</span><span class="n">_is_optimal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_optimal</span>
+
+        <span class="k">return</span> <span class="n">cpy</span></div>
+
+
+<div class="viewcode-block" id="LpModel.get_obj_coefficient">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_obj_coefficient">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_obj_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">LpVar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the coefficient of a variable, if not found, return 0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">is_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a variable to the problem</span>
+<span class="sd">        :param lb:</span>
+<span class="sd">        :param ub:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param is_int:</span>
+<span class="sd">        :return: Variable instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">LpVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">is_integer</span><span class="o">=</span><span class="n">is_int</span><span class="p">,</span> <span class="n">hash_id</span><span class="o">=</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">var</span>
+
+<div class="viewcode-block" id="LpModel.add_int">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_int">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LpVar</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make integer LP var</span>
+<span class="sd">        :param lb: lower bound</span>
+<span class="sd">        :param ub: upper bound</span>
+<span class="sd">        :param name: name (optional)</span>
+<span class="sd">        :return: LpVar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_variable</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">is_int</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.add_var">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LpVar</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make floating point LP var</span>
+<span class="sd">        :param lb: lower bound</span>
+<span class="sd">        :param ub: upper bound</span>
+<span class="sd">        :param name: name (optional)</span>
+<span class="sd">        :return: LpVar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_variable</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">is_int</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.add_vars">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_vars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">is_int</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LpVar</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make array of LP vars</span>
+<span class="sd">        :param size: number of variables</span>
+<span class="sd">        :param lb: lower bound</span>
+<span class="sd">        :param ub: upper bound</span>
+<span class="sd">        :param name: name (optional)</span>
+<span class="sd">        :param is_int: create integer variables</span>
+<span class="sd">        :return: LpVar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_add_variable</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">is_int</span><span class="o">=</span><span class="n">is_int</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">LpExp</span><span class="p">,</span> <span class="n">is_minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the objective function</span>
+<span class="sd">        :param expression: Expression</span>
+<span class="sd">        :param is_minimize: minimize?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objective</span> <span class="o">=</span> <span class="n">expression</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_minimize</span> <span class="o">=</span> <span class="n">is_minimize</span>
+
+<div class="viewcode-block" id="LpModel.minimize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.minimize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_function</span><span class="p">:</span> <span class="n">LpExp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the objective to minimize</span>
+<span class="sd">        :param obj_function: Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_objective</span><span class="p">(</span><span class="n">obj_function</span><span class="p">,</span> <span class="n">is_minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.maximize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.maximize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_function</span><span class="p">:</span> <span class="n">LpExp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the objective to maximize</span>
+<span class="sd">        :param obj_function: Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_objective</span><span class="p">(</span><span class="n">obj_function</span><span class="p">,</span> <span class="n">is_minimize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.add_cst">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_cst">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_cst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cst</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpCst</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpCst</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add constraint to the model</span>
+<span class="sd">        :param cst: constraint object (or general expression)</span>
+<span class="sd">        :param name: name of the constraint (optional)</span>
+<span class="sd">        :return: Constraint object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cst</span><span class="p">,</span> <span class="n">LpCst</span><span class="p">):</span>
+            <span class="n">cst</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cst</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cst</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only Constraint instances can be added.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.sum">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.sum">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpExp</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpExp</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        create sum of the expression</span>
+<span class="sd">        :param expr: LpExp object (or general expression)</span>
+<span class="sd">        :return: LpExp object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">expr</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">elm</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only iterables can be used with sum.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.save_model_to_lp">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.save_model_to_lp">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_model_to_lp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save model to LP file</span>
+<span class="sd">        :param filename: LP file path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="c1"># Write Objective Function</span>
+            <span class="n">obj_type</span> <span class="o">=</span> <span class="s2">&quot;Minimize&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_minimize</span> <span class="k">else</span> <span class="s2">&quot;Maximize&quot;</span>
+            <span class="n">objective_expression</span> <span class="o">=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                                               <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span>
+                                               <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">offset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># Add constant term if exists</span>
+                <span class="n">objective_expression</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj_type</span><span class="si">}</span><span class="se">\n</span><span class="s2"> obj: </span><span class="si">{</span><span class="n">objective_expression</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write Constraints</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Subject To</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">):</span>
+                <span class="n">expression</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">linear_expression</span>
+                <span class="n">constraint_expression</span> <span class="o">=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                                                    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span>
+                                                    <span class="ow">in</span> <span class="n">expression</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+                <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">offset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># Add constant term if exists</span>
+                    <span class="n">objective_expression</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="n">expression</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="n">cname</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">constraint_expression</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">sense</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">coefficient</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write Bounds</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bounds</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                <span class="n">lb</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">lower_bound</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">lower_bound</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;-inf&quot;</span>
+                <span class="n">ub</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">upper_bound</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">upper_bound</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;inf&quot;</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">lb</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">ub</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write Variable Types</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Generals</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">is_integer</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;End</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.save_model_to_mps">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.save_model_to_mps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_model_to_mps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the model to MPS</span>
+<span class="sd">        :param filename: MPS file path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="c1"># Write the header</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;NAME          MIPMODEL</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write the ROWS section</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ROWS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; N  COST</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">)):</span>
+                <span class="n">sense</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sense</span>
+                <span class="k">if</span> <span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; L  C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; G  C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;==&#39;</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; E  C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write the COLUMNS section</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;COLUMNS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">    COST    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">):</span>
+                    <span class="n">coeff</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">linear_expression</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">coeff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">    C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write the RHS section</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;RHS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">):</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    RHS1    C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">coefficient</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Write the BOUNDS section</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;BOUNDS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                <span class="n">lb</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">lower_bound</span>
+                <span class="n">ub</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">upper_bound</span>
+                <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">is_integer</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; UI BND1    </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">ub</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; LI BND1    </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">lb</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; UP BND1    </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">ub</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; LO BND1    </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">lb</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Optionally add the RANGES section</span>
+            <span class="c1"># ...</span>
+
+            <span class="c1"># Write the ENDATA section</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ENDATA</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.save_model">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.save_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;ntc_opf_problem.lp&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save model in lp or mps format</span>
+<span class="sd">        :param file_name: name of the file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.lp&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_model_to_lp</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.mps&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_model_to_lp</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized file format to save </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Formulate MIP</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Vars:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">var_type</span> <span class="o">=</span> <span class="s2">&quot;Integer&quot;</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">is_integer</span> <span class="k">else</span> <span class="s2">&quot;Continuous&quot;</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">var_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Objective:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">obj_type</span> <span class="o">=</span> <span class="s2">&quot;Minimize&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_minimize</span> <span class="k">else</span> <span class="s2">&quot;Maximize&quot;</span>
+
+        <span class="n">objective_expression</span> <span class="o">=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2"> * </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                                           <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span>
+                                           <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">offset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># Add constant term if exists</span>
+            <span class="n">objective_expression</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">objective_expression</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Constraints:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">):</span>
+            <span class="c1"># Create the constraint expression</span>
+            <span class="n">expression</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">linear_expression</span>
+            <span class="n">constraint_expression</span> <span class="o">=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                                                <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span>
+                                                <span class="ow">in</span> <span class="n">expression</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+            <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">offset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># Add constant term if exists</span>
+                <span class="n">constraint_expression</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="n">expression</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Constraint </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">constraint_expression</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">sense</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">constraint</span><span class="o">.</span><span class="n">coefficient</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bounds:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">lower_bound</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">upper_bound</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">bounds</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="LpModel.get_coefficients_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_coefficients_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_coefficients_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the coefficient matrix</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initialize lists to hold the row indices, column indices, and data for the A matrix</span>
+        <span class="n">row_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">col_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="n">var_idx_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)}</span>
+
+        <span class="c1"># Iterate through each constraint, populating the lists</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">):</span>
+
+            <span class="n">lower</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+            <span class="n">constraint</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">constraint</span><span class="o">.</span><span class="n">linear_expression</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Skip if it&#39;s the constant term</span>
+                    <span class="c1"># Row index is the constraint number</span>
+                    <span class="n">row_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+                    <span class="c1"># Column index is the variable&#39;s index</span>
+                    <span class="n">col_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_idx_dict</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
+
+                    <span class="c1"># Coefficient is the data</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
+
+        <span class="c1"># Create the A matrix in CSC format</span>
+        <span class="n">A_csc</span> <span class="o">=</span> <span class="n">csc_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">row_indices</span><span class="p">,</span> <span class="n">col_indices</span><span class="p">)),</span>
+                           <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">lower</span><span class="p">,</span> <span class="n">A_csc</span><span class="p">,</span> <span class="n">upper</span></div>
+
+
+<div class="viewcode-block" id="LpModel.get_var_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_var_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_var_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get arrays related to the variable bounds and the objective function coefficients</span>
+<span class="sd">        :return: lower bounds, f obj coefficients, upper bounds, list of integer vars&#39; indices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">is_int</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">):</span>
+            <span class="n">lower</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">lower_bound</span>
+            <span class="n">coeff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_obj_coefficient</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="n">upper</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">upper_bound</span>
+            <span class="n">var</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">is_integer</span><span class="p">:</span>
+                <span class="n">is_int</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">lower</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">is_int</span></div>
+
+
+<div class="viewcode-block" id="LpModel.is_optimal">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.is_optimal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_optimal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_optimal</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="s2">&quot;LpModel&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_type</span> <span class="o">==</span> <span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span><span class="p">:</span>
+            <span class="n">solve_with_highs</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported solver </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">solver_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LpModel.solve">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.solve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_logs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress_text</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the model</span>
+<span class="sd">        :param robust: Relax the problem if infeasible</span>
+<span class="sd">        :param show_logs: Show logs</span>
+<span class="sd">        :param progress_text: Function pointer to print the status</span>
+<span class="sd">        :return: integer value matching OPTIMAL or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">show_logs</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_optimal</span><span class="p">():</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">originally_infeasible</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">robust</span><span class="p">:</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                We are going to create a deep clone of the model,</span>
+<span class="sd">                add a slack variable to each constraint and minimize</span>
+<span class="sd">                the sum of the newly added slack vars.</span>
+<span class="sd">                This LP model will be always optimal.</span>
+<span class="sd">                After the solution, we inspect the slack vars added</span>
+<span class="sd">                if any of those is &gt; 0, then the constraint where it</span>
+<span class="sd">                was added needs &quot;slacking&quot;, therefore we add that slack</span>
+<span class="sd">                to the original model, and add the slack to the original </span>
+<span class="sd">                objective function. This way we relax the model while</span>
+<span class="sd">                bringing it to optimality.</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+
+                <span class="c1"># deep copy of the original model</span>
+                <span class="n">debug_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                <span class="c1"># modify the original to detect the bad constraints</span>
+                <span class="n">slacks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">debugging_f_obj</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cst</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">debug_model</span><span class="o">.</span><span class="n">constraints</span><span class="p">):</span>
+
+                    <span class="c1"># create a new slack var in the problem</span>
+                    <span class="n">sl</span> <span class="o">=</span> <span class="n">debug_model</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Slk_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cst</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                    <span class="c1"># add the variable to the new objective function</span>
+                    <span class="n">debugging_f_obj</span> <span class="o">+=</span> <span class="n">sl</span>
+
+                    <span class="c1"># add the variable to the current constraint</span>
+                    <span class="n">cst</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">sl</span><span class="p">)</span>
+
+                    <span class="c1"># store for later</span>
+                    <span class="n">slacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sl</span><span class="p">)</span>
+
+                <span class="c1"># set the objective function as the summation of the new slacks</span>
+                <span class="n">debug_model</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">debugging_f_obj</span><span class="p">)</span>
+
+                <span class="c1"># solve the debug model</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="n">debug_model</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">show_logs</span><span class="p">))</span>
+
+                <span class="n">debug_optimal</span> <span class="o">=</span> <span class="n">debug_model</span><span class="o">.</span><span class="n">is_optimal</span><span class="p">()</span>
+
+                <span class="c1"># clear the relaxed slacks list</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">relaxed_slacks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="n">debug_optimal</span><span class="p">:</span>
+
+                    <span class="c1"># pick the original objectve function</span>
+                    <span class="n">main_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span>
+
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">slacks</span><span class="p">):</span>
+
+                        <span class="c1"># get the debugging slack value</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">debug_model</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">sl</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+                            <span class="n">cst_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+                            <span class="c1"># add the slack in the main model</span>
+                            <span class="n">sl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Slk_rlx_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cst_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">relaxed_slacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">sl2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>  <span class="c1"># the 0.0 value will be read later</span>
+
+                            <span class="c1"># add the slack to the original objective function</span>
+                            <span class="n">main_f</span> <span class="o">+=</span> <span class="n">sl2</span>
+
+                            <span class="c1"># alter the matching constraint</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">sl2</span><span class="p">)</span>
+
+                    <span class="c1"># set the modified (original) objective function</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">main_f</span><span class="p">)</span>
+
+                    <span class="c1"># solve the modified (original) model</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">show_logs</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_optimal</span><span class="p">():</span>
+
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relaxed_slacks</span><span class="p">)):</span>
+                            <span class="n">k</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relaxed_slacks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">relaxed_slacks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+                            <span class="c1"># logg this</span>
+                            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Relaxed problem&quot;</span><span class="p">,</span>
+                                                        <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Unable to relax the model, the debug model failed&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OPTIMAL</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_optimal</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="LpModel.status2string">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.status2string">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">status2string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Optimal&quot;</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">INFINITY</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Infinity&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;infeasible&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="LpModel.set_solution">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.set_solution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col_values</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">col_duals</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                     <span class="n">row_values</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">row_duals</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                     <span class="n">f_obj</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">is_optimal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set solution from the MIP solver</span>
+<span class="sd">        :param col_values: array of variables&#39; values</span>
+<span class="sd">        :param col_duals: array of variable dual values</span>
+<span class="sd">        :param row_values: array of constraint values</span>
+<span class="sd">        :param row_duals: array of constraint dual values</span>
+<span class="sd">        :param f_obj: value of the objective function</span>
+<span class="sd">        :param is_optimal: is optimal</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span> <span class="o">=</span> <span class="n">col_values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_dual</span> <span class="o">=</span> <span class="n">col_duals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_value</span> <span class="o">=</span> <span class="n">row_values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_dual</span> <span class="o">=</span> <span class="n">row_duals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_objective_value</span> <span class="o">=</span> <span class="n">f_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_optimal</span> <span class="o">=</span> <span class="n">is_optimal</span></div>
+
+
+<div class="viewcode-block" id="LpModel.fobj_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.fobj_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fobj_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the objective function value</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objective_value</span></div>
+
+
+<div class="viewcode-block" id="LpModel.is_mip">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.is_mip">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_mip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Is this model a MIP?</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_mip</span></div>
+
+
+<div class="viewcode-block" id="LpModel.get_objective_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_objective_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_objective_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the objective function value</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objective_value</span></div>
+
+
+<div class="viewcode-block" id="LpModel.get_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">|</span> <span class="n">LpCst</span> <span class="o">|</span> <span class="n">LpExp</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the value of a variable</span>
+<span class="sd">        :param var: LpVar object</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpCst</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_value</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">offset</span>
+            <span class="k">for</span> <span class="n">var2</span><span class="p">,</span> <span class="n">_coef</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">+=</span> <span class="n">_coef</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span><span class="p">[</span><span class="n">var2</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">var</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported variable type </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="LpModel.get_dual_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_dual_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dual_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">|</span> <span class="n">LpCst</span> <span class="o">|</span> <span class="n">LpExp</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the dual value of a variable</span>
+<span class="sd">        :param var: LpVar object</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_dual</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpCst</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_dual</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">offset</span>
+            <span class="k">for</span> <span class="n">var2</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">+=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_dual</span><span class="p">[</span><span class="n">var2</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">var</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported variable type </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="LpModel.get_array_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_array_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_array_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">LpVar</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the array of var values</span>
+<span class="sd">        :param arr: array of variables</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="LpModel.solution_available">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.solution_available">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solution_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Is there a solution loaded?</span>
+<span class="sd">        :return: true / false</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpModel.print_solution">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.print_solution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print available solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution_available</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solution&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_value</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">get_index</span><span class="p">()]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No solution available, solve first&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

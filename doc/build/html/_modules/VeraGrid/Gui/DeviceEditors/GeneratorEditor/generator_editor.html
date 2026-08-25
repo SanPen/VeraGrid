@@ -1,0 +1,1117 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_GeneratorQCurveEditorDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard</span><span class="w"> </span><span class="kn">import</span> <span class="n">SolarPvWizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDeviceEditor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindFarmWizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Widgets.matplotlibwidget</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatplotlibWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">info_msg</span><span class="p">,</span> <span class="n">warning_msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.profile_wizard_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">fill_substation_weather_profiles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator_q_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneratorQCurve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">Vec</span>
+
+
+<div class="viewcode-block" id="build_safe_single_point_curve">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.build_safe_single_point_curve">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_safe_single_point_curve</span><span class="p">(</span><span class="n">qmin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qmax</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a one-point capability curve used as safe fallback.</span>
+
+<span class="sd">    :param qmin: Reactive lower limit in MVAr.</span>
+<span class="sd">    :param qmax: Reactive upper limit in MVAr.</span>
+<span class="sd">    :return: Matrix with one row ``[P, Qmin, Qmax]``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">curve_data</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">curve_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">curve_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">qmin</span><span class="p">)</span>
+    <span class="n">curve_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">qmax</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">curve_data</span></div>
+
+
+
+<div class="viewcode-block" id="draw_styled_qcurve_plot">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.draw_styled_qcurve_plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_styled_qcurve_plot</span><span class="p">(</span><span class="n">plotter</span><span class="p">:</span> <span class="n">MatplotlibWidget</span><span class="p">,</span> <span class="n">q_curve</span><span class="p">:</span> <span class="n">GeneratorQCurve</span><span class="p">,</span> <span class="n">chart_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw a styled generator capability chart.</span>
+
+<span class="sd">    :param plotter: Plot widget where the chart is rendered.</span>
+<span class="sd">    :param q_curve: Generator reactive capability curve object.</span>
+<span class="sd">    :param chart_title: Plot title text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">fig</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">ax</span>
+    <span class="n">figure</span><span class="o">.</span><span class="n">set_tight_layout</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Configure a clean background that improves contrast for overlays.</span>
+    <span class="n">figure</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;#F8FAFC&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Draw the apparent-power circle to show the global capability envelope.</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Snom</span><span class="p">())</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+    <span class="n">circle_x</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">circle_y</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">circle_x</span><span class="p">,</span> <span class="n">circle_y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#3B82F6&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Snom envelope&quot;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">circle_x</span><span class="p">,</span> <span class="n">circle_y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2563EB&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Draw q-curve limits and the feasible band between Qmin/Qmax.</span>
+    <span class="n">curve_data</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">q_curve</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">max_abs_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">curve_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">curve_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">sorted_curve_data</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">curve_data</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">p_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sorted_curve_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">qmin_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sorted_curve_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">qmax_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sorted_curve_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">p_values</span><span class="p">,</span> <span class="n">qmin_values</span><span class="p">,</span> <span class="n">qmax_values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#10B981&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.16</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Feasible band&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p_values</span><span class="p">,</span> <span class="n">qmax_values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0F766E&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Qmax(P)&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p_values</span><span class="p">,</span> <span class="n">qmin_values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#F97316&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Qmin(P)&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">p_values</span><span class="p">,</span> <span class="n">qmax_values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0F766E&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">p_values</span><span class="p">,</span> <span class="n">qmin_values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#F97316&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">p_abs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">p_values</span><span class="p">)))</span>
+        <span class="n">qmin_abs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qmin_values</span><span class="p">)))</span>
+        <span class="n">qmax_abs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qmax_values</span><span class="p">)))</span>
+        <span class="n">max_abs_value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_abs_value</span><span class="p">,</span> <span class="n">p_abs</span><span class="p">,</span> <span class="n">qmin_abs</span><span class="p">,</span> <span class="n">qmax_abs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Add coordinate axes and readable limits around the largest value shown.</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#94A3B8&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#94A3B8&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_abs_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">span_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">max_abs_value</span> <span class="o">*</span> <span class="mf">1.15</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">span_value</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="n">span_value</span><span class="p">,</span> <span class="n">span_value</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="n">span_value</span><span class="p">,</span> <span class="n">span_value</span><span class="p">)</span>
+
+    <span class="c1"># Configure labels, grid and styling for better visual tracking.</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">chart_title</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;P [MW]&quot;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Q [MVAr]&quot;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#CBD5E1&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#E2E8F0&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="mf">0.02</span><span class="p">,</span>
+        <span class="mf">0.98</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;Snom = </span><span class="si">{</span><span class="n">radius</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MVA&quot;</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">axis</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+        <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+        <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+        <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round,pad=0.28&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#D1D5DB&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.95</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Keep the legend outside the axes so it never hides q-curve points.</span>
+    <span class="n">legend_font_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">axis</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">get_size</span><span class="p">())</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="mf">4.0</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+        <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span>
+        <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_font_size</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">spine_key</span> <span class="ow">in</span> <span class="n">axis</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="n">spine_key</span><span class="p">]</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;#94A3B8&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="n">spine_key</span><span class="p">]</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mf">0.9</span><span class="p">)</span>
+
+    <span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneratorQCurveEditorTableModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractTableModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Table model for reactive power capability points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span>
+                 <span class="n">headers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                 <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build table model.</span>
+
+<span class="sd">        :param data: Initial point matrix.</span>
+<span class="sd">        :param headers: Column labels.</span>
+<span class="sd">        :param callback: Optional callback on data changes.</span>
+<span class="sd">        :param parent: Qt parent object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractTableModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">callback</span>
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.rowCount">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.rowCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return number of rows.</span>
+
+<span class="sd">        :param parent: Unused parent index.</span>
+<span class="sd">        :return: Row count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.columnCount">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.columnCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return number of columns.</span>
+
+<span class="sd">        :param parent: Unused parent index.</span>
+<span class="sd">        :return: Column count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return displayed and edited value.</span>
+
+<span class="sd">        :param index: Target table index.</span>
+<span class="sd">        :param role: Qt data role.</span>
+<span class="sd">        :return: Formatted cell value or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span> <span class="ow">or</span> <span class="n">role</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.setData">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.setData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">EditRole</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set one numeric cell.</span>
+
+<span class="sd">        :param index: Target table index.</span>
+<span class="sd">        :param value: New value.</span>
+<span class="sd">        :param role: Qt data role.</span>
+<span class="sd">        :return: Success flag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">numeric_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()]</span> <span class="o">=</span> <span class="n">numeric_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sort_data</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.flags">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.flags">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return editable item flags.</span>
+
+<span class="sd">        :param index: Target table index.</span>
+<span class="sd">        :return: Item flags.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="o">.</span><span class="n">ItemIsEditable</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="o">.</span><span class="n">ItemIsSelectable</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.headerData">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.headerData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">section</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                   <span class="n">orientation</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="p">,</span>
+                   <span class="n">role</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return column headers.</span>
+
+<span class="sd">        :param section: Header section.</span>
+<span class="sd">        :param orientation: Header orientation.</span>
+<span class="sd">        :param role: Qt role.</span>
+<span class="sd">        :return: Header text or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span> <span class="ow">and</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractTableModel</span><span class="o">.</span><span class="n">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.add_row">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.add_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_data</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append one row.</span>
+
+<span class="sd">        :param row_data: Row data with three values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beginInsertRows</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">row_data</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endInsertRows</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.del_row">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.del_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">del_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove row at index.</span>
+
+<span class="sd">        :param row_index: Row index to remove.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beginRemoveRows</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">(),</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">row_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">endRemoveRows</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.del_last_row">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.del_last_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">del_last_row</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove last row if any.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beginRemoveRows</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">(),</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">row_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">endRemoveRows</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.sort_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.sort_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sort_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort rows by active power column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layoutChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorTableModel.get_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorTableModel.get_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get table matrix.</span>
+
+<span class="sd">        :return: Data matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorWidget">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorWidget">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneratorQCurveEditorWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reactive power capability curve editor widget backed by a Qt Designer `.ui`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">curve_changed</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_curve</span><span class="p">:</span> <span class="n">GeneratorQCurve</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pmin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pmax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Snom</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the curve editor widget.</span>
+
+<span class="sd">        :param q_curve: Generator reactive capability object.</span>
+<span class="sd">        :param Qmin: Initial minimum reactive power.</span>
+<span class="sd">        :param Qmax: Initial maximum reactive power.</span>
+<span class="sd">        :param Pmin: Initial minimum active power.</span>
+<span class="sd">        :param Pmax: Initial maximum active power.</span>
+<span class="sd">        :param Snom: Initial apparent power nominal value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_GeneratorQCurveEditorDialog</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="p">:</span> <span class="n">GeneratorQCurve</span> <span class="o">=</span> <span class="n">q_curve</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Qmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Qmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Pmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Pmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Snom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Snom</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;Qmin&quot;</span><span class="p">,</span> <span class="s2">&quot;Qmax&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_model</span><span class="p">:</span> <span class="n">GeneratorQCurveEditorTableModel</span> <span class="o">=</span> <span class="n">GeneratorQCurveEditorTableModel</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_table_model_changed</span><span class="p">,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tableView</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="o">.</span><span class="n">SelectionBehavior</span><span class="o">.</span><span class="n">SelectRows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tableView</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="o">.</span><span class="n">SelectionMode</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tableView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">addRowButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_row</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">delRowButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_selected_row</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GeneratorQCurveEditorWidget.add_row">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorWidget.add_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_row</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one empty row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_model</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_table_model_changed</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorWidget.remove_selected_row">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorWidget.remove_selected_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_selected_row</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove selected row or the last row when no selection exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_indexes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tableView</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectedRows</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_indexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">selected_row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">selected_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_model</span><span class="o">.</span><span class="n">del_row</span><span class="p">(</span><span class="n">selected_row</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_model</span><span class="o">.</span><span class="n">del_last_row</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_table_model_changed</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorWidget.collect_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorWidget.collect_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">collect_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Collect values from the table model and update scalar limits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curve_data</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_model</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">curve_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">safe_curve_data</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">curve_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">safe_curve_data</span> <span class="o">=</span> <span class="n">build_safe_single_point_curve</span><span class="p">(</span><span class="n">qmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Qmin</span><span class="p">,</span> <span class="n">qmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Qmax</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">safe_curve_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Snom</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Snom</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Qmax</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Qmin</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Pmax</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Pmin</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorWidget.closeEvent">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorWidget.closeEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save edited data when closing.</span>
+
+<span class="sd">        :param event: Qt close event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect_data</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditorWidget.plot">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditorWidget.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot capability envelope and q-curve limits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect_data</span><span class="p">()</span>
+        <span class="n">draw_styled_qcurve_plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">plotter</span><span class="p">,</span> <span class="n">q_curve</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="p">,</span> <span class="n">chart_title</span><span class="o">=</span><span class="s2">&quot;Reactive capability curve&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_table_model_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        React to table edits by redrawing and notifying listeners.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curve_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="GeneratorQCurveEditor">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneratorQCurveEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Standalone reactive power capability curve editor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_curve</span><span class="p">:</span> <span class="n">GeneratorQCurve</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pmin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pmax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Snom</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the curve editor.</span>
+
+<span class="sd">        :param q_curve: Generator reactive capability object.</span>
+<span class="sd">        :param Qmin: Initial minimum reactive power.</span>
+<span class="sd">        :param Qmax: Initial maximum reactive power.</span>
+<span class="sd">        :param Pmin: Initial minimum active power.</span>
+<span class="sd">        :param Pmax: Initial maximum active power.</span>
+<span class="sd">        :param Snom: Initial apparent power nominal value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="p">:</span> <span class="n">GeneratorQCurveEditorWidget</span> <span class="o">=</span> <span class="n">GeneratorQCurveEditorWidget</span><span class="p">(</span>
+            <span class="n">q_curve</span><span class="o">=</span><span class="n">q_curve</span><span class="p">,</span>
+            <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+            <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+            <span class="n">Pmin</span><span class="o">=</span><span class="n">Pmin</span><span class="p">,</span>
+            <span class="n">Pmax</span><span class="o">=</span><span class="n">Pmax</span><span class="p">,</span>
+            <span class="n">Snom</span><span class="o">=</span><span class="n">Snom</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">curve_changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync_from_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Reactive power curve editor&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span><span class="p">:</span> <span class="n">GeneratorQCurve</span> <span class="o">=</span> <span class="n">q_curve</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Qmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Qmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Pmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Pmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Snom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Snom</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">980</span><span class="p">,</span> <span class="mi">620</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sync_from_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize the scalar fields from the embedded q-curve widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">collect_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_curve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">q_curve</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Snom</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">Snom</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">Qmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">Qmin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">Pmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_curve_widget</span><span class="o">.</span><span class="n">Pmin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GeneratorQCurveEditor.closeEvent">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorQCurveEditor.closeEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save edited data when closing.</span>
+
+<span class="sd">        :param event: Qt close event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync_from_widget</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EmbeddedSolarPvEditorWidget">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.EmbeddedSolarPvEditorWidget">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmbeddedSolarPvEditorWidget</span><span class="p">(</span><span class="n">SolarPvWizard</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solar editor embedded as a child widget inside the generator editor tab.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">generation_finished</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">time_array</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">object</span><span class="p">],</span>
+                 <span class="n">peak_power</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">gen_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">bus_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build embedded solar editor widget.</span>
+
+<span class="sd">        :param time_array: Time profile sequence.</span>
+<span class="sd">        :param peak_power: Generator peak power.</span>
+<span class="sd">        :param latitude: Bus latitude.</span>
+<span class="sd">        :param longitude: Bus longitude.</span>
+<span class="sd">        :param gen_name: Generator name.</span>
+<span class="sd">        :param bus_name: Bus name.</span>
+<span class="sd">        :param parent: Qt parent widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SolarPvWizard</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">time_array</span><span class="o">=</span><span class="n">time_array</span><span class="p">,</span>
+            <span class="n">peak_power</span><span class="o">=</span><span class="n">peak_power</span><span class="p">,</span>
+            <span class="n">latitude</span><span class="o">=</span><span class="n">latitude</span><span class="p">,</span>
+            <span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span>
+            <span class="n">gen_name</span><span class="o">=</span><span class="n">gen_name</span><span class="p">,</span>
+            <span class="n">bus_name</span><span class="o">=</span><span class="n">bus_name</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Solar profile editor&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EmbeddedSolarPvEditorWidget.generate_click">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.EmbeddedSolarPvEditorWidget.generate_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_click</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the solar profile and notify parent listeners.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SolarPvWizard</span><span class="o">.</span><span class="n">generate_click</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generation_finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="EmbeddedSolarPvEditorWidget.accept_click">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.EmbeddedSolarPvEditorWidget.accept_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept_click</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Notify parent listeners without closing embedded widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_accepted</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generation_finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_accepted</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EmbeddedWindFarmEditorWidget">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.EmbeddedWindFarmEditorWidget">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmbeddedWindFarmEditorWidget</span><span class="p">(</span><span class="n">WindFarmWizard</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wind farm editor embedded as a child widget inside the generator editor tab.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">generation_finished</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">time_array</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">object</span><span class="p">],</span>
+                 <span class="n">peak_power</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">gen_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">bus_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build embedded wind farm editor widget.</span>
+
+<span class="sd">        :param time_array: Time profile sequence.</span>
+<span class="sd">        :param peak_power: Generator peak power.</span>
+<span class="sd">        :param latitude: Bus latitude.</span>
+<span class="sd">        :param longitude: Bus longitude.</span>
+<span class="sd">        :param gen_name: Generator name.</span>
+<span class="sd">        :param bus_name: Bus name.</span>
+<span class="sd">        :param parent: Qt parent widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WindFarmWizard</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">time_array</span><span class="o">=</span><span class="n">time_array</span><span class="p">,</span>
+            <span class="n">peak_power</span><span class="o">=</span><span class="n">peak_power</span><span class="p">,</span>
+            <span class="n">latitude</span><span class="o">=</span><span class="n">latitude</span><span class="p">,</span>
+            <span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span>
+            <span class="n">gen_name</span><span class="o">=</span><span class="n">gen_name</span><span class="p">,</span>
+            <span class="n">bus_name</span><span class="o">=</span><span class="n">bus_name</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Wind profile editor&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EmbeddedWindFarmEditorWidget.generate_click">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.EmbeddedWindFarmEditorWidget.generate_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_click</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the wind profile and notify parent listeners.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WindFarmWizard</span><span class="o">.</span><span class="n">generate_click</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generation_finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="EmbeddedWindFarmEditorWidget.accept_click">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.EmbeddedWindFarmEditorWidget.accept_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept_click</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Notify parent listeners without closing embedded widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_accepted</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generation_finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_accepted</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GeneratorEditor">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneratorEditor</span><span class="p">(</span><span class="n">TemplateDeviceEditor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generator editor that extends ``TemplateDeviceEditor`` with specialized tabs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_object</span><span class="p">:</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the generator editor.</span>
+
+<span class="sd">        :param api_object: Generator edited in place.</span>
+<span class="sd">        :param circuit: Optional circuit context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TemplateDeviceEditor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_object</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="n">api_object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="p">:</span> <span class="n">EmbeddedSolarPvEditorWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="p">:</span> <span class="n">EmbeddedWindFarmEditorWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_qcurve_tab</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_solar_tab</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_wind_tab</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_qcurve_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build and configure the capability curve tab widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_tab</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_tab_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qcurve_tab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_editor_widget</span><span class="p">:</span> <span class="n">GeneratorQCurveEditorWidget</span> <span class="o">=</span> <span class="n">GeneratorQCurveEditorWidget</span><span class="p">(</span>
+            <span class="n">q_curve</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span><span class="p">,</span>
+            <span class="n">Qmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Qmin</span><span class="p">,</span>
+            <span class="n">Qmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Qmax</span><span class="p">,</span>
+            <span class="n">Pmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Pmin</span><span class="p">,</span>
+            <span class="n">Pmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Pmax</span><span class="p">,</span>
+            <span class="n">Snom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Snom</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_tab_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qcurve_editor_widget</span><span class="p">)</span>
+        <span class="n">qcurve_tab_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qcurve_tab</span><span class="p">,</span> <span class="s2">&quot;Q curve editor&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">setTabIcon</span><span class="p">(</span><span class="n">qcurve_tab_index</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/plot.png&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_editor_widget</span><span class="o">.</span><span class="n">curve_changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_qcurve_data_changed</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_solar_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build and configure the embedded solar profile editor tab.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_tab</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_tab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_button_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Accept&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_tab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/accept.png&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_generator_bus</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span> <span class="ow">and</span> <span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="p">:</span> <span class="n">EmbeddedSolarPvEditorWidget</span> <span class="o">=</span> <span class="n">EmbeddedSolarPvEditorWidget</span><span class="p">(</span>
+                <span class="n">time_array</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">,</span>
+                <span class="n">peak_power</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Pmax</span><span class="p">,</span>
+                <span class="n">latitude</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                <span class="n">longitude</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                <span class="n">gen_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">bus_name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_tab</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">generation_finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_embedded_solar_generation_finished</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_solar_profile</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">missing_msg</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span>
+                <span class="s2">&quot;Solar editor requires an assigned bus and circuit time profiles.&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">solar_tab</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solar_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">missing_msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_button_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_button_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_button_layout</span><span class="p">)</span>
+
+        <span class="n">solar_tab_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_tab</span><span class="p">,</span> <span class="s2">&quot;Solar editor&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">setTabIcon</span><span class="p">(</span><span class="n">solar_tab_index</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/solar_power.png&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_wind_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build and configure the embedded wind profile editor tab.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_tab</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_tab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_button_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Accept&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_tab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/accept.png&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_generator_bus</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span> <span class="ow">and</span> <span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="p">:</span> <span class="n">EmbeddedWindFarmEditorWidget</span> <span class="o">=</span> <span class="n">EmbeddedWindFarmEditorWidget</span><span class="p">(</span>
+                <span class="n">time_array</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span><span class="p">,</span>
+                <span class="n">peak_power</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Pmax</span><span class="p">,</span>
+                <span class="n">latitude</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                <span class="n">longitude</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                <span class="n">gen_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">bus_name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_tab</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">generation_finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_embedded_wind_generation_finished</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_wind_profile</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">missing_msg</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span>
+                <span class="s2">&quot;Wind editor requires an assigned bus and circuit time profiles.&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wind_tab</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">missing_msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_button_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_button_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_button_layout</span><span class="p">)</span>
+
+        <span class="n">wind_tab_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_tab</span><span class="p">,</span> <span class="s2">&quot;Wind farm editor&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_widget</span><span class="o">.</span><span class="n">setTabIcon</span><span class="p">(</span><span class="n">wind_tab_index</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/wind_power.png&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_qcurve</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot capability envelope and edited q-curve.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_editor_widget</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sync_qcurve_to_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize q-curve widget data into the generator object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_editor_widget</span><span class="o">.</span><span class="n">collect_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qcurve_editor_widget</span><span class="o">.</span><span class="n">q_curve</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Snom</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Snom</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Qmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Qmax</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Qmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Qmin</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Pmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Pmax</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">Pmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">q_curve</span><span class="o">.</span><span class="n">get_Pmin</span><span class="p">())</span>
+
+        <span class="c1"># Keep property and profile tabs coherent with scalar updates.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties_model</span><span class="o">.</span><span class="n">set_time_index</span><span class="p">(</span><span class="n">time_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_current_time_index</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_profile_table</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_qcurve_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        React to q-curve table changes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync_qcurve_to_generator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plot_qcurve</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_generator_bus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get generator bus if available.</span>
+
+<span class="sd">        :return: Bus object or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus</span>
+        <span class="k">return</span> <span class="n">bus</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_embedded_solar_generation_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable or disable solar profile application according to generation status.</span>
+
+<span class="sd">        :param ok: Generation status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solar_apply_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">ok</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_embedded_wind_generation_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable or disable wind profile application according to generation status.</span>
+
+<span class="sd">        :param ok: Generation status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_apply_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">ok</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_solar_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply previously generated solar profile values to generator profiles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Solar editor is not available&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">ok</span><span class="p">):</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Generate a solar profile first&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">solar_profile_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">solar_temperature</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">temperature</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">solar_wind_speed</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">wind_speed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">wind_speed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">solar_irradiation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">irradiation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solar_editor_widget</span><span class="o">.</span><span class="n">irradiation</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">expected_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">P_prof</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">solar_profile_values</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected_size</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">P_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">solar_profile_values</span><span class="p">)</span>
+
+                <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_generator_bus</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fill_substation_weather_profiles</span><span class="p">(</span>
+                        <span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span>
+                        <span class="n">temperature</span><span class="o">=</span><span class="n">solar_temperature</span><span class="p">,</span>
+                        <span class="n">wind_speed</span><span class="o">=</span><span class="n">solar_wind_speed</span><span class="p">,</span>
+                        <span class="n">irradiation</span><span class="o">=</span><span class="n">solar_irradiation</span><span class="p">,</span>
+                        <span class="n">expected_size</span><span class="o">=</span><span class="n">expected_size</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">refresh_profile_table</span><span class="p">()</span>
+                <span class="n">info_msg</span><span class="p">(</span><span class="s2">&quot;Solar profile applied to generator&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Wrong solar profile length&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_wind_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply previously generated wind profile values to generator profiles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Wind editor is not available&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">ok</span><span class="p">):</span>
+            <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Generate a wind profile first&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wind_profile_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">wind_temperature</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">temperature</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">wind_speed</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">wind_speed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_editor_widget</span><span class="o">.</span><span class="n">wind_speed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">expected_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">P_prof</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_profile_values</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected_size</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">P_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_profile_values</span><span class="p">)</span>
+
+                <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_generator_bus</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fill_substation_weather_profiles</span><span class="p">(</span>
+                        <span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span>
+                        <span class="n">temperature</span><span class="o">=</span><span class="n">wind_temperature</span><span class="p">,</span>
+                        <span class="n">wind_speed</span><span class="o">=</span><span class="n">wind_speed</span><span class="p">,</span>
+                        <span class="n">irradiation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">expected_size</span><span class="o">=</span><span class="n">expected_size</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">refresh_profile_table</span><span class="p">()</span>
+                <span class="n">info_msg</span><span class="p">(</span><span class="s2">&quot;Wind profile applied to generator&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warning_msg</span><span class="p">(</span><span class="s2">&quot;Wrong wind profile length&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator editor&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GeneratorEditor.closeEvent">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.closeEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize q-curve table edits before dialog closes.</span>
+
+<span class="sd">        :param event: Qt close event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync_qcurve_to_generator</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="c1"># Backward-compatible alias used by existing call sites in diagrams.</span>
+<span class="n">GeneratorEditorDialog</span> <span class="o">=</span> <span class="n">GeneratorEditor</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">qt_app</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+
+    <span class="n">circuit_demo</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Generator editor demo&quot;</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">fbase</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+    <span class="n">circuit_demo</span><span class="o">.</span><span class="n">create_profiles</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">step_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step_unit</span><span class="o">=</span><span class="s2">&quot;h&quot;</span><span class="p">)</span>
+
+    <span class="n">bus_demo</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus demo&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">132.0</span><span class="p">)</span>
+    <span class="n">circuit_demo</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_demo</span><span class="p">)</span>
+
+    <span class="n">generator_demo</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Generator demo&quot;</span><span class="p">,</span>
+        <span class="n">P</span><span class="o">=</span><span class="mf">55.0</span><span class="p">,</span>
+        <span class="n">Q</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">Qmin</span><span class="o">=-</span><span class="mf">50.0</span><span class="p">,</span>
+        <span class="n">Qmax</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>
+        <span class="n">Pmin</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+        <span class="n">Pmax</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
+        <span class="n">Snom</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+        <span class="n">is_controlled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">power_factor</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">circuit_demo</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_demo</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">generator_demo</span><span class="p">)</span>
+
+    <span class="n">generator_demo</span><span class="o">.</span><span class="n">P_prof</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">52.0</span>
+    <span class="n">generator_demo</span><span class="o">.</span><span class="n">P_prof</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">58.0</span>
+    <span class="n">generator_demo</span><span class="o">.</span><span class="n">Vset_prof</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.01</span>
+    <span class="n">generator_demo</span><span class="o">.</span><span class="n">Vset_prof</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.02</span>
+
+    <span class="n">dialog_demo</span><span class="p">:</span> <span class="n">GeneratorEditor</span> <span class="o">=</span> <span class="n">GeneratorEditor</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="n">generator_demo</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="n">circuit_demo</span><span class="p">)</span>
+    <span class="n">dialog_demo</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">qt_app</span><span class="o">.</span><span class="n">exec</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

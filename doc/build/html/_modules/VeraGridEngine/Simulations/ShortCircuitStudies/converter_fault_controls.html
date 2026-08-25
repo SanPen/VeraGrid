@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">bisect</span>
+
+<div class="viewcode-block" id="vdl">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ShortCircuitStudies.html#VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls.vdl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">vdl</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear approximation with clamping.</span>
+<span class="sd">    points: list of (x_i, y_i), sorted by x_i</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">]</span>
+
+    <span class="c1"># Clamp</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">ys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">xs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">ys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Find segment</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect_right</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ys</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Linear interpolation</span>
+    <span class="k">return</span> <span class="n">y0</span> <span class="o">+</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="current_limit_logic">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ShortCircuitStudies.html#VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls.current_limit_logic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">current_limit_logic</span><span class="p">(</span><span class="n">Iqcmd</span><span class="p">,</span> <span class="n">vdlq</span><span class="p">,</span> <span class="n">vdlp</span><span class="p">,</span> <span class="n">is_blocked</span><span class="p">):</span>
+
+    <span class="n">Imax</span> <span class="o">=</span> <span class="mf">1.3</span> <span class="c1"># Maximum converter current limit in [pu]</span>
+    <span class="n">ipmin</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">is_blocked</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">blocking_factor</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">blocking_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="c1"># Reactive limits</span>
+    <span class="n">iqmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">vdlq</span><span class="p">,</span> <span class="n">Imax</span><span class="p">)</span> <span class="o">*</span> <span class="n">blocking_factor</span>
+
+    <span class="k">if</span> <span class="n">iqmax</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">iqmin</span> <span class="o">=</span> <span class="n">iqmax</span> <span class="o">*</span> <span class="n">blocking_factor</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">iqmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">iqmax</span> <span class="o">*</span> <span class="n">blocking_factor</span>
+
+    <span class="c1"># Reactive limits</span>
+    <span class="n">iq_used</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">vdlq</span><span class="p">,</span> <span class="n">Imax</span><span class="p">,</span> <span class="n">Iqcmd</span><span class="p">)</span>
+    <span class="n">ipmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">vdlp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">Imax</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">iq_used</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">iqmin</span><span class="p">,</span> <span class="n">iqmax</span><span class="p">,</span> <span class="n">ipmin</span><span class="p">,</span> <span class="n">ipmax</span></div>
+
+
+<div class="viewcode-block" id="reec_d">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ShortCircuitStudies.html#VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls.reec_d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reec_d</span><span class="p">(</span><span class="n">u</span><span class="p">,</span>
+           <span class="n">Vpf</span><span class="p">,</span>
+           <span class="n">Qpf</span><span class="p">,</span>
+           <span class="n">Ppf</span><span class="p">,</span>
+           <span class="p">):</span>
+
+    <span class="n">Vt</span> <span class="o">=</span> <span class="n">u</span>  <span class="c1"># Input 0</span>
+    <span class="n">Qext</span> <span class="o">=</span> <span class="n">Qpf</span>  <span class="c1"># Input 8</span>
+    <span class="n">Paux</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Input 11</span>
+    <span class="n">Speed</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Input 12</span>
+    <span class="n">Pref_WGO</span> <span class="o">=</span> <span class="n">Ppf</span>  <span class="c1"># Input 14</span>
+
+    <span class="c1"># Current Blocking</span>
+    <span class="n">vblkl</span> <span class="o">=</span> <span class="mf">0.65</span> <span class="c1"># Voltage below which the converter is blocked in [pu]</span>
+    <span class="n">vblkh</span> <span class="o">=</span> <span class="mf">1.2</span> <span class="c1"># Voltage above which the converter is blocked in [pu]</span>
+    <span class="n">is_blocked</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="n">Vt</span> <span class="o">&gt;=</span> <span class="n">vblkh</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Vt</span> <span class="o">&lt;=</span> <span class="n">vblkl</span><span class="p">))</span>
+
+    <span class="c1"># Reactive Current Injection</span>
+    <span class="n">dbd1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.05</span>
+    <span class="n">dbd2</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">Kqv</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">Iqh1</span> <span class="o">=</span> <span class="mf">1.1</span>  <span class="c1"># Maximum limit of reactive current injection in [pu]</span>
+    <span class="n">Iql1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.1</span>  <span class="c1"># Minimum limit of reactive current injection in [pu]</span>
+
+    <span class="n">Vdif</span> <span class="o">=</span> <span class="n">Vpf</span> <span class="o">-</span> <span class="n">Vt</span>
+
+    <span class="k">if</span> <span class="n">Vdif</span> <span class="o">&gt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dbd2</span><span class="p">):</span>
+        <span class="n">Verr</span> <span class="o">=</span> <span class="n">Vdif</span> <span class="o">-</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dbd2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">Vdif</span> <span class="o">&lt;</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">dbd1</span><span class="p">):</span>
+        <span class="n">Verr</span> <span class="o">=</span> <span class="n">Vdif</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dbd1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Verr</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">Iqv</span> <span class="o">=</span> <span class="n">Verr</span> <span class="o">*</span> <span class="n">Kqv</span>
+    <span class="n">Iqinj</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">Iqv</span><span class="p">,</span> <span class="n">Iql1</span><span class="p">),</span> <span class="n">Iqh1</span><span class="p">)</span>
+
+    <span class="c1"># Q-V Limitation</span>
+    <span class="n">yi</span> <span class="o">=</span> <span class="n">Qext</span>
+    <span class="n">qvmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># Minimum reactive power limit in [pu]</span>
+    <span class="n">qvmax</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Maximum reactive power limit in [pu]</span>
+    <span class="n">o3</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">qvmin</span><span class="p">),</span> <span class="n">qvmax</span><span class="p">)</span>
+
+    <span class="n">o5</span> <span class="o">=</span> <span class="n">o3</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">Vt</span><span class="p">)</span>
+
+    <span class="n">Iq_unlim</span> <span class="o">=</span> <span class="n">Iqinj</span> <span class="o">+</span> <span class="n">o5</span>
+
+    <span class="n">o6</span> <span class="o">=</span> <span class="n">Pref_WGO</span>
+
+    <span class="n">yi10</span> <span class="o">=</span> <span class="n">Speed</span> <span class="o">*</span> <span class="n">o6</span>
+
+    <span class="n">Pmin</span><span class="p">,</span> <span class="n">Pmax</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="c1"># Minimum and Maximum power reference in [pu]</span>
+    <span class="n">Pord</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">yi10</span><span class="p">,</span> <span class="n">Pmax</span><span class="p">),</span> <span class="n">Pmin</span><span class="p">)</span>
+
+    <span class="n">o12</span> <span class="o">=</span> <span class="n">Paux</span> <span class="o">+</span> <span class="n">Pord</span>
+
+    <span class="n">o7</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">Vt</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="n">Ip_unlim</span> <span class="o">=</span> <span class="n">o12</span> <span class="o">/</span> <span class="n">o7</span>
+
+    <span class="n">oarray_vdlq</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1.10</span><span class="p">,</span> <span class="mf">1.10</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.30</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">)]</span>
+    <span class="n">vdlq</span> <span class="o">=</span> <span class="n">vdl</span><span class="p">(</span><span class="n">Vt</span><span class="p">,</span> <span class="n">oarray_vdlq</span><span class="p">)</span>
+
+    <span class="n">oarray_vdlp</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1.10</span><span class="p">,</span> <span class="mf">1.10</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.30</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">)]</span>
+    <span class="n">vdlp</span> <span class="o">=</span> <span class="n">vdl</span><span class="p">(</span><span class="n">Vt</span><span class="p">,</span> <span class="n">oarray_vdlp</span><span class="p">)</span>
+
+    <span class="n">iqmin</span><span class="p">,</span> <span class="n">iqmax</span><span class="p">,</span> <span class="n">i_in1</span><span class="p">,</span> <span class="n">i_in</span> <span class="o">=</span> <span class="n">current_limit_logic</span><span class="p">(</span><span class="n">Iq_unlim</span><span class="p">,</span> <span class="n">vdlq</span><span class="p">,</span> <span class="n">vdlp</span><span class="p">,</span> <span class="n">is_blocked</span><span class="p">)</span>
+
+    <span class="n">Iqcmd</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Iq_unlim</span><span class="p">,</span> <span class="n">iqmax</span><span class="p">),</span> <span class="n">iqmin</span><span class="p">)</span>
+
+    <span class="n">Ipcmd</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Ip_unlim</span><span class="p">,</span> <span class="n">i_in</span><span class="p">),</span> <span class="n">i_in1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Iqcmd</span><span class="p">,</span> <span class="n">Ipcmd</span><span class="p">,</span> <span class="n">is_blocked</span></div>
+
+
+
+<div class="viewcode-block" id="regc_c">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ShortCircuitStudies.html#VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls.regc_c">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">regc_c</span><span class="p">(</span><span class="n">Iqcmd</span><span class="p">,</span> <span class="n">Ipcmd</span><span class="p">):</span>
+
+    <span class="n">iq_ref</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Iqcmd</span>
+
+    <span class="n">id_ref</span> <span class="o">=</span> <span class="n">Ipcmd</span>
+
+    <span class="k">return</span> <span class="n">iq_ref</span><span class="p">,</span> <span class="n">id_ref</span></div>
+
+
+<div class="viewcode-block" id="genstat">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ShortCircuitStudies.html#VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls.genstat">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">genstat</span><span class="p">(</span><span class="n">ur</span><span class="p">,</span> <span class="n">ui</span><span class="p">,</span> <span class="n">iq_ref</span><span class="p">,</span> <span class="n">id_ref</span><span class="p">,</span> <span class="n">Sn</span><span class="p">,</span> <span class="n">is_blocked</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">is_blocked</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">u1</span> <span class="o">=</span> <span class="n">ur</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">ui</span>
+
+        <span class="n">cos_u1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span>
+        <span class="n">sin_u1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span>
+
+        <span class="n">i1</span> <span class="o">=</span> <span class="p">(</span><span class="n">id_ref</span> <span class="o">*</span> <span class="n">cos_u1</span> <span class="o">-</span> <span class="n">iq_ref</span> <span class="o">*</span> <span class="n">sin_u1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">id_ref</span> <span class="o">*</span> <span class="n">sin_u1</span> <span class="o">+</span> <span class="n">iq_ref</span> <span class="o">*</span> <span class="n">cos_u1</span><span class="p">)</span>
+
+        <span class="n">s1</span> <span class="o">=</span> <span class="n">u1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">i1</span><span class="p">)</span>
+
+        <span class="n">Pref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Sn</span>  <span class="c1"># MW</span>
+        <span class="n">Qref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Sn</span>  <span class="c1"># MVAr</span>
+
+        <span class="k">return</span> <span class="n">Pref</span><span class="p">,</span> <span class="n">Qref</span></div>
+
+
+<div class="viewcode-block" id="wecc_wt_type_4b">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ShortCircuitStudies.html#VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls.wecc_wt_type_4b">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wecc_wt_type_4b</span><span class="p">(</span><span class="n">V_measured</span><span class="p">,</span> <span class="n">Vpf</span><span class="p">,</span> <span class="n">St_vsc_pf</span><span class="p">,</span> <span class="n">S_base_vg</span><span class="p">,</span> <span class="n">S_rated_vsc</span><span class="p">):</span>
+
+    <span class="n">Vt</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">V_measured</span><span class="p">)</span> <span class="c1"># Absolute value of the converter&#39;s voltage [pu]</span>
+    <span class="n">Vt_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">V_measured</span><span class="p">)</span> <span class="c1"># Real component of the converter&#39;s voltage [pu]</span>
+    <span class="n">Vt_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">V_measured</span><span class="p">)</span> <span class="c1"># Imaginary component of the converter&#39;s voltage [pu]</span>
+
+    <span class="n">Ppf</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">St_vsc_pf</span><span class="p">)</span> <span class="o">/</span> <span class="n">S_rated_vsc</span>
+    <span class="n">Qpf</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">St_vsc_pf</span><span class="p">)</span> <span class="o">/</span> <span class="n">S_rated_vsc</span>
+
+    <span class="n">Iqcmd</span><span class="p">,</span> <span class="n">Ipcmd</span><span class="p">,</span> <span class="n">is_blocked</span> <span class="o">=</span> <span class="n">reec_d</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">Vt</span><span class="p">,</span>
+                                      <span class="n">Vpf</span><span class="o">=</span><span class="n">Vpf</span><span class="p">,</span>
+                                      <span class="n">Qpf</span><span class="o">=</span><span class="n">Qpf</span><span class="p">,</span>
+                                      <span class="n">Ppf</span><span class="o">=</span><span class="n">Ppf</span><span class="p">)</span>
+
+    <span class="n">iq_ref</span><span class="p">,</span> <span class="n">id_ref</span> <span class="o">=</span> <span class="n">regc_c</span><span class="p">(</span><span class="n">Iqcmd</span><span class="o">=</span><span class="n">Iqcmd</span><span class="p">,</span> <span class="c1"># Current reference from REEC_D [pu]</span>
+                            <span class="n">Ipcmd</span><span class="o">=</span><span class="n">Ipcmd</span><span class="p">,</span> <span class="c1"># Current reference from REEC_D [pu]</span>
+                            <span class="p">)</span>
+
+    <span class="n">Pref</span><span class="p">,</span> <span class="n">Qref</span> <span class="o">=</span> <span class="n">genstat</span><span class="p">(</span><span class="n">ur</span><span class="o">=</span><span class="n">Vt_r</span><span class="p">,</span>  <span class="c1"># Real component of the converter&#39;s voltage [pu]</span>
+                         <span class="n">ui</span><span class="o">=</span><span class="n">Vt_i</span><span class="p">,</span>  <span class="c1"># Imaginary component of the converter&#39;s voltage [pu]</span>
+                         <span class="n">iq_ref</span><span class="o">=</span><span class="n">iq_ref</span><span class="p">,</span>  <span class="c1"># Current reference from REGC_C [pu]</span>
+                         <span class="n">id_ref</span><span class="o">=</span><span class="n">id_ref</span><span class="p">,</span>  <span class="c1"># Current reference from REGC_C [pu]</span>
+                         <span class="n">Sn</span><span class="o">=</span><span class="n">S_rated_vsc</span><span class="p">,</span>  <span class="c1"># Converter&#39;s nominal power [MVA]</span>
+                         <span class="n">is_blocked</span><span class="o">=</span><span class="n">is_blocked</span>  <span class="c1"># Converter&#39;s disconnection = 1</span>
+                         <span class="p">)</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="n">Pref</span><span class="o">/</span><span class="n">S_base_vg</span><span class="p">,</span> <span class="o">-</span><span class="n">Qref</span><span class="o">/</span><span class="n">S_base_vg</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

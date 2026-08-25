@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">lil_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">StrVec</span><span class="p">,</span> <span class="n">IntMat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackBoxProblemTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Reliability.reliability</span><span class="w"> </span><span class="kn">import</span> <span class="n">reliability_simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.simple_dispatch_ts</span><span class="w"> </span><span class="kn">import</span> <span class="n">GreedyDispatchInputs</span><span class="p">,</span> <span class="n">greedy_dispatch2</span>
+
+
+<div class="viewcode-block" id="correct_x">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.correct_x">[docs]</a>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct x in place to the given boundaries</span>
+<span class="sd">    :param x:</span>
+<span class="sd">    :param lb:</span>
+<span class="sd">    :param ub:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lb</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">lb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ub</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ub</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="apply_actives_mask">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.apply_actives_mask">[docs]</a>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_actives_mask</span><span class="p">(</span><span class="n">original_active</span><span class="p">:</span> <span class="n">IntMat</span><span class="p">,</span> <span class="n">mask_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">years_starts_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param original_active:</span>
+<span class="sd">    :param mask_indices:</span>
+<span class="sd">    :param mask: x applied to generators or batteries (goes from 0 to N-years + 1)</span>
+<span class="sd">    :param years_starts_indices: array saying in which profile index starts each year</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">original_active</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mask_indices</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">active</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">years_starts_indices</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">active</span><span class="p">[:</span><span class="n">start</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># deactivate until start</span>
+            <span class="n">active</span><span class="p">[</span><span class="n">start</span><span class="p">:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># activate from start onwards</span>
+
+    <span class="k">return</span> <span class="n">active</span></div>
+
+
+
+<div class="viewcode-block" id="determine_starting_index_of_every_year">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.determine_starting_index_of_every_year">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">determine_starting_index_of_every_year</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the index where each different year starts</span>
+<span class="sd">    :param index:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">year_prev</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">year</span>
+    <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">year</span> <span class="o">!=</span> <span class="n">year_prev</span><span class="p">:</span>
+            <span class="n">year_prev</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">year</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdequacyInvestmentProblem">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AdequacyInvestmentProblem</span><span class="p">(</span><span class="n">BlackBoxProblemTemplate</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">n_monte_carlo_sim</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                 <span class="n">use_monte_carlo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">minimum_firm_share</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                 <span class="n">use_firm_capacity_penalty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">save_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param grid:</span>
+<span class="sd">        :param n_monte_carlo_sim:</span>
+<span class="sd">        :param use_monte_carlo:</span>
+<span class="sd">        :param minimum_firm_share: minimum share of firm capacity in p.u.</span>
+<span class="sd">        :param use_firm_capacity_penalty: if to use the firm capacity penalty</span>
+<span class="sd">        :param save_file:</span>
+<span class="sd">        :param time_indices: array of time indices to use, if None all are used</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                         <span class="n">x_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">investments_groups</span><span class="p">),</span>
+                         <span class="n">plot_x_idx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">plot_y_idx</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># options object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_monte_carlo_sim</span> <span class="o">=</span> <span class="n">n_monte_carlo_sim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_monte_carlo</span> <span class="o">=</span> <span class="n">use_monte_carlo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minimum_firm_share</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">minimum_firm_share</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_firm_capacity_penalty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_firm_capacity_penalty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_file</span> <span class="o">=</span> <span class="n">save_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span> <span class="o">=</span> <span class="n">time_indices</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;adequacy_output.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_f</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+        <span class="c1"># gather problem structures</span>
+        <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span> <span class="o">=</span> <span class="n">GreedyDispatchInputs</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                                                           <span class="n">time_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span><span class="p">,</span>
+                                                           <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">years_starts_indices</span> <span class="o">=</span> <span class="n">determine_starting_index_of_every_year</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">years_starts_indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_max</span> <span class="o">*=</span> <span class="n">years</span>  <span class="c1"># 0 is for not investing, any other number is for the year of entrance</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_load</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">load_profile</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_group_capex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_capex_by_investment_group</span><span class="p">()</span>
+
+        <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_mttf</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">mttf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_mttr</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">mttr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_capex</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">capex</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">snom</span>  <span class="c1"># CAPEX in $</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batt_capex</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">battery_data</span><span class="o">.</span><span class="n">capex</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">battery_data</span><span class="o">.</span><span class="n">snom</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">investments_groups</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># write header</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;n_inv,LOLE(MWh),CAPEX(M$),&quot;</span>
+                                <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_investment_groups_names</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_time_deltas_in_hours</span><span class="p">()</span>
+        <span class="n">gen_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">idtag</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">idtag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">idtag</span><span class="p">)}</span>
+        <span class="n">batt_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">idtag</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">idtag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">battery_data</span><span class="o">.</span><span class="n">idtag</span><span class="p">)}</span>
+        <span class="n">inv_group_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_investment_by_groups_index_dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim2gen</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim2batt</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">nc</span><span class="o">.</span><span class="n">battery_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_gen_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_batt_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">inv_group_idx</span><span class="p">,</span> <span class="n">invs</span> <span class="ow">in</span> <span class="n">inv_group_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">investment</span> <span class="ow">in</span> <span class="n">invs</span><span class="p">:</span>
+                <span class="n">gen_idx</span> <span class="o">=</span> <span class="n">gen_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">investment</span><span class="o">.</span><span class="n">device_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">gen_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dim2gen</span><span class="p">[</span><span class="n">gen_idx</span><span class="p">,</span> <span class="n">inv_group_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inv_gen_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gen_idx</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">batt_idx</span> <span class="o">=</span> <span class="n">batt_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">investment</span><span class="o">.</span><span class="n">device_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">batt_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">dim2batt</span><span class="p">[</span><span class="n">batt_idx</span><span class="p">,</span> <span class="n">inv_group_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">inv_batt_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batt_idx</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_gen_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_gen_idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_batt_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_batt_idx</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">Cost</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span>
+                                       <span class="n">grid</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AdequacyInvestmentProblem.n_objectives">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.n_objectives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_objectives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of objectives (size of f)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_firm_capacity_penalty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">5</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="AdequacyInvestmentProblem.n_vars">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.n_vars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of variables (size of x)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_dim</span></div>
+
+
+<div class="viewcode-block" id="AdequacyInvestmentProblem.get_objectives_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.get_objectives_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_objectives_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StrVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of names for the elements of f</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_firm_capacity_penalty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;LOLE&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;CAPEX&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;Unitary electricity cost&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;Curtailment&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;Firm capacity penalty&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;LOLE&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;CAPEX&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;Unitary electricity cost&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;Curtailment&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AdequacyInvestmentProblem.get_vars_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.get_vars_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_vars_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StrVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of names for the elements of x</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">investments_groups</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AdequacyInvestmentProblem.objective_function">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.objective_function">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate x and return f(x)</span>
+<span class="sd">        :param x: array of variable values</span>
+<span class="sd">        :return: array of objectives</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># correct x</span>
+        <span class="n">correct_x</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_max</span><span class="p">)</span>
+
+        <span class="n">x_bin</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">gen_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2gen</span> <span class="o">@</span> <span class="n">x</span>
+        <span class="n">batt_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2batt</span> <span class="o">@</span> <span class="n">x</span>
+
+        <span class="c1"># compute the firm capacity</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_firm_capacity_penalty</span><span class="p">:</span>
+            <span class="c1"># a generator is &quot;firm&quot; if it is dispatchable</span>
+            <span class="n">P_firm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_dispatchable</span>
+                            <span class="o">*</span> <span class="n">gen_mask</span>
+                            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_p_max</span><span class="p">)</span>
+
+            <span class="n">P_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gen_mask</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_p_max</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">P_total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">firm_share</span> <span class="o">=</span> <span class="n">P_firm</span> <span class="o">/</span> <span class="n">P_total</span>
+
+                <span class="k">if</span> <span class="n">firm_share</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum_firm_share</span><span class="p">:</span>
+                    <span class="c1"># the penalty is the difference scaled by 1000</span>
+                    <span class="n">firm_capacity_penalty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimum_firm_share</span> <span class="o">-</span> <span class="n">firm_share</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">firm_capacity_penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">firm_capacity_penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">firm_capacity_penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="c1"># get the active arrays of generators and batteries</span>
+        <span class="n">gen_active</span> <span class="o">=</span> <span class="n">apply_actives_mask</span><span class="p">(</span><span class="n">original_active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_active</span><span class="p">,</span>
+                                        <span class="n">mask_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_gen_idx</span><span class="p">,</span>
+                                        <span class="n">mask</span><span class="o">=</span><span class="n">gen_mask</span><span class="p">,</span>
+                                        <span class="n">years_starts_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">years_starts_indices</span><span class="p">)</span>
+
+        <span class="n">batt_active</span> <span class="o">=</span> <span class="n">apply_actives_mask</span><span class="p">(</span><span class="n">original_active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_active</span><span class="p">,</span>
+                                         <span class="n">mask_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_batt_idx</span><span class="p">,</span>
+                                         <span class="n">mask</span><span class="o">=</span><span class="n">batt_mask</span><span class="p">,</span>
+                                         <span class="n">years_starts_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">years_starts_indices</span><span class="p">)</span>
+
+        <span class="c1"># batt_pmax = self.greedy_dispatch_inputs.batt_p_max_charge.copy()</span>
+        <span class="c1"># batt_pmax[:, self.inv_batt_idx] *= batt_mask[self.inv_batt_idx]</span>
+        <span class="c1"># invested_batt_idx = np.where(batt_mask == 1)[0]</span>
+        <span class="c1"># capex += np.sum(self.batt_capex[invested_batt_idx])</span>
+
+        <span class="c1"># compute the capex of the selected investment groups</span>
+        <span class="n">capex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_group_capex</span> <span class="o">*</span> <span class="n">x_bin</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monte_carlo</span><span class="p">:</span>
+
+            <span class="n">lole_array</span><span class="p">,</span> <span class="n">total_cost_arr</span><span class="p">,</span> <span class="n">curtailment_arr</span> <span class="o">=</span> <span class="n">reliability_simulation</span><span class="p">(</span>
+                <span class="n">n_sim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_monte_carlo_sim</span><span class="p">,</span>
+                <span class="n">load_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">load_profile</span><span class="p">,</span>
+
+                <span class="n">gen_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_profile</span><span class="p">,</span>
+                <span class="n">gen_p_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_p_max</span><span class="p">,</span>
+                <span class="n">gen_p_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_p_min</span><span class="p">,</span>
+                <span class="n">gen_dispatchable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_dispatchable</span><span class="p">,</span>
+                <span class="n">gen_active</span><span class="o">=</span><span class="n">gen_active</span><span class="p">,</span>
+                <span class="n">gen_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_cost</span><span class="p">,</span>
+                <span class="n">gen_mttf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gen_mttf</span><span class="p">,</span>
+                <span class="n">gen_mttr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gen_mttr</span><span class="p">,</span>
+
+                <span class="n">batt_active</span><span class="o">=</span><span class="n">batt_active</span><span class="p">,</span>
+                <span class="n">batt_p_max_charge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_p_max_charge</span><span class="p">,</span>
+                <span class="n">batt_p_max_discharge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_p_max_discharge</span><span class="p">,</span>
+                <span class="n">batt_energy_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_energy_max</span><span class="p">,</span>
+                <span class="n">batt_eff_charge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_eff_charge</span><span class="p">,</span>
+                <span class="n">batt_eff_discharge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_eff_discharge</span><span class="p">,</span>
+                <span class="n">batt_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_cost</span><span class="p">,</span>
+                <span class="n">batt_soc0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_soc0</span><span class="p">,</span>
+                <span class="n">batt_soc_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_soc_min</span><span class="p">,</span>
+                <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                <span class="n">force_charge_if_low</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">lole</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">lole_array</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_monte_carlo_sim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">total_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">total_cost_arr</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_monte_carlo_sim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">ndg_curtailment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">curtailment_arr</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_monte_carlo_sim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="p">(</span><span class="n">gen_dispatch</span><span class="p">,</span> <span class="n">batt_dispatch</span><span class="p">,</span>
+             <span class="n">batt_energy</span><span class="p">,</span> <span class="n">total_cost</span><span class="p">,</span>
+             <span class="n">load_not_supplied</span><span class="p">,</span> <span class="n">load_shedding</span><span class="p">,</span>
+             <span class="n">ndg_surplus_after_batt</span><span class="p">,</span>
+             <span class="n">ndg_curtailment_per_gen</span><span class="p">)</span> <span class="o">=</span> <span class="n">greedy_dispatch2</span><span class="p">(</span>
+                <span class="n">load_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">load_profile</span><span class="p">,</span>
+                <span class="n">gen_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_profile</span><span class="p">,</span>
+                <span class="n">gen_p_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_p_max</span><span class="p">,</span>
+                <span class="n">gen_p_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_p_min</span><span class="p">,</span>
+                <span class="n">gen_dispatchable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_dispatchable</span><span class="p">,</span>
+                <span class="n">gen_active</span><span class="o">=</span><span class="n">gen_active</span><span class="p">,</span>
+                <span class="n">gen_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">gen_cost</span><span class="p">,</span>
+                <span class="n">batt_active</span><span class="o">=</span><span class="n">batt_active</span><span class="p">,</span>
+                <span class="n">batt_p_max_charge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_p_max_charge</span><span class="p">,</span>
+                <span class="n">batt_p_max_discharge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_p_max_discharge</span><span class="p">,</span>
+                <span class="n">batt_energy_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_energy_max</span><span class="p">,</span>
+                <span class="n">batt_eff_charge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_eff_charge</span><span class="p">,</span>
+                <span class="n">batt_eff_discharge</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_eff_discharge</span><span class="p">,</span>
+                <span class="n">batt_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_cost</span><span class="p">,</span>
+                <span class="n">batt_soc0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_soc0</span><span class="p">,</span>
+                <span class="n">batt_soc_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">batt_soc_min</span><span class="p">,</span>
+                <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">greedy_dispatch_inputs</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                <span class="n">force_charge_if_low</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">lole</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">load_not_supplied</span><span class="p">)</span>
+            <span class="n">ndg_curtailment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ndg_surplus_after_batt</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># write header</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">lole</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">capex</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xi</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">unit_cost</span> <span class="o">=</span> <span class="n">total_cost</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_load</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_inv: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;lole: </span><span class="si">{</span><span class="n">lole</span><span class="si">}</span><span class="s2">, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;capex: </span><span class="si">{</span><span class="n">capex</span><span class="si">}</span><span class="s2">, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;e cost: </span><span class="si">{</span><span class="n">unit_cost</span><span class="si">}</span><span class="s2">, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;curtailment: </span><span class="si">{</span><span class="n">ndg_curtailment</span><span class="si">}</span><span class="s2">, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;firm penalty </span><span class="si">{</span><span class="n">firm_capacity_penalty</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_firm_capacity_penalty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lole</span><span class="p">,</span> <span class="n">capex</span><span class="p">,</span> <span class="n">unit_cost</span><span class="p">,</span> <span class="n">ndg_curtailment</span><span class="p">,</span> <span class="n">firm_capacity_penalty</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lole</span><span class="p">,</span> <span class="n">capex</span><span class="p">,</span> <span class="n">unit_cost</span><span class="p">,</span> <span class="n">ndg_curtailment</span><span class="p">])</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">DPRHEM sigma analysis.</span>
+
+<span class="sd">Canonical sigma analysis assumes one HELM embedding from the no-load germ to the target system. DPRHEM is different:</span>
+<span class="sd">it is a sequence of accepted local embeddings around physical restart voltages, as described in the DPRHEM paper:</span>
+<span class="sd">https://www.sciencedirect.com/science/article/pii/S0142061525004715</span>
+
+<span class="sd">This module therefore computes sigma as a DPR path metric. For each accepted segment of the final fixed-control model</span>
+<span class="sd">it evaluates the standard sigma function locally, then reports the per-bus worst distance over that controlled DPR</span>
+<span class="sd">path. Control actions are treated as model discontinuities, not analytic continuation segments, so earlier pre-control</span>
+<span class="sd">segments are discarded when a control restart changes the fixed algebraic model.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DiscreteShuntControlState</span><span class="p">,</span>
+                                                                                     <span class="n">QvDroopControlState</span><span class="p">,</span>
+                                                                                     <span class="n">compute_slack_distribution</span><span class="p">,</span>
+                                                                                     <span class="n">control_q_inside_method</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_dpr</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DprAdmittanceControlView</span><span class="p">,</span>
+                                                                            <span class="n">DprCoefficientPath</span><span class="p">,</span>
+                                                                            <span class="n">DprSegmentResult</span><span class="p">,</span>
+                                                                            <span class="n">dpr_power_mismatch</span><span class="p">,</span>
+                                                                            <span class="n">helm_coefficients_dpr_path</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_power_flow</span><span class="w"> </span><span class="kn">import</span> <span class="n">sigma_function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">Vec</span>
+
+
+<div class="viewcode-block" id="DprSigmaPath">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SigmaAnalysis.html#VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr.DprSigmaPath">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DprSigmaPath</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sigma values obtained from the accepted DPRHEM segments of one fixed-control model.</span>
+
+<span class="sd">    :param sigma_re: Per-bus sigma real coordinate selected from the worst local DPR segment.</span>
+<span class="sd">    :param sigma_im: Per-bus sigma imaginary coordinate selected from the worst local DPR segment.</span>
+<span class="sd">    :param distances: Per-bus minimum sigma distance over the accepted DPR path.</span>
+<span class="sd">    :param segment_distances: Matrix with one distance row per accepted DPR segment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;sigma_re&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_im&quot;</span><span class="p">,</span> <span class="s2">&quot;distances&quot;</span><span class="p">,</span> <span class="s2">&quot;segment_distances&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">sigma_re</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">sigma_im</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">distances</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">segment_distances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the DPR sigma path values.</span>
+
+<span class="sd">        :param sigma_re: Per-bus sigma real coordinate selected from the worst local DPR segment.</span>
+<span class="sd">        :param sigma_im: Per-bus sigma imaginary coordinate selected from the worst local DPR segment.</span>
+<span class="sd">        :param distances: Per-bus minimum sigma distance over the accepted DPR path.</span>
+<span class="sd">        :param segment_distances: Matrix with one distance row per accepted DPR segment.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_re</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">sigma_re</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_im</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">sigma_im</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">distances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_distances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">segment_distances</span></div>
+
+
+
+<div class="viewcode-block" id="DprSigmaResult">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SigmaAnalysis.html#VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr.DprSigmaResult">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DprSigmaResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DPRHEM sigma result for the final controlled model.</span>
+
+<span class="sd">    :param V: Final voltage vector used by the settled controlled model.</span>
+<span class="sd">    :param norm_f: Final power-flow mismatch norm.</span>
+<span class="sd">    :param converged: True when the final controlled model satisfies the requested tolerance.</span>
+<span class="sd">    :param iterations: Total coefficient orders consumed, including control restarts.</span>
+<span class="sd">    :param control_restarts: Number of model restarts caused by controls.</span>
+<span class="sd">    :param elapsed: Elapsed time in seconds.</span>
+<span class="sd">    :param sigma_re: Per-bus sigma real coordinate selected from the worst local DPR segment.</span>
+<span class="sd">    :param sigma_im: Per-bus sigma imaginary coordinate selected from the worst local DPR segment.</span>
+<span class="sd">    :param distances: Per-bus minimum sigma distance over the accepted DPR path.</span>
+<span class="sd">    :param segment_distances: Matrix with one distance row per accepted DPR segment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;norm_f&quot;</span><span class="p">,</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span> <span class="s2">&quot;iterations&quot;</span><span class="p">,</span> <span class="s2">&quot;control_restarts&quot;</span><span class="p">,</span> <span class="s2">&quot;elapsed&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;sigma_re&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_im&quot;</span><span class="p">,</span> <span class="s2">&quot;distances&quot;</span><span class="p">,</span> <span class="s2">&quot;segment_distances&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                 <span class="n">norm_f</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">control_restarts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">sigma_path</span><span class="p">:</span> <span class="n">DprSigmaPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the DPRHEM sigma result.</span>
+
+<span class="sd">        :param V: Final voltage vector used by the settled controlled model.</span>
+<span class="sd">        :param norm_f: Final power-flow mismatch norm.</span>
+<span class="sd">        :param converged: True when the final controlled model satisfies the requested tolerance.</span>
+<span class="sd">        :param iterations: Total coefficient orders consumed, including control restarts.</span>
+<span class="sd">        :param control_restarts: Number of model restarts caused by controls.</span>
+<span class="sd">        :param elapsed: Elapsed time in seconds.</span>
+<span class="sd">        :param sigma_path: Computed sigma path values.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">V</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_f</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">norm_f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">converged</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">iterations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_restarts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">control_restarts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">elapsed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_re</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">sigma_path</span><span class="o">.</span><span class="n">sigma_re</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_im</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">sigma_path</span><span class="o">.</span><span class="n">sigma_im</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">sigma_path</span><span class="o">.</span><span class="n">distances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_distances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">sigma_path</span><span class="o">.</span><span class="n">segment_distances</span></div>
+
+
+
+<div class="viewcode-block" id="dpr_sigma_distance">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SigmaAnalysis.html#VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr.dpr_sigma_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dpr_sigma_distance</span><span class="p">(</span><span class="n">sigma_re</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">sigma_im</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the canonical sigma distance without importing the driver at module import time.</span>
+
+<span class="sd">    :param sigma_re: Sigma real coordinates.</span>
+<span class="sd">    :param sigma_im: Sigma imaginary coordinates.</span>
+<span class="sd">    :return: Distance of each sigma point to the collapse curve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">sigma_distance</span>
+
+    <span class="k">return</span> <span class="n">sigma_distance</span><span class="p">(</span><span class="n">sigma_re</span><span class="p">,</span> <span class="n">sigma_im</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dpr_sigma_from_segments">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SigmaAnalysis.html#VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr.dpr_sigma_from_segments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dpr_sigma_from_segments</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">DprSegmentResult</span><span class="p">],</span>
+                            <span class="n">Vset</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                            <span class="n">sl</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">no_slack</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">nbus</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DprSigmaPath</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the per-bus worst local sigma values over accepted DPRHEM segments.</span>
+
+<span class="sd">    :param segments: Accepted DPRHEM segments for the final fixed-control model.</span>
+<span class="sd">    :param Vset: Voltage set-point vector.</span>
+<span class="sd">    :param sl: Slack bus indices.</span>
+<span class="sd">    :param no_slack: Original non-slack bus indices.</span>
+<span class="sd">    :param nbus: Number of buses.</span>
+<span class="sd">    :return: DPR sigma path values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">valid_segments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">DprSegmentResult</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">iterations</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">valid_segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valid_segments</span> <span class="o">=</span> <span class="n">valid_segments</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_segments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sigma_re</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">sigma_im</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">distances</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">dpr_sigma_distance</span><span class="p">(</span><span class="n">sigma_re</span><span class="o">=</span><span class="n">sigma_re</span><span class="p">,</span> <span class="n">sigma_im</span><span class="o">=</span><span class="n">sigma_im</span><span class="p">)</span>
+        <span class="n">segment_distances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbus</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">segment_sigma_re</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_segments</span><span class="p">),</span> <span class="n">nbus</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">segment_sigma_im</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_segments</span><span class="p">),</span> <span class="n">nbus</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">segment_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_segments</span><span class="p">),</span> <span class="n">nbus</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># Each DPR restart has its own local coefficient system. The standard sigma function is only meaningful within</span>
+        <span class="c1"># that segment, so aggregate local distances instead of pretending that the last segment is a global embedding.</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_segments</span><span class="p">):</span>
+            <span class="n">sigma</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">sigma_function</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">iterations</span><span class="p">,</span> <span class="n">Vset</span><span class="p">[</span><span class="n">sl</span><span class="p">])</span>
+            <span class="n">segment_sigma_re</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">no_slack</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">segment_sigma_im</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">no_slack</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">imag</span>
+            <span class="n">segment_distances</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dpr_sigma_distance</span><span class="p">(</span><span class="n">sigma_re</span><span class="o">=</span><span class="n">segment_sigma_re</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
+                                                           <span class="n">sigma_im</span><span class="o">=</span><span class="n">segment_sigma_im</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:])</span>
+
+        <span class="n">worst_segment_idx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">segment_distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">bus_idx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nbus</span><span class="p">)</span>
+        <span class="n">sigma_re</span> <span class="o">=</span> <span class="n">segment_sigma_re</span><span class="p">[</span><span class="n">worst_segment_idx</span><span class="p">,</span> <span class="n">bus_idx</span><span class="p">]</span>
+        <span class="n">sigma_im</span> <span class="o">=</span> <span class="n">segment_sigma_im</span><span class="p">[</span><span class="n">worst_segment_idx</span><span class="p">,</span> <span class="n">bus_idx</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">segment_distances</span><span class="p">[</span><span class="n">worst_segment_idx</span><span class="p">,</span> <span class="n">bus_idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">DprSigmaPath</span><span class="p">(</span><span class="n">sigma_re</span><span class="o">=</span><span class="n">sigma_re</span><span class="p">,</span>
+                        <span class="n">sigma_im</span><span class="o">=</span><span class="n">sigma_im</span><span class="p">,</span>
+                        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+                        <span class="n">segment_distances</span><span class="o">=</span><span class="n">segment_distances</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sigma_dpr_fixed_model">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SigmaAnalysis.html#VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr.sigma_dpr_fixed_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigma_dpr_fixed_model</span><span class="p">(</span><span class="n">Ybus</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span>
+                          <span class="n">Yseries</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span>
+                          <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">Vset</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                          <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                          <span class="n">Ysh0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                          <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                          <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                          <span class="n">pqv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                          <span class="n">p</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                          <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                          <span class="n">no_slack</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                          <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">max_coefficients</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">restart_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">max_restarts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">use_classical_germ</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                          <span class="n">allow_dynamic_restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DprCoefficientPath</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve one fixed-control DPRHEM model and expose its accepted coefficient path.</span>
+
+<span class="sd">    :param Ybus: Complete admittance matrix.</span>
+<span class="sd">    :param Yseries: Series-only admittance matrix.</span>
+<span class="sd">    :param V0: Voltage estimate/set-point vector.</span>
+<span class="sd">    :param Vset: Voltage set-point vector.</span>
+<span class="sd">    :param S0: Specified complex bus powers in p.u.</span>
+<span class="sd">    :param Ysh0: Bus shunt admittance vector including branch shunt legs.</span>
+<span class="sd">    :param pq: PQ bus indices.</span>
+<span class="sd">    :param pv: PV bus indices.</span>
+<span class="sd">    :param pqv: PVQ bus indices.</span>
+<span class="sd">    :param p: P bus indices.</span>
+<span class="sd">    :param vd: Slack bus indices.</span>
+<span class="sd">    :param no_slack: Sorted non-slack bus indices.</span>
+<span class="sd">    :param tolerance: Target mismatch tolerance.</span>
+<span class="sd">    :param max_coefficients: Total coefficient budget.</span>
+<span class="sd">    :param restart_order: Maximum coefficient order per DPR segment.</span>
+<span class="sd">    :param max_restarts: Maximum DPR restart count.</span>
+<span class="sd">    :param use_classical_germ: Use the classical flat germ instead of the supplied voltage estimate.</span>
+<span class="sd">    :param allow_dynamic_restart: Let the residual-ratio rule truncate a segment and restart from its best voltage.</span>
+<span class="sd">    :param verbose: Verbosity flag.</span>
+<span class="sd">    :param logger: Logger object.</span>
+<span class="sd">    :return: DPR coefficient path, final mismatch norm and convergence flag.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">path</span><span class="p">:</span> <span class="n">DprCoefficientPath</span> <span class="o">=</span> <span class="n">helm_coefficients_dpr_path</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+                                                          <span class="n">Yseries</span><span class="o">=</span><span class="n">Yseries</span><span class="p">,</span>
+                                                          <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
+                                                          <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">,</span>
+                                                          <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                                          <span class="n">Ysh0</span><span class="o">=</span><span class="n">Ysh0</span><span class="p">,</span>
+                                                          <span class="n">pq</span><span class="o">=</span><span class="n">pq</span><span class="p">,</span>
+                                                          <span class="n">pv</span><span class="o">=</span><span class="n">pv</span><span class="p">,</span>
+                                                          <span class="n">pqv</span><span class="o">=</span><span class="n">pqv</span><span class="p">,</span>
+                                                          <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+                                                          <span class="n">sl</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                          <span class="n">no_slack</span><span class="o">=</span><span class="n">no_slack</span><span class="p">,</span>
+                                                          <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span>
+                                                          <span class="n">max_coeff</span><span class="o">=</span><span class="n">max_coefficients</span><span class="p">,</span>
+                                                          <span class="n">restart_order</span><span class="o">=</span><span class="n">restart_order</span><span class="p">,</span>
+                                                          <span class="n">max_restarts</span><span class="o">=</span><span class="n">max_restarts</span><span class="p">,</span>
+                                                          <span class="n">use_classical_germ</span><span class="o">=</span><span class="n">use_classical_germ</span><span class="p">,</span>
+                                                          <span class="n">allow_dynamic_restart</span><span class="o">=</span><span class="n">allow_dynamic_restart</span><span class="p">,</span>
+                                                          <span class="n">verbose</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">verbose</span><span class="p">),</span>
+                                                          <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">norm_f</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">dpr_power_mismatch</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+                                       <span class="n">V</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+                                       <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                       <span class="n">no_slack</span><span class="o">=</span><span class="n">no_slack</span><span class="p">,</span>
+                                       <span class="n">pq</span><span class="o">=</span><span class="n">pq</span><span class="p">,</span>
+                                       <span class="n">pqv</span><span class="o">=</span><span class="n">pqv</span><span class="p">,</span>
+                                       <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">)</span>
+    <span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">norm_f</span> <span class="o">&lt;</span> <span class="n">tolerance</span>
+
+    <span class="k">return</span> <span class="n">path</span><span class="p">,</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">converged</span></div>
+
+
+
+<div class="viewcode-block" id="sigma_dpr">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SigmaAnalysis.html#VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr.sigma_dpr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigma_dpr</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+              <span class="n">Ybus</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span>
+              <span class="n">Yshunt_bus</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+              <span class="n">Yseries</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span>
+              <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+              <span class="n">Ysh0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+              <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+              <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+              <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+              <span class="n">no_slack</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+              <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+              <span class="n">max_coefficients</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+              <span class="n">restart_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+              <span class="n">max_restarts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+              <span class="n">use_classical_germ</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">control_q</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">pqv</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">p</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">Qmin</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">Qmax</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">control_discrete_shunts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">control_qv_droop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">distributed_slack</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">bus_installed_power</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">controls_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+              <span class="n">max_control_restarts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+              <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+              <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DprSigmaResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute DPRHEM sigma analysis after applying the same controls as the DPR power-flow solver.</span>
+
+<span class="sd">    :param nc: Numerical circuit island.</span>
+<span class="sd">    :param Ybus: Complete admittance matrix.</span>
+<span class="sd">    :param Yshunt_bus: Bus shunt admittance vector.</span>
+<span class="sd">    :param Yseries: Series-only admittance matrix.</span>
+<span class="sd">    :param V0: Voltage estimate/set-point vector.</span>
+<span class="sd">    :param S0: Specified complex bus powers in p.u.</span>
+<span class="sd">    :param Ysh0: Bus shunt admittance vector including branch shunt legs.</span>
+<span class="sd">    :param pq: PQ bus indices.</span>
+<span class="sd">    :param pv: PV bus indices.</span>
+<span class="sd">    :param vd: Slack bus indices.</span>
+<span class="sd">    :param no_slack: Sorted non-slack bus indices.</span>
+<span class="sd">    :param tolerance: Target mismatch tolerance.</span>
+<span class="sd">    :param max_coefficients: Total coefficient budget for each fixed-control DPR solve.</span>
+<span class="sd">    :param restart_order: Maximum coefficient order per DPR segment.</span>
+<span class="sd">    :param max_restarts: Maximum DPR restart count for each fixed-control solve.</span>
+<span class="sd">    :param use_classical_germ: Use the classical flat germ instead of the supplied voltage estimate.</span>
+<span class="sd">    :param control_q: Apply PV-to-PQ reactive limit control at accepted DPR states.</span>
+<span class="sd">    :param pqv: PQV bus indices used by the Q-limit control.</span>
+<span class="sd">    :param p: P bus indices used by the Q-limit control.</span>
+<span class="sd">    :param Qmin: Minimum reactive power limits in p.u.</span>
+<span class="sd">    :param Qmax: Maximum reactive power limits in p.u.</span>
+<span class="sd">    :param control_discrete_shunts: Apply discrete shunt controls at accepted DPR states.</span>
+<span class="sd">    :param control_qv_droop: Apply generator QV droop controls at accepted DPR states.</span>
+<span class="sd">    :param distributed_slack: Apply one distributed slack correction at an accepted DPR state.</span>
+<span class="sd">    :param bus_installed_power: Installed power per bus for distributed slack participation.</span>
+<span class="sd">    :param controls_tol: Residual threshold below which discrete controls are trusted.</span>
+<span class="sd">    :param max_control_restarts: Maximum outer restarts caused by controls.</span>
+<span class="sd">    :param verbose: Verbosity flag.</span>
+<span class="sd">    :param logger: Logger object.</span>
+<span class="sd">    :return: DPRHEM sigma result for the final controlled model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">Vset</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span>
+    <span class="n">active_S0</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">S0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_Ybus</span><span class="p">:</span> <span class="n">CscMat</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_Yshunt_bus</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">Yshunt_bus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_Ysh0</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">Ysh0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_adm_view</span><span class="p">:</span> <span class="n">DprAdmittanceControlView</span> <span class="o">=</span> <span class="n">DprAdmittanceControlView</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">active_Ybus</span><span class="p">,</span>
+                                                                         <span class="n">Yshunt_bus</span><span class="o">=</span><span class="n">active_Yshunt_bus</span><span class="p">)</span>
+    <span class="n">active_V0</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">V0</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">V0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_pq</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_pv</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_pqv</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">pqv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pqv</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_p</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">active_use_classical_germ</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_classical_germ</span>
+    <span class="n">control_restart</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">controls_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">slack_distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">control_discrete_shunts</span><span class="p">:</span>
+        <span class="n">discrete_shunt_control</span><span class="p">:</span> <span class="n">DiscreteShuntControlState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">DiscreteShuntControlState</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">discrete_shunt_control</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">control_qv_droop</span><span class="p">:</span>
+        <span class="n">qv_droop_control</span><span class="p">:</span> <span class="n">QvDroopControlState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">QvDroopControlState</span><span class="p">(</span><span class="n">S0</span><span class="o">=</span><span class="n">active_S0</span><span class="p">,</span> <span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qv_droop_control</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">path</span><span class="p">,</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">sigma_dpr_fixed_model</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">active_Ybus</span><span class="p">,</span>
+                                                    <span class="n">Yseries</span><span class="o">=</span><span class="n">Yseries</span><span class="p">,</span>
+                                                    <span class="n">V0</span><span class="o">=</span><span class="n">active_V0</span><span class="p">,</span>
+                                                    <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">,</span>
+                                                    <span class="n">S0</span><span class="o">=</span><span class="n">active_S0</span><span class="p">,</span>
+                                                    <span class="n">Ysh0</span><span class="o">=</span><span class="n">active_Ysh0</span><span class="p">,</span>
+                                                    <span class="n">pq</span><span class="o">=</span><span class="n">active_pq</span><span class="p">,</span>
+                                                    <span class="n">pv</span><span class="o">=</span><span class="n">active_pv</span><span class="p">,</span>
+                                                    <span class="n">pqv</span><span class="o">=</span><span class="n">active_pqv</span><span class="p">,</span>
+                                                    <span class="n">p</span><span class="o">=</span><span class="n">active_p</span><span class="p">,</span>
+                                                    <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                    <span class="n">no_slack</span><span class="o">=</span><span class="n">no_slack</span><span class="p">,</span>
+                                                    <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span>
+                                                    <span class="n">max_coefficients</span><span class="o">=</span><span class="n">max_coefficients</span><span class="p">,</span>
+                                                    <span class="n">restart_order</span><span class="o">=</span><span class="n">restart_order</span><span class="p">,</span>
+                                                    <span class="n">max_restarts</span><span class="o">=</span><span class="n">max_restarts</span><span class="p">,</span>
+                                                    <span class="n">use_classical_germ</span><span class="o">=</span><span class="n">active_use_classical_germ</span><span class="p">,</span>
+                                                    <span class="n">allow_dynamic_restart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">controls_pending</span> <span class="ow">and</span> <span class="n">control_restart</span> <span class="o">&lt;</span> <span class="n">max_control_restarts</span><span class="p">:</span>
+        <span class="n">controls_pending</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">norm_f</span> <span class="o">&lt;</span> <span class="n">controls_tol</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">control_q</span> <span class="ow">and</span> <span class="n">Qmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Qmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">active_pv</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_p</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">Scalc_pu</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">active_Ybus</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">V</span><span class="p">)</span>
+                <span class="n">changed</span><span class="p">,</span> <span class="n">active_pv</span><span class="p">,</span> <span class="n">active_pq</span><span class="p">,</span> <span class="n">active_pqv</span><span class="p">,</span> <span class="n">active_p</span> <span class="o">=</span> <span class="n">control_q_inside_method</span><span class="p">(</span>
+                    <span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc_pu</span><span class="p">,</span>
+                    <span class="n">S0</span><span class="o">=</span><span class="n">active_S0</span><span class="p">,</span>
+                    <span class="n">pv</span><span class="o">=</span><span class="n">active_pv</span><span class="p">,</span>
+                    <span class="n">pq</span><span class="o">=</span><span class="n">active_pq</span><span class="p">,</span>
+                    <span class="n">pqv</span><span class="o">=</span><span class="n">active_pqv</span><span class="p">,</span>
+                    <span class="n">p</span><span class="o">=</span><span class="n">active_p</span><span class="p">,</span>
+                    <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+                    <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span>
+                <span class="p">)</span>
+                <span class="n">controls_pending</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+
+            <span class="k">if</span> <span class="n">discrete_shunt_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">discrete_shunt_control</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">Vm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">V</span><span class="p">),</span> <span class="n">adm</span><span class="o">=</span><span class="n">active_adm_view</span><span class="p">,</span> <span class="n">yshunt_bus</span><span class="o">=</span><span class="n">active_Ysh0</span><span class="p">):</span>
+                    <span class="n">controls_pending</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+
+            <span class="k">if</span> <span class="n">qv_droop_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">qv_droop_control</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">S0</span><span class="o">=</span><span class="n">active_S0</span><span class="p">,</span> <span class="n">Vm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">V</span><span class="p">)):</span>
+                    <span class="n">controls_pending</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+
+            <span class="k">if</span> <span class="n">distributed_slack</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">slack_distributed</span> <span class="ow">and</span> <span class="n">bus_installed_power</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">Scalc_pu</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">active_Ybus</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">V</span><span class="p">)</span>
+                <span class="n">ok</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">compute_slack_distribution</span><span class="p">(</span><span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc_pu</span><span class="p">,</span>
+                                                       <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                       <span class="n">bus_installed_power</span><span class="o">=</span><span class="n">bus_installed_power</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+                    <span class="n">active_S0</span> <span class="o">+=</span> <span class="n">delta</span>
+                    <span class="n">slack_distributed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">controls_pending</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">controls_pending</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">controls_pending</span><span class="p">:</span>
+            <span class="n">control_restart</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">total_iterations</span> <span class="o">+=</span> <span class="n">path</span><span class="o">.</span><span class="n">iterations</span>
+            <span class="n">active_V0</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">V</span>
+            <span class="n">active_use_classical_germ</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">sigma_dpr_fixed_model</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">active_Ybus</span><span class="p">,</span>
+                                                            <span class="n">Yseries</span><span class="o">=</span><span class="n">Yseries</span><span class="p">,</span>
+                                                            <span class="n">V0</span><span class="o">=</span><span class="n">active_V0</span><span class="p">,</span>
+                                                            <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">,</span>
+                                                            <span class="n">S0</span><span class="o">=</span><span class="n">active_S0</span><span class="p">,</span>
+                                                            <span class="n">Ysh0</span><span class="o">=</span><span class="n">active_Ysh0</span><span class="p">,</span>
+                                                            <span class="n">pq</span><span class="o">=</span><span class="n">active_pq</span><span class="p">,</span>
+                                                            <span class="n">pv</span><span class="o">=</span><span class="n">active_pv</span><span class="p">,</span>
+                                                            <span class="n">pqv</span><span class="o">=</span><span class="n">active_pqv</span><span class="p">,</span>
+                                                            <span class="n">p</span><span class="o">=</span><span class="n">active_p</span><span class="p">,</span>
+                                                            <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                            <span class="n">no_slack</span><span class="o">=</span><span class="n">no_slack</span><span class="p">,</span>
+                                                            <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span>
+                                                            <span class="n">max_coefficients</span><span class="o">=</span><span class="n">max_coefficients</span><span class="p">,</span>
+                                                            <span class="n">restart_order</span><span class="o">=</span><span class="n">restart_order</span><span class="p">,</span>
+                                                            <span class="n">max_restarts</span><span class="o">=</span><span class="n">max_restarts</span><span class="p">,</span>
+                                                            <span class="n">use_classical_germ</span><span class="o">=</span><span class="n">active_use_classical_germ</span><span class="p">,</span>
+                                                            <span class="n">allow_dynamic_restart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                                            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">controls_pending</span> <span class="o">=</span> <span class="n">controls_pending</span>
+
+    <span class="n">total_iterations</span> <span class="o">+=</span> <span class="n">path</span><span class="o">.</span><span class="n">iterations</span>
+    <span class="n">pf_norm_f</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">norm_f</span>
+    <span class="n">pf_converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">converged</span>
+
+    <span class="c1"># Sigma needs continuation coefficients, not the tiny correction coefficients produced by accepted DPR restarts.</span>
+    <span class="c1"># Once controls have settled, compute one full non-restarting DPR embedding from the no-load germ to the final</span>
+    <span class="c1"># controlled model and use those coefficients for the sigma Padé system.</span>
+    <span class="n">sigma_coeff_path</span><span class="p">,</span> <span class="n">sigma_norm_f</span><span class="p">,</span> <span class="n">sigma_converged</span> <span class="o">=</span> <span class="n">sigma_dpr_fixed_model</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">active_Ybus</span><span class="p">,</span>
+                                                                            <span class="n">Yseries</span><span class="o">=</span><span class="n">Yseries</span><span class="p">,</span>
+                                                                            <span class="n">V0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                                            <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">,</span>
+                                                                            <span class="n">S0</span><span class="o">=</span><span class="n">active_S0</span><span class="p">,</span>
+                                                                            <span class="n">Ysh0</span><span class="o">=</span><span class="n">active_Ysh0</span><span class="p">,</span>
+                                                                            <span class="n">pq</span><span class="o">=</span><span class="n">active_pq</span><span class="p">,</span>
+                                                                            <span class="n">pv</span><span class="o">=</span><span class="n">active_pv</span><span class="p">,</span>
+                                                                            <span class="n">pqv</span><span class="o">=</span><span class="n">active_pqv</span><span class="p">,</span>
+                                                                            <span class="n">p</span><span class="o">=</span><span class="n">active_p</span><span class="p">,</span>
+                                                                            <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                                            <span class="n">no_slack</span><span class="o">=</span><span class="n">no_slack</span><span class="p">,</span>
+                                                                            <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span>
+                                                                            <span class="n">max_coefficients</span><span class="o">=</span><span class="n">max_coefficients</span><span class="p">,</span>
+                                                                            <span class="n">restart_order</span><span class="o">=</span><span class="n">max_coefficients</span><span class="p">,</span>
+                                                                            <span class="n">max_restarts</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                                            <span class="n">use_classical_germ</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                                            <span class="n">allow_dynamic_restart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                                                            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="c1"># Sigma coefficients are an analytic diagnostic. Their direct summed voltage may fail the PF tolerance even when</span>
+    <span class="c1"># the controlled DPR power-flow state has converged; report PF convergence and use the coefficients only for sigma.</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s2">&quot;DPR sigma coefficient norm&quot;</span><span class="p">,</span> <span class="n">sigma_norm_f</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s2">&quot;DPR sigma coefficient converged&quot;</span><span class="p">,</span> <span class="n">sigma_converged</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+    <span class="n">sigma_path</span><span class="p">:</span> <span class="n">DprSigmaPath</span> <span class="o">=</span> <span class="n">dpr_sigma_from_segments</span><span class="p">(</span><span class="n">segments</span><span class="o">=</span><span class="n">sigma_coeff_path</span><span class="o">.</span><span class="n">segments</span><span class="p">,</span>
+                                                       <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">,</span>
+                                                       <span class="n">sl</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                       <span class="n">no_slack</span><span class="o">=</span><span class="n">no_slack</span><span class="p">,</span>
+                                                       <span class="n">nbus</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">nbus</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">DprSigmaResult</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+                          <span class="n">norm_f</span><span class="o">=</span><span class="n">pf_norm_f</span><span class="p">,</span>
+                          <span class="n">converged</span><span class="o">=</span><span class="n">pf_converged</span><span class="p">,</span>
+                          <span class="n">iterations</span><span class="o">=</span><span class="n">total_iterations</span><span class="p">,</span>
+                          <span class="n">control_restarts</span><span class="o">=</span><span class="n">control_restart</span><span class="p">,</span>
+                          <span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span>
+                          <span class="n">sigma_path</span><span class="o">=</span><span class="n">sigma_path</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

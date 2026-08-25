@@ -1,0 +1,628 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.base &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cgmes.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span><span class="p">,</span> <span class="n">UUID</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_property</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesProperty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesProfileType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnitMultiplier</span><span class="p">,</span> <span class="n">UnitSymbol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+
+
+<div class="viewcode-block" id="str2num">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.str2num">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">str2num</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to convert to number, else keep as string</span>
+<span class="sd">    :param val: String value</span>
+<span class="sd">    :return: int, float or string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span></div>
+
+
+
+<div class="viewcode-block" id="index_find">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.index_find">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">index_find</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    version of substring that matches</span>
+<span class="sd">    :param string: string</span>
+<span class="sd">    :param start: string to start splitting</span>
+<span class="sd">    :param end: string to end splitting</span>
+<span class="sd">    :return: string between start and end</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">start</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">end</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="get_new_rdfid">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.get_new_rdfid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_new_rdfid</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="rfid2uuid">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.rfid2uuid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rfid2uuid</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param val:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="form_rdfid">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.form_rdfid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">form_rdfid</span><span class="p">(</span><span class="n">idtag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a simple string, eg. idtag (without hyphens or underscores)</span>
+<span class="sd">    to a UUID format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        idtag (str): The input idtag without hyphens or underscores.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The corresponding UUID idtag with hyphens.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Add hyphens to the simple idtag to create a valid UUID</span>
+    <span class="n">formatted_uuid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">idtag</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">idtag</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">idtag</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">idtag</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">idtag</span><span class="p">[</span><span class="mi">20</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Validate and return the UUID</span>
+        <span class="n">UUID</span><span class="p">(</span><span class="n">formatted_uuid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">formatted_uuid</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># Handle invalid input (e.g., incorrect length)</span>
+        <span class="k">return</span> <span class="s2">&quot;Invalid input: Not a valid UUID&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Base">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;rdfid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;uuid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tpe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;class_replacements&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;resources&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references_to_me&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;missing_references&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;declared_properties&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parsed_properties&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;boundary_set&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;used&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">LOCAL_CGMES_PROPERTIES</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CgmesProperty</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+    <span class="n">CLASS_REGISTERED_PROPERTIES</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CgmesProperty</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdfid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tpe</span><span class="p">,</span> <span class="n">resources</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_replacements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        General CIM object container</span>
+<span class="sd">        :param rdfid:</span>
+<span class="sd">        :param tpe: type of the object (class)</span>
+<span class="sd">        :param resources:</span>
+<span class="sd">        :param class_replacements:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># pick the object id</span>
+        <span class="k">if</span> <span class="n">class_replacements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">class_replacements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">resources</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">resources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">rdfid</span> <span class="o">=</span> <span class="n">rdfid</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">rdfid</span> <span class="k">if</span> <span class="n">rdfid</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="k">else</span> <span class="n">get_new_rdfid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uuid</span> <span class="o">=</span> <span class="n">rfid2uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span>
+
+        <span class="c1"># store the object type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">tpe</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_replacements</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">class_replacements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">resources</span>
+
+        <span class="c1"># dictionary of objects that reference this object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">references_to_me</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary of missing references (those provided but not used)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_references</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># Register CIM properties at class level once (PSSe-like schema cache behavior).</span>
+        <span class="c1"># Each instance shares the same property schema dictionary for its concrete class.</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;CLASS_REGISTERED_PROPERTIES&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">declared_props</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CgmesProperty</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">base_cls</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">):</span>
+                <span class="n">local_props</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CgmesProperty</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base_cls</span><span class="p">,</span> <span class="s2">&quot;LOCAL_CGMES_PROPERTIES&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">local_props</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">local_props</span><span class="p">:</span>
+                        <span class="n">declared_props</span><span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">property_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">CLASS_REGISTERED_PROPERTIES</span> <span class="o">=</span> <span class="n">declared_props</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">declared_properties</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CgmesProperty</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CLASS_REGISTERED_PROPERTIES</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_set</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">used</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Base.can_keep">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.can_keep">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_keep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Can I keep this object?</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">used</span>  <span class="c1"># and not self.boundary_set</span></div>
+
+
+<div class="viewcode-block" id="Base.has_references">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.has_references">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_references</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine if there are references to this object</span>
+<span class="sd">        :return: Bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">references_to_me</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="Base.parse_dict">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.parse_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param data:</span>
+<span class="sd">        :param logger:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_properties</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">declared_properties</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CgmesProperty</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_properties</span>
+
+        <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">prop</span> <span class="o">=</span> <span class="n">declared_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">prop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">store_parsed_property_value</span><span class="p">(</span><span class="n">prop_name</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="n">prop_value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_set</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Declared property has no storage in CGMES class&quot;</span><span class="p">,</span>
+                                         <span class="n">device_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                         <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                                         <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_set</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Missing object property&quot;</span><span class="p">,</span>
+                                     <span class="n">device_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                     <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                                     <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Base.store_parsed_property_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.store_parsed_property_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store_parsed_property_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one raw parsed property value on a declared attribute slot.</span>
+
+<span class="sd">        This method exists for two reasons:</span>
+
+<span class="sd">        1. During CGMES import, object materialization is a very hot path. Every</span>
+<span class="sd">           parsed property of every parsed object is stored once before later</span>
+<span class="sd">           typing and reference resolution happen in ``find_references()``.</span>
+<span class="sd">        2. The storage path must stay compatible with fully slotted generated</span>
+<span class="sd">           CGMES classes. Unknown properties are filtered before this method is</span>
+<span class="sd">           called, so at this point we are writing only to a declared attribute.</span>
+<span class="sd">           Using ``object.__setattr__`` keeps that write explicit and avoids the</span>
+<span class="sd">           generic ``setattr()`` helper.</span>
+
+<span class="sd">        :param prop_name: Declared CGMES property name</span>
+<span class="sd">        :param prop_value: Raw parsed XML value</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Base.set_declared_property_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.set_declared_property_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_declared_property_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one value into a declared CGMES property.</span>
+
+<span class="sd">        :param prop_name: Declared property name</span>
+<span class="sd">        :param prop_value: Value to store</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Base.get_declared_property_value">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_declared_property_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_declared_property_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read one declared CGMES property value.</span>
+
+<span class="sd">        :param prop_name: Declared property name</span>
+<span class="sd">        :return: Stored value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Base.get_declared_property_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_declared_property_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_declared_property_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the declared CGMES property names for the concrete class.</span>
+
+<span class="sd">        :return: Declared property names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">prop_name</span> <span class="k">for</span> <span class="n">prop_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="Base.get_declared_property_map">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_declared_property_map">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_declared_property_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a dictionary with the declared property values of the object.</span>
+
+<span class="sd">        :return: Dictionary of declared property values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">property_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">property_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_declared_property_names</span><span class="p">():</span>
+            <span class="n">property_map</span><span class="p">[</span><span class="n">property_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">property_map</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># alternatively, return hash(repr(self))</span>
+        <span class="c1"># handle X nodes Check if the last character is &#39;X&#39;</span>
+        <span class="n">hex_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uuid</span>
+        <span class="k">if</span> <span class="n">hex_string</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+            <span class="n">hex_string_without_X</span> <span class="o">=</span> <span class="n">hex_string</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Remove the last character</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hex_string_without_X</span> <span class="o">=</span> <span class="n">hex_string</span>  <span class="c1"># No &#39;X&#39;, keep the original string</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">hex_string_without_X</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>  <span class="c1"># hex string to int</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># an illegal value like 3c3b5330e94e444e965b688e0d1a88ebLASLACLG makes the previous crash</span>
+            <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">rdfid</span>
+
+<div class="viewcode-block" id="Base.check">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check specific OCL rules</span>
+<span class="sd">        :param logger: Logger instance</span>
+<span class="sd">        :return: true is ok false otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Base.add_reference">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.add_reference">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a categorized reference to this object</span>
+<span class="sd">        :param obj:</span>
+<span class="sd">        :param attr_name:</span>
+<span class="sd">        :param logger:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_declared_property_names</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">tpe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">references_to_me</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">references_to_me</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">tpe</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">references_to_me</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">tpe</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">obj</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">attr_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="n">current_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_declared_property_value</span><span class="p">(</span><span class="n">prop_name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">current_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_declared_property_value</span><span class="p">(</span><span class="n">prop_name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">current_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_declared_property_value</span><span class="p">(</span><span class="n">prop_name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="p">[</span><span class="n">current_value</span><span class="p">,</span> <span class="n">obj</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Cannot add reference&quot;</span><span class="p">,</span> <span class="n">device_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span> <span class="n">device_property</span><span class="o">=</span><span class="n">attr_name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Base.register_property">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.register_property">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">class_type</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+                          <span class="n">multiplier</span><span class="p">:</span> <span class="n">UnitMultiplier</span> <span class="o">=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
+                          <span class="n">unit</span><span class="p">:</span> <span class="n">UnitSymbol</span> <span class="o">=</span> <span class="n">UnitSymbol</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
+                          <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                          <span class="n">max_chars</span><span class="o">=</span><span class="mi">65536</span><span class="p">,</span>
+                          <span class="n">mandatory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                          <span class="n">out_of_the_standard</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">profiles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CgmesProfileType</span><span class="p">]</span> <span class="o">=</span> <span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disabled runtime API. Use class-level LOCAL_CGMES_PROPERTIES declarations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Base.register_property() is disabled. Use class-level LOCAL_CGMES_PROPERTIES.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Base.get_properties">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">CgmesProperty</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="Base.get_xml">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_xml">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">profiles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CgmesProfileType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">EQ</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">CgmesProfileType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns an XML representation of the object</span>
+<span class="sd">        Args:</span>
+<span class="sd">            level:</span>
+<span class="sd">            profiles</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;cim:IEC61970CIMVersion rdf:ID=&quot;version&quot;&gt;</span>
+<span class="sd">            &lt;cim:IEC61970CIMVersion.version&gt;IEC61970CIM16v29a&lt;/cim:IEC61970CIMVersion.version&gt;</span>
+<span class="sd">            &lt;cim:IEC61970CIMVersion.date&gt;2015-07-15&lt;/cim:IEC61970CIMVersion.date&gt;</span>
+<span class="sd">        &lt;/cim:IEC61970CIMVersion&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">profiles</span><span class="p">:</span>
+            <span class="n">l1</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">level</span>  <span class="c1"># start/end tabbing</span>
+            <span class="n">l2</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># middle tabbing</span>
+
+            <span class="c1"># header</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="n">l1</span> <span class="o">+</span> <span class="s1">&#39;&lt;cim:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span> <span class="o">+</span> <span class="s1">&#39; rdf:ID=&quot;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+            <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="k">if</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">prop</span><span class="o">.</span><span class="n">profiles</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span>
+
+                    <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+
+                    <span class="c1"># eventually replace the class of the property, because CIM is so well designed...</span>
+                    <span class="k">if</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_replacements</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_replacements</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span>
+
+                    <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">class_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+                        <span class="n">xml</span> <span class="o">+=</span> <span class="n">l2</span> <span class="o">+</span> <span class="s1">&#39;&lt;cim:&#39;</span> <span class="o">+</span> <span class="bp">cls</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">prop_name</span> <span class="o">+</span> <span class="s1">&#39; rdf:resource=&quot;#&#39;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s1">&#39;&quot; /&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">xml</span> <span class="o">+=</span> <span class="n">l2</span> <span class="o">+</span> <span class="s1">&#39;&lt;cim:&#39;</span> <span class="o">+</span> <span class="bp">cls</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">prop_name</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s1">&#39;&lt;/cim:&#39;</span> <span class="o">+</span> <span class="bp">cls</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">prop_name</span> <span class="o">+</span> <span class="s1">&#39;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+            <span class="c1"># closing</span>
+            <span class="n">xml</span> <span class="o">+=</span> <span class="n">l1</span> <span class="o">+</span> <span class="s1">&#39;&lt;/cim:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span> <span class="o">+</span> <span class="s1">&#39;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+            <span class="n">data</span><span class="p">[</span><span class="n">profile</span><span class="p">]</span> <span class="o">=</span> <span class="n">xml</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="Base.get_dict">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get dictionary with the data</span>
+<span class="sd">        :return: Dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">cim_prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">property_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="Base.get_all_properties">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.get_all_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of properties of this object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">prop_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_declared_property_names</span><span class="p">():</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">T</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="Base.detect_circular_references">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base.detect_circular_references">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_circular_references</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visited</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get path, leading to a circular refference</span>
+<span class="sd">        :param visited: list of visited elements&#39; rdfid (used for recursion)</span>
+<span class="sd">        :return: path of circular refferences</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_properties</span><span class="p">():</span>
+
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;rdfid&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">rdfid</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="n">visited</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">is_loop</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">detect_circular_references</span><span class="p">(</span><span class="n">visited</span><span class="o">=</span><span class="n">visited</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">is_loop</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exponential load &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="EMT fault" href="fault.html" />
+    <link rel="prev" title="Exciter" href="exciter.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../dynamic_model_library_index.html">📚 Dynamic model library</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#authoring-models">Authoring models</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../dynamic_model_library_index.html#device-templates">Device templates</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../RMS/index.html">RMS device templates</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">EMT device templates</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#reusable-blocks-and-logic">Reusable blocks and logic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+          <li class="breadcrumb-item"><a href="index.html">EMT device templates</a></li>
+      <li class="breadcrumb-item active">Exponential load</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/md_source/dyn_templates/EMT/exponential_load_abc.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="exponential-load">
+<h1>Exponential load<a class="headerlink" href="#exponential-load" title="Link to this heading"></a></h1>
+<!-- veragrid-block-introduction:start -->
+<p><strong>Exponential load</strong> describes how electrical demand responds to terminal voltage. Its active- and reactive-power exponents produce different fault and recovery behavior, so the selected formulation materially changes system damping and voltage stability.</p>
+<section id="typical-use">
+<h2>Typical use<a class="headerlink" href="#typical-use" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use the formulation that matches the time scale and measured behavior of the represented demand.</p></li>
+<li><p>Initialize active and reactive demand from the power flow and verify the voltage-dependence convention.</p></li>
+</ul>
+<!-- veragrid-block-introduction:end -->
+<p>This is a phase-selective EMT model. Any non-empty subset of <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, and <code class="docutils literal notranslate"><span class="pre">C</span></code> can be enabled, with star or delta connection behavior selected independently. ABC is the default arrangement, not a restriction of the model.</p>
+</section>
+<section id="model-behavior">
+<h2>Model behavior<a class="headerlink" href="#model-behavior" title="Link to this heading"></a></h2>
+<p>Each active branch uses a second-order generalized integrator (SOGI) to obtain in-phase and quadrature voltage components. For branch <span class="math">X</span>,</p>
+<div class="math">
+<p><span class="math">\dot u_X=k_{sogi}\omega(v_X-u_X)-\omega q_X,</span></p>
+</div><div class="math">
+<p><span class="math">\dot q_X=\omega u_X.</span></p>
+</div><p>The filtered magnitude is regularized close to zero voltage:</p>
+<div class="math">
+<p><span class="math">V_X=\sqrt{u_X^2+q_X^2+\varepsilon}.</span></p>
+</div><p>Active and reactive demand then follow</p>
+<div class="math">
+<p><span class="math">P_X=P_{0,X}\left(\frac{V_X}{V_0}\right)^a,
+\qquad
+Q_X=Q_{0,X}\left(\frac{V_X}{V_0}\right)^b.</span></p>
+</div><p>The branch current is reconstructed from the filtered voltage components and the requested complex power. Internal safe denominators keep the expression finite during deep voltage depressions.</p>
+</section>
+<section id="phase-and-connection-configurations">
+<h2>Phase and connection configurations<a class="headerlink" href="#phase-and-connection-configurations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Star configurations create one load branch for every enabled phase. The reference can be grounded, externally neutral-connected, or a solved floating star point.</p></li>
+<li><p>Delta configurations create branches only between enabled phase pairs and require at least two active phases.</p></li>
+<li><p>Disabled conductors do not create ports, equations, states, or external mappings.</p></li>
+</ul>
+<p>The generic branch notation in the equations and table applies equally to A, AB, AC, BC, ABC, and the applicable neutral-inclusive star interfaces.</p>
+</section>
+<section id="exponent-selection">
+<h2>Exponent selection<a class="headerlink" href="#exponent-selection" title="Link to this heading"></a></h2>
+<p>An exponent of 0 gives constant power, 1 gives approximately constant current, and 2 gives constant impedance in terms of power-versus-voltage magnitude. Active and reactive demand may use different exponents. Use measured composite-load behavior where available instead of assuming the same exponent for both.</p>
+</section>
+<section id="initialization-and-numerical-behavior">
+<h2>Initialization and numerical behavior<a class="headerlink" href="#initialization-and-numerical-behavior" title="Link to this heading"></a></h2>
+<p>The SOGI states are initialized from the solved branch voltages and the power setpoints from the operating point. Confirm that <code class="docutils literal notranslate"><span class="pre">V0</span></code>, <code class="docutils literal notranslate"><span class="pre">P0_X</span></code>, and <code class="docutils literal notranslate"><span class="pre">Q0_X</span></code> use the same base and sign convention as the connected device. The <code class="docutils literal notranslate"><span class="pre">eps</span></code> regularization prevents division by zero but does not make a constant-power load physically realistic at zero voltage; inspect fault recovery results when small terminal voltages are expected.</p>
+</section>
+<section id="interface-table">
+<h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v_A</span></code></p></td>
+<td><p>Instantaneous phase-A terminal voltage when phase A is active in the load</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v_B</span></code></p></td>
+<td><p>Instantaneous phase-B terminal voltage when phase B is active in the load</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v_C</span></code></p></td>
+<td><p>Instantaneous phase-C terminal voltage when phase C is active in the load</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i_A</span></code></p></td>
+<td><p>Phase-A current drawn by the exponential load and injected into the EMT network with load sign convention</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i_B</span></code></p></td>
+<td><p>Phase-B current drawn by the exponential load and injected into the EMT network with load sign convention</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i_C</span></code></p></td>
+<td><p>Phase-C current drawn by the exponential load and injected into the EMT network with load sign convention</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">u_A</span></code></p></td>
+<td><p>In-phase SOGI state used to estimate the filtered phase-A voltage component</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">u_B</span></code></p></td>
+<td><p>In-phase SOGI state used to estimate the filtered phase-B voltage component</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">u_C</span></code></p></td>
+<td><p>In-phase SOGI state used to estimate the filtered phase-C voltage component</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">q_A</span></code></p></td>
+<td><p>Quadrature SOGI state used to estimate the filtered phase-A voltage component</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">q_B</span></code></p></td>
+<td><p>Quadrature SOGI state used to estimate the filtered phase-B voltage component</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">q_C</span></code></p></td>
+<td><p>Quadrature SOGI state used to estimate the filtered phase-C voltage component</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">V_A</span></code></p></td>
+<td><p>Filtered magnitude of the phase-A voltage used in the exponential power law</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">V_B</span></code></p></td>
+<td><p>Filtered magnitude of the phase-B voltage used in the exponential power law</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">V_C</span></code></p></td>
+<td><p>Filtered magnitude of the phase-C voltage used in the exponential power law</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P_A</span></code></p></td>
+<td><p>Active power absorbed on phase A after applying the voltage exponent</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P_B</span></code></p></td>
+<td><p>Active power absorbed on phase B after applying the voltage exponent</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P_C</span></code></p></td>
+<td><p>Active power absorbed on phase C after applying the voltage exponent</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q_A</span></code></p></td>
+<td><p>Reactive power absorbed on phase A after applying the voltage exponent</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q_B</span></code></p></td>
+<td><p>Reactive power absorbed on phase B after applying the voltage exponent</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q_C</span></code></p></td>
+<td><p>Reactive power absorbed on phase C after applying the voltage exponent</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i_A</span></code></p></td>
+<td><p>Algebraic phase-A current computed from the phase-A power and voltage</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i_B</span></code></p></td>
+<td><p>Algebraic phase-B current computed from the phase-B power and voltage</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i_C</span></code></p></td>
+<td><p>Algebraic phase-C current computed from the phase-C power and voltage</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>Reference voltage magnitude used in the exponential active- and reactive-power laws</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code></p></td>
+<td><p>Exponent that makes active power vary with voltage magnitude</p></td>
+<td><p>dimensionless</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b</span></code></p></td>
+<td><p>Exponent that makes reactive power vary with voltage magnitude</p></td>
+<td><p>dimensionless</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">k_sogi</span></code></p></td>
+<td><p>SOGI gain that sets the filter tracking aggressiveness</p></td>
+<td><p>dimensionless</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">eps</span></code></p></td>
+<td><p>Small regularization term used to avoid singular behavior near zero voltage</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">omega</span></code></p></td>
+<td><p>Angular frequency used by the SOGI filter states</p></td>
+<td><p>rad/s</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P0_A</span></code></p></td>
+<td><p>Nominal phase-A active power at the reference voltage <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P0_B</span></code></p></td>
+<td><p>Nominal phase-B active power at the reference voltage <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P0_C</span></code></p></td>
+<td><p>Nominal phase-C active power at the reference voltage <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q0_A</span></code></p></td>
+<td><p>Nominal phase-A reactive power at the reference voltage <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q0_B</span></code></p></td>
+<td><p>Nominal phase-B reactive power at the reference voltage <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q0_C</span></code></p></td>
+<td><p>Nominal phase-C reactive power at the reference voltage <code class="docutils literal notranslate"><span class="pre">V0</span></code></p></td>
+<td><p>pu</p></td>
+</tr>
+</tbody>
+</table>
+<p>Only rows belonging to enabled phases are instantiated. For a delta model, the same quantities are associated with active phase pairs rather than phase-to-neutral branches.</p>
+</section>
+<section id="how-to-use-it">
+<h2>How to use it<a class="headerlink" href="#how-to-use-it" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Enable the required phases and choose the physical star or delta connection.</p></li>
+<li><p>Map the nominal branch powers and reference voltage from the initialized network.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> from the intended voltage response.</p></li>
+<li><p>Verify the initial total active and reactive power, including the load/injection sign.</p></li>
+<li><p>Apply a small voltage disturbance before relying on severe-fault results, and confirm that the selected exponents give the expected response.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="exciter.html" class="btn btn-neutral float-left" title="Exciter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fault.html" class="btn btn-neutral float-right" title="EMT fault" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

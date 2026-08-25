@@ -1,0 +1,758 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Change log &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Change log</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/rst_source/change_log.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="change-log">
+<h1>Change log<a class="headerlink" href="#change-log" title="Link to this heading"></a></h1>
+<p>This section describes the changes introduced at each Version.</p>
+<p>* Short releases indicate the fix of a critical bug.</p>
+<section id="version-5-0-2-the-great-split">
+<h2>Version 5.0.2 (The great split)<a class="headerlink" href="#version-5-0-2-the-great-split" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Massive refactor to allow multiple bus-branch diagrams and maps.</p></li>
+<li><p>The great split: Now there are two packages: <cite>VeraGrid</cite> which deals with the graphical user interface and <cite>VeraGridEngine</cite> that provides all the engine functionality without Qt dependencies.</p></li>
+<li><p>MIP auto-healing: OPF simulations are always feasible by properly relaxing infeasible ones.</p></li>
+<li><p>Added cutting edge investments evaluation. This will be evolved in future releases.</p></li>
+<li><p>API naming unification</p></li>
+<li><p>Overall refactoring and bug fixing</p></li>
+</ul>
+</section>
+<section id="version-4-7-0">
+<h2>Version 4.7.0<a class="headerlink" href="#version-4-7-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Massive refactor to accommodate flexible contingencies and investment objects</p></li>
+<li><p>Major refactor in the short circuit study to add sequence components</p></li>
+<li><p>Better integration of other calculation engines</p></li>
+<li><p>Added PSSe 35 raw support</p></li>
+<li><p>Overall bug fixing</p></li>
+</ul>
+</section>
+<section id="version-4-5-1">
+<h2>Version 4.5.1<a class="headerlink" href="#version-4-5-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Now the short circuit includes the loading results again (bug fix)</p></li>
+<li><p>Merged Short circuit contribution from user Ameer Carlo Lubang</p></li>
+<li><p>The HELM algorithm is now able to stop before reaching the iteration limit</p></li>
+</ul>
+</section>
+<section id="version-4-5-0">
+<h2>Version 4.5.0<a class="headerlink" href="#version-4-5-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added HiGHS as an optional MIP solver</p></li>
+<li><p>Added NTC optimization time series</p></li>
+<li><p>Tweak improvements in the NTC optimization calculation</p></li>
+<li><p>Moved to the more standard ZIP model, instead of the embedded ZIP model</p></li>
+<li><dl class="simple">
+<dt>Further Bentayga Integration:</dt><dd><ul>
+<li><p>Translated the power flow report</p></li>
+<li><p>Added fast decoupled power flow</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Refactored the code for all power flow numerical methods (No external changes should be appreciated)</p></li>
+<li><p>Cleaned the backtracking process in Newton-Raphson</p></li>
+</ul>
+</section>
+<section id="version-4-4-5">
+<h2>Version 4.4.5<a class="headerlink" href="#version-4-4-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Integrated Bentayga’s PTDF / LODF calculation</p></li>
+<li><p>Improved HVDC oscillation control when acting in free mode</p></li>
+<li><p>Integrated the Highs solver into the custom pulp implementation</p></li>
+</ul>
+</section>
+<section id="version-4-4-3">
+<h2>Version 4.4.3<a class="headerlink" href="#version-4-4-3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added HVDC oscillation control when acting in free mode</p></li>
+</ul>
+</section>
+<section id="version-4-4-2">
+<h2>Version 4.4.2<a class="headerlink" href="#version-4-4-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Changed the license to LGPL</p></li>
+<li><p>Improved HVDC power flow control management</p></li>
+<li><p>Added the license directly in the about box, featuring the linking exceptions for Bentayga and Newton.</p></li>
+<li><p>Rearranged menus oon the GUI.</p></li>
+</ul>
+</section>
+<section id="version-4-3-5">
+<h2>Version 4.3.5<a class="headerlink" href="#version-4-3-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed State Estimation error.</p></li>
+<li><p>Fixed: The buses name change immediately change the GUI bus name tag.</p></li>
+<li><p>Added NTC-OPF pre-solve diagnostic.</p></li>
+<li><p>Added ATC clustering simulation.</p></li>
+<li><p>Added DC power flow phase shifter effects.</p></li>
+<li><p>Added Proper HVDC losses calculation.</p></li>
+<li><p>Added HVDC “free” control to the power flow. This changes the HVDC set point using the angular difference.</p></li>
+<li><p>Added Newton interface for power flow.</p></li>
+<li><p>Added bentayga interface for power flow and time series.</p></li>
+<li><p>Added device fusion per node: this add all the devices of the same type connected to a node.</p></li>
+<li><p>Added functions with expert rules to correct and delete inconsistencies.</p></li>
+<li><p>Improved: Better island detection when buses are disconnected.</p></li>
+<li><p>Modified the ATC report to be similar to the NTC-OPF report.</p></li>
+<li><p>Rearranged the settings (added ML and Areas tabs)</p></li>
+</ul>
+</section>
+<section id="version-4-2-8">
+<h2>Version 4.2.8<a class="headerlink" href="#version-4-2-8" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added very detailed NTC-opf logger</p></li>
+</ul>
+</section>
+<section id="version-4-2-7">
+<h2>Version 4.2.7<a class="headerlink" href="#version-4-2-7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added virtual taps to the array view.</p></li>
+<li><p>Added the ability to plot and copy to the array view.</p></li>
+<li><p>Adapted to apple M1 limitations: Cannot use PyQt web view, cannot use CBC for now in the NTC-optimization only GLOP.</p></li>
+<li><p>Added the possibility of using Google’s GLOP optimization engine with the NTC optimization.</p></li>
+<li><p>Added better logging to the NTC optimization to report the slack variables.</p></li>
+<li><p>Added 3-node state estimation test.</p></li>
+<li><p>Added again the Gauss-Seidel power flow mainly aimed at the education sector.</p></li>
+<li><p>Added correct_branches_monitoring function to the GUI to be accessed as a console command.</p></li>
+<li><p>Added correct_shit function to correct virtual taps and generator set points to the GUI to be accessed as a console command.</p></li>
+<li><p>Changed the contingency report of the ATC and NTC simulations to include all the contingencies despite it being massive.</p></li>
+<li><p>Fixed syntax error with the state estimator.</p></li>
+<li><p>Improved Power World .epc format parser.</p></li>
+<li><p>Increased the console buffer size to 10000 lines.</p></li>
+</ul>
+</section>
+<section id="version-4-2-5">
+<h2>Version 4.2.5<a class="headerlink" href="#version-4-2-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed simple OPF dispatch</p></li>
+</ul>
+</section>
+<section id="version-4-2-4">
+<h2>Version 4.2.4<a class="headerlink" href="#version-4-2-4" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added HVDC and phase shifter optimization to the DC OPF and time series OPF</p></li>
+<li><p>Added contingency report to all the OPF modes</p></li>
+<li><p>Added transformer angle and tap module profiles</p></li>
+<li><p>Added dispatchable HVDC devices to the optimization</p></li>
+<li><p>Linked the HVDC and phase shifting from th OPF to the PF</p></li>
+<li><p>Removed AC linear OPF for the time being</p></li>
+</ul>
+</section>
+<section id="version-4-2-3">
+<h2>Version 4.2.3<a class="headerlink" href="#version-4-2-3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed memory leak in the TowerBuilderGui handling</p></li>
+</ul>
+</section>
+<section id="version-4-2-2">
+<h2>Version 4.2.2<a class="headerlink" href="#version-4-2-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed CIM export.</p></li>
+<li><p>Fixed Batteries min_soc bug when running time series OPF.</p></li>
+<li><p>Added contingencies to the DC-OPF time series.</p></li>
+<li><p>Added possibility of copper plate grouping.</p></li>
+</ul>
+</section>
+<section id="version-4-2-1">
+<h2>Version 4.2.1<a class="headerlink" href="#version-4-2-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added Early PowerWorld grids converter</p></li>
+<li><p>Added inputs analysis (Area, Zone, Country analysis)</p></li>
+<li><p>Added logging to the NTC OPF</p></li>
+<li><p>Added contingencies to the NTC OPF</p></li>
+<li><p>Added icon to the bus drag and drop (finally)</p></li>
+<li><p>Added vsc control modes Vdc and Pdc</p></li>
+<li><p>Added console commands to access the session results</p></li>
+<li><p>Added console commands <cite>app.numerical_circuit`and `app.islands</cite>.</p></li>
+<li><p>Added console command <cite>app.delete_shit()</cite> to delete all the useless islands and disconnected equipment.</p></li>
+<li><p>Fixed bug and improved clipboard results export</p></li>
+<li><p>Fixed glitch when importing profiles</p></li>
+<li><p>Fixed the kV not being calculated in the results’ tool tips</p></li>
+</ul>
+</section>
+<section id="version-4-2-0">
+<h2>Version 4.2.0<a class="headerlink" href="#version-4-2-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added the ability to save the results into the file, loading and unloading from the file. This is a massive feature.</p></li>
+<li><p>Added contingency analysis colouring.</p></li>
+<li><p>Added ATC generation scaling based on the installed power.</p></li>
+<li><p>Added NTC calculation using optimal dispatch (blue lambda).</p></li>
+<li><p>Added time series bus type series. Now the bus types change upon the generators’ availability.</p></li>
+<li><p>Better detection of power imbalances in the analysis tool.</p></li>
+<li><p>Finalized the json v3 export implementation.</p></li>
+<li><p>Fixed really rare bug with .real and .imag was making HELM diverge. Now it is fixed.</p></li>
+<li><p>Fixed multiple slacks error in PTDF calculations.</p></li>
+<li><p>Fixed bug where the voltage profiles were not being applied.</p></li>
+<li><p>Fixed FUBM model branch power calculation.</p></li>
+<li><p>Overall usability improvements.</p></li>
+</ul>
+</section>
+<section id="version-4-1-2">
+<h2>Version 4.1.2<a class="headerlink" href="#version-4-1-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added branch contingency multiplier for contingency related simulations</p></li>
+<li><p>Added Available Transmission Capacity</p></li>
+<li><p>Added dynamic bus types for the time series, this allows to correctly account for the generators’ status</p></li>
+</ul>
+</section>
+<section id="version-4-1-1">
+<h2>Version 4.1.1<a class="headerlink" href="#version-4-1-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed per unit computation with the GUI dialogues.</p></li>
+<li><p>Converted GUI simulation thread handling to a session based architecture.</p></li>
+</ul>
+</section>
+<section id="version-4-1-0">
+<h2>Version 4.1.0<a class="headerlink" href="#version-4-1-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added coordinates and position input dialogue for the buses</p></li>
+<li><p>Added ability to set a branch rating profile from the snapshot, via a context menu option.</p></li>
+<li><p>Added time series clustering</p></li>
+<li><p>Added HDF file format .gch5</p></li>
+<li><p>Much faster read and write of .veragrid files due to the saving of the profiles in pandas “pickles”</p></li>
+<li><p>Fixed Areas not loading properly</p></li>
+<li><p>Fixed Time series indexing for discontinuous index.</p></li>
+</ul>
+</section>
+<section id="version-4-0-2">
+<h2>Version 4.0.2<a class="headerlink" href="#version-4-0-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed xlrd dependency. It broke the profile import because it stopped supporting .xlsx.
+Switched to openpyxl.</p></li>
+<li><p>Fixed Wire call bug when not passing idtag.</p></li>
+<li><p>Added shunt voltage control.</p></li>
+</ul>
+</section>
+<section id="version-4-0-0-multi-terminal-dc-grids">
+<h2>Version 4.0.0 (multi-terminal DC Grids)<a class="headerlink" href="#version-4-0-0-multi-terminal-dc-grids" title="Link to this heading"></a></h2>
+<ul>
+<li><dl class="simple">
+<dt>General</dt><dd><ul class="simple">
+<li><p>Massive re-write of all the structures and the engine in order to have a more flexible
+approach to the devices and how the information is passed from the asset manager
+(the circuit) to the simulations. Hence the version jump attends to that massive effort.</p></li>
+<li><p>Fixed transformer editor Sbase conversion.</p></li>
+<li><p>Added HVDC line model.</p></li>
+<li><p>Added VSC branch model.</p></li>
+<li><p>Added DC line model.</p></li>
+<li><p>Added tags to the sigma-plot.</p></li>
+<li><p>Added Substation, Zone, Area and Country objects to group better the buses.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>GUI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Ability to select columns and rows when plotting the results</p></li>
+<li><p>Added update check and command in the GUI about box.</p></li>
+<li><p>Added a quite good random grid generator from the project SyntheticNetworks.</p></li>
+<li><p>Added a bus viewer: It allows to visualize subsets of the grid.
+It is useful for very large grids where the complete schematic is cumbersome or slow.</p></li>
+<li><p>Added check that converts the results into CDF.</p></li>
+<li><p>Added check that converts the results into their absolute value.</p></li>
+<li><p>Added schematic branch width based on the line flow.</p></li>
+<li><p>Added button in the results to copy text data in numpy format.</p></li>
+<li><p>Added column search in the results.</p></li>
+<li><p>Revamp of the context menus.</p></li>
+<li><p>Replaced how all the GUI messages are handled.</p></li>
+<li><p>Improved the logger window, which now allows to save logs report.</p></li>
+<li><p>Improved the transformer and line editors integrating the template selection.</p></li>
+<li><p>Improved filtering (bool values are recognised now)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt>I/O</dt><dd><ul class="simple">
+<li><p>Added better Json export file (v3.1 of the specification).</p></li>
+<li><p>Improved the PSS/e Raw file import.</p></li>
+<li><p>Implemented the ability to load several files to load a bunch of .xml CIM files together.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Linear Analysis</dt><dd><ul class="simple">
+<li><p>Replaced the empirical PTDF/OTDF by the analytical PTDF/LODF which are several orders of magnitude faster.</p></li>
+<li><p>Added linear contingency analysis time series</p></li>
+<li><p>Added linear grouping based on PTDF + DBScan clustering.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Power Flow</dt><dd><ul class="simple">
+<li><p>Improved the speed of the power flow process, by delaying the matrices and vector
+calculations until needed by any method.</p></li>
+<li><p>Fixed the line search in Newton-Raphson, now it is truly non-divergent.</p></li>
+<li><p>Removed the outer loop completely. Now the outer loop controls are performed inside the
+numerical methods that allow it (NR, LM, etc…) This is much faster.</p></li>
+<li><p>Now the reactive power control only converts PQ-&gt;PV, and not the other way around. This renders into
+a more stable process.</p></li>
+<li><dl class="simple">
+<dt>Seamless AC-DC simulation:</dt><dd><ul>
+<li><p>Added the FUBM model at the numeric circuit level</p></li>
+<li><p>Added FUBM version of the line-search Newton-Raphson method (without the super optimized jacobian for now)</p></li>
+<li><p>Integrated it with the GUI.</p></li>
+<li><p>The advanced controls such a transformer power set-points are simulated using the FUBM logic.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Stochastic Power Flow</dt><dd><ul class="simple">
+<li><p>Merged Monte Carlo and Latin Hypercube in the same simulation driver.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Continuation Power Flow</dt><dd><ul class="simple">
+<li><p>Added reactive power limits option for the generators.</p></li>
+<li><p>Added overload stop criteria.</p></li>
+<li><p>Added distributed slack.</p></li>
+<li><p>Added back-tracking mechanism to the corrector step.</p></li>
+<li><p>Now you can select to collapse a selection of nodes, from the GUI as well.</p></li>
+<li><p>Now you can set the direction of the continuation negative so that you actually
+increase the generation. This allows the use of the CPF as an exploration tool.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="version-3-7-1">
+<h2>Version 3.7.1<a class="headerlink" href="#version-3-7-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added Jacobian with numba optimization from Pandapower increasing Newton-Raphson performance by x20.</p></li>
+<li><p>Measuring the branch power instead of the current in the stochastic simulations.</p></li>
+<li><p>Fixes the problem with qtConsole by not displaying the console if the package crashes. Hopefully the QtConsole team
+will fix their issue.</p></li>
+</ul>
+</section>
+<section id="version-3-7-0-helm">
+<h2>Version 3.7.0 (HELM)<a class="headerlink" href="#version-3-7-0-helm" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Replaced the numerical circuit by two specialised objects: one for static power flow and another one for time series
+This allows to include specific circuit compilations for different studies such as harmonics ot dynamic studies
+without overcrowding the numerical circuit object with unused stuff.</p></li>
+<li><p>Greatly improved the time series flushing speed when saving.</p></li>
+<li><p>Improved the auto-link feature in the time series import.</p></li>
+<li><p>Added clustering to the time series.</p></li>
+<li><p>Added ability to not to draw the schematic. This speeds up operation with very large grids.</p></li>
+<li><p>The time series output size now adjust to the selected time interval.</p></li>
+<li><p>Now to drop a file does not automatically load the grid when another one is loaded.</p></li>
+<li><p>Replaced the previous HELM version by a working and competitive one thanks to Josep Fanals Batllori.</p></li>
+<li><p>Added the HELM-Sigma analysis tool.</p></li>
+</ul>
+</section>
+<section id="version-3-6-7">
+<h2>Version 3.6.7<a class="headerlink" href="#version-3-6-7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed critical bug with the user gathering under windows.</p></li>
+<li><p>Improved the Analysis tool.</p></li>
+</ul>
+</section>
+<section id="version-3-6-6">
+<h2>Version 3.6.6<a class="headerlink" href="#version-3-6-6" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed PTDFTimeSeries timing.</p></li>
+<li><p>Connected loose parameters on the PTDFTimeSeries class.</p></li>
+<li><p>Fixed the Fast decoupled power flow algorithm.</p></li>
+</ul>
+</section>
+<section id="version-3-6-5">
+<h2>Version 3.6.5<a class="headerlink" href="#version-3-6-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added Sqlite save/open support.</p></li>
+<li><p>Added Grid append functionality.</p></li>
+<li><p>Added units in the results.</p></li>
+<li><p>Now all the results are displayed in real numbers instead of in complex numbers.</p></li>
+<li><p>Added an amazing functionality to allow model synchronization across several computers.</p></li>
+</ul>
+</section>
+<section id="version-3-6-4">
+<h2>Version 3.6.4<a class="headerlink" href="#version-3-6-4" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Integrated better the PTDF into the GUI.</p></li>
+<li><p>Added VTDF calculations in the PTDF and PTDF time series.</p></li>
+<li><p>Added GIS as a visualization option.</p></li>
+<li><p>Improved the OPF formulation times.</p></li>
+<li><p>Improved the Jacobian-based power flow speeds by reducing the steps in the error computation.</p></li>
+<li><p>Fixed loading visualization in the schematic.</p></li>
+</ul>
+</section>
+<section id="version-3-6-3">
+<h2>Version 3.6.3<a class="headerlink" href="#version-3-6-3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added equipment catalogue to the docs.</p></li>
+<li><p>Added tutorial section to the docs.</p></li>
+<li><p>Added simple dispatch.</p></li>
+<li><p>Refactored the device-bus connectivity matrices to avoid transpositions.</p></li>
+<li><p>Added function to relocate buses based on their peers.</p></li>
+<li><p>Added PTDF based time series.</p></li>
+<li><p>Fixed very important bug that neglected the sign of the power flows!</p></li>
+</ul>
+</section>
+<section id="version-3-6-2">
+<h2>Version 3.6.2<a class="headerlink" href="#version-3-6-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added logs record to the “export all” process.</p></li>
+<li><p>Added a console reset. This is needed when the console crashes.</p></li>
+<li><p>Improved the grid data expert analysis tool.</p></li>
+<li><p>Now the GUI elements are in a package <em>GridEditorWidget</em> instead of a single file.
+This improves the maintainability.</p></li>
+<li><p>Added ability to set OPF generation into the power flow, the load shedding is also subtracted.</p></li>
+<li><p>Fixed long standing bug related to MC and LHS having very small variation.</p></li>
+<li><p>Fixed bug with buses not creating their own profile</p></li>
+<li><p>Fixed bug with the run power flow interface</p></li>
+</ul>
+</section>
+<section id="version-3-6-1">
+<h2>Version 3.6.1<a class="headerlink" href="#version-3-6-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added N-1 and OTDF</p></li>
+<li><p>Now the plots are way faster</p></li>
+<li><p>Now the export results truly exports everything into a zip file with csv files inside.</p></li>
+<li><p>The top menus have been re-arranged.</p></li>
+<li><p>The multi-core test was moved into research.</p></li>
+<li><p>Added tap module to the power flow results.</p></li>
+<li><p>Fixed bug related to OPF results being multiplied by <span class="math">Sbase</span> twice.</p></li>
+<li><p>Fixed units displayed in the results plot.</p></li>
+<li><p>Fixed the results representation when single-node islands were ignored.</p></li>
+</ul>
+</section>
+<section id="version-3-6-0">
+<h2>Version 3.6.0<a class="headerlink" href="#version-3-6-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed csv profile input.</p></li>
+<li><p>Added similarity-based auto link in the profile import.</p></li>
+<li><p>Improved PSS/e import by improving the device naming.</p></li>
+<li><p>Refactored the power flow section, removing quite a lot of the
+existing complexity. Now there is only one power flow class which
+calls to power flow functions.</p></li>
+<li><p>Changed the multiprocess from multiple processes to a pool.
+Hopefully this will allow multi-core on MS Windows.</p></li>
+<li><p>Added a proper logger object.</p></li>
+</ul>
+</section>
+<section id="version-3-5-9">
+<h2>Version 3.5.9<a class="headerlink" href="#version-3-5-9" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added the ability to ignore single node islands</p></li>
+<li><p>Fixed voltage module in the LACPF algorithm: Now the PQ buses voltage is closer to NR.</p></li>
+<li><p>Improved the Newton-Raphson line search speed by roughly 200% by tuning the acceleration parameter.</p></li>
+</ul>
+</section>
+<section id="version-3-5-8">
+<h2>Version 3.5.8<a class="headerlink" href="#version-3-5-8" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed PTDF and added cancelling.</p></li>
+<li><p>Fixed Vbranch not being copied correctly in multi-island mode in the Time series.</p></li>
+<li><p>Redesigned the results tab: Now the data is the default view and the plot is optional. This allows
+a much better user interface experience since Matplotlib does not block the results when the grids are large.</p></li>
+<li><p>Added N-k simulation.</p></li>
+<li><p>Fixed PSS/e import branches; PSS/e does not account for the length in the impedance computation.</p></li>
+<li><p>Greatly improved the PSS/e file parser by using variable length lists.</p></li>
+<li><p>Implemented the distributed slack.</p></li>
+<li><p>Open by GUI file drop.</p></li>
+<li><p>Fixed bug: Now when many generators are at a node only one controls voltage.</p></li>
+</ul>
+</section>
+<section id="version-3-5-7">
+<h2>Version 3.5.7<a class="headerlink" href="#version-3-5-7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed profile default-value initialization in automatic-load function.</p></li>
+<li><p>Added branch dynamic rating.</p></li>
+</ul>
+</section>
+<section id="version-3-5-6">
+<h2>Version 3.5.6<a class="headerlink" href="#version-3-5-6" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added thread for buses delete-and-reduce functionality.</p></li>
+<li><p>Moved the pulp solvers into individual files.</p></li>
+<li><p>Implemented the option to choose the linear algebra framework.</p></li>
+<li><p>Vastly improved DC power flow performance.</p></li>
+</ul>
+</section>
+<section id="version-3-5-5">
+<h2>Version 3.5.5<a class="headerlink" href="#version-3-5-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added generator technology property</p></li>
+<li><dl class="simple">
+<dt>Refactored code to make it simpler:</dt><dd><ul>
+<li><p>The enum’s behave like types and are able to parse text into types.</p></li>
+<li><p>The objects editor is now agnostic of complex types, and so are the load and save functions.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Added Power Transfer Distribution Factors (PTDF) analysis</p></li>
+</ul>
+</section>
+<section id="version-3-5-4">
+<h2>Version 3.5.4<a class="headerlink" href="#version-3-5-4" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed bug related to adding wires to the GUI.</p></li>
+<li><p>For some reason, <cite>sdist</cite> does not ship the right files to pypi, so changed to <cite>bdist_wheel</cite></p></li>
+<li><p>Fixed code smells</p></li>
+</ul>
+</section>
+<section id="version-3-5-3">
+<h2>Version 3.5.3<a class="headerlink" href="#version-3-5-3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added voltage angle in the power flow results and time series power flow results. About time!</p></li>
+<li><p>Removed warnings from the power flow driver. Now the warnings are stored in a log and displayed in the GUI.</p></li>
+<li><p>Fixed the rare bug of native open file dialogues not showing up. Native dialogues can be activated anytime via the
+“use_native_dialogues” flag in the GUI module.</p></li>
+<li><p>Fixed multi-island opf simulation in all the modes.</p></li>
+<li><p>Radically changed the way the file information is read. Now the function is much easier to maintain, so that changes
+in the objects should not affect the ability to read/write.</p></li>
+<li><p>Changed the way the overhead lines tower information is stored. Now should be more maintainable.</p></li>
+</ul>
+</section>
+<section id="version-3-5-2">
+<h2>Version 3.5.2<a class="headerlink" href="#version-3-5-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Removed pulp dependency in the generator objects (forced a critical update)</p></li>
+<li><p>Added some icons in the GUI</p></li>
+</ul>
+</section>
+<section id="version-3-5-1">
+<h2>Version 3.5.1<a class="headerlink" href="#version-3-5-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Simplified and unified the OPF interfaces.</p></li>
+<li><p>Added AC-liner OPF time series as a non-sequential algorithm.</p></li>
+<li><p>Added shadow prices to the non-sequential OPF.</p></li>
+<li><p>Added the handling of dispatchable non dispatchable generators to the OPF.</p></li>
+<li><p>Fixed bug with the OPF offset when starting at a index other than 0.</p></li>
+<li><p>Fixed bug with time grouping that repeated the last index.</p></li>
+<li><p>Fixed bug with the delegates setting for the boolean values</p></li>
+</ul>
+</section>
+<section id="version-3-5-0-commemorating-the-100-github-stars">
+<h2>Version 3.5.0 (commemorating the 100 GitHub stars)<a class="headerlink" href="#version-3-5-0-commemorating-the-100-github-stars" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added pulp as an embedded dependency, and updated its CBC solver with a custom compiled one from the latest sources.</p></li>
+<li><p>Fixed some bug related to the OPF storage and results display in non-sequential mode.</p></li>
+</ul>
+</section>
+<section id="version-3-4-2">
+<h2>Version 3.4.2<a class="headerlink" href="#version-3-4-2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed branch saving code (hopefully forever)</p></li>
+<li><p>Fixed the loading of some properties that were missing.</p></li>
+<li><p>Fixed the non-sequential OPF.</p></li>
+</ul>
+</section>
+<section id="version-3-4-1">
+<h2>Version 3.4.1<a class="headerlink" href="#version-3-4-1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added branch voltage and angle drops in the power flow and power flow time series simulations.</p></li>
+<li><p>Added cost profiles for the use in the OPF programs.</p></li>
+<li><p>Fixed critical bug when applying profile to snapshot.</p></li>
+<li><p>Fixed pySide related bug when converting dates.</p></li>
+<li><p>Fixed ui bug when setting values in the profiles manually.</p></li>
+</ul>
+</section>
+<section id="version-3-4-0">
+<h2>Version 3.4.0<a class="headerlink" href="#version-3-4-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Now when highlighting the selection, the buses on the schematic are selected.
+This feature allows to move buses in bulk after any selection kind.</p></li>
+<li><p>Added feature to highlight buses based on any numeric property from the grid objects.</p></li>
+<li><p>Added “master” delete from the schematic.
+Now any selection of buses from the schematic can be deleted at once.</p></li>
+</ul>
+</section>
+<section id="version-3-3-9">
+<h2>Version 3.3.9<a class="headerlink" href="#version-3-3-9" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Improved object filtering.</p></li>
+<li><p>Fixed critical bug involving the change to setuptools.</p></li>
+</ul>
+</section>
+<section id="version-3-3-7">
+<h2>Version 3.3.7<a class="headerlink" href="#version-3-3-7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Added filtering capabilities to the object browser.</p></li>
+<li><p>Added Bus reduction.</p></li>
+<li><p>Added bus highlight based on the object filtering.</p></li>
+</ul>
+</section>
+<section id="version-3-3-6">
+<h2>Version 3.3.6<a class="headerlink" href="#version-3-3-6" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Continued to improved PSS/e .raw support.</p></li>
+<li><p>Fixed the bug caused by PySide2 with the excel sheet selection window.</p></li>
+</ul>
+</section>
+<section id="version-3-3-5">
+<h2>Version 3.3.5<a class="headerlink" href="#version-3-3-5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Greatly improved PSS/e .raw file import support.</p></li>
+</ul>
+</section>
+<section id="version-3-3-4">
+<h2>Version 3.3.4<a class="headerlink" href="#version-3-3-4" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The tower names are displayed correctly now.</p></li>
+<li><p>Completely switched from PyQt5 to PySide2.</p></li>
+<li><p>Added support for PSS/e RAW file format Version 29.</p></li>
+<li><p>Overall bug fix.</p></li>
+</ul>
+</section>
+<section id="version-3-3-0">
+<h2>Version 3.3.0<a class="headerlink" href="#version-3-3-0" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Now the branches and the buses have activation profiles. This allows to run time series
+where the topology changes. Only available for time series for the moment.</p></li>
+<li><p>The branches now allow to profile their temperature.
+This allows to change the resistance to explore heat effects.</p></li>
+<li><p>Added undo / redo to the profiles editor. This improves usability quite a bit.</p></li>
+<li><p>Added csv files into zip files as the VeraGrid default format. This allows to use the same logic
+as with the excel files but with much faster saving and loading times.
+Especially suited for large grids with large profiles.</p></li>
+<li><p>Added error logging for the power flow time series.</p></li>
+<li><p>Massive refactoring of the the files in the program structure,
+hoping to provide a more intuitive interface.</p></li>
+<li><p>Replace the internal profiles from Pandas DataFrames to numpy arrays.
+This makes the processing simpler and more robust.</p></li>
+<li><p>Added rating to cables.</p></li>
+<li><p>Changed the TransformerType inner property names to shorter ones.</p></li>
+<li><p>Plenty of bug fixes.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

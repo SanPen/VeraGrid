@@ -1,0 +1,2612 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔥 Power flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="📏 Linear analysis" href="linear_analysis.html" />
+    <link rel="prev" title="🕸️ Procedural Grid Expansion" href="procedural_grid.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🔥 Power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#powerflowtimeseriesresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">PowerFlowTimeSeriesResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#powerflowresults3ph-registered-properties"><code class="docutils literal notranslate"><span class="pre">PowerFlowResults3Ph</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#powerflowresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">PowerFlowResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmark">Benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#matpower-grids">Matpower grids</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#three-phase-unbalanced-power-flow">Three-phase Unbalanced Power Flow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-newton-raphson-method">The Newton-Raphson Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#solving-the-three-phase-unbalanced-power-flow-problem">Solving the Three-phase Unbalanced Power Flow Problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#benchmark-ieee-13-node-test-feeder">Benchmark - IEEE 13 Node Test Feeder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#phase-a">Phase A</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#phase-b">Phase B:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#phase-c">Phase C:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🔥 Power flow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/power_flow.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="power-flow">
+<h1>🔥 Power flow<a class="headerlink" href="#power-flow" title="Link to this heading"></a></h1>
+<p>VeraGrid has the most power flow features in any open-source software.
+This is the power flow settings page:</p>
+<p><img alt="" src="../_images/settings-pf.png" /></p>
+<p>🎥 <a class="reference external" href="https://www.youtube.com/watch?v=d9dTyO4wels">Watch the IEEE14 demo on YouTube</a></p>
+<p>Below, a list of the parameters and solvers available.</p>
+<p>Settings:</p>
+<ul class="simple">
+<li><p><strong>Solver</strong>: The power flow solver to use.</p>
+<ul>
+<li><p>Newton-Raphson in power:</p></li>
+<li><p>Newton-Raphson in current:</p></li>
+<li><p>Newton-Raphson-Iwamoto:</p></li>
+<li><p>Levenberg-Marquardt:</p></li>
+<li><p>Fast-Decoupled:</p></li>
+<li><p>Holomorphic-Embedding:</p></li>
+<li><p>Linear “AC” approximation:</p></li>
+<li><p>“DC” approximation</p></li>
+</ul>
+</li>
+</ul>
+<p>The following table relates which power flow controls are available in each solver:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Newton <br/>Raphson</p></th>
+<th class="head"><p>Powell <br/>Dog-leg</p></th>
+<th class="head"><p>Levenberg-<br/>Marquardt</p></th>
+<th class="head"><p>Iwamoto</p></th>
+<th class="head"><p>Fast-<br/>decoupled</p></th>
+<th class="head"><p>Gauss-<br/>seidel</p></th>
+<th class="head"><p>Holomorphic <br/>embedding</p></th>
+<th class="head"><p>Linear <br/>without <br/>voltage modules</p></th>
+<th class="head"><p>Linear <br/>with voltage <br/>modules</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Local voltage <br/>control using <br/>a Generator.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>Remote voltage <br/>control using <br/>a Generator.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Generator <br/>reactive power <br/>limits.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Local and <br/>remote voltage <br/>control using <br/>a transformer’s <br/>tap changer.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Local active <br/>power control <br/>using a <br/>transformer’s <br/>tap changer.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Local reactive <br/>power control <br/>using a <br/>transformer’s <br/>tap changer.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Local and <br/>remote <br/>AC and DC <br/>voltage control <br/>using a <br/>converter.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Local <br/>AC and DC <br/>active power<br/> control using <br/>a converter.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Local AC <br/>reactive power <br/>control using <br/>a converter.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>3-phase <br/>unbalanced.</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p><strong>Tolerance</strong>: per-unit error tolerance to use in the solver. Exponent of the numerical precision. i.e. <code class="docutils literal notranslate"><span class="pre">4</span></code> corresponds to <code class="docutils literal notranslate"><span class="pre">1e-4</span></code> MW in p.u. of precision</p></li>
+<li><p><strong>Automatic precision (find)</strong>:
+The precision to use for the numerical solvers depends on the magnitude of the power injections.
+If we are dealing with hundreds of MW, the precision may be <code class="docutils literal notranslate"><span class="pre">1e-3</span></code>, but if we are dealing with Watts, the precision has
+to be greater. The automatic precision checks the loading for a suitable precision such that the results are fine.</p></li>
+<li><p><strong>Trust radius</strong>: For newton-like methods this is the solution trust radius to use</p></li>
+<li><p><strong>Max. Iterations</strong>: Maximum number of iterations in the solver.</p></li>
+<li><p><strong>Verbosity</strong>: Level of verbosity (0: none, 1: some, &gt;=2: all)</p></li>
+</ul>
+<p>Flags:</p>
+<ul class="simple">
+<li><p><strong>Retry with other methods is failed</strong>:
+This option tries other numerical solvers to try to find a power flow solution.
+This option is relevant because different numerical algorithms may be more suited to certain grid configurations.
+In general the Newton-Raphson implementation in VeraGrid includes back-tracing and other innovations that make it
+a very competitive method to consider by default.</p></li>
+<li><p><strong>Use initial guess</strong>: In the buses there are two properties <code class="docutils literal notranslate"><span class="pre">Vm0</span></code>and <code class="docutils literal notranslate"><span class="pre">Va0</span></code> both serve to
+specify the initial voltage guess. If selected those values are used to initialize the power flow solution.</p></li>
+<li><p><strong>Ignore single island nodes</strong>: If selected, the islands of 1 one are considered in blackout and not calculated.</p></li>
+<li><p><strong>3-phase</strong>: If selected a three phase power flow is run. For now only supporting simple local voltage controls.</p></li>
+<li><p><strong>Distributed slack</strong>: If selected, the slack power is distributed simply among the existing generators.</p></li>
+<li><p><strong>Control Q limits</strong>: This is the mode of reactive power control for the generators that are set in PV mode.
+This is a node-level control, so for this to work, there must not be more than one generator per bus. Otherwise a
+per-node repartition will be made, but the limits respecting cannot be ensured. For that use the AC-OPF.</p></li>
+<li><p><strong>Control tap module</strong>: If selected the tap module controls are possible, if active at device level.</p></li>
+<li><p><strong>Control tap phase</strong>: If selected the tap phase controls are possible, if active at device level.</p></li>
+<li><p><strong>Control remote voltages</strong>: If selected, the remote voltage controls are possible if set at device level.</p></li>
+<li><p><strong>Orthogonalize controls</strong>: If selected, the controls are “orthogonalized” to their device specified steps.
+This applies to transformer tap changers and non-linear shunts.</p></li>
+<li><p><strong>Initialize angles</strong>: If selected the power flow angles are initialized with a linear power flow.
+For Holomorphic embedding this is not necessary.</p></li>
+<li><p><strong>Apply temperature correction</strong>: When selected the branches apply the correction of the resistance due to the temperature.</p></li>
+<li><p><strong>Apply impedance tolerances</strong>:</p></li>
+<li><p><strong>Add report</strong>: Inspect the results looking for violations to report in the power flow logger.</p></li>
+</ul>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="powerflowtimeseriesresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">PowerFlowTimeSeriesResults</span></code> registered properties<a class="headerlink" href="#powerflowtimeseriesresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The power flow time-series result stores the solved network quantities for every time step.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time_array</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DateVec</span></code></p></td>
+<td><p>Time stamps represented by the result object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch from-bus index for each branch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch to-bus index for each branch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC from-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC to-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_area_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area index assigned to each bus.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area names or area identifiers used for inter-area aggregation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power result matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch current at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch current at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tap_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Transformer tap module used in the solved state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tap_angle</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Transformer tap angle used in the solved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Vbranch</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch voltage result used by branch reports.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_Pt</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_Pt</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="powerflowresults3ph-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">PowerFlowResults3Ph</span></code> registered properties<a class="headerlink" href="#powerflowresults3ph-registered-properties" title="Link to this heading"></a></h3>
+<p>The three-phase power flow result stores phase-resolved bus, branch, HVDC, VSC, generator, battery, and shunt quantities.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with generator-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">batt_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with battery-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with shunt-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with load-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch from-bus index for each branch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch to-bus index for each branch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC from-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC to-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_area_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area index assigned to each bus.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">area_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area names or area identifiers used for inter-area aggregation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus_N</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection for neutral.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage_N</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution for neutral.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltage_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltage_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the from side for phase A.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the from side for phase B.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the from side for phase C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">St_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">St_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">If_N</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the from side for neutral.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the from side for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">If_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the from side for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the from side for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It_N</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for neutral.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">It_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">It_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tap_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap module used in the solved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tap_angle</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap angle used in the solved state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Vbranch_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch voltage result for phase A.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Vbranch_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch voltage result for phase B.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Vbranch_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch voltage result for phase C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Loading result for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Loading result for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Loading result for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Losses result for phase A.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Losses result for phase B.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Losses result for phase C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Losses result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_hvdc_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pf_hvdc_A</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_hvdc_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pf_hvdc_B</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_hvdc_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pf_hvdc_C</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pt_hvdc_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pt_hvdc_A</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pt_hvdc_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pt_hvdc_B</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pt_hvdc_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Registered result field <code class="docutils literal notranslate"><span class="pre">Pt_hvdc_C</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Losses result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pfp_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">Pfp_vsc</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">St_vsc_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St_vsc_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">St_vsc_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">If_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Complex branch current at the from side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">It_vsc_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It_vsc_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">It_vsc_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the to side for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_q_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator reactive power output for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gen_q_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator reactive power output for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_q_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator reactive power output for phase C.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">battery_q_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Battery reactive power output for phase A.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">battery_q_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Battery reactive power output for phase B.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">battery_q_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Battery reactive power output for phase C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_q_A</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Shunt reactive power output for phase A.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_q_B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Shunt reactive power output for phase B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_q_C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Shunt reactive power output for phase C.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>Using the simplified API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE39_1W.veragrid&#39;</span><span class="p">)</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">main_circuit</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">main_circuit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Converged:&#39;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s1">&#39;error:&#39;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Using the more complex library objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE14_from_raw.veragrid&#39;</span><span class="p">)</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">power_flow</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">main_circuit</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+<span class="n">power_flow</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">main_circuit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Converged:&#39;</span><span class="p">,</span> <span class="n">power_flow</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s1">&#39;error:&#39;</span><span class="p">,</span> <span class="n">power_flow</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">power_flow</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">power_flow</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<section id="powerflowresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">PowerFlowResults</span></code> registered properties<a class="headerlink" href="#powerflowresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">PowerFlowResults</span></code> object stores the following registered properties for persistence and programmatic access.
+The arrays use the grid ordering used by the numerical circuit: buses follow <code class="docutils literal notranslate"><span class="pre">bus_names</span></code>, branches follow
+<code class="docutils literal notranslate"><span class="pre">branch_names</span></code>, HVDC links follow <code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code>, generators follow <code class="docutils literal notranslate"><span class="pre">gen_names</span></code>, batteries follow <code class="docutils literal notranslate"><span class="pre">batt_names</span></code>,
+and shunts follow <code class="docutils literal notranslate"><span class="pre">sh_names</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Bus names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Branch names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>HVDC line names aligned with HVDC-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Generator names aligned with generator-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">batt_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Battery names aligned with battery-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Shunt names aligned with shunt-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch “from” bus index for each branch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch “to” bus index for each branch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC “from” bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC “to” bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_area_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area index assigned to each bus.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area names or area identifiers used for inter-area aggregation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the “from” side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the “to” side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the “from” side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">It</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch current at the “to” side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tap_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap module used in the solved state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tap_angle</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap angle used in the solved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Vbranch</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch voltage magnitude reference used by branch reports.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC active power losses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC active power flow at the “from” side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pt_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC active power flow at the “to” side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC loading result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC active power losses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pfp_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC positive-pole active power flow at the “from” side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pfn_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC negative-pole active power flow at the “from” side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">St_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex VSC power flow at the AC terminal.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">If_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC current at the “from” side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">It_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex VSC current at the AC terminal.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator reactive power output.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">battery_q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Battery reactive power output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Shunt reactive power output.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">three_phase</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Flag indicating whether these results belong to a three-phase power flow.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>IEEE14_from_raw
+
+Converged: True error: 5.98e-08
+
+Bus resuts:
+           Vm     Va      P      Q
+BUS 1    1.06   0.00 232.39 -16.55
+BUS 2    1.04  -4.98  18.30  30.86
+BUS 3    1.01 -12.73 -94.20   6.08
+BUS 4    1.02 -10.31 -47.80   3.90
+BUS 5    1.02  -8.77  -7.60  -1.60
+BUS 6    1.07 -14.22 -11.20   5.23
+BUS 7    1.06 -13.36   0.00   0.00
+BUS 8    1.09 -13.36   0.00  17.62
+BUS 9    1.06 -14.94 -29.50 -16.60
+BUS 10   1.05 -15.10  -9.00  -5.80
+BUS 11   1.06 -14.79  -3.50  -1.80
+BUS 12   1.06 -15.08  -6.10  -1.60
+BUS 13   1.05 -15.16 -13.50  -5.80
+BUS 14   1.04 -16.03 -14.90  -5.00
+
+Branch results:
+                Pf         Qf          Pt         Qt               loading    Ploss     Qloss
+1_2_1   156.882887 -20.404291 -152.585286  27.676248 15688288652036.908203 4.297600  7.271957
+1_5_1    75.510380   3.854989  -72.747507   2.229360  7551037982438.064453 2.762872  6.084349
+2_3_1    73.237578   3.560203  -70.914309   1.602232  7323757808601.912109 2.323269  5.162436
+2_4_1    56.131495  -1.550352  -54.454837   3.020689  5613149456668.273438 1.676658  1.470337
+2_5_1    41.516214   1.170996  -40.612460  -2.099032  4151621353697.657715 0.903753 -0.928036
+3_4_1   -23.285691   4.473114   23.659136  -4.835650 -2328569062725.765625 0.373445 -0.362537
+4_5_1   -61.158231  15.823642   61.672651 -14.201004 -6115823108351.800781 0.514420  1.622637
+6_11_1    7.353277   3.560471   -7.297904  -3.444512   735327693069.753418 0.055373  0.115959
+6_12_1    7.786067   2.503414   -7.714258  -2.353959   778606687855.751465 0.071809  0.149455
+6_13_1   17.747977   7.216574  -17.535891  -6.798912  1774797671583.112793 0.212085  0.417662
+7_8_1    -0.000000 -17.162967    0.000000  17.623448             -0.001718 0.000000  0.460481
+7_9_1    28.074179   5.778690  -28.074179  -4.976621  2807417855964.891602 0.000000  0.802069
+9_10_1    5.227551   4.219139   -5.214676  -4.184938   522755058212.680359 0.012875  0.034201
+9_14_1    9.426380   3.610007   -9.310226  -3.362932   942638030136.208130 0.116154  0.247075
+10_11_1  -3.785324  -1.615061    3.797906   1.644513  -378532426869.186707 0.012581  0.029451
+12_13_1   1.614258   0.753959   -1.607959  -0.748260   161425771970.211853 0.006298  0.005698
+13_14_1   5.643852   1.747172   -5.589774  -1.637068   564385175482.526855 0.054078  0.110105
+4_7_1    28.074176  -9.681066  -28.074176  11.384281  2807417645485.176270 0.000000  1.703214
+4_9_1    16.079758  -0.427611  -16.079758   1.732322  1607975830176.256104 0.000000  1.304711
+5_6_1    44.087319  12.470682  -44.087319  -8.049520  4408731875605.579102 0.000000  4.421161
+</pre></div>
+</div>
+<p>Getting the Jacobian:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Derivatives.ac_jacobian</span><span class="w"> </span><span class="kn">import</span> <span class="n">AC_jacobian</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE39_1W.veragrid&#39;</span><span class="p">)</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">nc</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">)</span>
+
+<span class="n">adm</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">get_simulation_indices</span><span class="p">()</span>
+
+<span class="n">J</span> <span class="o">=</span> <span class="n">AC_jacobian</span><span class="p">(</span>
+    <span class="n">Ybus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span>
+    <span class="n">V</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">,</span> <span class="c1"># The voltage initla guess, substitute by any other compatible voltage</span>
+    <span class="n">pvpq</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">no_slack</span><span class="p">,</span> 
+    <span class="n">pq</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">pq</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="benchmark">
+<h2>Benchmark<a class="headerlink" href="#benchmark" title="Link to this heading"></a></h2>
+<section id="matpower-grids">
+<h3>Matpower grids<a class="headerlink" href="#matpower-grids" title="Link to this heading"></a></h3>
+<p><img alt="VeraGrid" src="../_images/n_buses_vs_time.png" /></p>
+<p>Matpower’s excellent formulations and consistency has allowed this and other
+projects to develop, relying on its sound math. That is why VeraGrid reads Matpower
+cases out of the box, without you having to do anything special.
+And of course, VeraGrid solves all Matpower 8 provided grids,
+solving the continental USA case in about 1 second:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>n_buses</p></th>
+<th class="head"><p>n_branches</p></th>
+<th class="head"><p>P imbalance (%)</p></th>
+<th class="head"><p>Flat start</p></th>
+<th class="head"><p>converged</p></th>
+<th class="head"><p>error (p.u.)</p></th>
+<th class="head"><p>iterations</p></th>
+<th class="head"><p>time (ms)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>case_SyntheticUSA.m</p></td>
+<td><p>82000</p></td>
+<td><p>104121</p></td>
+<td><p>-0.12</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.03E-08</p></td>
+<td><p>13</p></td>
+<td><p>3181.41</p></td>
+</tr>
+<tr class="row-odd"><td><p>case_ACTIVSg70k.m</p></td>
+<td><p>70000</p></td>
+<td><p>88207</p></td>
+<td><p>0.64</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>8.00E-07</p></td>
+<td><p>4</p></td>
+<td><p>1170.59</p></td>
+</tr>
+<tr class="row-even"><td><p>case_ACTIVSg25k.m</p></td>
+<td><p>25000</p></td>
+<td><p>32230</p></td>
+<td><p>-2.72</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.77E-10</p></td>
+<td><p>13</p></td>
+<td><p>993.16</p></td>
+</tr>
+<tr class="row-odd"><td><p>case13659pegase.m</p></td>
+<td><p>13659</p></td>
+<td><p>20467</p></td>
+<td><p>2411.01</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.66E-07</p></td>
+<td><p>8</p></td>
+<td><p>284.45</p></td>
+</tr>
+<tr class="row-even"><td><p>case_ACTIVSg10k.m</p></td>
+<td><p>10000</p></td>
+<td><p>12706</p></td>
+<td><p>-7.61</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>3.81E-11</p></td>
+<td><p>5</p></td>
+<td><p>152.66</p></td>
+</tr>
+<tr class="row-odd"><td><p>case9241pegase.m</p></td>
+<td><p>9241</p></td>
+<td><p>16049</p></td>
+<td><p>683.53</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>9.97E-11</p></td>
+<td><p>11</p></td>
+<td><p>319.74</p></td>
+</tr>
+<tr class="row-even"><td><p>case8387pegase.m</p></td>
+<td><p>8387</p></td>
+<td><p>14561</p></td>
+<td><p>-44.18</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.27E-11</p></td>
+<td><p>15</p></td>
+<td><p>362.14</p></td>
+</tr>
+<tr class="row-odd"><td><p>case6515rte.m</p></td>
+<td><p>6515</p></td>
+<td><p>9037</p></td>
+<td><p>-47.51</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>9.36E-08</p></td>
+<td><p>7</p></td>
+<td><p>132.49</p></td>
+</tr>
+<tr class="row-even"><td><p>case6495rte.m</p></td>
+<td><p>6495</p></td>
+<td><p>9019</p></td>
+<td><p>-48.91</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.08E-07</p></td>
+<td><p>6</p></td>
+<td><p>111.79</p></td>
+</tr>
+<tr class="row-odd"><td><p>case6470rte.m</p></td>
+<td><p>6470</p></td>
+<td><p>9005</p></td>
+<td><p>-47.97</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.89E-09</p></td>
+<td><p>7</p></td>
+<td><p>130.71</p></td>
+</tr>
+<tr class="row-even"><td><p>case6468rte.m</p></td>
+<td><p>6468</p></td>
+<td><p>9000</p></td>
+<td><p>-46.27</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.20E-09</p></td>
+<td><p>7</p></td>
+<td><p>145.08</p></td>
+</tr>
+<tr class="row-odd"><td><p>case3375wp.m</p></td>
+<td><p>3374</p></td>
+<td><p>4161</p></td>
+<td><p>-73.29</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.26E-09</p></td>
+<td><p>5</p></td>
+<td><p>52.88</p></td>
+</tr>
+<tr class="row-even"><td><p>case3120sp.m</p></td>
+<td><p>3120</p></td>
+<td><p>3693</p></td>
+<td><p>-99.96</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.56E-08</p></td>
+<td><p>12</p></td>
+<td><p>142.90</p></td>
+</tr>
+<tr class="row-odd"><td><p>case3012wp.m</p></td>
+<td><p>3012</p></td>
+<td><p>3572</p></td>
+<td><p>-98.93</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.85E-10</p></td>
+<td><p>6</p></td>
+<td><p>67.21</p></td>
+</tr>
+<tr class="row-even"><td><p>case2869pegase.m</p></td>
+<td><p>2869</p></td>
+<td><p>4582</p></td>
+<td><p>561.42</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.22E-11</p></td>
+<td><p>10</p></td>
+<td><p>78.79</p></td>
+</tr>
+<tr class="row-odd"><td><p>case2868rte.m</p></td>
+<td><p>2868</p></td>
+<td><p>3808</p></td>
+<td><p>-46.03</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.05E-07</p></td>
+<td><p>15</p></td>
+<td><p>119.37</p></td>
+</tr>
+<tr class="row-even"><td><p>case2848rte.m</p></td>
+<td><p>2848</p></td>
+<td><p>3776</p></td>
+<td><p>-41.34</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.30E-11</p></td>
+<td><p>18</p></td>
+<td><p>153.64</p></td>
+</tr>
+<tr class="row-odd"><td><p>case2746wp.m</p></td>
+<td><p>2746</p></td>
+<td><p>3514</p></td>
+<td><p>-95.83</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>9.13E-09</p></td>
+<td><p>9</p></td>
+<td><p>72.19</p></td>
+</tr>
+<tr class="row-even"><td><p>case2746wop.m</p></td>
+<td><p>2746</p></td>
+<td><p>3514</p></td>
+<td><p>-96.55</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.78E-07</p></td>
+<td><p>9</p></td>
+<td><p>128.23</p></td>
+</tr>
+<tr class="row-odd"><td><p>case2737sop.m</p></td>
+<td><p>2737</p></td>
+<td><p>3506</p></td>
+<td><p>-94.20</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>3.01E-10</p></td>
+<td><p>11</p></td>
+<td><p>94.70</p></td>
+</tr>
+<tr class="row-even"><td><p>case2736sp.m</p></td>
+<td><p>2736</p></td>
+<td><p>3504</p></td>
+<td><p>-95.17</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.74E-09</p></td>
+<td><p>10</p></td>
+<td><p>114.32</p></td>
+</tr>
+<tr class="row-odd"><td><p>case2383wp.m</p></td>
+<td><p>2383</p></td>
+<td><p>2896</p></td>
+<td><p>-97.43</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.17E-12</p></td>
+<td><p>10</p></td>
+<td><p>87.65</p></td>
+</tr>
+<tr class="row-even"><td><p>case_ACTIVSg2000.m</p></td>
+<td><p>2000</p></td>
+<td><p>3206</p></td>
+<td><p>10.84</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.16E-10</p></td>
+<td><p>12</p></td>
+<td><p>136.57</p></td>
+</tr>
+<tr class="row-odd"><td><p>case1951rte.m</p></td>
+<td><p>1951</p></td>
+<td><p>2596</p></td>
+<td><p>-45.97</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.67E-07</p></td>
+<td><p>4</p></td>
+<td><p>31.74</p></td>
+</tr>
+<tr class="row-even"><td><p>case1888rte.m</p></td>
+<td><p>1888</p></td>
+<td><p>2531</p></td>
+<td><p>-47.08</p></td>
+<td><p>FALSE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.56E-07</p></td>
+<td><p>5</p></td>
+<td><p>39.21</p></td>
+</tr>
+<tr class="row-odd"><td><p>case1354pegase.m</p></td>
+<td><p>1354</p></td>
+<td><p>1991</p></td>
+<td><p>862.85</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.43E-09</p></td>
+<td><p>8</p></td>
+<td><p>56.87</p></td>
+</tr>
+<tr class="row-even"><td><p>case_ACTIVSg500.m</p></td>
+<td><p>500</p></td>
+<td><p>597</p></td>
+<td><p>2.78</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>4.17E-09</p></td>
+<td><p>7</p></td>
+<td><p>19.51</p></td>
+</tr>
+<tr class="row-odd"><td><p>case300.m</p></td>
+<td><p>300</p></td>
+<td><p>411</p></td>
+<td><p>-38.64</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.54E-09</p></td>
+<td><p>8</p></td>
+<td><p>7.69</p></td>
+</tr>
+<tr class="row-even"><td><p>case_ACTIVSg200.m</p></td>
+<td><p>200</p></td>
+<td><p>245</p></td>
+<td><p>6.48</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>3.07E-10</p></td>
+<td><p>5</p></td>
+<td><p>11.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>case145.m</p></td>
+<td><p>145</p></td>
+<td><p>453</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.04E-09</p></td>
+<td><p>8</p></td>
+<td><p>14.71</p></td>
+</tr>
+<tr class="row-even"><td><p>case141.m</p></td>
+<td><p>141</p></td>
+<td><p>140</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>4.69E-09</p></td>
+<td><p>2</p></td>
+<td><p>1.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>case136ma.m</p></td>
+<td><p>136</p></td>
+<td><p>156</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.14E-08</p></td>
+<td><p>2</p></td>
+<td><p>1.11</p></td>
+</tr>
+<tr class="row-even"><td><p>case118zh.m</p></td>
+<td><p>118</p></td>
+<td><p>132</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.46E-08</p></td>
+<td><p>2</p></td>
+<td><p>1.35</p></td>
+</tr>
+<tr class="row-odd"><td><p>case118.m</p></td>
+<td><p>118</p></td>
+<td><p>186</p></td>
+<td><p>-28.33</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.94E-07</p></td>
+<td><p>7</p></td>
+<td><p>3.05</p></td>
+</tr>
+<tr class="row-even"><td><p>case94pi.m</p></td>
+<td><p>94</p></td>
+<td><p>93</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.08E-11</p></td>
+<td><p>2</p></td>
+<td><p>1.32</p></td>
+</tr>
+<tr class="row-odd"><td><p>case89pegase.m</p></td>
+<td><p>89</p></td>
+<td><p>210</p></td>
+<td><p>4.19</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.81E-09</p></td>
+<td><p>4</p></td>
+<td><p>2.54</p></td>
+</tr>
+<tr class="row-even"><td><p>case85.m</p></td>
+<td><p>85</p></td>
+<td><p>84</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.90E-12</p></td>
+<td><p>2</p></td>
+<td><p>1.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>case74ds.m</p></td>
+<td><p>74</p></td>
+<td><p>73</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>8.74E-07</p></td>
+<td><p>1</p></td>
+<td><p>0.58</p></td>
+</tr>
+<tr class="row-even"><td><p>case_RTS_GMLC.m</p></td>
+<td><p>73</p></td>
+<td><p>120</p></td>
+<td><p>-80.55</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.62E-07</p></td>
+<td><p>7</p></td>
+<td><p>11.74</p></td>
+</tr>
+<tr class="row-odd"><td><p>case70da.m</p></td>
+<td><p>70</p></td>
+<td><p>76</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.17E-12</p></td>
+<td><p>2</p></td>
+<td><p>0.89</p></td>
+</tr>
+<tr class="row-even"><td><p>case69.m</p></td>
+<td><p>69</p></td>
+<td><p>68</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.20E-09</p></td>
+<td><p>2</p></td>
+<td><p>0.78</p></td>
+</tr>
+<tr class="row-odd"><td><p>case60nordic.m</p></td>
+<td><p>60</p></td>
+<td><p>88</p></td>
+<td><p>96.26</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.15E-08</p></td>
+<td><p>4</p></td>
+<td><p>1.35</p></td>
+</tr>
+<tr class="row-even"><td><p>case57.m</p></td>
+<td><p>57</p></td>
+<td><p>80</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.82E-10</p></td>
+<td><p>7</p></td>
+<td><p>11.47</p></td>
+</tr>
+<tr class="row-odd"><td><p>case51ga.m</p></td>
+<td><p>51</p></td>
+<td><p>50</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.85E-12</p></td>
+<td><p>2</p></td>
+<td><p>0.86</p></td>
+</tr>
+<tr class="row-even"><td><p>case51he.m</p></td>
+<td><p>51</p></td>
+<td><p>50</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.16E-07</p></td>
+<td><p>1</p></td>
+<td><p>0.40</p></td>
+</tr>
+<tr class="row-odd"><td><p>case39.m</p></td>
+<td><p>39</p></td>
+<td><p>46</p></td>
+<td><p>-26.13</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.93E-11</p></td>
+<td><p>7</p></td>
+<td><p>10.79</p></td>
+</tr>
+<tr class="row-even"><td><p>case38si.m</p></td>
+<td><p>38</p></td>
+<td><p>37</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.26E-12</p></td>
+<td><p>2</p></td>
+<td><p>1.06</p></td>
+</tr>
+<tr class="row-odd"><td><p>case34sa.m</p></td>
+<td><p>34</p></td>
+<td><p>33</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>8.24E-13</p></td>
+<td><p>2</p></td>
+<td><p>0.74</p></td>
+</tr>
+<tr class="row-even"><td><p>case33bw.m</p></td>
+<td><p>33</p></td>
+<td><p>37</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.38E-09</p></td>
+<td><p>2</p></td>
+<td><p>1.09</p></td>
+</tr>
+<tr class="row-odd"><td><p>case33mg.m</p></td>
+<td><p>33</p></td>
+<td><p>37</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>7.46E-12</p></td>
+<td><p>2</p></td>
+<td><p>0.70</p></td>
+</tr>
+<tr class="row-even"><td><p>case30.m</p></td>
+<td><p>30</p></td>
+<td><p>41</p></td>
+<td><p>-39.59</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>9.57E-10</p></td>
+<td><p>3</p></td>
+<td><p>1.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>case_ieee30.m</p></td>
+<td><p>30</p></td>
+<td><p>41</p></td>
+<td><p>-3.24</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.18E-08</p></td>
+<td><p>3</p></td>
+<td><p>0.92</p></td>
+</tr>
+<tr class="row-even"><td><p>case30pwl.m</p></td>
+<td><p>30</p></td>
+<td><p>41</p></td>
+<td><p>-39.59</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>9.57E-10</p></td>
+<td><p>3</p></td>
+<td><p>0.89</p></td>
+</tr>
+<tr class="row-odd"><td><p>case30Q.m</p></td>
+<td><p>30</p></td>
+<td><p>41</p></td>
+<td><p>-39.59</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>9.57E-10</p></td>
+<td><p>3</p></td>
+<td><p>0.92</p></td>
+</tr>
+<tr class="row-even"><td><p>case28da.m</p></td>
+<td><p>28</p></td>
+<td><p>27</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.85E-07</p></td>
+<td><p>1</p></td>
+<td><p>0.53</p></td>
+</tr>
+<tr class="row-odd"><td><p>case24_ieee_rts.m</p></td>
+<td><p>24</p></td>
+<td><p>38</p></td>
+<td><p>-70.52</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.63E-08</p></td>
+<td><p>5</p></td>
+<td><p>9.04</p></td>
+</tr>
+<tr class="row-even"><td><p>case22.m</p></td>
+<td><p>22</p></td>
+<td><p>21</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.13E-07</p></td>
+<td><p>1</p></td>
+<td><p>0.47</p></td>
+</tr>
+<tr class="row-odd"><td><p>case18.m</p></td>
+<td><p>18</p></td>
+<td><p>17</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.27E-08</p></td>
+<td><p>3</p></td>
+<td><p>0.74</p></td>
+</tr>
+<tr class="row-even"><td><p>case18nbr.m</p></td>
+<td><p>18</p></td>
+<td><p>17</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.35E-07</p></td>
+<td><p>2</p></td>
+<td><p>0.84</p></td>
+</tr>
+<tr class="row-odd"><td><p>case17me.m</p></td>
+<td><p>17</p></td>
+<td><p>16</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>3.19E-08</p></td>
+<td><p>3</p></td>
+<td><p>0.91</p></td>
+</tr>
+<tr class="row-even"><td><p>case16ci.m</p></td>
+<td><p>16</p></td>
+<td><p>16</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.38E-09</p></td>
+<td><p>2</p></td>
+<td><p>0.47</p></td>
+</tr>
+<tr class="row-odd"><td><p>case15da.m</p></td>
+<td><p>15</p></td>
+<td><p>14</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>8.57E-07</p></td>
+<td><p>1</p></td>
+<td><p>0.68</p></td>
+</tr>
+<tr class="row-even"><td><p>case15nbr.m</p></td>
+<td><p>15</p></td>
+<td><p>14</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.43E-08</p></td>
+<td><p>2</p></td>
+<td><p>0.63</p></td>
+</tr>
+<tr class="row-odd"><td><p>case16am.m</p></td>
+<td><p>15</p></td>
+<td><p>14</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.22E-07</p></td>
+<td><p>2</p></td>
+<td><p>0.89</p></td>
+</tr>
+<tr class="row-even"><td><p>case14.m</p></td>
+<td><p>14</p></td>
+<td><p>20</p></td>
+<td><p>1.26</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.98E-08</p></td>
+<td><p>3</p></td>
+<td><p>0.61</p></td>
+</tr>
+<tr class="row-odd"><td><p>case12da.m</p></td>
+<td><p>12</p></td>
+<td><p>11</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.71E-07</p></td>
+<td><p>1</p></td>
+<td><p>1.36</p></td>
+</tr>
+<tr class="row-even"><td><p>case10ba.m</p></td>
+<td><p>10</p></td>
+<td><p>9</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.22E-08</p></td>
+<td><p>2</p></td>
+<td><p>0.52</p></td>
+</tr>
+<tr class="row-odd"><td><p>case9target.m</p></td>
+<td><p>9</p></td>
+<td><p>9</p></td>
+<td><p>-41.08</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>1.40E-07</p></td>
+<td><p>5</p></td>
+<td><p>2.12</p></td>
+</tr>
+<tr class="row-even"><td><p>case9_gurobi_test.m</p></td>
+<td><p>9</p></td>
+<td><p>9</p></td>
+<td><p>1.68</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>3.42E-07</p></td>
+<td><p>3</p></td>
+<td><p>1.61</p></td>
+</tr>
+<tr class="row-odd"><td><p>case9.m</p></td>
+<td><p>9</p></td>
+<td><p>9</p></td>
+<td><p>1.68</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>3.42E-07</p></td>
+<td><p>3</p></td>
+<td><p>0.67</p></td>
+</tr>
+<tr class="row-even"><td><p>case9Q.m</p></td>
+<td><p>9</p></td>
+<td><p>9</p></td>
+<td><p>-21.27</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>5.71E-07</p></td>
+<td><p>3</p></td>
+<td><p>0.64</p></td>
+</tr>
+<tr class="row-odd"><td><p>case6ww.m</p></td>
+<td><p>6</p></td>
+<td><p>11</p></td>
+<td><p>-47.62</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>2.09E-10</p></td>
+<td><p>3</p></td>
+<td><p>1.43</p></td>
+</tr>
+<tr class="row-even"><td><p>case5.m</p></td>
+<td><p>5</p></td>
+<td><p>6</p></td>
+<td><p>-36.35</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.42E-11</p></td>
+<td><p>3</p></td>
+<td><p>1.87</p></td>
+</tr>
+<tr class="row-odd"><td><p>case4_dist.m</p></td>
+<td><p>4</p></td>
+<td><p>3</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>4.63E-11</p></td>
+<td><p>6</p></td>
+<td><p>8.03</p></td>
+</tr>
+<tr class="row-even"><td><p>case4gs.m</p></td>
+<td><p>4</p></td>
+<td><p>4</p></td>
+<td><p>-100.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>6.59E-14</p></td>
+<td><p>6</p></td>
+<td><p>1.14</p></td>
+</tr>
+<tr class="row-odd"><td><p>contab_ACTIVSg200.m</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>0.00E+00</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-even"><td><p>contab_ACTIVSg500.m</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>0.00E+00</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>scenarios_ACTIVSg200.m</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>0.00E+00</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-even"><td><p>contab_ACTIVSg10k.m</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>0.00E+00</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>contab_ACTIVSg2000.m</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>0.00E+00</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+<tr class="row-even"><td><p>scenarios_ACTIVSg2000.m</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+<td><p>TRUE</p></td>
+<td><p>TRUE</p></td>
+<td><p>0.00E+00</p></td>
+<td><p>0</p></td>
+<td><p>0.00</p></td>
+</tr>
+</tbody>
+</table>
+<p>_Results simulated with AMD 9750x and 64 GB of RAM under Ubuntu 24.04.
+All solved using Newton-Raphson, and only using the provided solution
+that comes with the files when the flat start fails.</p>
+<p>Cool right? This is the code to reproduce the results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="s2">&quot;[some path...]/matpower8.0b1/data&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_grid</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span>
+                                         <span class="n">retry_with_other_methods</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">use_stored_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">flat_start</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+            <span class="c1"># if it does not converge, retry with the provided solution</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span>
+                                             <span class="n">retry_with_other_methods</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                             <span class="n">use_stored_guess</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">flat_start</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;n_buses&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span>
+            <span class="s2">&quot;n_branches&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branch_number</span><span class="p">(),</span>
+            <span class="s2">&quot;P imbalance (%)&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_imbalance</span><span class="p">()</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">,</span>
+            <span class="s2">&quot;Flat start&quot;</span><span class="p">:</span> <span class="n">flat_start</span><span class="p">,</span>
+            <span class="s2">&quot;converged&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span>
+            <span class="s2">&quot;error (p.u.)&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
+            <span class="s2">&quot;iterations&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">iterations</span><span class="p">,</span>
+            <span class="s2">&quot;time (ms)&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;n_buses&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span>
+            <span class="s2">&quot;n_branches&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branch_number</span><span class="p">(),</span>
+            <span class="s2">&quot;P imbalance (%)&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s2">&quot;Flat start&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;converged&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;error (p.u.)&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;iterations&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;time (ms)&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">info</span>
+
+
+<span class="c1"># run this one to compile all JIT routines and have fair measurements</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;case_ieee30.m&quot;</span><span class="p">)))</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">files_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.m&quot;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">files_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">run_grid</span><span class="p">,</span> <span class="n">files_list</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;n_buses&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;All matpower grids.xlsx&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="three-phase-unbalanced-power-flow">
+<h2>Three-phase Unbalanced Power Flow<a class="headerlink" href="#three-phase-unbalanced-power-flow" title="Link to this heading"></a></h2>
+<p>The power flow problem, or load flow problem, consists of computing the flow of electrical power in a steady-state
+system. In practice, this amounts to calculating the voltage phasor in each bus of the power network.
+Once the bus voltages are known, the other electrical variables are easy to compute. Mathematical equations for the
+power flow problem can be obtained by combining the complex power equation with Ohm’s law.</p>
+<p>The injected complex power <span class="math">\vec{S_i}</span> can be written as the product of the voltage phasor <span class="math">\vec{U_i}</span> and the
+conjugated current phasor <span class="math">\vec{I_i}^*</span> in the bus <span class="math">i</span>.</p>
+<div class="math">
+<p><span class="math">\vec{S_i} = \vec{U_i} \vec{I_i}^*</span></p>
+</div><p>Ohm’s law relates the current <span class="math">\vec{I_i}</span> flowing through the bus <span class="math">i</span> with the bus voltage <span class="math">\vec{U_i}</span> and its
+impedance <span class="math">\vec{Z_i}</span>. We can express it in terms of admittance <span class="math">\vec{Y_i}</span>, which is the impedance inverse.</p>
+<div class="math">
+<p><span class="math">\vec{I_i} = \frac{\vec{U_i}}{\vec{Z_i}} = \vec{Y_i}\vec{U_i}</span></p>
+</div><p>Therefore, by substituting the current from the first equation into the second equation, the fundamental expression to
+be solved is obtained as:</p>
+<div class="math">
+<p><span class="math">\vec{S_i} = \vec{U_i}(\vec{Y_i}\vec{U_i})^*</span></p>
+</div><p>The following magnitudes are defined for each bus <span class="math">i</span>:</p>
+<ul class="simple">
+<li><p><span class="math">U</span>: Voltage module.</p></li>
+<li><p><span class="math">\delta</span>: Voltage angle.</p></li>
+<li><p><span class="math">P</span>: Active power injection or consumption.</p></li>
+<li><p><span class="math">Q</span>: Reactive power injection or consumption.</p></li>
+</ul>
+<p>In some buses we artificially define the voltage module and angle (slack buses), in some buses we just know the
+consumption power (load buses or PQ), and in some others we know the active power injection and the voltage module
+(generation buses or PV). Thus, the different bus types are summarised in the following table.
+At least one slack bus is required in order to solve the power flow problem.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p><span class="math">U</span></p></th>
+<th class="head"><p><span class="math">\delta</span></p></th>
+<th class="head"><p><span class="math">P</span></p></th>
+<th class="head"><p><span class="math">Q</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Slack</p></td>
+<td><p>Set</p></td>
+<td><p>Set</p></td>
+<td><p>Computed</p></td>
+<td><p>Computed</p></td>
+</tr>
+<tr class="row-odd"><td><p>PQ</p></td>
+<td><p>Computed</p></td>
+<td><p>Computed</p></td>
+<td><p>Set</p></td>
+<td><p>Set</p></td>
+</tr>
+<tr class="row-even"><td><p>PV</p></td>
+<td><p>Set</p></td>
+<td><p>Computed</p></td>
+<td><p>Set</p></td>
+<td><p>Computed</p></td>
+</tr>
+</tbody>
+</table>
+<section id="the-newton-raphson-method">
+<h3>The Newton-Raphson Method<a class="headerlink" href="#the-newton-raphson-method" title="Link to this heading"></a></h3>
+<p>The Newton-Raphson method is used to solve the power flow problem, which consists of a zero-finding algorithm that
+produces successively better approximations to the zeros of a function. A zero of a function <span class="math">f</span> is the <span class="math">x</span> value such
+that <span class="math">f(x)=0</span>. The idea is to start with an initial guess <span class="math">x_0</span>, then to approximate the function by its tangent line,
+and finally to compute the x-axis interception of this tangent line.
+As shown in the following figure, the <span class="math">x_1</span> interception will typically be a better approximation to the
+function’s real zero <span class="math">x_n</span> than the initial guess <span class="math">x_0</span>, and the method can be iterated.</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_newton_raphson.png?raw=true"
+    alt="Newton-Raphson Method"
+    title="Newton-Raphson Method"
+    width="75%"/>
+</div>
+<p>If a function <span class="math">y=f(x)</span> is expanded about an operating point <span class="math">x_0</span> using a Taylor series expansion and ignoring all
+terms of higher order than 1, the following equation can be obtained:</p>
+<div class="math">
+<p><span class="math">y = f(x_0) + \frac{df(x_0)}{dx} (x - x_0)</span></p>
+</div><p>Returning to the power flow problem and considering again the fundamental equation <span class="math">\vec{S_i} = \vec{U_i}(\vec{Y_i}\vec{U_i})^*</span>
+to be solved, it can be noted that it may be expressed as <span class="math">\vec{S}_i = f(\vec{U}_i)</span>, in the same way as a generic function <span class="math">y = f(x)</span>.
+Therefore, it can be solved using the Newton-Raphson method.</p>
+</section>
+<section id="solving-the-three-phase-unbalanced-power-flow-problem">
+<h3>Solving the Three-phase Unbalanced Power Flow Problem<a class="headerlink" href="#solving-the-three-phase-unbalanced-power-flow-problem" title="Link to this heading"></a></h3>
+<p>From the previous consideration, the solution of the function <span class="math">\vec{S_i} = f(\vec{U_i})</span> can be written in the form of
+the expression above, the fundamental Newton-Raphson expression for the solution of the power flow problem,
+where <span class="math">J</span> is the Jacobian matrix:</p>
+<div class="math">
+<p><span class="math">\varDelta \vec{S} = -J \cdot \vec{U}</span></p>
+</div><p>If the previous equation is developed such that the complex power is expressed in its respective active <span class="math">P</span> and
+reactive <span class="math">Q</span> components, <span class="math">J</span> is the Jacobian matrix composed by the partial derivatives, and the voltage is isolated
+and expressed in polar coordinates with angle <span class="math">\delta</span> and module <span class="math">U</span>. Then, its matrix full representation is as follows:</p>
+<div class="math">
+<p><span class="math">\begin{bmatrix}
+\delta \\
+U
+\end{bmatrix}
+=-
+\begin{bmatrix}
+\dfrac{\partial P}{\partial \delta} &amp; \dfrac{\partial P}{\partial U} \\ \\
+\dfrac{\partial Q}{\partial \delta} &amp; \dfrac{\partial Q}{\partial U}
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+\varDelta P \\
+\varDelta Q
+\end{bmatrix}</span></p>
+</div><p>Therefore, the system will be solved iteratively until the difference between the specified power <span class="math">S_\text{spec}</span> and
+the calculated power <span class="math">S_\text{calc}</span> is negligible, meaning that the zero of the function has been found:</p>
+<div class="math">
+<p><span class="math">\varDelta \vec{S} = \vec{S}_\text{calc} - \vec{S}_\text{spec}</span></p>
+</div><p>The calculated power can be obtained using the voltage and the admittance matrices of the lines and
+transformers, as previously developed:</p>
+<div class="math">
+<p><span class="math">\vec{S}_\text{calc} = \vec{U} \, (\vec{Y} \, \vec{U})^*</span></p>
+</div><p>In contrast, the specified power incorporates the injection values of the different elements defined by
+the user. As previously discussed in the modelling section, these elements may be defined in terms of specified power
+<span class="math">\vec{S}_0</span>, current <span class="math">\vec{I}_0</span>, or admittance <span class="math">\vec{Y}_0</span>. Then, the equivalent specified power is calculated using
+the following expression:</p>
+<div class="math">
+<p><span class="math">\vec{S}_\text{spec} = \vec{S}_0 + (\vec{I}_0 + \vec{Y}_0 \, \vec{U})^* \, \vec{U}</span></p>
+</div><p>The voltage term <span class="math">\vec{U}</span> is a vector composed by the voltage values at each of the system’s buses, and therefore has
+a size equal to <span class="math">n</span>, that is, the total number of buses. The admittance term <span class="math">\vec{Y}</span> is a matrix comprising the
+admittance of the lines and transformers, therefore the elements that interconnect the buses with one another.
+As a result, it has a size of <span class="math">n \times n</span>.</p>
+<p>On the other hand, the specified power and current injection vectors, <span class="math">\vec{S}_0</span> and <span class="math">\vec{I}_0</span>, have the same length
+as the voltage vector <span class="math">\vec{U}</span>, while the specified admittance <span class="math">\vec{Y}_0</span> has the same dimensions as the branch
+admittance matrix <span class="math">\vec{Y}</span>.</p>
+<p>One might assume that, in order to formulate a three-phase power flow, it would be sufficient to simply multiply the
+number of buses by three, to account for the <span class="math">abc</span> phases. While this assumption could be valid in transmission systems,
+it does not hold true when we enter the domain of distribution networks. In such systems, all kinds of elements can be
+present, with three-phase, two-phase, and single-phase components.</p>
+<p>Since VeraGrid aims to address both transmission and distribution systems, the assumption of simply tripling the number
+of buses is not sufficient. A more advanced method must be implemented to accurately detect the real number of buses,
+taking into account the presence or absence of the three phases.</p>
+<p>This system for detecting the existing phases at each bus must begin with the branches (lines and transformers).
+These are the elements where the presence of phases transporting electrical energy is specified. Based on this
+information, a binary vector, referred to as the bus <strong>mask</strong>, is constructed. This vector contains ones for the phases
+that are present and zeros for those positions where one of the three standard phases is absent.</p>
+<p>This mask <span class="math">M</span> must be applied to several variables. The first is the admittance matrix, which will be processed by
+multiplying both its rows and columns by the bus mask. In this way, the entries corresponding to non-existent phases
+are removed. As a result, the matrix remains of size equal to <span class="math">n \times n</span>, that this time corresponds to the total
+number of <strong>active buses</strong>.</p>
+<div class="math">
+<p><span class="math">\vec{Y}_{\text{masked}} = M \cdot \vec{Y} \cdot M^{\top}</span></p>
+</div><p>Considering a simple example of two buses connected through a line that only has phases <span class="math">a</span> and <span class="math">c</span> active, phase <span class="math">b</span>
+cannot exist at the second bus. Therefore, the bus mask will contain a zero in that position, effectively removing the
+corresponding rows and columns from the admittance matrix:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_mask.png?raw=true"
+    alt="Bus Mask"
+    title="Bus Mask"
+    width="90%"/>
+</div>
+<p>Naturally, the bus mask must also be applied to the voltage vector at each bus in order to eliminate the entries
+corresponding to non-existent buses:</p>
+<div class="math">
+<p><span class="math">\vec{U}_{\text{masked}} = M^{\top} \cdot \vec{U}</span></p>
+</div><p>And the same operation must be carried out equivalently for the current injection vector and the power vector
+at each bus:</p>
+<div class="math">
+<p><span class="math">\vec{I}_{\text{masked}} = M^{\top} \cdot \vec{I}</span></p>
+</div><div class="math">
+<p><span class="math">\vec{S}_{\text{masked}} = M^{\top} \cdot \vec{S}</span></p>
+</div><p>In this way, all the elements required for the power flow are now correctly dimensioned, and the algorithm can be
+applied in a manner equivalent to the traditional single-phase power flow.</p>
+</section>
+<section id="benchmark-ieee-13-node-test-feeder">
+<h3>Benchmark - IEEE 13 Node Test Feeder<a class="headerlink" href="#benchmark-ieee-13-node-test-feeder" title="Link to this heading"></a></h3>
+<p>To validate the implementation in VeraGrid of the three-phase power flow algorithm, the IEEE 13 Node Test Feeder has
+been selected as a reference benchmark. This distribution system model, published by the IEEE Distribution System
+Analysis Subcommittee, represents a typical North American urban radial distribution network.</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_IEEE_13_Node_Test_Feeder.png?raw=true"
+    alt="IEEE 13 Node Test Feeder"
+    title="IEEE 13 Node Test Feeder"
+    width="99%"/>
+</div>
+<p>The network, depicted in the figure above, includes a variety of distribution elements such as:</p>
+<ul class="simple">
+<li><p>Unbalanced overhead power lines with different phasing configurations (three-phase, two-phase, and single-phase).</p></li>
+<li><p>A distribution transformer between buses 633 and 634.</p></li>
+<li><p>Multiple balanced and unbalanced loads modelled as constant impedance (Z), constant power (P), and constant current (I), with three-phase connections in star (Y) and delta (D), connections between two phases, and also between one phase and the ground.</p></li>
+<li><p>Shunt capacitor banks for reactive power compensation, also with different phasing configurations (three-phase and single-phase).</p></li>
+</ul>
+<p>The base voltage levels of the system are 4,16 kV on the distribution side, with a
+downstream low-voltage level of 0,48 kV at bus 634. The total nominal load is around 3,8 MVA, distributed across
+residential, commercial, and industrial consumers. Due to the network’s unbalanced and mixed-phase nature, this test feeder is widely recognised as a challenging yet
+representative case for validating unbalanced power flow solvers.</p>
+<p>The following code can be used to model the IEEE 13 Node Test Feeder in VeraGrid and to perform the three-phase
+unbalanced power flow, obtaining the voltage results depicted bellow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindingType</span><span class="p">,</span> <span class="n">ShuntConnectionType</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">()</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">fBase</span> <span class="o">=</span> <span class="mi">60</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Buses</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">bus_632</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;632&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">bus_632</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_632</span><span class="p">)</span>
+<span class="n">gen</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">vset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_632</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
+
+<span class="n">bus_633</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;633&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_633</span><span class="p">)</span>
+
+<span class="n">bus_634</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;634&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">0.48</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="mi">200</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_634</span><span class="p">)</span>
+
+<span class="n">bus_645</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;645&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=-</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_645</span><span class="p">)</span>
+
+<span class="n">bus_646</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;646&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=-</span><span class="mi">200</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_646</span><span class="p">)</span>
+
+<span class="n">bus_652</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;652&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=-</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">200</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_652</span><span class="p">)</span>
+
+<span class="n">bus_671</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;671&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_671</span><span class="p">)</span>
+
+<span class="n">bus_675</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;675&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="mi">200</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_675</span><span class="p">)</span>
+
+<span class="n">bus_611</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;611&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=-</span><span class="mi">200</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_611</span><span class="p">)</span>
+
+<span class="n">bus_680</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;680&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">200</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_680</span><span class="p">)</span>
+
+<span class="n">bus_684</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;684&#39;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=-</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">bus_684</span><span class="p">)</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Impedances [Ohm/km]</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">z_601</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.3465</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.0179</span><span class="p">,</span> <span class="mf">0.1560</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.5017</span><span class="p">,</span> <span class="mf">0.1580</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4236</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1560</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.5017</span><span class="p">,</span> <span class="mf">0.3375</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.0478</span><span class="p">,</span> <span class="mf">0.1535</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.3849</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1580</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4236</span><span class="p">,</span> <span class="mf">0.1535</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.3849</span><span class="p">,</span> <span class="mf">0.3414</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.0348</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">z_602</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.7526</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.1814</span><span class="p">,</span> <span class="mf">0.1580</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4236</span><span class="p">,</span> <span class="mf">0.1560</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.5017</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1580</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4236</span><span class="p">,</span> <span class="mf">0.7475</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.1983</span><span class="p">,</span> <span class="mf">0.1535</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.3849</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1560</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.5017</span><span class="p">,</span> <span class="mf">0.1535</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.3849</span><span class="p">,</span> <span class="mf">0.7436</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.2112</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">z_603</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.3294</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.3471</span><span class="p">,</span> <span class="mf">0.2066</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4591</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.2066</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4591</span><span class="p">,</span> <span class="mf">1.3238</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.3569</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">z_604</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.3238</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.3569</span><span class="p">,</span> <span class="mf">0.2066</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4591</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.2066</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4591</span><span class="p">,</span> <span class="mf">1.3294</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.3471</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">z_605</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.3292</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">1.3475</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">z_606</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.7982</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4463</span><span class="p">,</span> <span class="mf">0.3192</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0328</span><span class="p">,</span> <span class="mf">0.2849</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.0143</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.3192</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0328</span><span class="p">,</span> <span class="mf">0.7891</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4041</span><span class="p">,</span> <span class="mf">0.3192</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0328</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.2849</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.0143</span><span class="p">,</span> <span class="mf">0.3192</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0328</span><span class="p">,</span> <span class="mf">0.7982</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.4463</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">z_607</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.3425</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.5124</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Admittances [S/km]</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">y_601</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">6.2998</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.9958</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.2595</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.9958</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">5.9597</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.7417</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.2595</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.7417</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">5.6386</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">y_602</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">5.6990</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.0817</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.6905</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.0817</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">5.1795</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.6588</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.6905</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.6588</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">5.4246</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">y_603</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">4.7097</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.8999</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.8999</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">4.6658</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">y_604</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">4.6658</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.8999</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.8999</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">4.7097</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">y_605</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">4.5193</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">y_606</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">96.8897</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0000</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">96.8897</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0000</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">96.8897</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="n">y_607</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">88.9912</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span> <span class="o">/</span> <span class="mf">1.60934</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Loads</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">load_634</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P1</span><span class="o">=</span><span class="mf">0.160</span><span class="p">,</span>
+                    <span class="n">Q1</span><span class="o">=</span><span class="mf">0.110</span><span class="p">,</span>
+                    <span class="n">P2</span><span class="o">=</span><span class="mf">0.120</span><span class="p">,</span>
+                    <span class="n">Q2</span><span class="o">=</span><span class="mf">0.090</span><span class="p">,</span>
+                    <span class="n">P3</span><span class="o">=</span><span class="mf">0.120</span><span class="p">,</span>
+                    <span class="n">Q3</span><span class="o">=</span><span class="mf">0.090</span><span class="p">)</span>
+<span class="n">load_634</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_634</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_634</span><span class="p">)</span>
+
+<span class="n">load_645</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">Q1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">P2</span><span class="o">=</span><span class="mf">0.170</span><span class="p">,</span>
+                    <span class="n">Q2</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span>
+                    <span class="n">P3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">Q3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">load_645</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_645</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_645</span><span class="p">)</span>
+
+<span class="n">load_646</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">G1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">B1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">G2</span><span class="o">=</span><span class="mf">0.230</span><span class="p">,</span>
+                    <span class="n">B2</span><span class="o">=-</span><span class="mf">0.132</span><span class="p">,</span>
+                    <span class="n">G3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">B3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">load_646</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">Delta</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_646</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_646</span><span class="p">)</span>
+
+<span class="n">load_652</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">G1</span><span class="o">=</span><span class="mf">0.128</span><span class="p">,</span>
+                    <span class="n">B1</span><span class="o">=-</span><span class="mf">0.086</span><span class="p">,</span>
+                    <span class="n">G2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">B2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">G3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">B3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">load_652</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_652</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_652</span><span class="p">)</span>
+
+<span class="n">load_671</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P1</span><span class="o">=</span><span class="mf">0.385</span><span class="p">,</span>
+                    <span class="n">Q1</span><span class="o">=</span><span class="mf">0.220</span><span class="p">,</span>
+                    <span class="n">P2</span><span class="o">=</span><span class="mf">0.385</span><span class="p">,</span>
+                    <span class="n">Q2</span><span class="o">=</span><span class="mf">0.220</span><span class="p">,</span>
+                    <span class="n">P3</span><span class="o">=</span><span class="mf">0.385</span><span class="p">,</span>
+                    <span class="n">Q3</span><span class="o">=</span><span class="mf">0.220</span><span class="p">)</span>
+<span class="n">load_671</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">Delta</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_671</span><span class="p">)</span>
+
+<span class="n">load_671_692</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">Ir1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">Ii1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">Ir2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">Ii2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">Ir3</span><span class="o">=</span><span class="mf">0.170</span><span class="p">,</span>
+                        <span class="n">Ii3</span><span class="o">=</span><span class="mf">0.151</span><span class="p">)</span>
+<span class="n">load_671_692</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">Delta</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_671_692</span><span class="p">)</span>
+
+<span class="n">load_611</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">Ir1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">Ii1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">Ir2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">Ii2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">Ir3</span><span class="o">=</span><span class="mf">0.170</span><span class="p">,</span>
+                    <span class="n">Ii3</span><span class="o">=</span><span class="mf">0.080</span><span class="p">)</span>
+<span class="n">load_611</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_611</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_611</span><span class="p">)</span>
+
+<span class="n">load_632_distrib</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P1</span><span class="o">=</span><span class="mf">0.017</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">Q1</span><span class="o">=</span><span class="mf">0.010</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">P2</span><span class="o">=</span><span class="mf">0.066</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">Q2</span><span class="o">=</span><span class="mf">0.038</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">P3</span><span class="o">=</span><span class="mf">0.117</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">Q3</span><span class="o">=</span><span class="mf">0.068</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">load_632_distrib</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_632</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_632_distrib</span><span class="p">)</span>
+
+<span class="n">load_671_distrib</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P1</span><span class="o">=</span><span class="mf">0.017</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">Q1</span><span class="o">=</span><span class="mf">0.010</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">P2</span><span class="o">=</span><span class="mf">0.066</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">Q2</span><span class="o">=</span><span class="mf">0.038</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">P3</span><span class="o">=</span><span class="mf">0.117</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">Q3</span><span class="o">=</span><span class="mf">0.068</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">load_671_distrib</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_671_distrib</span><span class="p">)</span>
+
+<span class="n">load_675</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P1</span><span class="o">=</span><span class="mf">0.485</span><span class="p">,</span>
+                    <span class="n">Q1</span><span class="o">=</span><span class="mf">0.190</span><span class="p">,</span>
+                    <span class="n">P2</span><span class="o">=</span><span class="mf">0.068</span><span class="p">,</span>
+                    <span class="n">Q2</span><span class="o">=</span><span class="mf">0.060</span><span class="p">,</span>
+                    <span class="n">P3</span><span class="o">=</span><span class="mf">0.290</span><span class="p">,</span>
+                    <span class="n">Q3</span><span class="o">=</span><span class="mf">0.212</span><span class="p">)</span>
+<span class="n">load_675</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_675</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load_675</span><span class="p">)</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Capacitors</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">cap_675</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span><span class="n">B1</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">B2</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                    <span class="n">B3</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">cap_675</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_675</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">cap_675</span><span class="p">)</span>
+
+<span class="n">cap_611</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span><span class="n">B1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">B2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">B3</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">cap_611</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_611</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">cap_611</span><span class="p">)</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Line Configurations</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">config_601</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 601&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_601</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_601</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_601</span><span class="p">)</span>
+
+<span class="n">config_602</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 602&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_602</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_602</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_602</span><span class="p">)</span>
+
+<span class="n">config_603</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 603&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_603</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_603</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_603</span><span class="p">)</span>
+
+<span class="n">config_604</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 604&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_604</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_604</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_604</span><span class="p">)</span>
+
+<span class="n">config_605</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 605&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_605</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_605</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_605</span><span class="p">)</span>
+
+<span class="n">config_606</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 606&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_606</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_606</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_606</span><span class="p">)</span>
+
+<span class="n">config_607</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">create_known_abc_overhead_template</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Config. 607&#39;</span><span class="p">,</span>
+                                                    <span class="n">z_abc</span><span class="o">=</span><span class="n">z_607</span><span class="p">,</span>
+                                                    <span class="n">ysh_abc</span><span class="o">=</span><span class="n">y_607</span><span class="p">,</span>
+                                                    <span class="n">phases</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+                                                    <span class="n">Vnom</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                                                    <span class="n">frequency</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_overhead_line</span><span class="p">(</span><span class="n">config_607</span><span class="p">)</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Lines and Transformers</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">line_632_645</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_632</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_645</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">500</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_632_645</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_603</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_632_645</span><span class="p">)</span>
+
+<span class="n">line_645_646</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_645</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_646</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">300</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_645_646</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_603</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_645_646</span><span class="p">)</span>
+
+<span class="n">line_632_633</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_632</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_633</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">500</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_632_633</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_602</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_632_633</span><span class="p">)</span>
+
+<span class="n">XFM_1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;XFM-1&#39;</span><span class="p">,</span>
+                          <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_633</span><span class="p">,</span>
+                          <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_634</span><span class="p">,</span>
+                          <span class="n">HV</span><span class="o">=</span><span class="mf">4.16</span><span class="p">,</span>
+                          <span class="n">LV</span><span class="o">=</span><span class="mf">0.48</span><span class="p">,</span>
+                          <span class="n">nominal_power</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">r</span><span class="o">=</span><span class="mf">1.1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+                          <span class="n">x</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">XFM_1</span><span class="o">.</span><span class="n">conn_f</span> <span class="o">=</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">XFM_1</span><span class="o">.</span><span class="n">conn_t</span> <span class="o">=</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">XFM_1</span><span class="p">)</span>
+
+<span class="n">line_632_671</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_632</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">2000</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_632_671</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_601</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_632_671</span><span class="p">)</span>
+
+<span class="n">line_671_684</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_684</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">300</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_671_684</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_604</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_671_684</span><span class="p">)</span>
+
+<span class="n">line_684_611</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_684</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_611</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">300</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_684_611</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_605</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_684_611</span><span class="p">)</span>
+
+<span class="n">line_684_652</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_684</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_652</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">800</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_684_652</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_607</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_684_652</span><span class="p">)</span>
+
+<span class="n">line_671_680</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_680</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">1000</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_671_680</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_601</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_671_680</span><span class="p">)</span>
+
+<span class="n">line_671_675</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_671</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_675</span><span class="p">,</span>
+                        <span class="n">length</span><span class="o">=</span><span class="mi">500</span> <span class="o">*</span> <span class="mf">0.0003048</span><span class="p">)</span>
+<span class="n">line_671_675</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">config_606</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">line_671_675</span><span class="p">)</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Run power flow</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">three_phase_unbalanced</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Show the results</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Save the grid</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">save_file</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="s2">&quot;IEEE 13 Node Test Feeder.veragrid&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="phase-a">
+<h4>Phase A<a class="headerlink" href="#phase-a" title="Link to this heading"></a></h4>
+<p>Voltage magnitude:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_U_a_results.png?raw=true"
+    alt="Phase A Voltage Magnitude"
+    title="Phase A Voltage Magnitude"
+    width="75%"/>
+</div>
+<p>Voltage angle:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_delta_a_results.png?raw=true"
+    alt="Phase A Voltage Angle"
+    title="Phase A Voltage Angle"
+    width="75%"/>
+</div>
+</section>
+<section id="phase-b">
+<h4>Phase B:<a class="headerlink" href="#phase-b" title="Link to this heading"></a></h4>
+<p>Voltage magnitude:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_U_b_results.png?raw=true"
+    alt="Phase B Voltage Magnitude"
+    title="Phase B Voltage Magnitude"
+    width="75%"/>
+</div>
+<p>Voltage angle:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_delta_b_results.png?raw=true"
+    alt="Phase B Voltage Angle"
+    title="Phase B Voltage Angle"
+    width="75%"/>
+</div>
+</section>
+<section id="phase-c">
+<h4>Phase C:<a class="headerlink" href="#phase-c" title="Link to this heading"></a></h4>
+<p>Voltage magnitude:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_U_c_results.png?raw=true"
+    alt="Phase C Voltage Magnitude"
+    title="Phase C Voltage Magnitude"
+    width="75%"/>
+</div>
+<p>Voltage angle:</p>
+<div style="text-align: center;">
+    <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_delta_c_results.png?raw=true"
+    alt="Phase C Voltage Angle"
+    title="Phase C Voltage Angle"
+    width="75%"/>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="procedural_grid.html" class="btn btn-neutral float-left" title="🕸️ Procedural Grid Expansion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="linear_analysis.html" class="btn btn-neutral float-right" title="📏 Linear analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

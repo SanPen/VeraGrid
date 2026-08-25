@@ -1,0 +1,232 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.raw.versioned.base.facts &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.raw.versioned.base.facts</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.raw.versioned.base.facts</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Unit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawObject</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_property</span><span class="w"> </span><span class="kn">import</span> <span class="n">PsseProperty</span>
+
+
+<div class="viewcode-block" id="RawFACTS">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.facts.RawFACTS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RawFACTS</span><span class="p">(</span><span class="n">RawObject</span><span class="p">):</span>
+
+    <span class="n">LOCAL_PROPERTIES</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PsseProperty</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;NAME&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Device name&#39;</span><span class="p">,</span> <span class="n">max_chars</span><span class="o">=</span><span class="mi">12</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;ibus&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Bus from number&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">999997</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;jbus&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Bus to number&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">999997</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;MODE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Control mode&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;PDES&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;pdes&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Desired active power flow arriving at the &quot;to&quot; bus;&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mw</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;QDES&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;qdes&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Desired reactive power flow arriving at the &quot;to&quot; bus&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mvar</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;VSET&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;vset&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Voltage set point at the &quot;from&quot; bus&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;SHMX&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;shmx&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Maximum shunt current at the &quot;from&quot; bus&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mva</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;TRMX&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;trmx&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Maximum bridge active power transfer&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mw</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;VTMN&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;vtmn&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Minimum voltage at the &quot;to&quot; bus&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;VTMX&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;vtmx&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Maximum voltage at the &quot;to&quot; bus&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;VSMX&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;vsmx&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Maximum series voltage&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;IMX&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;imx&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Maximum series current. Zero for no series current limit&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mva</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;LINX&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;linx&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Reactance of the series element used during power flow solutions&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;RMPCT&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;rmpct&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Percentage of the total Mvar required to hold the voltage at the bus controlled by the shunt element&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_percent</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;OWNER&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;owner&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Owner number&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">999999</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;SET1&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;set1&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Set value 1 (see manual)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;SET2&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;set2&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Set value  (see manual)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;VSREF&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;vsref&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Series voltage reference code&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;FCREG&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;fcreg&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Bus number, or extended bus name enclosed in single quotes&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;NREG&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;nreg&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A node number of bus FCREG&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;REMOT&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;remot&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Remote bus number&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">999999</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;MNAME&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;mname&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;device name&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">RawObject</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;FACTS&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MODE</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 0 means out of service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PDES</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QDES</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">VSET</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SHMX</span> <span class="o">=</span> <span class="mf">9999.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TRMX</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">VTMN</span> <span class="o">=</span> <span class="mf">0.9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">VTMX</span> <span class="o">=</span> <span class="mf">1.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">VSMX</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">IMX</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LINX</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RMPCT</span> <span class="o">=</span> <span class="mf">100.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OWNER</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SET1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SET2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">VSREF</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">FCREG</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NREG</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">REMOT</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MNAME</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="RawFACTS.parse">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.facts.RawFACTS.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.parse must be implemented in a version-specific subclass&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RawFACTS.get_raw_line">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.facts.RawFACTS.get_raw_line">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_raw_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.get_raw_line must be implemented in a version-specific subclass&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RawFACTS.get_id">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.facts.RawFACTS.get_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the element PSSE ID</span>
+<span class="sd">        :return: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">_1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RawFACTS.is_connected">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.facts.RawFACTS.is_connected">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

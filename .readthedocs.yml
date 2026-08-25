@@ -12,12 +12,15 @@ build:
     python: "3.11"
 
 # Build documentation in the docs/ directory with Sphinx
-sphinx:
-  configuration: doc/conf.py
+#sphinx:
+#  configuration: doc/conf.py
 
 # We recommend specifying your dependencies to enable reproducible builds:
 # https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html
-python:
-  install:
-    - requirements: doc/requirements.txt
+#python:
+#  install:
+#    - requirements: doc/requirements.txt
 
+commands:
+    - mkdir --parents doc/build/html/
+    - cp --recursive doc/build/html/* _readthedocs/html/

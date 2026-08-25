@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;Long-edge expansion phase for the Sugiyama layered pipeline.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutContext</span><span class="p">,</span> <span class="n">LayoutPhaseBase</span>
+
+
+<div class="viewcode-block" id="VirtualNode">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.VirtualNode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VirtualNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Virtual node inserted to split a long edge across layers.</span>
+
+<span class="sd">    :param identifier: Virtual node identifier.</span>
+<span class="sd">    :type identifier: str</span>
+<span class="sd">    :param width: Node width.</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param height: Node height.</span>
+<span class="sd">    :type height: float</span>
+<span class="sd">    :param is_dummy: Whether this node is synthetic.</span>
+<span class="sd">    :type is_dummy: bool</span>
+<span class="sd">    :param original_edge_id: Source edge identifier for dummy nodes.</span>
+<span class="sd">    :type original_edge_id: str | None</span>
+<span class="sd">    :param chain_index: Position inside the dummy chain.</span>
+<span class="sd">    :type chain_index: int</span>
+<span class="sd">    :param chain_priority: Dummy chain priority used in ordering.</span>
+<span class="sd">    :type chain_priority: int</span>
+<span class="sd">    :param model_order: Stable model-order key.</span>
+<span class="sd">    :type model_order: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_identifier&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_width&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_height&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_is_dummy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_original_edge_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_chain_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_chain_priority&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_model_order&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">is_dummy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">original_edge_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">chain_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">chain_priority</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">model_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_dummy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_dummy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_original_edge_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">original_edge_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chain_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">chain_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chain_priority</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">chain_priority</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">model_order</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the virtual node identifier.</span>
+
+<span class="sd">        :return: Virtual node identifier.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the virtual node width.</span>
+
+<span class="sd">        :return: Virtual node width.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the virtual node height.</span>
+
+<span class="sd">        :return: Virtual node height.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_dummy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the node is synthetic.</span>
+
+<span class="sd">        :return: ``True`` for dummy nodes.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_dummy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">original_edge_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the original edge identifier.</span>
+
+<span class="sd">        :return: Original edge identifier.</span>
+<span class="sd">        :rtype: str | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_edge_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chain_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the dummy-chain index.</span>
+
+<span class="sd">        :return: Dummy-chain index.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chain_index</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chain_priority</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the dummy-chain priority.</span>
+
+<span class="sd">        :return: Dummy-chain priority.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chain_priority</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stable model-order key.</span>
+
+<span class="sd">        :return: Stable model-order key.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_order</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_node_model_order</span><span class="p">(</span><span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the model-order key for one node.</span>
+
+<span class="sd">    :param node_id: Node identifier.</span>
+<span class="sd">    :type node_id: str</span>
+<span class="sd">    :param fallback: Fallback order.</span>
+<span class="sd">    :type fallback: int</span>
+<span class="sd">    :param node_by_id: Node lookup.</span>
+<span class="sd">    :type node_by_id: dict[str, object]</span>
+<span class="sd">    :return: Model-order key.</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">node_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">candidates</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fallback</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;modelOrder&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;model_order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span><span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.groupModelOrder.cycleBreakingId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">fallback</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_edge_chain_priority</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the priority of one expanded edge chain.</span>
+
+<span class="sd">    :param entry: Oriented edge entry.</span>
+<span class="sd">    :type entry: dict[str, str | bool | None]</span>
+<span class="sd">    :return: Priority key.</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reversed_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reversed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">reversed_value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_virtual_node_sort_key</span><span class="p">(</span><span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the stable ordering key for one expanded node.</span>
+
+<span class="sd">    :param node_id: Expanded node identifier.</span>
+<span class="sd">    :type node_id: str</span>
+<span class="sd">    :param expanded_nodes: Expanded node lookup.</span>
+<span class="sd">    :type expanded_nodes: dict[str, VirtualNode]</span>
+<span class="sd">    :return: Stable ordering key.</span>
+<span class="sd">    :rtype: tuple[int, int, int, bool, str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">virtual_node</span><span class="p">:</span> <span class="n">VirtualNode</span> <span class="o">=</span> <span class="n">expanded_nodes</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">virtual_node</span><span class="o">.</span><span class="n">chain_priority</span><span class="p">,</span>
+        <span class="n">virtual_node</span><span class="o">.</span><span class="n">model_order</span><span class="p">,</span>
+        <span class="n">virtual_node</span><span class="o">.</span><span class="n">chain_index</span><span class="p">,</span>
+        <span class="n">virtual_node</span><span class="o">.</span><span class="n">is_dummy</span><span class="p">,</span>
+        <span class="n">node_id</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">key</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_expanded_layer_nodes</span><span class="p">(</span><span class="n">node_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return one stable ordering of expanded layer nodes.</span>
+
+<span class="sd">    :param node_ids: Node identifiers in one expanded layer.</span>
+<span class="sd">    :type node_ids: list[str]</span>
+<span class="sd">    :param expanded_nodes: Expanded node lookup.</span>
+<span class="sd">    :type expanded_nodes: dict[str, VirtualNode]</span>
+<span class="sd">    :return: Sorted node identifiers.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sortable_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">:</span>
+        <span class="n">sortable_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_virtual_node_sort_key</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">),</span> <span class="n">node_id</span><span class="p">))</span>
+
+    <span class="n">sortable_items</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sortable_items</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="LongEdgePhase">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LongEdgePhase</span><span class="p">(</span><span class="n">LayoutPhaseBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split edges that span more than one layer.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;long-edges&quot;</span>
+
+<div class="viewcode-block" id="LongEdgePhase.run">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges.LongEdgePhase.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the long-edge expansion phase.</span>
+
+<span class="sd">        The phase inserts one dummy node on every intermediate layer crossed by</span>
+<span class="sd">        a long edge. That transformation is required so later crossing</span>
+<span class="sd">        minimization and coordinate assignment can operate on one proper</span>
+<span class="sd">        layer-by-layer graph.</span>
+
+<span class="sd">        :param context: Shared pipeline context.</span>
+<span class="sd">        :type context: LayoutContext</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">layer_of</span>
+        <span class="n">oriented_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">oriented_edges</span>
+
+        <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">node_by_id</span><span class="p">()</span>
+        <span class="n">topological_order_obj</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">topological_order</span>
+        <span class="n">node_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">expanded_layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">expanded_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">edge_paths</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">long_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">dummy_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.0</span>
+        <span class="n">dummy_counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">topological_order_obj</span><span class="p">):</span>
+            <span class="n">node_order</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">node_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">expanded_nodes</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">]</span> <span class="o">=</span> <span class="n">VirtualNode</span><span class="p">(</span>
+                <span class="n">identifier</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
+                <span class="n">width</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                <span class="n">height</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                <span class="n">is_dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">model_order</span><span class="o">=</span><span class="n">_node_model_order</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">node_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">node_by_id</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layer_of</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">layer_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">layer_index</span> <span class="ow">in</span> <span class="n">expanded_layers</span><span class="p">:</span>
+                <span class="n">expanded_layers</span><span class="p">[</span><span class="n">layer_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expanded_layers</span><span class="p">[</span><span class="n">layer_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_id</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">oriented_edges</span><span class="p">):</span>
+            <span class="n">edge_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;edge_id&quot;</span><span class="p">])</span>
+            <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">])</span>
+            <span class="n">target_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">])</span>
+            <span class="n">source_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">layer_of</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">target_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">layer_of</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_id</span><span class="p">,</span> <span class="n">source_layer</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">source_id</span> <span class="o">==</span> <span class="n">target_id</span> <span class="ow">or</span> <span class="n">target_layer</span> <span class="o">-</span> <span class="n">source_layer</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">expanded_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">edge_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="n">edge_paths</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">long_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge_id</span><span class="p">)</span>
+                <span class="n">previous_node_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">source_id</span>
+                <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
+                <span class="n">source_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_node_model_order</span><span class="p">(</span><span class="n">source_id</span><span class="p">,</span> <span class="n">node_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_id</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">),</span> <span class="n">node_by_id</span><span class="p">)</span>
+                <span class="n">target_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_node_model_order</span><span class="p">(</span><span class="n">target_id</span><span class="p">,</span> <span class="n">node_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_id</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">),</span> <span class="n">node_by_id</span><span class="p">)</span>
+                <span class="n">chain_priority</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_edge_chain_priority</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">hop_layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">source_layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">target_layer</span><span class="p">):</span>
+                    <span class="n">dummy_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__dummy__</span><span class="si">{</span><span class="n">edge_id</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">dummy_counter</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">dummy_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">expanded_nodes</span><span class="p">[</span><span class="n">dummy_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">VirtualNode</span><span class="p">(</span>
+                        <span class="n">identifier</span><span class="o">=</span><span class="n">dummy_id</span><span class="p">,</span>
+                        <span class="n">width</span><span class="o">=</span><span class="n">dummy_size</span><span class="p">,</span>
+                        <span class="n">height</span><span class="o">=</span><span class="n">dummy_size</span><span class="p">,</span>
+                        <span class="n">is_dummy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">original_edge_id</span><span class="o">=</span><span class="n">edge_id</span><span class="p">,</span>
+                        <span class="n">chain_index</span><span class="o">=</span><span class="n">hop_layer</span> <span class="o">-</span> <span class="n">source_layer</span><span class="p">,</span>
+                        <span class="n">chain_priority</span><span class="o">=</span><span class="n">chain_priority</span><span class="p">,</span>
+                        <span class="n">model_order</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">source_order</span><span class="p">,</span> <span class="n">target_order</span><span class="p">),</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">hop_layer</span> <span class="ow">in</span> <span class="n">expanded_layers</span><span class="p">:</span>
+                        <span class="n">expanded_layers</span><span class="p">[</span><span class="n">hop_layer</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dummy_id</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">expanded_layers</span><span class="p">[</span><span class="n">hop_layer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">dummy_id</span><span class="p">]</span>
+
+                    <span class="n">expanded_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">edge_id</span><span class="p">,</span> <span class="n">previous_node_id</span><span class="p">,</span> <span class="n">dummy_id</span><span class="p">,</span> <span class="n">hop_layer</span> <span class="o">-</span> <span class="n">source_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+                    <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dummy_id</span><span class="p">)</span>
+                    <span class="n">previous_node_id</span> <span class="o">=</span> <span class="n">dummy_id</span>
+
+                <span class="n">expanded_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">edge_id</span><span class="p">,</span> <span class="n">previous_node_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">target_layer</span> <span class="o">-</span> <span class="n">source_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_id</span><span class="p">)</span>
+                <span class="n">edge_paths</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+
+        <span class="k">for</span> <span class="n">layer_index</span><span class="p">,</span> <span class="n">node_ids</span> <span class="ow">in</span> <span class="n">expanded_layers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">expanded_layers</span><span class="p">[</span><span class="n">layer_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sort_expanded_layer_nodes</span><span class="p">(</span><span class="n">node_ids</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">)</span>
+
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">long_edges</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">long_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">long_edges</span><span class="p">)))</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_nodes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_nodes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">expanded_nodes</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_layers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">expanded_layers</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_edges</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">expanded_edges</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">edge_paths</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">edge_paths</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">edge_paths</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Long-edge expansion inserted </span><span class="si">{</span><span class="n">dummy_counter</span><span class="si">}</span><span class="s2"> dummy node(s) across </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">long_edges</span><span class="p">))</span><span class="si">}</span><span class="s2"> edge(s).&quot;</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

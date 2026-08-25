@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.rms_models_types &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.rms_models_types</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.rms_models_types</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">compare_n_blocks_structurally</span><span class="p">,</span> <span class="n">_get_var_attribute_mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConverterControlType</span><span class="p">,</span>
+    <span class="n">DeviceType</span><span class="p">,</span>
+    <span class="n">ExternalGridMode</span><span class="p">,</span>
+    <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span>
+    <span class="n">ShuntConnectionType</span><span class="p">,</span>
+    <span class="n">ShuntControlMode</span><span class="p">,</span>
+    <span class="n">WindingType</span><span class="p">,</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="build_equivalence_classes_dict">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Utils.html#VeraGridEngine.Utils.rms_models_types.build_equivalence_classes_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_equivalence_classes_dict</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span><span class="n">MultiCircuit</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this functions receives the grid and return a dictionary with clases of equivalence of the dynamic models</span>
+<span class="sd">    and a dictionary with clases of equivalence of their variables.</span>
+<span class="sd">    :param grid:</span>
+<span class="sd">    :type grid:</span>
+<span class="sd">    :return: Tuple of:</span>
+<span class="sd">        - Dict with new uid as keys and lists of equivalent block uids as values</span>
+<span class="sd">        - Dict with representative uid as keys and lists of lists of equivalent variable uids as values</span>
+<span class="sd">        - Dict with representative uid as keys and lists of all block uids composing that model (including children)</span>
+<span class="sd">        - Dict with representative uid as keys and lists of all block uids in the reference class (equivalent blocks and their children recursively, plus the representative and its children)</span>
+<span class="sd">    :rtype:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">class_equivalence_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">block_composition_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">all_model_lists</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span>
+        <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="p">]</span>
+    <span class="n">BUS</span><span class="p">,</span> <span class="n">LOAD</span><span class="p">,</span> <span class="n">STATIC_GEN</span><span class="p">,</span> <span class="n">EXT_GRID</span><span class="p">,</span> <span class="n">SHUNT</span><span class="p">,</span> <span class="n">CTRL_SHUNT</span><span class="p">,</span> <span class="n">CURR_INJ</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">GEN</span><span class="p">,</span> <span class="n">BATTERY</span><span class="p">,</span> <span class="n">VSC</span><span class="p">,</span> <span class="n">DC_LINE</span><span class="p">,</span> <span class="n">TRANSFORMER</span><span class="p">,</span> <span class="n">WINDING</span><span class="p">,</span> <span class="n">LINE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">HVDC</span><span class="p">,</span> <span class="n">SERIES_REACT</span><span class="p">,</span> <span class="n">SWITCH</span><span class="p">,</span> <span class="n">UPFC</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
+
+    <span class="c1"># for elm in grid.buses:</span>
+    <span class="c1">#     all_model_lists[BUS].append(elm.rms_model)</span>
+
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branches_iter</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">LOAD</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">StaticGeneratorDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">STATIC_GEN</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ExternalGridDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">EXT_GRID</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ShuntDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">SHUNT</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ControllableShuntDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">CTRL_SHUNT</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">CurrentInjectionDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">CURR_INJ</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">GEN</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">BatteryDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">BATTERY</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">VscDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">VSC</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">DC_LINE</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">TRANSFORMER</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">WindingDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">WINDING</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">LINE</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">HVDCLineDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">HVDC</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SeriesReactanceDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">SERIES_REACT</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SwitchDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">SWITCH</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">UpfcDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">UPFC</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_injection_devices_iter</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">LOAD</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">StaticGeneratorDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">STATIC_GEN</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ExternalGridDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">EXT_GRID</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ShuntDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">SHUNT</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ControllableShuntDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">CTRL_SHUNT</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">CurrentInjectionDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">CURR_INJ</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">GEN</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">BatteryDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">BATTERY</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">VscDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">VSC</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">DC_LINE</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">TRANSFORMER</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">WindingDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">WINDING</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">LINE</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">HVDCLineDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">HVDC</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SeriesReactanceDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">SERIES_REACT</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SwitchDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">SWITCH</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">UpfcDevice</span><span class="p">:</span>
+            <span class="n">all_model_lists</span><span class="p">[</span><span class="n">UPFC</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">)</span>
+
+    <span class="n">uid_to_block</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">block_list</span> <span class="ow">in</span> <span class="n">all_model_lists</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">block_list</span><span class="p">:</span>
+            <span class="n">uid_to_block</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+
+    <span class="n">variables_equivalence_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">model_list</span> <span class="ow">in</span> <span class="n">all_model_lists</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model_list</span><span class="p">:</span>
+            <span class="n">model_result</span><span class="p">,</span> <span class="n">var_result</span> <span class="o">=</span> <span class="n">compare_n_blocks_structurally</span><span class="p">(</span><span class="n">model_list</span><span class="p">)</span>
+            <span class="n">class_equivalence_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_result</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">rep_uid</span> <span class="ow">in</span> <span class="n">model_result</span><span class="p">:</span>
+                <span class="n">rep_block</span> <span class="o">=</span> <span class="n">uid_to_block</span><span class="p">[</span><span class="n">rep_uid</span><span class="p">]</span>
+                <span class="n">rep_var_uids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">rep_block</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
+                    <span class="n">rep_var_uids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_get_var_attribute_mapping</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">var_lists</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">ref_var_uid</span><span class="p">,</span> <span class="n">equiv_uids</span> <span class="ow">in</span> <span class="n">var_result</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">ref_var_uid</span> <span class="ow">in</span> <span class="n">rep_var_uids</span><span class="p">:</span>
+                        <span class="n">var_lists</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ref_var_uid</span><span class="p">]</span> <span class="o">+</span> <span class="n">equiv_uids</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">var_lists</span><span class="p">:</span>
+                    <span class="n">variables_equivalence_dict</span><span class="p">[</span><span class="n">rep_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_lists</span>
+
+    <span class="k">for</span> <span class="n">rep_uid</span> <span class="ow">in</span> <span class="n">class_equivalence_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rep_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block_composition_dict</span> <span class="ow">and</span> <span class="n">rep_uid</span> <span class="ow">in</span> <span class="n">uid_to_block</span><span class="p">:</span>
+            <span class="n">block_composition_dict</span><span class="p">[</span><span class="n">rep_uid</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">uid_to_block</span><span class="p">[</span><span class="n">rep_uid</span><span class="p">]</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">()]</span>
+
+    <span class="n">reference_class_for_all_blocks_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">rep_uid</span><span class="p">,</span> <span class="n">equiv_uids</span> <span class="ow">in</span> <span class="n">class_equivalence_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">all_uids</span> <span class="o">=</span> <span class="p">{</span><span class="n">rep_uid</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">rep_uid</span> <span class="ow">in</span> <span class="n">uid_to_block</span><span class="p">:</span>
+            <span class="n">all_uids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">uid_to_block</span><span class="p">[</span><span class="n">rep_uid</span><span class="p">]</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">())</span>
+        <span class="n">all_uids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">equiv_uids</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">equiv_uid</span> <span class="ow">in</span> <span class="n">equiv_uids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">equiv_uid</span> <span class="ow">in</span> <span class="n">uid_to_block</span><span class="p">:</span>
+                <span class="n">all_uids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">uid_to_block</span><span class="p">[</span><span class="n">equiv_uid</span><span class="p">]</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">())</span>
+        <span class="n">reference_class_for_all_blocks_dict</span><span class="p">[</span><span class="n">rep_uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_uids</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">class_equivalence_dict</span><span class="p">,</span> <span class="n">variables_equivalence_dict</span><span class="p">,</span> <span class="n">block_composition_dict</span><span class="p">,</span> <span class="n">reference_class_for_all_blocks_dict</span></div>
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiFrequencySamples</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Typed container holding frequency-domain line samples for one JMARTI fit.</span>
+
+<span class="sd">    The fitting workflow starts from sampled multiconductor series impedance and</span>
+<span class="sd">    shunt admittance matrices. The container validates all structural</span>
+<span class="sd">    assumptions once so every later fitting stage can rely on a coherent input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_frequency_hz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_z_per_length&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_y_per_length&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_line_length_m&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_phase_labels&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                 <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">line_length_m</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">phase_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one validated JMARTI frequency-sample container.</span>
+
+<span class="sd">        :param frequency_hz: Strictly increasing frequency samples in Hz.</span>
+<span class="sd">        :param z_per_length: Series impedance matrices with shape ``(nf, np, np)``.</span>
+<span class="sd">        :param y_per_length: Shunt admittance matrices with shape ``(nf, np, np)``.</span>
+<span class="sd">        :param line_length_m: Physical line length in meters.</span>
+<span class="sd">        :param phase_labels: Ordered phase labels associated with the matrices.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z_per_length</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_per_length</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_length_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line_length_m</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">phase_labels</span><span class="p">)</span>
+
+        <span class="n">validate_jmarti_frequency_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sampled frequency vector.</span>
+
+<span class="sd">        :return: Frequency vector in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_angular_frequency_rad_per_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_angular_frequency_rad_per_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_angular_frequency_rad_per_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sampled angular-frequency vector.</span>
+
+<span class="sd">        :return: Angular-frequency vector in rad/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_z_per_length">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_z_per_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_z_per_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sampled series impedance matrices.</span>
+
+<span class="sd">        :return: Complex impedance tensor with shape ``(nf, np, np)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z_per_length</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_y_per_length">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_y_per_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_y_per_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sampled shunt admittance matrices.</span>
+
+<span class="sd">        :return: Complex admittance tensor with shape ``(nf, np, np)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_per_length</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_line_length_m">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_line_length_m">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_line_length_m</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the physical line length in meters.</span>
+
+<span class="sd">        :return: Line length in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_length_m</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_phase_labels">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_phase_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_phase_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the ordered phase labels.</span>
+
+<span class="sd">        :return: Ordered phase-label tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_frequency_count">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_frequency_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of sampled frequencies.</span>
+
+<span class="sd">        :return: Number of frequency samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="JMartiFrequencySamples.get_phase_count">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.JMartiFrequencySamples.get_phase_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_phase_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of conductors or phases in the sample set.</span>
+
+<span class="sd">        :return: Matrix dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="validate_jmarti_frequency_samples">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.validate_jmarti_frequency_samples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_jmarti_frequency_samples</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="n">JMartiFrequencySamples</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate one JMARTI frequency-sample container.</span>
+
+<span class="sd">    :param samples: Frequency-sample container to validate.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :raises ValueError: If the sample set is structurally inconsistent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_frequency_hz</span><span class="p">()</span>
+    <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_z_per_length</span><span class="p">()</span>
+    <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_y_per_length</span><span class="p">()</span>
+    <span class="n">line_length_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_line_length_m</span><span class="p">()</span>
+    <span class="n">phase_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_phase_labels</span><span class="p">()</span>
+    <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">phase_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phase_labels</span><span class="p">))</span>
+    <span class="n">sample_index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="c1"># Stage 1: validate the global dimensions of the sampled data.</span>
+    <span class="k">if</span> <span class="n">sample_count</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI fitting requires at least two frequency samples&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">line_length_m</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI fitting requires a strictly positive line length&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">phase_count</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI fitting requires at least one phase label&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">z_per_length</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">sample_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;JMARTI series impedance samples must have shape &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">sample_count</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">phase_count</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">phase_count</span><span class="si">}</span><span class="s2">), got </span><span class="si">{</span><span class="n">z_per_length</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y_per_length</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">sample_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">,</span> <span class="n">phase_count</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;JMARTI shunt admittance samples must have shape &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">sample_count</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">phase_count</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">phase_count</span><span class="si">}</span><span class="s2">), got </span><span class="si">{</span><span class="n">y_per_length</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Stage 2: require a strictly increasing frequency grid so all derivative and</span>
+    <span class="c1"># phase-unwrapping steps later on remain well-posed.</span>
+    <span class="n">sample_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">sample_index</span> <span class="o">&lt;</span> <span class="n">sample_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">frequency_hz</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI frequency samples must be strictly increasing&quot;</span><span class="p">)</span>
+
+        <span class="n">sample_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Stage 3: ensure every sampled matrix stays finite and square. The fitting</span>
+    <span class="c1"># pipeline can tolerate lossy or weakly coupled data, but not undefined values.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">z_per_length</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI series impedance samples must be finite&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_per_length</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI shunt admittance samples must be finite&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_frequency_samples">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.build_jmarti_frequency_samples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_frequency_samples</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                                   <span class="n">z_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                   <span class="n">y_per_length</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                   <span class="n">line_length_m</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                   <span class="n">phase_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">JMartiFrequencySamples</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one validated JMARTI frequency-sample container.</span>
+
+<span class="sd">    :param frequency_hz: Strictly increasing frequency samples in Hz.</span>
+<span class="sd">    :param z_per_length: Series impedance matrices with shape ``(nf, np, np)``.</span>
+<span class="sd">    :param y_per_length: Shunt admittance matrices with shape ``(nf, np, np)``.</span>
+<span class="sd">    :param line_length_m: Physical line length in meters.</span>
+<span class="sd">    :param phase_labels: Ordered phase labels associated with the matrices.</span>
+<span class="sd">    :return: Validated frequency-sample container.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">JMartiFrequencySamples</span><span class="p">(</span>
+        <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+        <span class="n">z_per_length</span><span class="o">=</span><span class="n">z_per_length</span><span class="p">,</span>
+        <span class="n">y_per_length</span><span class="o">=</span><span class="n">y_per_length</span><span class="p">,</span>
+        <span class="n">line_length_m</span><span class="o">=</span><span class="n">line_length_m</span><span class="p">,</span>
+        <span class="n">phase_labels</span><span class="o">=</span><span class="n">phase_labels</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_frequency_subset">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_frequency_samples.build_jmarti_frequency_subset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_frequency_subset</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="n">JMartiFrequencySamples</span><span class="p">,</span>
+                                  <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                  <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiFrequencySamples</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one frequency-window subset of a JMARTI sample set.</span>
+
+<span class="sd">    :param samples: Full sample set.</span>
+<span class="sd">    :param low_hz: Lower retained frequency in Hz.</span>
+<span class="sd">    :param high_hz: Upper retained frequency in Hz.</span>
+<span class="sd">    :return: Windowed sample set.</span>
+<span class="sd">    :raises ValueError: If the requested window leaves too few samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">get_frequency_hz</span><span class="p">()</span>
+    <span class="n">selected_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span><span class="n">frequency_hz</span> <span class="o">&gt;=</span> <span class="nb">float</span><span class="p">(</span><span class="n">low_hz</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">frequency_hz</span> <span class="o">&lt;=</span> <span class="nb">float</span><span class="p">(</span><span class="n">high_hz</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">selected_mask</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI frequency subset must keep at least two samples&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JMartiFrequencySamples</span><span class="p">(</span>
+        <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">[</span><span class="n">selected_mask</span><span class="p">],</span>
+        <span class="n">z_per_length</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">get_z_per_length</span><span class="p">()[</span><span class="n">selected_mask</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+        <span class="n">y_per_length</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">get_y_per_length</span><span class="p">()[</span><span class="n">selected_mask</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+        <span class="n">line_length_m</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">get_line_length_m</span><span class="p">(),</span>
+        <span class="n">phase_labels</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">get_phase_labels</span><span class="p">(),</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

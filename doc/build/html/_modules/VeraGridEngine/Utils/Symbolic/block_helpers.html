@@ -1,0 +1,1103 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.Symbolic.block_helpers &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.Symbolic.block_helpers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.Symbolic.block_helpers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParamPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">,</span> <span class="n">CmpOp</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">,</span> <span class="n">heaviside</span><span class="p">,</span> <span class="n">hard_sat</span><span class="p">,</span> <span class="n">expression2numba</span><span class="p">,</span> <span class="n">get_expression_vars</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic_ml</span><span class="w"> </span><span class="kn">import</span> <span class="n">mti_hard_sat</span><span class="p">,</span> <span class="n">ml_hard_sat</span><span class="p">,</span> <span class="n">ml_heaviside</span>
+
+
+<div class="viewcode-block" id="tf_to_block">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.tf_to_block">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tf_to_block</span><span class="p">(</span><span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                <span class="n">num</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+                <span class="n">den</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+                <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">,</span>
+                <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">create_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="n">output_var_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;y_&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;transform definition&quot; to block</span>
+<span class="sd">    num: list of numerator coefficients [b0, b1, ..., bm]</span>
+<span class="sd">    den: list of denominator coefficients [a0, a1, ..., an]</span>
+<span class="sd">    x:   sympy symbol for input</span>
+<span class="sd">    y:   sympy function of t for output</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transfer function is improper: numerator degree &gt; denominator degree.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">output_var_name</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">aux_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># ADDED</span>
+    <span class="n">x_save</span> <span class="o">=</span> <span class="n">x</span>  <span class="c1"># Initialize x_save to avoid unbound variable error</span>
+    <span class="c1"># check if is an expression</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="n">diff_vars_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="n">diff_vars_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">base_var</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">create_state</span><span class="p">:</span>
+            <span class="n">x_new</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_&quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">state_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+            <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_save</span><span class="p">)</span>  <span class="c1"># x is already a Var</span>
+            <span class="n">diff_vars_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+            <span class="n">base_var</span> <span class="o">=</span> <span class="n">x_new</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">x_new</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">new_diff</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+                <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff</span><span class="p">)</span>
+                <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">new_diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ADDED</span>
+            <span class="n">diff_vars_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+            <span class="n">base_var</span> <span class="o">=</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span>
+    <span class="n">base_var</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_diff</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff</span><span class="p">)</span>
+            <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">new_diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ADDED</span>
+        <span class="n">diff_vars_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+        <span class="n">base_var</span> <span class="o">=</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span>
+
+    <span class="c1"># Create the diff equation</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_vars_x</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+    <span class="n">lhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_vars_y</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">den</span><span class="p">)</span>
+
+    <span class="c1"># Pure integrator-style blocks (den[0] == 0) need a derivative init that</span>
+    <span class="c1"># matches the full numerator side of the transfer-function equation.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">den</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">diff_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhs</span> <span class="o">/</span> <span class="n">den</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">lhs</span> <span class="o">-</span> <span class="n">rhs</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span>     <span class="o">=</span> <span class="n">state_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span>    <span class="o">=</span> <span class="n">state_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span>     <span class="o">=</span> <span class="n">diff_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span>       <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>  <span class="c1"># Input is x</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span>      <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>  <span class="c1"># Output is y</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span>      <span class="o">=</span> <span class="n">init_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>  <span class="c1"># ADDED</span>
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="tf_to_diffblock_with_output">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.tf_to_diffblock_with_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tf_to_diffblock_with_output</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">num</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">den</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">create_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    num: list of numerator coefficients [b0, b1, ..., bm]</span>
+<span class="sd">    den: list of denominator coefficients [a0, a1, ..., an]</span>
+<span class="sd">    x:   sympy symbol for input</span>
+<span class="sd">    y:   sympy function of t for output</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transfer function is improper: numerator degree &gt; denominator degree.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Leading coefficient of numerator or denominator cannot be zero.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;y_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">x_save</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Initialize x_save to avoid unbound variable error</span>
+    <span class="c1"># check if is an expression</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">x_save</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="n">diff_vars_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="n">diff_vars_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>   <span class="c1"># ADDED</span>
+    <span class="n">base_var</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">create_state</span><span class="p">:</span>
+            <span class="n">x_new</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_&quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">state_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+            <span class="c1"># x_save only exists if x was an expression (not a Var)</span>
+            <span class="k">if</span> <span class="s1">&#39;x_save&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+                <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_save</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># x is already a Var</span>
+            <span class="n">diff_vars_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+            <span class="n">base_var</span> <span class="o">=</span> <span class="n">x_new</span>
+            <span class="n">init_eqs</span><span class="p">[</span><span class="n">x_new</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">new_diff</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+                <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff</span><span class="p">)</span>
+                <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">new_diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>   <span class="c1"># ADDED</span>
+            <span class="n">diff_vars_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+            <span class="n">base_var</span> <span class="o">=</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span>
+    <span class="n">base_var</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_diff</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff</span><span class="p">)</span>
+            <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">new_diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>   <span class="c1"># ADDED</span>
+        <span class="n">diff_vars_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+        <span class="n">base_var</span> <span class="o">=</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span>
+
+    <span class="c1"># Create the diff equation</span>
+    <span class="n">rhs</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_vars_x</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+    <span class="n">lhs</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_vars_y</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">den</span><span class="p">)</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="n">state_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="n">state_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">lhs</span> <span class="o">-</span> <span class="n">rhs</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">diff_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="n">init_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>   <span class="c1"># ADDED</span>
+
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="tf_to_block_with_states">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.tf_to_block_with_states">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tf_to_block_with_states</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">num</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">den</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    num: numerator coefficients [b0,...,bm]</span>
+<span class="sd">    den: denominator coefficients [a0,...,an], with an != 0</span>
+<span class="sd">    u:   input Var</span>
+<span class="sd">    y:   output Var</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transfer function is improper: numerator degree &gt; denominator degree.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Leading coefficient of cannot be zero.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;y_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># ADDED</span>
+    <span class="c1"># check if x is a expression</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="c1"># Normalize</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">/</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">den</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">/</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">num</span><span class="p">]</span>
+
+    <span class="c1"># States</span>
+    <span class="n">x_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="n">y_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+    <span class="n">y_states</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">))])</span>  <span class="c1"># y1,...,yn</span>
+    <span class="n">x_states</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">))])</span>  <span class="c1"># x1,...,xm</span>
+
+    <span class="c1"># Differential equations (canonical form)</span>
+    <span class="n">diff_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_states</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;d_</span><span class="si">{</span><span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span>
+            <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">dy</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ADDED</span>
+        <span class="n">diff_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_states</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;d^</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>
+            <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">dx</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ADDED</span>
+        <span class="n">diff_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_states</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+
+        <span class="c1"># Last equation: linear combination</span>
+    <span class="n">last_eq</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">den</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_states</span><span class="p">)))</span>
+            <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">num</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_states</span><span class="p">)))</span>
+    <span class="p">)</span>
+    <span class="n">diff_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_eq</span><span class="p">)</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">y_states</span> <span class="o">+</span> <span class="n">x_states</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">aux_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">diff_eqs</span> <span class="o">+</span> <span class="n">aux_eqs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">diff_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>  <span class="c1"># ADDED</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;TF&#39;</span>
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="tf_to_block2">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.tf_to_block2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tf_to_block2</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">num</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">den</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    num: numerator coefficients [b0,...,bm]</span>
+<span class="sd">    den: denominator coefficients [a0,...,an], with an != 0</span>
+<span class="sd">    u:   input Expr or Var</span>
+<span class="sd">    y:   output Var</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transfer function is improper: numerator degree &gt; denominator degree.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Leading coefficient of cannot be zero.&quot;</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">aux_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1"># check if xis a expression</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="c1"># Normalize</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">/</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">den</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">/</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">num</span><span class="p">]</span>
+
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)</span>  <span class="c1"># system order</span>
+    <span class="n">x_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>  <span class="c1"># x0</span>
+    <span class="n">x_states</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>  <span class="c1"># x1,...,xn</span>
+
+    <span class="c1"># Differential equations (canonical form)</span>
+    <span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">state_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_states</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">y_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>  <span class="c1"># x1,...,xn</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)):</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">state_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_states</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Last equation: linear combination</span>
+    <span class="n">last_eq</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">den</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">y_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
+            <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">num</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">x_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)))</span>
+    <span class="p">)</span>
+
+    <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_eq</span><span class="p">)</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="n">state_eqs</span><span class="p">,</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="n">state_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">aux_eqs</span><span class="p">,</span>
+        <span class="c1"># TODO: this is highly suspicious (better add vars to aux_vars)</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">x_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="to_implicit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.to_implicit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_implicit</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a block with explicit state equations to implicit form.</span>
+
+<span class="sd">    For each state variable x with equation dx/dt = f(x, y):</span>
+<span class="sd">    - Create a new algebraic variable dt_x representing the derivative</span>
+<span class="sd">    - Add dt_x to algebraic_vars</span>
+<span class="sd">    - Add equation: diff(x) - f(x, y) = 0 to algebraic_eqs</span>
+<span class="sd">    - Move x from state_vars to algebraic_vars</span>
+<span class="sd">    - Remove the state equation from state_eqs</span>
+
+<span class="sd">    This transforms the explicit ODE form into DAE implicit form suitable</span>
+<span class="sd">    for solvers that expect algebraic equations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Process each state variable and its corresponding state equation</span>
+    <span class="c1"># We iterate backwards to safely modify lists while iterating</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">state_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span><span class="p">):</span>
+        <span class="n">state_eq</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Create a new algebraic variable for the derivative</span>
+        <span class="k">if</span> <span class="n">state_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dt_var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt_</span><span class="si">{</span><span class="n">state_var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">state_var</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_var</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dt_var</span> <span class="o">=</span> <span class="n">state_var</span><span class="o">.</span><span class="n">diff_var</span>
+
+        <span class="n">implicit_eq</span> <span class="o">=</span> <span class="n">dt_var</span> <span class="o">-</span> <span class="n">state_eq</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_var</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">implicit_eq</span><span class="p">)</span>
+
+        <span class="c1">#block.init_eqs[dt_var] = block.init_eqs[state_var]</span>
+
+
+    <span class="c1"># The state_vars become algebraic_vars since they now appear in algebraic equations</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+
+    <span class="c1"># Recursively process children</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">to_implicit</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_rhs_from_implicit_eq</span><span class="p">(</span><span class="n">eq</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">diff_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to recover rhs from an implicit algebraic equation of the form:</span>
+<span class="sd">        diff_var - rhs = 0</span>
+<span class="sd">    Returns rhs when recognized, otherwise None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">eq</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="n">eq</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">eq</span><span class="o">.</span><span class="n">right</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="n">eq</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">eq</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">elif</span> <span class="n">eq</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="n">eq</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">eq</span><span class="o">.</span><span class="n">right</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="n">eq</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">eq</span><span class="o">.</span><span class="n">left</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="to_explicit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.to_explicit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_explicit</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an implicit DAE-like block back to explicit state equations.</span>
+
+<span class="sd">    For each diff var `dt_x` in `block.diff_vars`, look for an algebraic equation</span>
+<span class="sd">    equivalent to `dt_x - f(...) = 0`. When found:</span>
+<span class="sd">    - create/ensure state equation `dx/dt = f(...)` for base var `x`</span>
+<span class="sd">    - remove that implicit algebraic equation</span>
+<span class="sd">    - substitute `dt_x` by `f(...)` in remaining algebraic equations</span>
+<span class="sd">    - remove all recovered diff vars from `block.diff_vars`</span>
+
+<span class="sd">    Recurses through child blocks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">unify_blocks</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">diff_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">):</span>
+        <span class="n">new_diff_var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt_</span><span class="si">{</span><span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span><span class="p">:</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diff_var</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_eq</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span><span class="p">)]</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff_var</span> <span class="o">-</span> <span class="n">state_eq</span><span class="p">)</span>
+
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff_var</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">update_equations</span><span class="p">(</span><span class="n">diff_var</span><span class="p">,</span> <span class="n">new_diff_var</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">to_explicit</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">vfactory</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span></div>
+
+
+
+<div class="viewcode-block" id="tf_to_diffblock_with_antiwindup">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.tf_to_diffblock_with_antiwindup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tf_to_diffblock_with_antiwindup</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">num</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">den</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">sat_min</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">)),</span>
+        <span class="n">sat_max</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)),</span>
+        <span class="n">multilinear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">PI</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    num: numerator coefficients [b0, ..., bm]</span>
+<span class="sd">    den: denominator coefficients [a0, ..., an]</span>
+<span class="sd">    x:   input (Var or Expr)</span>
+<span class="sd">    y:   output Var</span>
+<span class="sd">    sat_min, sat_max: saturation limits for anti-windup</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transfer function is improper: numerator degree &gt; denominator degree.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">den</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Leading coefficient cannot be zero.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;y_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># ADDED</span>
+
+    <span class="c1"># If x is an expression, wrap it in a Var</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="n">diff_vars_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="n">diff_vars_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Derivative chain for x</span>
+    <span class="n">base_var</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_diff</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff</span><span class="p">)</span>
+            <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">new_diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ADDED</span>
+        <span class="n">diff_vars_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+        <span class="n">base_var</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">diff_var</span>
+
+    <span class="c1"># Derivative chain for y</span>
+    <span class="n">base_var</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">base_var</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_diff</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_&#39;</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_diff</span><span class="p">)</span>
+            <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">new_diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ADDED</span>
+        <span class="n">diff_vars_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">diff_var</span><span class="p">)</span>
+        <span class="n">base_var</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">diff_var</span>
+
+    <span class="n">is_simple_integrator</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="ow">and</span> <span class="n">den</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_simple_integrator</span><span class="p">:</span>
+        <span class="c1"># 1/(sT): dy/dt = (num[0]/den[1]) * u</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">num</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">diff_vars_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">den</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Generic TF fallback</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">lhs_wo_dy</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">PI</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">den</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_vars_y</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">lhs_wo_dy</span> <span class="o">+=</span> <span class="n">term</span>
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_vars_x</span><span class="p">):</span>
+            <span class="n">rhs</span> <span class="o">+=</span> <span class="n">term</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">rhs</span> <span class="o">-</span> <span class="n">lhs_wo_dy</span><span class="p">)</span> <span class="o">/</span> <span class="n">Const</span><span class="p">(</span><span class="n">den</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Integrator with non-windup limiter (Figure E.2 behavior):</span>
+    <span class="c1"># - freeze when already at upper bound and f &gt; 0</span>
+    <span class="c1"># - freeze when already at lower bound and f &lt; 0</span>
+    <span class="c1"># - otherwise integrate with dy/dt = f</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">multilinear</span><span class="p">:</span>
+        <span class="n">at_or_above_min</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">sat_min</span><span class="p">)</span>
+        <span class="n">at_or_below_max</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">sat_max</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">f_pos</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f_neg</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">f_pos</span>
+
+        <span class="n">allow_integrate</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span>
+            <span class="n">at_or_above_min</span> <span class="o">*</span> <span class="n">at_or_below_max</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">at_or_below_max</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_neg</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">at_or_above_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_pos</span>
+        <span class="p">)</span>
+        <span class="n">eq_main</span> <span class="o">=</span> <span class="p">(</span><span class="n">diff_vars_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">allow_integrate</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+        <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span>
+        <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">eq_main</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span>
+        <span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sat_block</span><span class="p">,</span> <span class="n">y_sat</span> <span class="o">=</span> <span class="n">mti_hard_sat</span><span class="p">(</span>
+            <span class="n">vf</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+            <span class="n">u</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">ul</span><span class="o">=</span><span class="n">sat_min</span><span class="p">,</span>
+            <span class="n">uu</span><span class="o">=</span><span class="n">sat_max</span><span class="p">,</span>
+            <span class="n">yl</span><span class="o">=</span><span class="n">sat_min</span><span class="p">,</span>
+            <span class="n">yu</span><span class="o">=</span><span class="n">sat_max</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_sat&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">hv_up_block</span><span class="p">,</span> <span class="n">at_upper</span> <span class="o">=</span> <span class="n">ml_heaviside</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">sat_max</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_up&quot;</span><span class="p">)</span>
+        <span class="n">hv_lo_block</span><span class="p">,</span> <span class="n">at_lower</span> <span class="o">=</span> <span class="n">ml_heaviside</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">sat_min</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_lo&quot;</span><span class="p">)</span>
+        <span class="n">hv_f_block</span><span class="p">,</span> <span class="n">f_pos</span> <span class="o">=</span> <span class="n">ml_heaviside</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_f&quot;</span><span class="p">)</span>
+        <span class="n">f_neg</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">f_pos</span>
+        <span class="n">freeze</span> <span class="o">=</span> <span class="n">at_upper</span> <span class="o">*</span> <span class="n">f_pos</span> <span class="o">+</span> <span class="n">at_lower</span> <span class="o">*</span> <span class="n">f_neg</span>
+
+        <span class="n">eq_main</span> <span class="o">=</span> <span class="p">(</span><span class="n">diff_vars_y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">freeze</span><span class="p">)</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+        <span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_sat</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_up_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_lo_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_f_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">eq_main</span><span class="p">,</span> <span class="n">y_sat</span> <span class="o">-</span> <span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_up_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_lo_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_f_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span>
+        <span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">hv_up_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">hv_lo_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">hv_f_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">)}</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">algebraic_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">algebraic_eqs</span><span class="p">,</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="n">diff_vars</span><span class="p">,</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="n">init_eqs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>  <span class="c1"># ADDED</span>
+
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="integrator_with_non_windup">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.integrator_with_non_windup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">integrator_with_non_windup</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">sat_min</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">)),</span>
+        <span class="n">sat_max</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)),</span>
+        <span class="n">multilinear</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Integrator with non-windup limiter (Figure E.2 style):</span>
+
+<span class="sd">        dy/dt = (1/T) * x</span>
+
+<span class="sd">    with clamping logic:</span>
+<span class="sd">    - if y &gt;= sat_max and dy/dt would be positive -&gt; dy/dt = 0</span>
+<span class="sd">    - if y &lt;= sat_min and dy/dt would be negative -&gt; dy/dt = 0</span>
+<span class="sd">    - otherwise dy/dt = (1/T) * x</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;y_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">diff_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_1_</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">diff_var</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">T</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">multilinear</span><span class="p">:</span>
+        <span class="n">at_or_above_min</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">sat_min</span><span class="p">)</span>
+        <span class="n">at_or_below_max</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">sat_max</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">f_pos</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f_neg</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">f_pos</span>
+        <span class="n">allow_integrate</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span>
+            <span class="n">at_or_above_min</span> <span class="o">*</span> <span class="n">at_or_below_max</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">at_or_below_max</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_neg</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">at_or_above_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_pos</span>
+        <span class="p">)</span>
+        <span class="n">eq_main</span> <span class="o">=</span> <span class="p">(</span><span class="n">dy</span> <span class="o">-</span> <span class="n">allow_integrate</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span><span class="p">,</span>
+            <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">eq_main</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span><span class="p">,</span>
+            <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dy</span><span class="p">],</span>
+            <span class="n">init_eqs</span><span class="o">=</span><span class="n">init_eqs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sat_block</span><span class="p">,</span> <span class="n">y_sat_expr</span> <span class="o">=</span> <span class="n">ml_hard_sat</span><span class="p">(</span>
+            <span class="n">vf</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+            <span class="n">u</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">u_min</span><span class="o">=</span><span class="n">sat_min</span><span class="p">,</span>
+            <span class="n">u_max</span><span class="o">=</span><span class="n">sat_max</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_sat&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">y_sat</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y_sat_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">hv_up_block</span><span class="p">,</span> <span class="n">at_upper</span> <span class="o">=</span> <span class="n">ml_heaviside</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">sat_max</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_up&quot;</span><span class="p">)</span>
+        <span class="n">hv_lo_block</span><span class="p">,</span> <span class="n">at_lower</span> <span class="o">=</span> <span class="n">ml_heaviside</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">sat_min</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_lo&quot;</span><span class="p">)</span>
+        <span class="n">hv_f_block</span><span class="p">,</span> <span class="n">f_pos</span> <span class="o">=</span> <span class="n">ml_heaviside</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_aw_f&quot;</span><span class="p">)</span>
+        <span class="n">f_neg</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">f_pos</span>
+        <span class="n">freeze</span> <span class="o">=</span> <span class="n">at_upper</span> <span class="o">*</span> <span class="n">f_pos</span> <span class="o">+</span> <span class="n">at_lower</span> <span class="o">*</span> <span class="n">f_neg</span>
+        <span class="n">eq_main</span> <span class="o">=</span> <span class="p">(</span><span class="n">dy</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">freeze</span><span class="p">)</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">y_sat</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_up_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_lo_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_f_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">),</span>
+            <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">eq_main</span><span class="p">,</span> <span class="n">y_sat</span> <span class="o">-</span> <span class="n">y_sat_expr</span><span class="p">,</span> <span class="n">y_sat</span> <span class="o">-</span> <span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_up_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_lo_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hv_f_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">),</span>
+            <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dy</span><span class="p">],</span>
+            <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+                <span class="o">**</span><span class="n">init_eqs</span><span class="p">,</span>
+                <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span>
+                <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">hv_up_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span>
+                <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">hv_lo_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span>
+                <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">hv_f_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span>
+                <span class="n">y_sat</span><span class="p">:</span> <span class="n">hard_sat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sat_min</span><span class="p">,</span> <span class="n">sat_max</span><span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="integrator_with_windup">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.integrator_with_windup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">integrator_with_windup</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">sat_min</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">)),</span>
+        <span class="n">sat_max</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)),</span>
+        <span class="n">multilinear</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple 1/(sT) integrator followed by output saturation (windup behavior).</span>
+
+<span class="sd">    Internal state:</span>
+<span class="sd">        dz/dt = x / T</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">        y = sat(z)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;y_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;z_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;dt_1_</span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span><span class="n">z</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="n">eq_int</span> <span class="o">=</span> <span class="p">(</span><span class="n">dz</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">multilinear</span><span class="p">:</span>
+        <span class="n">eq_sat</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">hard_sat</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">sat_min</span><span class="p">,</span> <span class="n">sat_max</span><span class="p">))</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span><span class="p">,</span>
+            <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">eq_int</span><span class="p">,</span> <span class="n">eq_sat</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span><span class="p">,</span>
+            <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dz</span><span class="p">],</span>
+            <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">init_eqs</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">hard_sat</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">sat_min</span><span class="p">,</span> <span class="n">sat_max</span><span class="p">)},</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sat_block</span><span class="p">,</span> <span class="n">y_sat_expr</span> <span class="o">=</span> <span class="n">ml_hard_sat</span><span class="p">(</span>
+            <span class="n">vf</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+            <span class="n">u</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">u_min</span><span class="o">=</span><span class="n">sat_min</span><span class="p">,</span>
+            <span class="n">u_max</span><span class="o">=</span><span class="n">sat_max</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_windup_sat&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">),</span>
+            <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">eq_int</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_sat_expr</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">),</span>
+            <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dz</span><span class="p">],</span>
+            <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">init_eqs</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">sat_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">),</span> <span class="n">y</span><span class="p">:</span> <span class="n">hard_sat</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">sat_min</span><span class="p">,</span> <span class="n">sat_max</span><span class="p">)},</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="tf_to_diffblock_with_antiwindup_by_feedback">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.tf_to_diffblock_with_antiwindup_by_feedback">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tf_to_diffblock_with_antiwindup_by_feedback</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">num</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">den</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">sat_min</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">),</span>
+        <span class="n">sat_max</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1e6</span><span class="p">),</span>
+        <span class="n">Kaw</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span>  <span class="c1"># anti-windup gain (1/Tt)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements a back-calculation anti-windup controller using (u_sat - u) as feedback input.</span>
+<span class="sd">    Works better for implicit solvers</span>
+<span class="sd">    num: numerator coefficients [b0, ..., bm]</span>
+<span class="sd">    den: denominator coefficients [a0, ..., an]</span>
+<span class="sd">    x:   input signal</span>
+<span class="sd">    y:   output (saturated)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Improper TF&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;y_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Wrap input expression</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u_in</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;u_in_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u_in</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u_in</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u_in</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Build derivative chains</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">diff_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="n">diff_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+
+    <span class="n">base</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">num</span><span class="p">)):</span>
+        <span class="n">dv</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base</span><span class="p">)</span>
+        <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
+        <span class="n">diff_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">dv</span>
+
+    <span class="n">base</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">den</span><span class="p">)):</span>
+        <span class="n">dv</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base</span><span class="p">)</span>
+        <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
+        <span class="n">diff_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">dv</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Unsaturated output (internal)</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;u_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+
+    <span class="n">tf_rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">diff_x</span><span class="p">)</span>
+    <span class="n">tf_lhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">den</span><span class="p">,</span> <span class="n">diff_y</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">tf_rhs</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Saturation</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="n">u_sat</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;u_sat_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u_sat</span><span class="p">)</span>
+
+    <span class="n">sat_expr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">sat_min</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">sat_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">sat_min</span><span class="p">)</span>
+            <span class="o">-</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">sat_max</span><span class="p">)</span> <span class="o">*</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">sat_max</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u_sat</span> <span class="o">-</span> <span class="n">sat_expr</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Main differential equation</span>
+    <span class="c1"># Add anti-windup ONLY to integrator (dy/dt term)</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="n">lhs</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">den</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_y</span><span class="p">)):</span>
+        <span class="n">lhs</span> <span class="o">+=</span> <span class="n">term</span>
+
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">num</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">diff_x</span><span class="p">):</span>
+        <span class="n">rhs</span> <span class="o">+=</span> <span class="n">term</span>
+
+    <span class="c1"># Anti-windup injection</span>
+    <span class="n">rhs</span> <span class="o">+=</span> <span class="n">Kaw</span> <span class="o">*</span> <span class="p">(</span><span class="n">u_sat</span> <span class="o">-</span> <span class="n">u</span><span class="p">)</span>
+
+    <span class="n">eq_main</span> <span class="o">=</span> <span class="p">(</span><span class="n">lhs</span> <span class="o">-</span> <span class="n">rhs</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">u_sat</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">eq_main</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span><span class="p">,</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="n">diff_vars</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="discrete_control_block">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.discrete_control_block">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">discrete_control_block</span><span class="p">(</span>
+    <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">m</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">delta_m</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">m_max</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">m_min</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">v</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">v_ref</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">delta_v</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">ts</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>          <span class="c1"># seconds</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+
+    <span class="n">m_last</span>   <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;m_last_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">t_signal</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;t_signal_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">tick</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_signal</span> <span class="o">&gt;=</span> <span class="n">ts</span><span class="p">)</span><span class="o">.</span><span class="n">to_expression</span><span class="p">()</span>
+
+    <span class="c1"># your switching increment (only evaluated on tick)</span>
+    <span class="n">inc</span> <span class="o">=</span> <span class="n">delta_m</span> <span class="o">*</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v_ref</span> <span class="o">&lt;=</span> <span class="n">delta_v</span><span class="p">)</span><span class="o">.</span><span class="n">to_expression</span><span class="p">()</span> \
+        <span class="o">-</span> <span class="n">delta_m</span> <span class="o">*</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v_ref</span> <span class="o">&gt;=</span> <span class="n">delta_v</span><span class="p">)</span><span class="o">.</span><span class="n">to_expression</span><span class="p">()</span>
+
+    <span class="n">changed</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Comparison</span><span class="p">(</span><span class="n">m_last</span><span class="p">,</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">to_expression</span><span class="p">())</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dt&#39;</span><span class="p">)</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_input_controlled_switch&#39;</span><span class="p">,</span>
+        <span class="n">discrete_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">t_signal</span><span class="p">:</span> <span class="n">changed</span><span class="o">*</span><span class="p">(</span><span class="n">t_signal</span> <span class="o">+</span> <span class="n">dt</span><span class="p">),</span>
+            <span class="n">m</span><span class="p">:</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">inc</span> <span class="o">*</span> <span class="n">tick</span><span class="p">,</span> <span class="n">m_min</span><span class="p">,</span> <span class="n">m_max</span><span class="p">),</span>
+            <span class="n">m_last</span><span class="p">:</span> <span class="n">m</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">api_obj_mapping</span><span class="o">=</span><span class="p">{</span><span class="n">dt</span><span class="p">:</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dt</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">m</span></div>
+
+
+
+<div class="viewcode-block" id="deadband_block">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block_helpers.deadband_block">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deadband_block</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Expr</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">deadband</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a deadband function block.</span>
+
+<span class="sd">    The deadband function returns:</span>
+<span class="sd">    - 0 when input is within the deadband [-deadband, +deadband]</span>
+<span class="sd">    - input - deadband when input &gt; deadband</span>
+<span class="sd">    - input + deadband when input &lt; -deadband</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    var_factory: VarFactory instance for creating variables</span>
+<span class="sd">    x: input signal (Var or Expr)</span>
+<span class="sd">    y: output variable (optional, created if None)</span>
+<span class="sd">    name: name prefix for variables</span>
+<span class="sd">    deadband: deadband threshold (default 0.1)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    Tuple of (Block, output_var)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;y_deadband_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="n">aux_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aux_vars</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Wrap input expression if needed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u_deadband_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">aux_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+        <span class="n">aux_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span>
+
+    <span class="c1"># Deadband logic using Heaviside step functions</span>
+    <span class="c1"># y = (u - deadband) * H(u - deadband) + (u + deadband) * H(-deadband - u)</span>
+    <span class="c1">#   = (u - deadband) * H(u - deadband) + (u + deadband) * H(-u - deadband)</span>
+
+    <span class="n">h_pos</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">deadband</span><span class="p">)</span>
+    <span class="n">h_neg</span> <span class="o">=</span> <span class="n">heaviside</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">-</span> <span class="n">deadband</span><span class="p">)</span>
+
+    <span class="c1"># Output expression</span>
+    <span class="n">output_expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">deadband</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_pos</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">deadband</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_neg</span>
+
+    <span class="c1"># Algebraic equation: y - output_expr = 0</span>
+    <span class="n">eq</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">output_expr</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_deadband&#39;</span><span class="p">,</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">eq</span><span class="p">]</span> <span class="o">+</span> <span class="n">aux_eqs</span><span class="p">,</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span><span class="p">,</span> <span class="n">y</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

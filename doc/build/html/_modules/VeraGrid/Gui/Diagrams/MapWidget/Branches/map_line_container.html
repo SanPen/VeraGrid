@@ -1,0 +1,1219 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">webbrowser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QPointF</span><span class="p">,</span> <span class="n">Qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QPen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QGraphicsItemGroup</span><span class="p">,</span> <span class="n">QMenu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_polyline</span><span class="w"> </span><span class="kn">import</span> <span class="n">MapLinePolyline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_segment</span><span class="w"> </span><span class="kn">import</span> <span class="n">MapLineSegment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line_locations</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRANCH_TYPES</span><span class="p">,</span> <span class="n">FluidPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.generic_graphics</span><span class="w"> </span><span class="kn">import</span> <span class="n">ACTIVE</span><span class="p">,</span> <span class="n">DEACTIVATED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.generic_graphics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericDiagramWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_menu_entry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor</span><span class="w"> </span><span class="kn">import</span> <span class="n">DcLineDeviceEditorDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineDeviceEditorDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDeviceEditor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">error_msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_question</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Branches.line_location_graphic_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineLocationGraphicItem</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubstationGraphicItem</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Substation.voltage_level_graphic_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">VoltageLevelGraphicItem</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridMapWidget</span>
+
+
+<div class="viewcode-block" id="MapLineContainer">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MapLineContainer</span><span class="p">(</span><span class="n">GenericDiagramWidget</span><span class="p">,</span> <span class="n">QGraphicsItemGroup</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a polyline in the map</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">editor</span><span class="p">:</span> <span class="n">GridMapWidget</span><span class="p">,</span>
+                 <span class="n">api_object</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BRANCH_TYPES</span><span class="p">,</span> <span class="n">FluidPath</span><span class="p">],</span>
+                 <span class="n">draw_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param api_object:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">GenericDiagramWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">api_object</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                      <span class="n">editor</span><span class="o">=</span><span class="n">editor</span><span class="p">,</span>
+                                      <span class="n">draw_labels</span><span class="o">=</span><span class="n">draw_labels</span><span class="p">)</span>
+        <span class="n">QGraphicsItemGroup</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LineLocationGraphicItem</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MapLineSegment</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="p">:</span> <span class="n">MapLinePolyline</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">draw_labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">SolidLine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">:</span> <span class="n">QColor</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">min_branch_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arrow_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">arrow_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context_lat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context_lon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context_scene_pos</span><span class="p">:</span> <span class="n">QPointF</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api_object</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">BRANCH_TYPES</span><span class="p">,</span> <span class="n">FluidPath</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_object</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GridMapWidget</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editor</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the polyline item if needed and add it to the scene.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="o">=</span> <span class="n">MapLinePolyline</span><span class="p">(</span><span class="n">container</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">add_to_scene</span><span class="p">(</span><span class="n">graphic_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MapLineContainer.clean_polyline">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.clean_polyline">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean_polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the polyline item from the scene.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram_scene</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.update_polyline_path">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.update_polyline_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_polyline_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rebuild the polyline geometry from segment endpoints.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">set_path_points</span><span class="p">(</span><span class="nb">list</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_polyline</span><span class="p">()</span>
+
+        <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QPointF</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">pos2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">set_path_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.set_handles_visible">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.set_handles_visible">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_handles_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_visible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show or hide waypoint handles for this line.</span>
+
+<span class="sd">        :param is_visible: visibility flag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">is_visible</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attach_segments_to_scene</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_detach_segments_from_scene</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_visible</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">isSelected</span><span class="p">():</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">setSelected</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">is_visible</span><span class="p">)</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">is_visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.on_polyline_mouse_press">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.on_polyline_mouse_press">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_polyline_mouse_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle clicks on the line polyline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_editor_model</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.set_width_scale">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.set_width_scale">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_width_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">arrow_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the width scale of the line</span>
+<span class="sd">        :param width:</span>
+<span class="sd">        :param arrow_width:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">==</span> <span class="n">width</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrow_width</span> <span class="o">==</span> <span class="n">arrow_width</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arrow_width</span> <span class="o">=</span> <span class="n">arrow_width</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="c1"># pen = segment.pen()  # get the current pen</span>
+            <span class="c1"># pen.setWidthF(val * segment.width)  # Set the fractional thickness of the line</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_width</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>  <span class="c1"># Assign the pen to the line item</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_arrow_sizes</span><span class="p">(</span><span class="n">arrow_width</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">set_width</span><span class="p">(</span><span class="n">width</span><span class="p">)</span></div>
+
+        <span class="c1"># self.setScale(branch_scale)</span>
+
+<div class="viewcode-block" id="MapLineContainer.clean_segments">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.clean_segments">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove all segments from the scene</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram_scene</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_attach_segments_to_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add all segment graphics to the scene for edit mode rendering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">add_to_scene</span><span class="p">(</span><span class="n">graphic_object</span><span class="o">=</span><span class="n">segment</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_stroke_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detach_segments_from_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove segment graphics from the scene when not editing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_stroke_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram_scene</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="MapLineContainer.clean_nodes">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.clean_nodes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove all the nodes from the scene</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">_remove_from_scene</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.clean">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.clean">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean all graphic elements from the scene</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_segments</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_polyline</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_nodes</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.number_of_nodes">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.number_of_nodes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">number_of_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.register_new_node">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.register_new_node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_new_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">LineLocationGraphicItem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add node</span>
+<span class="sd">        :param node: NodeGraphicItem</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.add_segment">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.add_segment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segment</span><span class="p">:</span> <span class="n">MapLineSegment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add segment</span>
+<span class="sd">        :param segment: Connector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addToGroup</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.set_colour">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.set_colour">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_colour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="p">,</span> <span class="n">tool_tip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set color and style</span>
+<span class="sd">        :param color: QColor instance</span>
+<span class="sd">        :param style: PenStyle instance</span>
+<span class="sd">        :param tool_tip: tool tip text</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">style</span>
+
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tool_tip</span><span class="p">)</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_colour</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tool_tip</span><span class="p">)</span>
+            <span class="n">polyline_pen</span> <span class="o">=</span> <span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span>
+                                <span class="n">Qt</span><span class="o">.</span><span class="n">PenCapStyle</span><span class="o">.</span><span class="n">RoundCap</span><span class="p">,</span>
+                                <span class="n">Qt</span><span class="o">.</span><span class="n">PenJoinStyle</span><span class="o">.</span><span class="n">RoundJoin</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">set_pen</span><span class="p">(</span><span class="n">polyline_pen</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.update_connectors">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.update_connectors">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_connectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">connector</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="c1"># Avoid rebuilding the same polyline path for every connector.</span>
+            <span class="n">connector</span><span class="o">.</span><span class="n">update_endings</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_polyline_path</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.end_update">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.end_update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">end_update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.draw_all">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.draw_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+
+        <span class="c1"># get the diagram line locations</span>
+        <span class="n">line_locs_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">query_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineLocation</span><span class="p">)</span>
+
+        <span class="c1"># draw line locations</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">line_locs_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">loc_data</span> <span class="o">=</span> <span class="n">line_locs_info</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loc_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">graphic_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">create_line_location_graphic</span><span class="p">(</span><span class="n">line_container</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                                    <span class="n">api_object</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                                                    <span class="n">lat</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">lat</span> <span class="k">if</span> <span class="n">loc_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">loc_data</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                                                                    <span class="n">lon</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">long</span> <span class="k">if</span> <span class="n">loc_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">loc_data</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                                                                    <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">())</span>  <span class="c1"># 2.7 ...</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_new_node</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">graphic_obj</span><span class="p">)</span>
+
+        <span class="c1"># second pass: create the segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redraw_segments</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_handles_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.remove_node">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.remove_node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">LineLocationGraphicItem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param node:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">api_object</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">api_object</span> <span class="ow">or</span> <span class="n">seg</span><span class="o">.</span><span class="n">second</span><span class="o">.</span><span class="n">api_object</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">api_object</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">diagram_scene</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">seg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">nod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">node</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">remove_line_location_graphic</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redraw_segments</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.redraw_segments">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.redraw_segments">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">redraw_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw all segments in the line</span>
+<span class="sd">        If there were previous segments, those are deleted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">segments_were_drawn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_drawn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_segments</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_polyline</span><span class="p">()</span>
+
+        <span class="n">connection_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">LineLocationGraphicItem</span><span class="p">,</span> <span class="n">SubstationGraphicItem</span><span class="p">,</span> <span class="n">VoltageLevelGraphicItem</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="c1"># add the substation from</span>
+        <span class="n">substation_from_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_from</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">substation_from_graphics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">substation_from_graphics</span><span class="o">.</span><span class="n">valid_coordinates</span><span class="p">():</span>
+                <span class="n">connection_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">substation_from_graphics</span><span class="p">)</span>
+                <span class="n">substation_from_graphics</span><span class="o">.</span><span class="n">line_container</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="c1"># add all the intermediate positions</span>
+        <span class="n">connection_elements</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span>
+
+        <span class="c1"># add the substation to</span>
+        <span class="n">substation_to_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_to</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">substation_to_graphics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">substation_to_graphics</span><span class="o">.</span><span class="n">valid_coordinates</span><span class="p">():</span>
+                <span class="n">connection_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">substation_to_graphics</span><span class="p">)</span>
+                <span class="n">substation_to_graphics</span><span class="o">.</span><span class="n">line_container</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="c1"># br_scale = self.editor.get_branch_width()</span>
+        <span class="c1"># arrow_scale = self.editor.get_arrow_scale()</span>
+
+        <span class="c1"># second pass: create the segments</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">connection_elements</span><span class="p">)):</span>
+            <span class="n">elm1</span> <span class="o">=</span> <span class="n">connection_elements</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">elm2</span> <span class="o">=</span> <span class="n">connection_elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># Assuming Connector takes (scene, node1, node2) as arguments</span>
+            <span class="n">segment_graphic_object</span> <span class="o">=</span> <span class="n">MapLineSegment</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">elm1</span><span class="p">,</span>
+                                                    <span class="n">second</span><span class="o">=</span><span class="n">elm2</span><span class="p">,</span>
+                                                    <span class="n">container</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                    <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">min_branch_width</span><span class="p">)</span>
+            <span class="n">segment_graphic_object</span><span class="o">.</span><span class="n">set_stroke_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">elm2</span><span class="o">.</span><span class="n">needsUpdate</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">segment_graphic_object</span><span class="o">.</span><span class="n">needsUpdate</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># register the segment in the line</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_segment</span><span class="p">(</span><span class="n">segment</span><span class="o">=</span><span class="n">segment_graphic_object</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_connectors</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_colour</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">segments_were_drawn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attach_segments_to_scene</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_distance_to_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">:</span> <span class="n">QPointF</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">QPointF</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="n">QPointF</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the euclidean distance from a point to one segment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">second</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">second</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+
+        <span class="n">numerator</span> <span class="o">=</span> <span class="p">((</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="p">())</span> <span class="o">*</span> <span class="n">dx</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="p">())</span> <span class="o">*</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dx</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">dy</span> <span class="o">*</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span><span class="p">))</span>
+
+        <span class="n">projection_x</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">+</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">dx</span>
+        <span class="n">projection_y</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">dy</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="n">projection_x</span><span class="p">,</span> <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="n">projection_y</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MapLineContainer.add_node_at_scene_position">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.add_node_at_scene_position">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_node_at_scene_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene_pos</span><span class="p">:</span> <span class="n">QPointF</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insert a new waypoint in the nearest line segment to a clicked point.</span>
+
+<span class="sd">        :param scene_pos: click position in scene coordinates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">insert_new_node_at_position</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">closest_segment_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">closest_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">):</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_to_segment</span><span class="p">(</span><span class="n">scene_pos</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">pos1</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">pos2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">closest_distance</span><span class="p">:</span>
+                <span class="n">closest_distance</span> <span class="o">=</span> <span class="n">dist</span>
+                <span class="n">closest_segment_index</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_new_node_at_position</span><span class="p">(</span><span class="n">closest_segment_index</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_street_view_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open Google Maps for the latest context-menu click location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_lat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_lon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.google.com/maps/?q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_lat</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_lon</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_point_from_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insert one waypoint at the latest context-menu click location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_scene_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_node_at_scene_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_scene_pos</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_line_selected_for_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure this line is present in the current selection for editor actions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">isSelected</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="o">.</span><span class="n">setSelected</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_merge_selected_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run merge operation preserving the clicked line in selection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_line_selected_for_actions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">merge_selected_lines</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_split_line_to_substation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run split-to-substation operation preserving the clicked line in selection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_line_selected_for_actions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">split_line_to_substation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_change_line_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run line connection change operation preserving the clicked line in selection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_line_selected_for_actions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">change_line_connection</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MapLineContainer.show_context_menu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.show_context_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene_pos</span><span class="p">:</span> <span class="n">QPointF</span><span class="p">,</span> <span class="n">screen_pos</span><span class="p">:</span> <span class="n">QPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the line context menu for the given click position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">()</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSection</span><span class="p">(</span><span class="s2">&quot;Line&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Active&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">enable_disable_toggle</span><span class="p">,</span>
+                       <span class="n">checkeable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">checked_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Draw labels&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">enable_disable_label_drawing</span><span class="p">,</span>
+                       <span class="n">checkeable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">checked_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Editor&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">call_editor</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/edit.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Calculate total length&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_length_toast</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/ruler.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Consolidate selected objects coordinates&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">consolidate_object_coordinates</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/assign_to_profile.png&quot;</span><span class="p">)</span>
+
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Merge selected lines&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_merge_selected_lines</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/fusion.png&quot;</span><span class="p">)</span>
+
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Split line to selected substation (In-Out)&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_split_line_to_substation</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/divide.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Change substation connection of the line&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_change_line_connection</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/move_bus.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Plot profiles&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_profiles</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/plot.png&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context_scene_pos</span> <span class="o">=</span> <span class="n">scene_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context_lat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_lon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">to_lat_lon</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">scene_pos</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">y</span><span class="o">=</span><span class="n">scene_pos</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Open in Street view&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_street_view_context</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/map.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Assign rate to profile&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">assign_rate_to_profile</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/assign_to_profile.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Assign active state to profile&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">assign_status_to_profile</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/assign_to_profile.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Add point&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_add_point_from_context</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/cn_icon.png&quot;</span><span class="p">)</span>
+
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/delete_schematic.png&quot;</span><span class="p">)</span>
+
+        <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="n">screen_pos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.enable_disable_toggle">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.enable_disable_toggle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_disable_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggle line active state and optionally propagate to profiles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_enable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_enable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="n">yes_no_question</span><span class="p">(</span><span class="s1">&#39;Do you want to update the time series active status accordingly?&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;Update time series active status&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_active_status_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="n">override_question</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.set_enable">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.set_enable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the enabled state both graphically and in the API object.</span>
+
+<span class="sd">        :param val: target state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">ACTIVE</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">ACTIVE</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">DEACTIVATED</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">DEACTIVATED</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_colour</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.enable_disable_label_drawing">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.enable_disable_label_drawing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_disable_label_drawing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggle arrow label rendering state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">draw_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.open_device_editor">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.open_device_editor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_device_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the editor for this map branch.</span>
+
+<span class="sd">        :return: ``True`` when an editor was opened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">:</span>
+            <span class="n">dialog</span> <span class="o">=</span> <span class="n">LineDeviceEditorDialog</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">:</span>
+            <span class="n">dialog</span> <span class="o">=</span> <span class="n">DcLineDeviceEditorDialog</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dialog</span> <span class="o">=</span> <span class="n">TemplateDeviceEditor</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">)</span>
+
+        <span class="n">dialog</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.call_editor">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.call_editor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the specific branch editor dialogue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_device_editor</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.plot_profiles">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.plot_profiles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot branch time series profiles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_branches</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">plot_branch</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.assign_rate_to_profile">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.assign_rate_to_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_rate_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign snapshot rating to the profile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_rate_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.assign_status_to_profile">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.assign_status_to_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_status_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign snapshot active state to the profile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_active_status_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.calculate_total_length_toast">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.calculate_total_length_toast">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_total_length_toast</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recalculate length and show user feedback.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">total_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_length</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Line length calculated: </span><span class="si">{</span><span class="n">total_length</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> km. The length property of line &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has been updated.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.substation_to">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.substation_to">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">substation_to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_to</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.substation_from">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.substation_from">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">substation_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_from</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.insert_new_node_at_position">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.insert_new_node_at_position">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_new_node_at_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new node in the list at the given position</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check if the index is valid</span>
+        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="n">nd1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">nd2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Create a new API object for the node. Assuming `api_object.locations.data` holds coordinates or similar data</span>
+            <span class="n">new_api_node_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+            <span class="n">new_lat</span> <span class="o">=</span> <span class="p">((</span><span class="n">nd2</span><span class="o">.</span><span class="n">lat</span> <span class="o">+</span> <span class="n">nd1</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">new_long</span> <span class="o">=</span> <span class="p">((</span><span class="n">nd2</span><span class="o">.</span><span class="n">lon</span> <span class="o">+</span> <span class="n">nd1</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">new_api_object</span> <span class="o">=</span> <span class="n">LineLocation</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">new_lat</span><span class="p">,</span>
+                                          <span class="n">lon</span><span class="o">=</span><span class="n">new_long</span><span class="p">,</span>
+                                          <span class="n">z</span><span class="o">=</span><span class="n">new_api_node_data</span><span class="o">.</span><span class="n">alt</span><span class="p">,</span>
+                                          <span class="n">seq</span><span class="o">=</span><span class="n">new_api_node_data</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span>
+                                          <span class="n">name</span><span class="o">=</span><span class="n">new_api_node_data</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                          <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># generates new UUID</span>
+                                          <span class="n">code</span><span class="o">=</span><span class="n">new_api_node_data</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">new_api_object</span><span class="p">)</span>
+
+            <span class="c1"># Create a new graphical node item</span>
+
+            <span class="n">graphic_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">create_line_location_graphic</span><span class="p">(</span><span class="n">line_container</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                                    <span class="n">api_object</span><span class="o">=</span><span class="n">new_api_object</span><span class="p">,</span>
+                                                                    <span class="n">lat</span><span class="o">=</span><span class="n">new_api_object</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                                                                    <span class="n">lon</span><span class="o">=</span><span class="n">new_api_object</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
+                                                                    <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">nod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">index</span><span class="p">:</span>
+                    <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Add the node to the nodes list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">graphic_obj</span><span class="p">)</span>
+
+            <span class="n">graphic_obj</span><span class="o">.</span><span class="n">update_position</span><span class="p">()</span>
+
+            <span class="c1"># Update connectors if necessary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redraw_segments</span><span class="p">()</span>
+
+            <span class="c1"># Return the newly created node</span>
+            <span class="k">return</span> <span class="n">graphic_obj</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">substation_from_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_from</span><span class="p">())</span>
+            <span class="n">substation_to_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_to</span><span class="p">())</span>
+
+            <span class="n">nd1</span> <span class="o">=</span> <span class="n">substation_from_graphics</span>
+            <span class="n">nd2</span> <span class="o">=</span> <span class="n">substation_to_graphics</span>
+
+            <span class="n">new_lat</span> <span class="o">=</span> <span class="p">((</span><span class="n">nd2</span><span class="o">.</span><span class="n">lat</span> <span class="o">+</span> <span class="n">nd1</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">new_long</span> <span class="o">=</span> <span class="p">((</span><span class="n">nd2</span><span class="o">.</span><span class="n">lon</span> <span class="o">+</span> <span class="n">nd1</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">new_api_object</span> <span class="o">=</span> <span class="n">LineLocation</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">new_lat</span><span class="p">,</span>
+                                          <span class="n">lon</span><span class="o">=</span><span class="n">new_long</span><span class="p">,</span>
+                                          <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                          <span class="n">seq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                          <span class="n">name</span><span class="o">=</span><span class="s2">&quot;New node&quot;</span><span class="p">,</span>
+                                          <span class="n">idtag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                                          <span class="n">code</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_api_object</span><span class="p">)</span>
+
+            <span class="c1"># Create a new graphical node item</span>
+
+            <span class="n">graphic_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">create_line_location_graphic</span><span class="p">(</span><span class="n">line_container</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                                    <span class="n">api_object</span><span class="o">=</span><span class="n">new_api_object</span><span class="p">,</span>
+                                                                    <span class="n">lat</span><span class="o">=</span><span class="n">new_api_object</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                                                                    <span class="n">lon</span><span class="o">=</span><span class="n">new_api_object</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
+                                                                    <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Add the node to the nodes list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">graphic_obj</span><span class="p">)</span>
+
+            <span class="n">graphic_obj</span><span class="o">.</span><span class="n">update_position</span><span class="p">()</span>
+
+            <span class="c1"># Update connectors if necessary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redraw_segments</span><span class="p">()</span>
+
+            <span class="c1"># Return the newly created node</span>
+            <span class="k">return</span> <span class="n">graphic_obj</span>
+
+        <span class="k">elif</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">index</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="n">substation_from_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_from</span><span class="p">())</span>
+            <span class="n">substation_to_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">get_substation_to</span><span class="p">())</span>
+
+            <span class="n">nd1</span> <span class="o">=</span> <span class="n">substation_from_graphics</span>
+            <span class="n">nd2</span> <span class="o">=</span> <span class="n">substation_to_graphics</span>
+
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">nd2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">):</span>
+                <span class="n">nd1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">new_lat</span> <span class="o">=</span> <span class="p">((</span><span class="n">nd2</span><span class="o">.</span><span class="n">lat</span> <span class="o">+</span> <span class="n">nd1</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">new_long</span> <span class="o">=</span> <span class="p">((</span><span class="n">nd2</span><span class="o">.</span><span class="n">lon</span> <span class="o">+</span> <span class="n">nd1</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">new_api_object</span> <span class="o">=</span> <span class="n">LineLocation</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">new_lat</span><span class="p">,</span>
+                                          <span class="n">lon</span><span class="o">=</span><span class="n">new_long</span><span class="p">,</span>
+                                          <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                          <span class="n">seq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                          <span class="n">name</span><span class="o">=</span><span class="s2">&quot;New node&quot;</span><span class="p">,</span>
+                                          <span class="n">idtag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                                          <span class="n">code</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">new_api_object</span><span class="p">)</span>
+
+            <span class="c1"># Create a new graphical node item</span>
+
+            <span class="n">graphic_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">create_line_location_graphic</span><span class="p">(</span><span class="n">line_container</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                                    <span class="n">api_object</span><span class="o">=</span><span class="n">new_api_object</span><span class="p">,</span>
+                                                                    <span class="n">lat</span><span class="o">=</span><span class="n">new_api_object</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                                                                    <span class="n">lon</span><span class="o">=</span><span class="n">new_api_object</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
+                                                                    <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">nod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">index</span><span class="p">:</span>
+                    <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">nod</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Add the node to the nodes list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">graphic_obj</span><span class="p">)</span>
+
+            <span class="n">graphic_obj</span><span class="o">.</span><span class="n">update_position</span><span class="p">()</span>
+
+            <span class="c1"># Update connectors if necessary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redraw_segments</span><span class="p">()</span>
+
+            <span class="c1"># Return the newly created node</span>
+            <span class="k">return</span> <span class="n">graphic_obj</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#     logging.basicConfig(level=logging.DEBUG, format=&#39;%(asctime)s - %(levelname)s - %(message)s&#39;)</span>
+            <span class="c1">#     logging.info(&quot;Invalid node index&quot;)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.split_line">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.split_line">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split Line</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Review this and possibly link to existing functions</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+
+            <span class="c1"># ln1 = Line()</span>
+            <span class="c1"># ln1.set_data_from(self.api_object)</span>
+            <span class="n">ln1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="c1"># ln2 = Line()</span>
+            <span class="c1"># ln2.set_data_from(self.api_object)</span>
+            <span class="n">ln2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="n">first_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">second_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+
+            <span class="n">ln1</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">first_list</span>
+            <span class="n">ln2</span><span class="o">.</span><span class="n">locations</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">second_list</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">api_obj</span> <span class="ow">in</span> <span class="n">first_list</span><span class="p">:</span>
+                <span class="n">api_obj</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">lat</span>
+                <span class="n">api_obj</span><span class="o">.</span><span class="n">long</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">lon</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">api_obj</span> <span class="ow">in</span> <span class="n">second_list</span><span class="p">:</span>
+                <span class="n">api_obj</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">lat</span>
+                <span class="n">api_obj</span><span class="o">.</span><span class="n">long</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">lon</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">ln1</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span>
+            <span class="n">ln2</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span>
+
+            <span class="c1"># l1 = self.editor.add_api_line(ln1, original=False)</span>
+            <span class="c1"># l2 = self.editor.add_api_line(ln2, original=False)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">disable_line</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">first_list</span><span class="p">,</span> <span class="n">second_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Handle invalid index</span>
+            <span class="n">error_msg</span><span class="p">(</span><span class="s2">&quot;Index out of range or invalid&quot;</span><span class="p">,</span> <span class="s2">&quot;split line&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(),</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.disable_line">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.disable_line">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disable_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">set_enable</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.set_arrows_with_power">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.set_arrows_with_power">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_arrows_with_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Sf</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">St</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param Sf:</span>
+<span class="sd">        :param St:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_arrows_with_power</span><span class="p">(</span><span class="n">Sf</span><span class="o">=</span><span class="n">Sf</span><span class="p">,</span> <span class="n">St</span><span class="o">=</span><span class="n">St</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.set_arrows_with_hvdc_power">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.set_arrows_with_hvdc_power">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_arrows_with_hvdc_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Pf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pt</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param Pf:</span>
+<span class="sd">        :param Pt:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">set_arrows_with_hvdc_power</span><span class="p">(</span><span class="n">Pf</span><span class="o">=</span><span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="o">=</span><span class="n">Pt</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.calculate_total_length">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.calculate_total_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_total_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the total length of the line by summing the distances between all waypoints</span>
+<span class="sd">        using the haversine formula, and update the line&#39;s length property. The coordiates used are the</span>
+<span class="sd">        ones from the api_object, not the graphic objects, in order to avoid undesired recalculations. Issue #23</span>
+<span class="sd">        </span>
+<span class="sd">        :return: Total length in kilometers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">haversine_distance</span>
+        
+        <span class="c1"># Get all connection points (substations and intermediate points)</span>
+        <span class="n">connection_points</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Add the substation from</span>
+        <span class="n">substation_from</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">substation_from</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">substation_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">connection_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">substation_from</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">substation_from</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">longitude</span><span class="p">))</span>
+
+        <span class="c1"># Add all intermediate points</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span><span class="p">:</span>
+            <span class="n">connection_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">long</span><span class="p">))</span>
+        
+        <span class="c1"># Add the substation to</span>
+        <span class="n">substation_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">substation_to</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">substation_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">connection_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">substation_to</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">substation_to</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">longitude</span><span class="p">))</span>
+
+        <span class="c1"># Calculate total length by summing distances between consecutive points</span>
+        <span class="n">total_length</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">connection_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span> <span class="o">=</span> <span class="n">connection_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span> <span class="o">=</span> <span class="n">connection_points</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">segment_length</span> <span class="o">=</span> <span class="n">haversine_distance</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span><span class="p">)</span>
+            <span class="n">total_length</span> <span class="o">+=</span> <span class="n">segment_length</span>
+        
+        <span class="c1"># Update the line&#39;s length property</span>
+        <span class="k">if</span> <span class="n">total_length</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">total_length</span>
+
+        <span class="k">return</span> <span class="n">total_length</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.get_extra_graphics">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.get_extra_graphics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_extra_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function gets the graphic objects associated to a MapLineContainer</span>
+<span class="sd">        return: The list of the associated graphic objects, which are the nodes, segments and polyline of the line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">extra_graphics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">extra_graphics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polyline</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">extra_graphics</span></div>
+
+
+<div class="viewcode-block" id="MapLineContainer.delete">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Branches.html#VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container.MapLineContainer.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete this object and all the other objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments_list</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">delete_from_associations</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">delete_with_dialogue</span><span class="p">(</span><span class="n">selected</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">],</span> <span class="n">delete_from_db</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

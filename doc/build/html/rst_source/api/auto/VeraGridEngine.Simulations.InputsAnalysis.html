@@ -1,0 +1,719 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.InputsAnalysis package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Simulations.InvestmentsEvaluation package" href="VeraGridEngine.Simulations.InvestmentsEvaluation.html" />
+    <link rel="prev" title="VeraGridEngine.Simulations.EMT.solvers package" href="VeraGridEngine.Simulations.EMT.solvers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.InputsAnalysis package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-simulations-inputsanalysis-package">
+<h1>VeraGridEngine.Simulations.InputsAnalysis package<a class="headerlink" href="#veragridengine-simulations-inputsanalysis-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver">
+<span id="veragridengine-simulations-inputsanalysis-inputs-analysis-driver-module"></span><h2>VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver module<a class="headerlink" href="#module-VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.</span></span><span class="sig-name descname"><span class="pre">InputsAnalysisDriver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisDriver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisDriver.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.cancel" title="Link to this definition"></a></dt>
+<dd><p>Cancel the simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.get_steps">
+<span class="sig-name descname"><span class="pre">get_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisDriver.get_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.get_steps" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Inputs</span> <span class="pre">Analysis'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisDriver.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.run" title="Link to this definition"></a></dt>
+<dd><p>Pack run_pf for the QThread
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Inputs</span> <span class="pre">Analysis'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.</span></span><span class="sig-name descname"><span class="pre">InputsAnalysisResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults" title="VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults"><span class="pre">OptimalPowerFlowResults</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_time_series_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_ts_results.OptimalPowerFlowTimeSeriesResults" title="VeraGridEngine.Simulations.OPF.opf_ts_results.OptimalPowerFlowTimeSeriesResults"><span class="pre">OptimalPowerFlowTimeSeriesResults</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_template.ResultsTemplate" title="VeraGridEngine.Simulations.results_template.ResultsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.CLASS_DATA_VARIABLES">
+<span class="sig-name descname"><span class="pre">CLASS_DATA_VARIABLES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.CLASS_DATA_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.CLASS_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.CLASS_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.LOCAL_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.LOCAL_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.area_names">
+<span class="sig-name descname"><span class="pre">area_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.area_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.battery_data">
+<span class="sig-name descname"><span class="pre">battery_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.battery_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_area_indices">
+<span class="sig-name descname"><span class="pre">bus_area_indices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_area_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_community_indices">
+<span class="sig-name descname"><span class="pre">bus_community_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_community_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_country_indices">
+<span class="sig-name descname"><span class="pre">bus_country_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_country_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_dict">
+<span class="sig-name descname"><span class="pre">bus_dict</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_municipality_indices">
+<span class="sig-name descname"><span class="pre">bus_municipality_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_municipality_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_region_indices">
+<span class="sig-name descname"><span class="pre">bus_region_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_region_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_substation_indices">
+<span class="sig-name descname"><span class="pre">bus_substation_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_substation_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_voltage_level_indices">
+<span class="sig-name descname"><span class="pre">bus_voltage_level_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_voltage_level_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_zone_indices">
+<span class="sig-name descname"><span class="pre">bus_zone_indices</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.bus_zone_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.community_names">
+<span class="sig-name descname"><span class="pre">community_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.community_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.country_names">
+<span class="sig-name descname"><span class="pre">country_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.country_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.current_injection_data">
+<span class="sig-name descname"><span class="pre">current_injection_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.current_injection_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.external_grid_data">
+<span class="sig-name descname"><span class="pre">external_grid_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.external_grid_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.gen_data">
+<span class="sig-name descname"><span class="pre">gen_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.gen_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_device_type">
+<span class="sig-name descname"><span class="pre">get_aggregation_device_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_aggregation_device_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_device_type" title="Link to this definition"></a></dt>
+<dd><p>Get the device type associated to an aggregation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>aggregation</strong> – Aggregation name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding device type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_elements">
+<span class="sig-name descname"><span class="pre">get_aggregation_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_aggregation_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_elements" title="Link to this definition"></a></dt>
+<dd><p>Get the aggregation objects associated to an aggregation name.</p>
+<p>This method preserves the collection order used by the bus-to-index
+maps so that time-series matrices and index lookups share the same
+coordinate system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>aggregation</strong> – Aggregation name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ordered list of aggregation objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_headers">
+<span class="sig-name descname"><span class="pre">get_aggregation_headers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_aggregation_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_headers" title="Link to this definition"></a></dt>
+<dd><p>Get the dataframe aggregation column headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Ordered list of aggregation column names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_names">
+<span class="sig-name descname"><span class="pre">get_aggregation_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_aggregation_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_names" title="Link to this definition"></a></dt>
+<dd><p>Get the names associated to an aggregation type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>aggregation</strong> – Aggregation name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of aggregation names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_available_results">
+<span class="sig-name descname"><span class="pre">get_available_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_available_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_available_results" title="Link to this definition"></a></dt>
+<dd><p>Get the available results grouped by spatial aggregation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>has_time_series</strong> – Whether time-series results are available</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Available results grouped by aggregation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_batteries_df">
+<span class="sig-name descname"><span class="pre">get_batteries_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_batteries_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_batteries_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_aggregation_values">
+<span class="sig-name descname"><span class="pre">get_bus_aggregation_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_aggregation_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_aggregation_values" title="Link to this definition"></a></dt>
+<dd><p>Get the aggregation names associated to a bus.</p>
+<p>The bus getter methods are used so that direct bus assignments have
+priority over values inferred from higher-level structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bus</strong> – Bus object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregation names in dataframe column order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_area_indices">
+<span class="sig-name descname"><span class="pre">get_bus_area_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_area_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_area_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the area index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Area indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_community_indices">
+<span class="sig-name descname"><span class="pre">get_bus_community_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_community_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_community_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the community index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any community.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Community indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_country_indices">
+<span class="sig-name descname"><span class="pre">get_bus_country_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_country_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_country_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the country index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Country indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_municipality_indices">
+<span class="sig-name descname"><span class="pre">get_bus_municipality_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_municipality_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_municipality_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the municipality index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any municipality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Municipality indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_region_indices">
+<span class="sig-name descname"><span class="pre">get_bus_region_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_region_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_region_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the region index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Region indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_substation_indices">
+<span class="sig-name descname"><span class="pre">get_bus_substation_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_substation_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_substation_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the substation index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any substation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Substation indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_voltage_level_indices">
+<span class="sig-name descname"><span class="pre">get_bus_voltage_level_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_voltage_level_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_voltage_level_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the voltage-level index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any voltage level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Voltage-level indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_zone_indices">
+<span class="sig-name descname"><span class="pre">get_bus_zone_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_bus_zone_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_zone_indices" title="Link to this definition"></a></dt>
+<dd><p>Get the zone index of each bus.</p>
+<p>A value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the bus is not associated to any zone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Zone indices per bus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_collection_attr_series">
+<span class="sig-name descname"><span class="pre">get_collection_attr_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Area'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_collection_attr_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_collection_attr_series" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elms</strong></p></li>
+<li><p><strong>magnitude</strong> – Snapshot property name</p></li>
+<li><p><strong>aggregation</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_collection_names">
+<span class="sig-name descname"><span class="pre">get_collection_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_collection_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_collection_names" title="Link to this definition"></a></dt>
+<dd><p>Get the unique names of a collection of aggregation objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>elements</strong> – List of aggregation objects</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted list of names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_current_injections_df">
+<span class="sig-name descname"><span class="pre">get_current_injections_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_current_injections_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_current_injections_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_external_grids_df">
+<span class="sig-name descname"><span class="pre">get_external_grids_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_external_grids_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_external_grids_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_generators_df">
+<span class="sig-name descname"><span class="pre">get_generators_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_generators_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_generators_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_loads_df">
+<span class="sig-name descname"><span class="pre">get_loads_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_loads_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_loads_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_result_aggregation">
+<span class="sig-name descname"><span class="pre">get_result_aggregation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_result_aggregation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_result_aggregation" title="Link to this definition"></a></dt>
+<dd><p>Get the aggregation name corresponding to a result type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>result_type</strong> – Result type</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregation name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_series_result_types">
+<span class="sig-name descname"><span class="pre">get_series_result_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_series_result_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_series_result_types" title="Link to this definition"></a></dt>
+<dd><p>Get the available time-series result types for inputs analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of time-series result types</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_shunts_df">
+<span class="sig-name descname"><span class="pre">get_shunts_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_shunts_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_shunts_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_snapshot_result_types">
+<span class="sig-name descname"><span class="pre">get_snapshot_result_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_snapshot_result_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_snapshot_result_types" title="Link to this definition"></a></dt>
+<dd><p>Get the available snapshot result types for inputs analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of snapshot result types</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_static_generators_df">
+<span class="sig-name descname"><span class="pre">get_static_generators_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.get_static_generators_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_static_generators_df" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.group_by">
+<span class="sig-name descname"><span class="pre">group_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.group_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.group_by" title="Link to this definition"></a></dt>
+<dd><p>Return a DataFrame grouped by the requested aggregation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>group</strong> – Aggregation name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Group DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.load_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.mdl">
+<span class="sig-name descname"><span class="pre">mdl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable" title="VeraGridEngine.Simulations.results_table.ResultsTable"><span class="pre">ResultsTable</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InputsAnalysis/inputs_analysis_driver.html#InputsAnalysisResults.mdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.mdl" title="Link to this definition"></a></dt>
+<dd><p>Plot the results
+:param result_type: type of results (string)
+:return: DataFrame of the results</p>
+<blockquote>
+<div><p>(or None if the result was not understood)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.municipality_names">
+<span class="sig-name descname"><span class="pre">municipality_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.municipality_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.opf_results">
+<span class="sig-name descname"><span class="pre">opf_results</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.opf_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.opf_time_series_results">
+<span class="sig-name descname"><span class="pre">opf_time_series_results</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.opf_time_series_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.region_names">
+<span class="sig-name descname"><span class="pre">region_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.region_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.shunt_data">
+<span class="sig-name descname"><span class="pre">shunt_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.shunt_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.static_gen_data">
+<span class="sig-name descname"><span class="pre">static_gen_data</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.static_gen_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.substation_names">
+<span class="sig-name descname"><span class="pre">substation_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.substation_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Inputs</span> <span class="pre">Analysis'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.voltage_level_names">
+<span class="sig-name descname"><span class="pre">voltage_level_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.voltage_level_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.zone_names">
+<span class="sig-name descname"><span class="pre">zone_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.zone_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.InputsAnalysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Simulations.InputsAnalysis" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Simulations.EMT.solvers.html" class="btn btn-neutral float-left" title="VeraGridEngine.Simulations.EMT.solvers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Simulations.InvestmentsEvaluation.html" class="btn btn-neutral float-right" title="VeraGridEngine.Simulations.InvestmentsEvaluation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

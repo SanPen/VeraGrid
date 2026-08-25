@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMT Floquet stability analysis &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">EMT Floquet stability analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/floquet_stability_veragrid.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="emt-floquet-stability-analysis">
+<h1>EMT Floquet stability analysis<a class="headerlink" href="#emt-floquet-stability-analysis" title="Link to this heading"></a></h1>
+<p>Floquet stability analysis is the small-signal stability method used when the steady state of an EMT simulation is <strong>periodic</strong> rather than constant. This is the normal situation for an AC network represented in the phase domain: voltages and currents in the <code class="docutils literal notranslate"><span class="pre">abc</span></code> frame are sinusoidal in steady state, so a conventional eigenvalue analysis around a constant operating point is not directly applicable.</p>
+<p>In VeraGrid, EMT Floquet stability analysis is implemented in the <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmt</span></code> simulation module. The driver captures one steady-state limit cycle from the EMT solver, builds a matrix-free monodromy operator for that cycle, and computes the dominant Floquet multipliers with Arnoldi-type eigensolvers.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use this analysis after the EMT model has reached a periodic steady state. The result describes the stability of that periodic operating trajectory, not the response to an arbitrary large disturbance.</p>
+</div>
+<section id="when-to-use-floquet-stability">
+<h2>When to use Floquet stability<a class="headerlink" href="#when-to-use-floquet-stability" title="Link to this heading"></a></h2>
+<p>Use EMT Floquet stability analysis when the system must be studied in the waveform or phase domain and the relevant operating point is periodic. Typical use cases include:</p>
+<ul class="simple">
+<li><p>phase-domain EMT models with sinusoidal <code class="docutils literal notranslate"><span class="pre">abc</span></code> steady-state quantities;</p></li>
+<li><p>converter-dominated systems where switching, controller, PLL, or filter interactions are represented in EMT form;</p></li>
+<li><p>unbalanced or three-phase models where the instantaneous waveforms should not be transformed into a constant synchronous-frame equilibrium;</p></li>
+<li><p>detection of poorly damped or unstable periodic modes around an EMT limit cycle.</p></li>
+</ul>
+<p>Do not use it as a substitute for time-domain transient simulation after faults, switching events, or protection actions. Floquet analysis is a <strong>local</strong> stability analysis around a periodic orbit.</p>
+</section>
+<section id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Link to this heading"></a></h2>
+<p>The VeraGrid EMT Floquet workflow is:</p>
+<ol class="arabic simple">
+<li><p>Run a power-flow calculation to initialise the network.</p></li>
+<li><p>Configure the EMT simulation options, especially the integration method and time step.</p></li>
+<li><p>Configure <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtOptions</span></code>, including the target period and number of modes.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtDriver</span></code>.</p></li>
+<li><p>Inspect the Floquet multipliers, damping ratios, frequencies, and participation factors.</p></li>
+</ol>
+<p>Internally, the driver performs the following steps:</p>
+<ol class="arabic simple">
+<li><p>Builds an <code class="docutils literal notranslate"><span class="pre">EmtProblemDae</span></code> from the grid and the available balanced or three-phase power-flow results.</p></li>
+<li><p>Runs the <code class="docutils literal notranslate"><span class="pre">StructuralVectorizedSolver</span></code> from <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">ss_assessment_time</span></code>.</p></li>
+<li><p>Extracts the last <code class="docutils literal notranslate"><span class="pre">target_period</span></code> of the simulated trajectory.</p></li>
+<li><p>Obtains a Floquet Jacobian evaluator from the EMT problem.</p></li>
+<li><p>Builds a monodromy operator, either from LU-cached DAE Jacobians or from an explicit stack of per-step transition matrices if available.</p></li>
+<li><p>Computes the selected Floquet multipliers.</p></li>
+<li><p>Maps the multipliers to continuous-time Floquet exponents and stores engineering metrics in <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtResults</span></code>.</p></li>
+</ol>
+</section>
+<section id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Link to this heading"></a></h2>
+<p>The Floquet-specific settings are defined in <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtOptions</span></code>.</p>
+<section id="main-settings">
+<h3>Main settings<a class="headerlink" href="#main-settings" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head text-right"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">k</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
+<td><p>Number of Floquet multipliers to compute and retain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target_period</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">0.02</span></code></p></td>
+<td><p>Period of the periodic orbit in seconds. For a 50 Hz grid, <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">0.02</span> <span class="pre">s</span></code>; for a 60 Hz grid, <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">1/60</span> <span class="pre">s</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target_frequency_hz</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Optional modal frequency to target. When provided in the standard Arnoldi path, VeraGrid keeps modes closest to the corresponding unit-circle multiplier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_krylov_dim</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">30</span></code></p></td>
+<td><p>Nominal Krylov subspace dimension budget for each Arnoldi or restarted Block-Arnoldi cycle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ss_assessment_time</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
+<td><p>EMT simulation time used before extracting the final limit cycle. This should be long enough for transients to decay.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Verbosity level.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_type</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">SmallSignalEmtBuildTypes.Arnoldi</span></code></p></td>
+<td><p>Solver strategy. Supported paths in the driver are <code class="docutils literal notranslate"><span class="pre">Arnoldi</span></code> and <code class="docutils literal notranslate"><span class="pre">HybridArnoldi</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="restart-and-robustness-options">
+<h3>Restart and robustness options<a class="headerlink" href="#restart-and-robustness-options" title="Link to this heading"></a></h3>
+<p>These options are mainly used by the hybrid Block-Arnoldi path.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head text-right"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_restarts</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p>Maximum number of explicit restart cycles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">restart_tol</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">1e-6</span></code></p></td>
+<td><p>Relative residual tolerance for accepting Ritz pairs as converged.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_refined_ritz</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Uses refined Ritz vectors to improve restart quality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">adaptive_restart</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Enables residual-stagnation detection and adaptive changes to block size or Krylov depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stagnation_improve_ratio</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">0.90</span></code></p></td>
+<td><p>Residual-improvement threshold used to detect stagnation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stagnation_patience</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
+<td><p>Number of restart cycles observed before declaring stagnation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deflation_tol</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">1e-12</span></code></p></td>
+<td><p>Singular-value threshold used to drop linearly dependent Arnoldi block vectors.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="performance-options">
+<h3>Performance options<a class="headerlink" href="#performance-options" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head text-right"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">prefer_ak_operator</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Prefer the explicit per-step state-transition stack <code class="docutils literal notranslate"><span class="pre">A_k</span></code> when the EMT backend exposes it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">use_numba_kernels</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Use Numba-accelerated block propagation and orthogonalisation kernels when available.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_block_size</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Lower block-size limit for restarted Block-Arnoldi. If not set, the driver derives one from <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_block_size</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Upper block-size limit for restarted Block-Arnoldi.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_krylov_dim_cap</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Upper cap for adaptive Krylov-dimension expansion.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The ratio <code class="docutils literal notranslate"><span class="pre">target_period</span> <span class="pre">/</span> <span class="pre">time_step</span></code> should represent the intended number of EMT integration steps per period. For reproducibility, choose a time step that divides the period cleanly, for example <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">/</span> <span class="pre">200</span></code> or <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">/</span> <span class="pre">400</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p>The main output is a <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtResults</span></code> object. The result object reports both discrete-time Floquet quantities and continuous-time engineering quantities.</p>
+<section id="modes-table">
+<h3>Modes table<a class="headerlink" href="#modes-table" title="Link to this heading"></a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">ResultTypes.Modes</span></code>, VeraGrid reports:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Mu</span> <span class="pre">Re</span></code></p></td>
+<td><p>Real part of the Floquet multiplier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Mu</span> <span class="pre">Im</span></code></p></td>
+<td><p>Imaginary part of the Floquet multiplier.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">|Mu|</span></code></p></td>
+<td><p>Multiplier magnitude. This is the direct unit-circle stability indicator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Damp</span> <span class="pre">Ratio</span></code></p></td>
+<td><p>Period-averaged damping ratio computed from the Floquet exponent.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Freq</span> <span class="pre">[Hz]</span></code></p></td>
+<td><p>Modal frequency in Hz, computed from the imaginary part of the Floquet exponent.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="stability-interpretation">
+<h3>Stability interpretation<a class="headerlink" href="#stability-interpretation" title="Link to this heading"></a></h3>
+<p>Let <code class="docutils literal notranslate"><span class="pre">mu_i</span></code> be one Floquet multiplier.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Interpretation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">abs(mu_i)</span> <span class="pre">&lt;</span> <span class="pre">1</span></code> for all modes</p></td>
+<td><p>The periodic orbit is locally asymptotically stable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">abs(mu_i)</span> <span class="pre">≈</span> <span class="pre">1</span></code></p></td>
+<td><p>The mode is marginal or close to the numerical stability boundary. Inspect discretisation, spectral gaps, and physical interpretation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">abs(mu_i)</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> for any mode</p></td>
+<td><p>The periodic orbit is locally unstable.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The result method <code class="docutils literal notranslate"><span class="pre">report_stability()</span></code> reports the spectral radius,</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>rho = max(abs(multipliers))
+</pre></div>
+</div>
+<p>and classifies the case as stable if the spectral radius is below the driver tolerance used by the method.</p>
+</section>
+<section id="participation-factors">
+<h3>Participation factors<a class="headerlink" href="#participation-factors" title="Link to this heading"></a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">ResultTypes.ParticipationFactors</span></code>, VeraGrid reports a matrix indexed by state-variable names and mode labels. Each column is normalised so that the participations for one mode sum to one.</p>
+<p>Participation factors are useful for identifying which EMT states contribute most to a critical Floquet mode. They should be interpreted as period-averaged modal indicators, not as instantaneous state sensitivities.</p>
+</section>
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtResults</span></code> registers the following result properties.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">multipliers</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Floquet multipliers, i.e. eigenvalues of the monodromy map.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">right_vecs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Right eigenvectors or Ritz vectors associated with the retained multipliers.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">left_vecs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Left or dual eigenvectors used for participation-factor calculations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">period</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Period <code class="docutils literal notranslate"><span class="pre">T</span></code> of the analysed limit cycle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Continuous-time Floquet exponents, computed as <code class="docutils literal notranslate"><span class="pre">log(multipliers)</span> <span class="pre">/</span> <span class="pre">period</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">damping_ratios</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Period-averaged damping ratios.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conjugate_frequencies</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Modal frequencies in Hz.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">participation_factors</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Normalised state participation factors.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stat_vars_array</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>State-variable names used as participation-factor row labels.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>The following example shows the typical scripting pattern. The exact <code class="docutils literal notranslate"><span class="pre">EmtOptions</span></code> fields should follow the EMT simulation configuration used in the project; the Floquet-specific part is the <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtOptions</span></code> and <code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtDriver</span></code> configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PowerFlowDriver</span><span class="p">,</span>
+    <span class="n">PowerFlowOptions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.emt_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_driver</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SmallSignalStabilityEmtDriver</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SmallSignalStabilityEmtOptions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicIntegrationMethod</span><span class="p">,</span> <span class="n">SmallSignalEmtBuildTypes</span>
+
+<span class="c1"># 1. Load grid</span>
+<span class="c1"># grid = gce.open_file(&quot;my_grid.veragrid&quot;)</span>
+
+<span class="c1"># 2. Run power flow to initialise the EMT problem</span>
+<span class="n">pf_options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pf_driver</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+<span class="n">pf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">pf_results</span> <span class="o">=</span> <span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="c1"># 3. Configure EMT time-domain integration</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">)</span>
+<span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">fn</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">period</span> <span class="o">/</span> <span class="mf">200.0</span>
+
+<span class="n">emt_options</span> <span class="o">=</span> <span class="n">EmtOptions</span><span class="p">()</span>
+<span class="n">emt_options</span><span class="o">.</span><span class="n">time_step</span> <span class="o">=</span> <span class="n">h</span>
+<span class="n">emt_options</span><span class="o">.</span><span class="n">integration_method</span> <span class="o">=</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span>
+
+<span class="c1"># 4. Configure Floquet analysis</span>
+<span class="n">sss_options</span> <span class="o">=</span> <span class="n">SmallSignalStabilityEmtOptions</span><span class="p">(</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">target_period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span>
+    <span class="n">ss_assessment_time</span><span class="o">=</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">period</span><span class="p">,</span>
+    <span class="n">max_krylov_dim</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">build_type</span><span class="o">=</span><span class="n">SmallSignalEmtBuildTypes</span><span class="o">.</span><span class="n">Arnoldi</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 5. Run EMT Floquet stability analysis</span>
+<span class="n">floquet_driver</span> <span class="o">=</span> <span class="n">SmallSignalStabilityEmtDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">emt_options</span><span class="o">=</span><span class="n">emt_options</span><span class="p">,</span>
+    <span class="n">sss_options</span><span class="o">=</span><span class="n">sss_options</span><span class="p">,</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">floquet_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">floquet_driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">report_stability</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">multipliers</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">damping_ratios</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="hybrid-block-arnoldi-configuration">
+<h3>Hybrid Block-Arnoldi configuration<a class="headerlink" href="#hybrid-block-arnoldi-configuration" title="Link to this heading"></a></h3>
+<p>For larger EMT models, use the hybrid Block-Arnoldi path.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sss_options</span> <span class="o">=</span> <span class="n">SmallSignalStabilityEmtOptions</span><span class="p">(</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">target_period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span>
+    <span class="n">ss_assessment_time</span><span class="o">=</span><span class="mf">20.0</span> <span class="o">*</span> <span class="n">period</span><span class="p">,</span>
+    <span class="n">max_krylov_dim</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+    <span class="n">build_type</span><span class="o">=</span><span class="n">SmallSignalEmtBuildTypes</span><span class="o">.</span><span class="n">HybridArnoldi</span><span class="p">,</span>
+    <span class="n">max_restarts</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">restart_tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">use_refined_ritz</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">adaptive_restart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">prefer_ak_operator</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_numba_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="targeting-a-frequency-band">
+<h3>Targeting a frequency band<a class="headerlink" href="#targeting-a-frequency-band" title="Link to this heading"></a></h3>
+<p>The standard Arnoldi path can target modes close to a specific oscillation frequency.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sss_options</span> <span class="o">=</span> <span class="n">SmallSignalStabilityEmtOptions</span><span class="p">(</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">target_period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span>
+    <span class="n">target_frequency_hz</span><span class="o">=</span><span class="mf">120.0</span><span class="p">,</span>
+    <span class="n">build_type</span><span class="o">=</span><span class="n">SmallSignalEmtBuildTypes</span><span class="o">.</span><span class="n">Arnoldi</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The driver maps the requested frequency <code class="docutils literal notranslate"><span class="pre">f_target</span></code> to the unit-circle point</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sigma = exp(j 2 pi f_target T)
+</pre></div>
+</div>
+<p>and selects the multipliers closest to <code class="docutils literal notranslate"><span class="pre">sigma</span></code> and its conjugate.</p>
+</section>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<section id="periodic-emt-steady-state">
+<h3>Periodic EMT steady state<a class="headerlink" href="#periodic-emt-steady-state" title="Link to this heading"></a></h3>
+<p>A conventional small-signal analysis assumes a constant equilibrium. In an EMT simulation expressed in the <code class="docutils literal notranslate"><span class="pre">abc</span></code> frame, the steady-state voltages and currents are generally periodic. A perturbation around the periodic trajectory is therefore governed by a linear periodic system,</p>
+<div class="math">
+<p><span class="math">\dot{\delta x}(t) = A(t) \delta x(t)</span></p>
+</div><p>with</p>
+<div class="math">
+<p><span class="math">A(t + T) = A(t)</span></p>
+</div><p>where <span class="math">T</span> is the period of the limit cycle.</p>
+</section>
+<section id="fundamental-matrix-and-monodromy-matrix">
+<h3>Fundamental matrix and monodromy matrix<a class="headerlink" href="#fundamental-matrix-and-monodromy-matrix" title="Link to this heading"></a></h3>
+<p>The fundamental matrix <span class="math">M(t)</span> maps an initial perturbation to its value at time <span class="math">t</span>:</p>
+<div class="math">
+<p><span class="math">\dot{M}(t) = A(t) M(t), \qquad M(0) = I</span></p>
+</div><div class="math">
+<p><span class="math">\delta x(t) = M(t) \delta x(0)</span></p>
+</div><p>The monodromy matrix is the state-transition matrix over one complete period:</p>
+<div class="math">
+<p><span class="math">C_M = M(T)</span></p>
+</div><p>The eigenvalues of <span class="math">C_M</span> are the Floquet multipliers:</p>
+<div class="math">
+<p><span class="math">C_M r_i = \mu_i r_i</span></p>
+</div><p>These multipliers determine the local stability of the periodic orbit.</p>
+</section>
+<section id="stability-criterion">
+<h3>Stability criterion<a class="headerlink" href="#stability-criterion" title="Link to this heading"></a></h3>
+<p>The unit circle replaces the left-half <span class="math">s</span> plane used in continuous-time eigenvalue analysis:</p>
+<div class="math">
+<p><span class="math">\rho(C_M) = \max_i |\mu_i|</span></p>
+</div><p>The periodic orbit is locally asymptotically stable when all retained physical multipliers lie inside the unit circle. If a multiplier lies outside the unit circle, the corresponding perturbation grows from one period to the next.</p>
+</section>
+<section id="from-emt-dae-to-periodic-state-matrix">
+<h3>From EMT DAE to periodic state matrix<a class="headerlink" href="#from-emt-dae-to-periodic-state-matrix" title="Link to this heading"></a></h3>
+<p>An EMT model is commonly represented as a differential-algebraic system,</p>
+<div class="math">
+<p><span class="math">\dot{x} = f(x, y, t)</span></p>
+</div><div class="math">
+<p><span class="math">0 = g(x, y, t)</span></p>
+</div><p>After linearisation and algebraic-variable elimination, the reduced state matrix is</p>
+<div class="math">
+<p><span class="math">A(t) = f_x(t) - f_y(t) g_y(t)^{-1} g_x(t)</span></p>
+</div><p>where the Jacobians are evaluated along the periodic EMT trajectory. VeraGrid avoids explicitly forming this reduced matrix for each operation whenever possible; instead, it applies the equivalent one-period transition map through the EMT linear solver infrastructure.</p>
+</section>
+<section id="floquet-exponents-damping-and-frequency">
+<h3>Floquet exponents, damping, and frequency<a class="headerlink" href="#floquet-exponents-damping-and-frequency" title="Link to this heading"></a></h3>
+<p>Floquet multipliers are discrete-time quantities. VeraGrid maps them to continuous-time Floquet exponents with</p>
+<div class="math">
+<p><span class="math">\lambda_i = \frac{1}{T} \log(\mu_i)</span></p>
+</div><p>For</p>
+<div class="math">
+<p><span class="math">\lambda_i = \alpha_i + j \beta_i</span></p>
+</div><p>VeraGrid reports</p>
+<div class="math">
+<p><span class="math">\zeta_i = -\frac{\alpha_i}{\sqrt{\alpha_i^2 + \beta_i^2}}</span></p>
+</div><p>and</p>
+<div class="math">
+<p><span class="math">f_i = \frac{|\beta_i|}{2\pi}</span></p>
+</div><p>The complex logarithm is multi-valued, so the reported frequency corresponds to the selected logarithm branch. Interpret high-frequency or aliased modes with the EMT time step and the target period in mind.</p>
+</section>
+<section id="id1">
+<h3>Participation factors<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>For a multiplier <span class="math">mu_i</span>, let <span class="math">r_i</span> and <span class="math">l_i</span> be the right and left eigenvectors of the monodromy matrix. VeraGrid computes participation factors from the bi-orthonormalised left/right vectors and normalises each mode column:</p>
+<div class="math">
+<p><span class="math">p_{ki} \propto |r_{ki} l_{ki}|</span></p>
+</div><p>The result is a relative contribution of state <span class="math">k</span> to Floquet mode <span class="math">i</span>. Because the underlying system is periodic, these factors describe modal participation over the selected reference period rather than an instantaneous modal decomposition at every time sample.</p>
+</section>
+</section>
+<section id="implementation-notes">
+<h2>Implementation notes<a class="headerlink" href="#implementation-notes" title="Link to this heading"></a></h2>
+<section id="matrix-free-monodromy-operators">
+<h3>Matrix-free monodromy operators<a class="headerlink" href="#matrix-free-monodromy-operators" title="Link to this heading"></a></h3>
+<p>VeraGrid represents the monodromy map as a <code class="docutils literal notranslate"><span class="pre">scipy.sparse.linalg.LinearOperator</span></code>. This is important because the full monodromy matrix is generally dense and expensive to store for large EMT systems.</p>
+<p>The implementation includes three operator paths:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EmtFloquetOperator</span></code></p></td>
+<td><p>Standard vector-by-vector monodromy action with LU factorisation caching.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BlockEmtFloquetOperator</span></code></p></td>
+<td><p>Block matrix-by-matrix monodromy action for Block-Arnoldi and Randomized Numerical Linear Algebra workflows.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AkStackBlockEmtFloquetOperator</span></code></p></td>
+<td><p>Explicit product of per-step state-transition matrices <code class="docutils literal notranslate"><span class="pre">A_k</span></code> when the EMT backend exposes the transition stack.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For the LU-cached paths, VeraGrid assembles or evaluates the augmented DAE Jacobian along the captured trajectory and stores sparse LU factorisations. Applying the operator to a perturbation then becomes a sequence of sparse triangular solves over one period.</p>
+</section>
+<section id="standard-arnoldi-path">
+<h3>Standard Arnoldi path<a class="headerlink" href="#standard-arnoldi-path" title="Link to this heading"></a></h3>
+<p>The standard <code class="docutils literal notranslate"><span class="pre">Arnoldi</span></code> build type uses:</p>
+<ul class="simple">
+<li><p>a dense fallback when the number of states is small;</p></li>
+<li><p>ARPACK through <code class="docutils literal notranslate"><span class="pre">scipy.sparse.linalg.eigs</span></code> when the system is larger;</p></li>
+<li><p>sorting by multiplier magnitude when no target frequency is selected;</p></li>
+<li><p>optional selection of multipliers closest to a requested target-frequency point on the unit circle.</p></li>
+</ul>
+</section>
+<section id="hybrid-block-arnoldi-path">
+<h3>Hybrid Block-Arnoldi path<a class="headerlink" href="#hybrid-block-arnoldi-path" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">HybridArnoldi</span></code> build type is intended for larger EMT cases. It uses:</p>
+<ul class="simple">
+<li><p>block operator applications;</p></li>
+<li><p>Block Modified Gram-Schmidt orthogonalisation;</p></li>
+<li><p>rank-revealing SVD deflation;</p></li>
+<li><p>refined Ritz vectors when requested;</p></li>
+<li><p>restarts seeded from previously selected Ritz or refined vectors;</p></li>
+<li><p>adaptive block-size or Krylov-depth changes when residual stagnation is detected.</p></li>
+</ul>
+</section>
+<section id="numba-kernels">
+<h3>Numba kernels<a class="headerlink" href="#numba-kernels" title="Link to this heading"></a></h3>
+<p>When available, VeraGrid can use Numba kernels for two performance-sensitive operations:</p>
+<ul class="simple">
+<li><p>block Modified Gram-Schmidt with optional re-orthogonalisation;</p></li>
+<li><p>block propagation through an explicit <code class="docutils literal notranslate"><span class="pre">A_k</span></code> transition stack.</p></li>
+</ul>
+<p>The code falls back to NumPy/SciPy paths when Numba is not available.</p>
+</section>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading"></a></h2>
+<section id="choose-the-period-carefully">
+<h3>Choose the period carefully<a class="headerlink" href="#choose-the-period-carefully" title="Link to this heading"></a></h3>
+<p>For a fundamental-frequency periodic orbit,</p>
+<div class="math">
+<p><span class="math">T = 1 / f_base</span></p>
+</div><p>For a 50 Hz system, <span class="math">T = 0.02 s</span>. For a 60 Hz system, <span class="math">T = 0.016666... s</span>.</p>
+<p>If the EMT model includes a different dominant periodicity, such as a controller or switching pattern that requires several fundamental cycles to repeat, set <code class="docutils literal notranslate"><span class="pre">target_period</span></code> to the full repeat period of the trajectory being analysed.</p>
+</section>
+<section id="check-that-the-captured-trajectory-is-periodic">
+<h3>Check that the captured trajectory is periodic<a class="headerlink" href="#check-that-the-captured-trajectory-is-periodic" title="Link to this heading"></a></h3>
+<p>The final period extracted by the driver should represent a settled limit cycle. If the waveform has not settled, the resulting multipliers describe the linearisation of a non-periodic segment and should not be interpreted as Floquet stability indicators.</p>
+<p>Increase <code class="docutils literal notranslate"><span class="pre">ss_assessment_time</span></code> when:</p>
+<ul class="simple">
+<li><p>the EMT transient has not decayed;</p></li>
+<li><p>the system has slow controls;</p></li>
+<li><p>the final period depends noticeably on the simulation start time;</p></li>
+<li><p>the largest multipliers change significantly when the assessment time is increased.</p></li>
+</ul>
+</section>
+<section id="interpret-near-unit-multipliers-with-tolerance">
+<h3>Interpret near-unit multipliers with tolerance<a class="headerlink" href="#interpret-near-unit-multipliers-with-tolerance" title="Link to this heading"></a></h3>
+<p>Multipliers very close to the unit circle can be physical, numerical, or both. Before concluding that a system is marginally stable, check:</p>
+<ul class="simple">
+<li><p>EMT time-step sensitivity;</p></li>
+<li><p>period selection;</p></li>
+<li><p>Arnoldi residuals;</p></li>
+<li><p>spectral gap isolation;</p></li>
+<li><p>whether the mode is a physical symmetry or a modelling artefact.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtResults.validate_spectral_gaps(h_step)</span></code> can be used to inspect whether the computed multipliers are sufficiently isolated relative to the integration-step scale.</p>
+</section>
+<section id="floquet-analysis-versus-era-matrix-pencil">
+<h3>Floquet analysis versus ERA Matrix Pencil<a class="headerlink" href="#floquet-analysis-versus-era-matrix-pencil" title="Link to this heading"></a></h3>
+<p>VeraGrid also includes an ERA/Matrix Pencil EMT modal-extraction workflow. The two tools answer related but different questions:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Input</p></th>
+<th class="head"><p>Main output</p></th>
+<th class="head"><p>Interpretation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>EMT Floquet stability</p></td>
+<td><p>Periodic EMT trajectory and EMT Jacobian information</p></td>
+<td><p>Floquet multipliers of the one-period transition map</p></td>
+<td><p>Model-based local stability of a periodic orbit.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ERA Matrix Pencil EMT</p></td>
+<td><p>Ringdown time-series data</p></td>
+<td><p>Identified continuous-time poles and residues</p></td>
+<td><p>Signal-based modal identification from simulated observations.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Use Floquet analysis when the objective is stability of the EMT periodic orbit. Use ERA/Matrix Pencil when the objective is modal extraction from measured or simulated ringdown signals.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>G. Floquet, “Sur les équations différentielles linéaires à coefficients périodiques,” 1883.</p></li>
+<li><p>V. A. Yakubovich and V. M. Starzhinskii, <em>Linear Differential Equations with Periodic Coefficients</em>, 1975.</p></li>
+<li><p>H. Sandberg and M. Molinas, “Floquet theory for stability analysis of periodic power system models,” <em>IEEE Transactions on Power Systems</em>, 2013.</p></li>
+<li><p>Y. Saad, <em>Numerical Methods for Large Eigenvalue Problems</em>, 2nd edition, SIAM, 2011.</p></li>
+<li><p>F. Milano, <em>Power System Modelling and Scripting</em>, Springer, 2010.</p></li>
+<li><p>N. Watson and J. Arrillaga, <em>Power Systems Electromagnetic Transients Simulation</em>, 2nd edition, IET, 2019.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

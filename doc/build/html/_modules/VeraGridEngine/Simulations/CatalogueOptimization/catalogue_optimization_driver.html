@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">SimulationTypes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.options_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InvestmentsEvaluationResults</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.CatalogueOptimization.nsga3_integer</span><span class="w"> </span><span class="kn">import</span> <span class="n">NSGA_3_integer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CatalogueOptimizationProblem</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="CatalogueOptimizationOptions">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver.CatalogueOptimizationOptions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CatalogueOptimizationOptions</span><span class="p">(</span><span class="n">OptionsTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Options for the catalogue optimization driver.</span>
+
+<span class="sd">    Mirrors the relevant subset of `InvestmentsEvaluationOptions`: only the controls that the GUI</span>
+<span class="sd">    currently exposes for catalogue optimization (max evaluations + power flow options).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;max_eval&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;pf_options&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">SimulationOptionsDevice</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">max_eval</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">pf_options</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PowerFlowOptions</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param max_eval: maximum number of black-box objective evaluations the optimizer may perform.</span>
+<span class="sd">        :param pf_options: power flow options used by the inner power-flow evaluations. When `None`</span>
+<span class="sd">            a default `PowerFlowOptions` is created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">OptionsTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;CatalogueOptimizationOptions&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Maximum number of objective-function evaluations (NSGA-3 termination criterion).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_eval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_eval</span><span class="p">)</span>
+
+        <span class="c1"># Power flow options reused by the inner PF runs. We instantiate a default one if the caller</span>
+        <span class="c1"># did not pass anything, so the driver never has to handle a `None` afterwards.</span>
+        <span class="k">if</span> <span class="n">pf_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pf_options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pf_options</span> <span class="o">=</span> <span class="n">pf_options</span></div>
+
+
+
+<div class="viewcode-block" id="CatalogueOptimizationDriver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver.CatalogueOptimizationDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CatalogueOptimizationDriver</span><span class="p">(</span><span class="n">DriverTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Driver that optimises the per-branch template selection from the grid catalogue using NSGA-3.</span>
+
+<span class="sd">    The driver is a thin orchestrator: the heavy lifting (apply / evaluate / revert) lives in the</span>
+<span class="sd">    `CatalogueOptimizationProblem`, while the optimization loop is delegated to `NSGA_3`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;options&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;problem&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Catalogue optimization&#39;</span>
+    <span class="n">tpe</span> <span class="o">=</span> <span class="n">SimulationTypes</span><span class="o">.</span><span class="n">CatalogueOptimization_run</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">options</span><span class="p">:</span> <span class="n">CatalogueOptimizationOptions</span><span class="p">,</span>
+                 <span class="n">problem</span><span class="p">:</span> <span class="n">CatalogueOptimizationProblem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param grid: MultiCircuit being optimized.</span>
+<span class="sd">        :param options: catalogue optimization options.</span>
+<span class="sd">        :param problem: pre-built `CatalogueOptimizationProblem`. Building the problem is left to the</span>
+<span class="sd">            caller because it can fail (no compatible templates), and we want that failure handled</span>
+<span class="sd">            in the GUI layer with a user-facing dialog rather than inside the driver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="c1"># Store options and problem.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">:</span> <span class="n">CatalogueOptimizationOptions</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">:</span> <span class="n">CatalogueOptimizationProblem</span> <span class="o">=</span> <span class="n">problem</span>
+
+        <span class="c1"># Inherit the warnings emitted while building the problem (unsupported branches, dropped</span>
+        <span class="c1"># degenerate slots, ...) so they reach the user via the driver&#39;s logger.</span>
+        <span class="k">if</span> <span class="n">problem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">+=</span> <span class="n">problem</span><span class="o">.</span><span class="n">logger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Build the results container with the proper shapes.</span>
+        <span class="c1"># `+1` slot accommodates the explicit baseline evaluation that we run before the optimization.</span>
+        <span class="k">if</span> <span class="n">problem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span> <span class="n">InvestmentsEvaluationResults</span> <span class="o">=</span> <span class="n">InvestmentsEvaluationResults</span><span class="p">(</span>
+                <span class="n">f_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_objectives_names</span><span class="p">(),</span>
+                <span class="n">x_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_vars_names</span><span class="p">(),</span>
+                <span class="n">plot_x_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">plot_x_idx</span><span class="p">,</span>
+                <span class="n">plot_y_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">plot_y_idx</span><span class="p">,</span>
+                <span class="n">max_eval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_eval</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">InvestmentsEvaluationResults</span><span class="p">(</span>
+                <span class="n">f_names</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="n">x_names</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="n">plot_x_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">plot_y_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">max_eval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_eval</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="CatalogueOptimizationDriver.get_steps">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver.CatalogueOptimizationDriver.get_steps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of evaluation indices used by the GUI to display progress.</span>
+
+<span class="sd">        :return: list of step labels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_index</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CatalogueOptimizationDriver.objective_function">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver.CatalogueOptimizationDriver.objective_function">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">record_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the catalogue problem at `x` and (optionally) record the result.</span>
+
+<span class="sd">        :param x: integer decision vector with `x[i]` indexing the template within the i-th pool.</span>
+<span class="sd">        :param record_results: when True the result is appended to the results container.</span>
+<span class="sd">        :return: six-objective vector returned by `CatalogueOptimizationProblem.objective_function`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Delegate evaluation to the problem (apply templates, run PF, revert).</span>
+        <span class="n">objectives</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">objective_function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">record_results</span><span class="p">:</span>
+            <span class="c1"># Store both the decision vector and the objective vector for later inspection.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x_vec</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">f_vec</span><span class="o">=</span><span class="n">objectives</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Push a progress update to the GUI based on the running evaluation counter.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_progress2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">current_evaluation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">max_eval</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">objectives</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_nsga3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the NSGA-3 optimization loop on the catalogue problem.</span>
+
+<span class="sd">        The population size is sized to the number of decision slots, and the number of Das-Dennis</span>
+<span class="sd">        partitions is grown to use as many reference directions as the population allows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s2">&quot;Evaluating catalogue templates with NSGA-3...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Decision-space dimensionality (number of optimisable branch slots).</span>
+        <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">n_vars</span><span class="p">()</span>
+
+        <span class="c1"># Number of objectives is fixed by the problem (no need to wait for the baseline run).</span>
+        <span class="n">n_obj</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">n_objectives</span><span class="p">()</span>
+
+        <span class="c1"># Minimum Das-Dennis reference set, which is the floor for pop_size:</span>
+        <span class="c1"># ref_dirs(n_partitions=1) = C(1 + n_obj - 1, n_obj - 1) = n_obj.</span>
+        <span class="c1"># NSGA-3 emits a warning when pop_size &lt; ref_dirs, so we lift the population to at least</span>
+        <span class="c1"># `n_obj` even when the user only selected a handful of branches.</span>
+        <span class="n">min_ref_dirs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">n_obj</span>
+
+        <span class="c1"># Population size: proportional to dimensionality, but never below the reference-set floor.</span>
+        <span class="n">pop_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dim</span><span class="p">)),</span> <span class="n">min_ref_dirs</span><span class="p">)</span>
+
+        <span class="c1"># Baseline evaluation at x = zero index for every slot. Two purposes:</span>
+        <span class="c1">#  - It provides a reference point in the results matrix.</span>
+        <span class="c1">#  - It makes sure the snapshot/restore logic is exercised at least once before NSGA-3.</span>
+        <span class="n">baseline_x</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objective_function</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">baseline_x</span><span class="p">)</span>
+
+        <span class="c1"># Find the largest n_partitions such that the Das-Dennis reference set still fits in pop_size.</span>
+        <span class="c1"># ref_dirs cardinality = C(n_partitions + n_obj - 1, n_obj - 1).</span>
+        <span class="n">n_partitions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">comb</span><span class="p">(</span><span class="n">n_partitions</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">n_obj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_obj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">pop_size</span><span class="p">:</span>
+            <span class="n">n_partitions</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Run the integer-aware NSGA-3. The integer bounds (lb / ub) come straight from the</span>
+        <span class="c1"># problem. We use `NSGA_3_integer` (PolynomialMutation) instead of the investments</span>
+        <span class="c1"># `NSGA_3` (BitflipMutation) because our slot indices live in `[0, len(pool) - 1]` rather</span>
+        <span class="c1"># than `{0, 1}`.</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">obj_values</span> <span class="o">=</span> <span class="n">NSGA_3_integer</span><span class="p">(</span>
+            <span class="n">obj_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">objective_function</span><span class="p">,</span>
+            <span class="n">n_partitions</span><span class="o">=</span><span class="n">n_partitions</span><span class="p">,</span>
+            <span class="n">n_var</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
+            <span class="n">lb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span>
+            <span class="n">ub</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">x_max</span><span class="p">,</span>
+            <span class="n">n_obj</span><span class="o">=</span><span class="n">n_obj</span><span class="p">,</span>
+            <span class="n">max_evals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_eval</span><span class="p">,</span>
+            <span class="n">pop_size</span><span class="o">=</span><span class="n">pop_size</span><span class="p">,</span>
+            <span class="n">crossover_prob</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+            <span class="n">mutation_probability</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">eta_crossover</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+            <span class="n">eta_mutation</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Record the best Pareto member (row 0) as the &quot;selected&quot; combination for the GUI.</span>
+        <span class="c1"># `X` is shape (n_pareto, n_var) from pymoo, so we want the full decision vector of the</span>
+        <span class="c1"># first Pareto member, not the first decision variable across all members.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">set_best_combination</span><span class="p">(</span><span class="n">combination</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_best_combination</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a logger entry per branch describing which catalogue template was selected as best.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># `f_best` holds the integer indices for the best Pareto member.</span>
+        <span class="n">best_x</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">f_best</span>
+
+        <span class="c1"># Walk through every decision slot and report the chosen template.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">n_vars</span><span class="p">()):</span>
+
+            <span class="n">slot_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">best_x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">slot_idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">slot_idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">slot_idx</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">pools</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">slot_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">pools</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">chosen_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">pools</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">slot_idx</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Best catalogue template&quot;</span><span class="p">,</span>
+                                 <span class="n">device</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                 <span class="n">device_property</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">chosen_template</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="n">chosen_template</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CatalogueOptimizationDriver.run">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver.CatalogueOptimizationDriver.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Entry point invoked by the session thread; runs NSGA-3 and finalises the results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Solver&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;NSGA-3&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Max evaluations&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">max_eval</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Decision slots&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">n_vars</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: when time-series support is added, branch on a method enum here.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_nsga3</span><span class="p">()</span>
+
+        <span class="c1"># Compress the recorded data into the final form expected by the GUI viewer.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s2">&quot;Finalizing the results object...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+        <span class="c1"># Emit a per-slot summary of the chosen templates for traceability.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_best_combination</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_done</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1044 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Branches.hvdc_line &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Branches.hvdc_line</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Branches.hvdc_line</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">BuildStatus</span><span class="p">,</span> <span class="n">SubObjectType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.branch_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">HvdcControlType</span><span class="p">,</span> <span class="n">PrpCat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProfileBool</span><span class="p">,</span> <span class="n">ProfileFloat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_at</span><span class="p">,</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line_locations</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineLocations</span>
+
+
+<div class="viewcode-block" id="firing_angles_to_reactive_limits">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.firing_angles_to_reactive_limits">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">firing_angles_to_reactive_limits</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alphamin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alphamax</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert firing angles to reactive power limits</span>
+<span class="sd">    :param P: Active power (MW)</span>
+<span class="sd">    :param alphamin: minimum firing angle (rad)</span>
+<span class="sd">    :param alphamax: Maximum firing angle (rad)</span>
+<span class="sd">    :return: Qmin (MVAr), Qmax (MVAr)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># minimum reactive power calculated under assumption of no overlap angle</span>
+    <span class="c1"># i.e. power factor equals to tan(alpha)</span>
+    <span class="n">Qmin</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">alphamin</span><span class="p">)</span>
+
+    <span class="c1"># maximum reactive power calculated when overlap angle reaches max</span>
+    <span class="c1"># value (60 deg). I.e.</span>
+    <span class="c1">#      cos(phi) = 1/2*(cos(alpha)+cos(delta))</span>
+    <span class="c1">#      Q = P*tan(phi)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alphamax</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">60</span><span class="p">))))</span>
+    <span class="n">Qmax</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="c1"># if Qmin &lt; 0:</span>
+    <span class="c1">#     Qmin = -Qmin</span>
+    <span class="c1">#</span>
+    <span class="c1"># if Qmax &lt; 0:</span>
+    <span class="c1">#     Qmax = -Qmax</span>
+
+    <span class="k">return</span> <span class="n">Qmin</span><span class="p">,</span> <span class="n">Qmax</span></div>
+
+
+
+<div class="viewcode-block" id="getFromAndToPowerAt">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.getFromAndToPowerAt">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getFromAndToPowerAt</span><span class="p">(</span><span class="n">Pset</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">theta_f</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">theta_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">Vnf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vnt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">v_set_f</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">v_set_t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">r1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">angle_droop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">free</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">in_pu</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the power and losses</span>
+<span class="sd">    :param Pset: set power in MW</span>
+<span class="sd">    :param theta_f: angle from (rad)</span>
+<span class="sd">    :param theta_t: angle to (rad)</span>
+<span class="sd">    :param Vnf: nominal voltage from (kV)</span>
+<span class="sd">    :param Vnt: nominal voltage to (kV)</span>
+<span class="sd">    :param v_set_f: control voltage from (p.u.)</span>
+<span class="sd">    :param v_set_t: control voltage to (p.u.)</span>
+<span class="sd">    :param Sbase: base power MVA</span>
+<span class="sd">    :param r1: line resistance (ohm)</span>
+<span class="sd">    :param angle_droop: angle droop control (MW/deg)</span>
+<span class="sd">    :param rate: Rate (MW)</span>
+<span class="sd">    :param free: is free to use the angle droop?</span>
+<span class="sd">    :param in_pu: return power in per unit? otherwise the power comes in MW</span>
+<span class="sd">    :return: Pf, Pt, losses (in MW or p.u. depending on `in_pu`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">free</span><span class="p">:</span>
+
+        <span class="c1"># simply copy the set power value</span>
+        <span class="n">Pcalc</span> <span class="o">=</span> <span class="n">Pset</span>
+
+    <span class="k">elif</span> <span class="n">free</span><span class="p">:</span>
+
+        <span class="c1"># compute the angular difference in degrees (0.017453292f -&gt; pi/180)</span>
+        <span class="c1"># theta_f and theta_t are in rad</span>
+        <span class="c1"># for the control not to be oscillatory, the angle difference must be the opposite (to - from)</span>
+        <span class="n">dtheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">theta_t</span> <span class="o">-</span> <span class="n">theta_f</span><span class="p">)</span>
+
+        <span class="c1"># compute the desired control power flow</span>
+        <span class="n">Pcalc</span> <span class="o">=</span> <span class="n">Pset</span> <span class="o">+</span> <span class="n">angle_droop</span> <span class="o">*</span> <span class="n">dtheta</span>  <span class="c1"># this is in MW</span>
+
+        <span class="c1"># rate truncation</span>
+        <span class="k">if</span> <span class="n">Pcalc</span> <span class="o">&gt;</span> <span class="n">rate</span><span class="p">:</span>
+            <span class="n">Pcalc</span> <span class="o">=</span> <span class="n">rate</span>
+
+        <span class="k">elif</span> <span class="n">Pcalc</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">rate</span><span class="p">:</span>
+            <span class="n">Pcalc</span> <span class="o">=</span> <span class="o">-</span><span class="n">rate</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Pcalc</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># depending on the value of Pcalc, assign the from and to values</span>
+    <span class="k">if</span> <span class="n">Pcalc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># from -&gt;  to</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">Pcalc</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vnf</span> <span class="o">*</span> <span class="n">v_set_f</span><span class="p">)</span>  <span class="c1"># current in kA</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">r1</span> <span class="o">*</span> <span class="n">I</span> <span class="o">*</span> <span class="n">I</span>  <span class="c1"># losses in MW</span>
+        <span class="n">Pf</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Pcalc</span>
+        <span class="n">Pt</span> <span class="o">=</span> <span class="n">Pcalc</span> <span class="o">-</span> <span class="n">loss</span>
+
+    <span class="k">elif</span> <span class="n">Pcalc</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># to -&gt; from</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">Pcalc</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vnt</span> <span class="o">*</span> <span class="n">v_set_t</span><span class="p">)</span>  <span class="c1"># current in kA</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">r1</span> <span class="o">*</span> <span class="n">I</span> <span class="o">*</span> <span class="n">I</span>  <span class="c1"># losses in MW</span>
+        <span class="n">Pf</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Pcalc</span> <span class="o">-</span> <span class="n">loss</span>
+        <span class="n">Pt</span> <span class="o">=</span> <span class="n">Pcalc</span>  <span class="c1"># is negative</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Pf</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">Pt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># convert to p.u.</span>
+    <span class="k">if</span> <span class="n">in_pu</span><span class="p">:</span>
+        <span class="n">Pf</span> <span class="o">/=</span> <span class="n">Sbase</span>
+        <span class="n">Pt</span> <span class="o">/=</span> <span class="n">Sbase</span>
+        <span class="n">loss</span> <span class="o">/=</span> <span class="n">Sbase</span>
+
+    <span class="k">return</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">loss</span></div>
+
+
+
+<div class="viewcode-block" id="HvdcLine">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HvdcLine</span><span class="p">(</span><span class="n">BranchParent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HvdcLine</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_length&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_dispatchable&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_Pset&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_r&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_dc_link_voltage&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_angle_droop&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;loss_factor&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mttf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mttr&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_Vset_f&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_Vset_t&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_min_firing_angle_f&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_max_firing_angle_f&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_min_firing_angle_t&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_max_firing_angle_t&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;capex&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;opex&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;build_status&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;control_mode&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_Pset_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_active_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_Vset_f_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_Vset_t_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_angle_droop_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_locations&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;dispatchable&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Is the line power optimizable?&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">OPF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;control_mode&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">HvdcControlType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Control type.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">OPF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;Pset&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;MW&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Set power flow.&#39;</span><span class="p">,</span>
+            <span class="n">profile_name</span><span class="o">=</span><span class="s1">&#39;Pset_prof&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;Ohm&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;line resistance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;dc_link_voltage&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kV&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;line voltage (only for compatibility, not used in calcs.)&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;angle_droop&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;MW/deg&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Power/angle rate control&#39;</span><span class="p">,</span>
+            <span class="n">profile_name</span><span class="o">=</span><span class="s1">&#39;angle_droop_prof&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">OPF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;Vset_f&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Set voltage at the from side&#39;</span><span class="p">,</span>
+            <span class="n">profile_name</span><span class="o">=</span><span class="s1">&#39;Vset_f_prof&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;Vset_t&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Set voltage at the to side&#39;</span><span class="p">,</span>
+            <span class="n">profile_name</span><span class="o">=</span><span class="s1">&#39;Vset_t_prof&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;min_firing_angle_f&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;minimum firing angle at the &quot;from&quot; side.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;max_firing_angle_f&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;maximum firing angle at the &quot;from&quot; side.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;min_firing_angle_t&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;minimum firing angle at the &quot;to&quot; side.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;max_firing_angle_t&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;maximum firing angle at the &quot;to&quot; side.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;km&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Length of the branch (not used for calculation)&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;locations&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">LineLocations</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">bus_from</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">bus_to</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HVDC Line&#39;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">code</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">design_rate</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">9999.0</span><span class="p">,</span>
+                 <span class="n">rate</span><span class="o">=</span><span class="mf">9999.0</span><span class="p">,</span>
+                 <span class="n">Pset</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">loss_factor</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">Vset_f</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">Vset_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">length</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">mttf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mttr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">overload_cost</span><span class="o">=</span><span class="mf">1000.0</span><span class="p">,</span>
+                 <span class="n">min_firing_angle_f</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">max_firing_angle_f</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">min_firing_angle_t</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">max_firing_angle_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">contingency_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">protection_rating_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
+                 <span class="n">control_mode</span><span class="p">:</span> <span class="n">HvdcControlType</span> <span class="o">=</span> <span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_1_Pset</span><span class="p">,</span>
+                 <span class="n">dispatchable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">angle_droop</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">capex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">build_status</span><span class="p">:</span> <span class="n">BuildStatus</span> <span class="o">=</span> <span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">,</span>
+                 <span class="n">dc_link_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">200.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        HVDC Line model</span>
+<span class="sd">        :param bus_from: Bus from</span>
+<span class="sd">        :param bus_to:  Bus to</span>
+<span class="sd">        :param name: name of the line</span>
+<span class="sd">        :param idtag:  id tag of the line</span>
+<span class="sd">        :param active:  Is the line active?</span>
+<span class="sd">        :param code: Secondary code for compatibility</span>
+<span class="sd">        :param design_rate: Design rate (MVA)</span>
+<span class="sd">        :param rate:  Line rate in MVA</span>
+<span class="sd">        :param Pset:  Active power set point</span>
+<span class="sd">        :param r: Line resistance (Ohm)</span>
+<span class="sd">        :param loss_factor:  Losses factor (p.u.)</span>
+<span class="sd">        :param Vset_f: Voltage set point at the &quot;from&quot; side</span>
+<span class="sd">        :param Vset_t: Voltage set point at the &quot;to&quot; side</span>
+<span class="sd">        :param length: line length in km</span>
+<span class="sd">        :param mttf: Mean time to failure in hours</span>
+<span class="sd">        :param mttr: Mean time to recovery in hours</span>
+<span class="sd">        :param overload_cost: cost of a line overload in EUR/MW</span>
+<span class="sd">        :param min_firing_angle_f: minimum firing angle at the &quot;from&quot; side</span>
+<span class="sd">        :param max_firing_angle_f: maximum firing angle at the &quot;from&quot; side</span>
+<span class="sd">        :param min_firing_angle_t: minimum firing angle at the &quot;to&quot; side</span>
+<span class="sd">        :param max_firing_angle_t: maximum firing angle at the &quot;to&quot; side</span>
+<span class="sd">        :param contingency_factor: factor used for contingency studies</span>
+<span class="sd">        :param protection_rating_factor: Rating used for protection tripping limit</span>
+<span class="sd">        :param control_mode: HvdcControlType</span>
+<span class="sd">        :param dispatchable: is this line dispatchable?</span>
+<span class="sd">        :param angle_droop: INELFE angle-droop constant</span>
+<span class="sd">        :param capex: Capital expenditures (€)</span>
+<span class="sd">        :param opex: Operational expenditures (€)</span>
+<span class="sd">        :param build_status: BuildStatus</span>
+<span class="sd">        :param dc_link_voltage: line voltage (only for compatibility, not used in calcs.) (kV)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">BranchParent</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                              <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                              <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                              <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                              <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                              <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+                              <span class="n">reducible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">design_rate</span><span class="o">=</span><span class="n">design_rate</span><span class="p">,</span>
+                              <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                              <span class="n">contingency_factor</span><span class="o">=</span><span class="n">contingency_factor</span><span class="p">,</span>
+                              <span class="n">protection_rating_factor</span><span class="o">=</span><span class="n">protection_rating_factor</span><span class="p">,</span>
+                              <span class="n">contingency_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">monitor_loading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">mttf</span><span class="o">=</span><span class="n">mttf</span><span class="p">,</span>
+                              <span class="n">mttr</span><span class="o">=</span><span class="n">mttr</span><span class="p">,</span>
+                              <span class="n">build_status</span><span class="o">=</span><span class="n">build_status</span><span class="p">,</span>
+                              <span class="n">capex</span><span class="o">=</span><span class="n">capex</span><span class="p">,</span>
+                              <span class="n">opex</span><span class="o">=</span><span class="n">opex</span><span class="p">,</span>
+                              <span class="n">cost</span><span class="o">=</span><span class="n">overload_cost</span><span class="p">,</span>
+                              <span class="n">temp_base</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+                              <span class="n">temp_oper</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+                              <span class="n">alpha</span><span class="o">=</span><span class="mf">0.0033</span><span class="p">,</span>
+                              <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">HVDCLineDevice</span><span class="p">)</span>
+
+        <span class="c1"># line length in km</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispatchable</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">dispatchable</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Pset</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dc_link_voltage</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dc_link_voltage</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_droop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle_droop</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_factor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">loss_factor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mttf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mttf</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mttr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mttr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vset_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Vset_f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vset_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Vset_t</span><span class="p">)</span>
+
+        <span class="c1"># converter / inverter firing angles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_firing_angle_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_firing_angle_f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_firing_angle_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_firing_angle_f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_firing_angle_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_firing_angle_t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_firing_angle_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_firing_angle_t</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">capex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">capex</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">opex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">opex</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_status</span> <span class="o">=</span> <span class="n">build_status</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_mode</span><span class="p">:</span> <span class="n">HvdcControlType</span> <span class="o">=</span> <span class="n">control_mode</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Pset_prof</span><span class="p">:</span> <span class="n">ProfileFloat</span> <span class="o">=</span> <span class="n">ProfileFloat</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">Pset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_prof</span><span class="p">:</span> <span class="n">ProfileBool</span> <span class="o">=</span> <span class="n">ProfileBool</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">active</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_f_prof</span><span class="p">:</span> <span class="n">ProfileFloat</span> <span class="o">=</span> <span class="n">ProfileFloat</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">Vset_f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_t_prof</span><span class="p">:</span> <span class="n">ProfileFloat</span> <span class="o">=</span> <span class="n">ProfileFloat</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">Vset_t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_angle_droop_prof</span><span class="p">:</span> <span class="n">ProfileFloat</span> <span class="o">=</span> <span class="n">ProfileFloat</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">angle_droop</span><span class="p">)</span>
+
+        <span class="c1"># Line locations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="p">:</span> <span class="n">LineLocations</span> <span class="o">=</span> <span class="n">LineLocations</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Pset_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileFloat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Pset_prof</span>
+
+    <span class="nd">@Pset_prof</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Pset_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProfileFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ProfileFloat</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Pset_prof</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Pset_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a Pset_prof&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HvdcLine.get_Pset_at">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_Pset_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_Pset_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Pset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pset_prof</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">angle_droop_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileFloat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_angle_droop_prof</span>
+
+    <span class="nd">@angle_droop_prof</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">angle_droop_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProfileFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ProfileFloat</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_angle_droop_prof</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_angle_droop_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a angle_droop_prof&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HvdcLine.get_angle_droop_at">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_angle_droop_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_angle_droop_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_droop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_droop_prof</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_f_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileFloat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_f_prof</span>
+
+    <span class="nd">@Vset_f_prof</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_f_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProfileFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ProfileFloat</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_f_prof</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_f_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a Vset_f_prof&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HvdcLine.get_Vset_f_at">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_Vset_f_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_Vset_f_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Vset_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Vset_f_prof</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_t_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileFloat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_t_prof</span>
+
+    <span class="nd">@Vset_t_prof</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_t_prof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProfileFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ProfileFloat</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_t_prof</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_t_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a Vset_t_prof&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HvdcLine.get_Vset_t_at">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_Vset_t_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_Vset_t_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Vset_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Vset_t_prof</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">locations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineLocations</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span>
+
+    <span class="nd">@locations</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LineLocations</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">LineLocations</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a locations&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Line length in km</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span>
+
+    <span class="nd">@length</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">val</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># new length / old length</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">*=</span> <span class="n">factor</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># print(&#39;The length cannot be zero, ignoring value&#39;)</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;The length must be a float value&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HvdcLine.get_from_and_to_power">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_from_and_to_power">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_from_and_to_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_f</span><span class="p">,</span> <span class="n">theta_t</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">,</span> <span class="n">in_pu</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the power set at both ends accounting for meaningful losses</span>
+<span class="sd">        :return: power from, power to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">losses</span> <span class="o">=</span> <span class="n">getFromAndToPowerAt</span><span class="p">(</span><span class="n">Pset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Pset</span><span class="p">,</span>
+                                                 <span class="n">theta_f</span><span class="o">=</span><span class="n">theta_f</span><span class="p">,</span>
+                                                 <span class="n">theta_t</span><span class="o">=</span><span class="n">theta_t</span><span class="p">,</span>
+                                                 <span class="n">Vnf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                                                 <span class="n">Vnt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                                                 <span class="n">v_set_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Vset_f</span><span class="p">,</span>
+                                                 <span class="n">v_set_t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Vset_t</span><span class="p">,</span>
+                                                 <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                                                 <span class="n">r1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+                                                 <span class="n">angle_droop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_droop</span><span class="p">,</span>
+                                                 <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                                                 <span class="n">free</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_0_free</span><span class="o">.</span><span class="n">idx</span><span class="p">(),</span>
+                                                 <span class="n">in_pu</span><span class="o">=</span><span class="n">in_pu</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">losses</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.get_from_and_to_power_at">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_from_and_to_power_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_from_and_to_power_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">theta_f</span><span class="p">,</span> <span class="n">theta_t</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">,</span> <span class="n">in_pu</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the power set at both ends accounting for meaningful losses</span>
+<span class="sd">        :return: power from, power to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_prof</span><span class="p">[</span><span class="n">t</span><span class="p">]:</span>
+            <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">losses</span> <span class="o">=</span> <span class="n">getFromAndToPowerAt</span><span class="p">(</span><span class="n">Pset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Pset_prof</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
+                                                 <span class="n">theta_f</span><span class="o">=</span><span class="n">theta_f</span><span class="p">,</span>
+                                                 <span class="n">theta_t</span><span class="o">=</span><span class="n">theta_t</span><span class="p">,</span>
+                                                 <span class="n">Vnf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                                                 <span class="n">Vnt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                                                 <span class="n">v_set_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Vset_f_prof</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
+                                                 <span class="n">v_set_t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Vset_t_prof</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
+                                                 <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                                                 <span class="n">r1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+                                                 <span class="n">angle_droop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_droop</span><span class="p">,</span>
+                                                 <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
+                                                 <span class="n">free</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_0_free</span><span class="o">.</span><span class="n">idx</span><span class="p">(),</span>
+                                                 <span class="n">in_pu</span><span class="o">=</span><span class="n">in_pu</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">losses</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.get_save_data">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_save_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the data that matches the edit_headers</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">properties</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">properties</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">idtag</span>
+
+            <span class="k">elif</span> <span class="n">properties</span><span class="o">.</span><span class="n">tpe</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.get_max_bus_nominal_voltage">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_max_bus_nominal_voltage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_max_bus_nominal_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.get_min_bus_nominal_voltage">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_min_bus_nominal_voltage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_min_bus_nominal_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.plot_profiles">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.plot_profiles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">my_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">show_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the time series results of this object</span>
+<span class="sd">        :param time_series: TimeSeries Instance</span>
+<span class="sd">        :param my_index: index of this object in the simulation</span>
+<span class="sd">        :param show_fig: Show the figure?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">time_series</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+            <span class="n">ax_1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+            <span class="n">ax_2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax_1</span><span class="p">)</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span>
+
+            <span class="c1"># loading</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pset_prof</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+            <span class="n">ax_1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Loading&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+            <span class="n">ax_1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Loading [%]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_1</span><span class="p">)</span>
+
+            <span class="c1"># losses</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pset_prof</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_factor</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+            <span class="n">ax_2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+            <span class="n">ax_2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Losses [MVA]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_2</span><span class="p">)</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.get_coordinates">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_coordinates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the branch defining coordinates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="HvdcLine.get_q_limits">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine.get_q_limits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_q_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get reactive power limits</span>
+<span class="sd">        :param P: Pset value</span>
+<span class="sd">        :return: Qmin_f, Qmax_f, Qmin_t, Qmax_t</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Qmin_f</span><span class="p">,</span> <span class="n">Qmax_f</span> <span class="o">=</span> <span class="n">firing_angles_to_reactive_limits</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_firing_angle_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_firing_angle_f</span><span class="p">)</span>
+
+        <span class="n">Qmin_t</span><span class="p">,</span> <span class="n">Qmax_t</span> <span class="o">=</span> <span class="n">firing_angles_to_reactive_limits</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_firing_angle_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_firing_angle_t</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Qmin_f</span><span class="p">,</span> <span class="n">Qmax_f</span><span class="p">,</span> <span class="n">Qmin_t</span><span class="p">,</span> <span class="n">Qmax_t</span></div>
+
+
+    <span class="c1"># Scalar property accessors coerce assignments to the declared schema types.</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatchable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``dispatchable``.</span>
+
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dispatchable</span>
+
+    <span class="nd">@dispatchable</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatchable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``dispatchable``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dispatchable</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Pset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``Pset``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Pset</span>
+
+    <span class="nd">@Pset</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Pset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``Pset``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Pset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">r</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``r``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span>
+
+    <span class="nd">@r</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``r``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dc_link_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``dc_link_voltage``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dc_link_voltage</span>
+
+    <span class="nd">@dc_link_voltage</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dc_link_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``dc_link_voltage``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dc_link_voltage</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">angle_droop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``angle_droop``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_angle_droop</span>
+
+    <span class="nd">@angle_droop</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">angle_droop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``angle_droop``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_angle_droop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_f</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``Vset_f``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_f</span>
+
+    <span class="nd">@Vset_f</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``Vset_f``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``Vset_t``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_t</span>
+
+    <span class="nd">@Vset_t</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Vset_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``Vset_t``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Vset_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_firing_angle_f</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``min_firing_angle_f``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_firing_angle_f</span>
+
+    <span class="nd">@min_firing_angle_f</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_firing_angle_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``min_firing_angle_f``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_firing_angle_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_firing_angle_f</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``max_firing_angle_f``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_firing_angle_f</span>
+
+    <span class="nd">@max_firing_angle_f</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_firing_angle_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``max_firing_angle_f``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_firing_angle_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_firing_angle_t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``min_firing_angle_t``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_firing_angle_t</span>
+
+    <span class="nd">@min_firing_angle_t</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_firing_angle_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``min_firing_angle_t``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_firing_angle_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_firing_angle_t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``max_firing_angle_t``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_firing_angle_t</span>
+
+    <span class="nd">@max_firing_angle_t</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_firing_angle_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``max_firing_angle_t``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_firing_angle_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

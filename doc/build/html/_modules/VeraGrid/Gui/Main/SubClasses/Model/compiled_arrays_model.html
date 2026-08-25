@@ -1,0 +1,787 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.Formulations.pf_advanced_formulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PfAdvancedFormulation</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">EngineType</span><span class="p">,</span> <span class="n">BusMode</span><span class="p">,</span> <span class="n">BranchImpedanceMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+
+<div class="viewcode-block" id="PackDf">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model.PackDf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">PackDf</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+           <span class="n">columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span>
+           <span class="n">index</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span>
+           <span class="n">enumerate_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+           <span class="n">enumerate_cols</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to wrap DataFrame creation with index re-enumeration for easy reading</span>
+<span class="sd">    :param data:</span>
+<span class="sd">    :param columns:</span>
+<span class="sd">    :param index:</span>
+<span class="sd">    :param enumerate_index:</span>
+<span class="sd">    :param enumerate_cols:</span>
+<span class="sd">    :return: DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columns</span><span class="p">)]</span> <span class="k">if</span> <span class="n">enumerate_cols</span> <span class="k">else</span> <span class="n">columns</span><span class="p">,</span>
+                        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span> <span class="k">if</span> <span class="n">enumerate_index</span> <span class="k">else</span> <span class="n">index</span>
+                        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CompiledArraysModule">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model.CompiledArraysModule">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompiledArraysModule</span><span class="p">:</span>
+    <span class="n">available_structures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Bus arrays&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;bus-active&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;Va&#39;</span><span class="p">,</span> <span class="s1">&#39;Vm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;P&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;I-load&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Y-load&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Y-shunt&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Qmin&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Qmax&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;Bus indices&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;Types&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;bus_ctrl&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pq&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pqv&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pv&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;vd&#39;</span><span class="p">,</span>
+            <span class="c1"># &#39;pqpv&#39;,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;Branch arrays&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;branch-active&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;g&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;tap-module&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;tap-angle&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;tap_f&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;tap_t&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Pf_set&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Qf_set&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Pt_set&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Qt_set&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+
+        <span class="s2">&quot;System matrices&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;Ybus&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;G&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;B&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Yf&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Yt&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Bbus&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Bf&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Cf&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Ct&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;B&#39;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;B&#39;&#39;&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;Yshunt&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Yseries&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;Power flow arrays&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;idx_dPf&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dQf&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dPt&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dQt&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dVa&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dVm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;idx_dtau&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;f(x0)&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Jacobian&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">engine</span><span class="p">:</span> <span class="n">EngineType</span><span class="p">,</span>
+                 <span class="n">apply_temperature</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">branch_tolerance_mode</span><span class="o">=</span><span class="n">BranchImpedanceMode</span><span class="o">.</span><span class="n">Specified</span><span class="p">,</span>
+                 <span class="n">use_stored_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">control_taps_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">control_taps_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">control_remote_voltage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">fill_gep</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">fill_three_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param grid:</span>
+<span class="sd">        :param t_idx:</span>
+<span class="sd">        :param engine:</span>
+<span class="sd">        :param apply_temperature:</span>
+<span class="sd">        :param branch_tolerance_mode:</span>
+<span class="sd">        :param use_stored_guess:</span>
+<span class="sd">        :param control_taps_modules:</span>
+<span class="sd">        :param control_taps_phase:</span>
+<span class="sd">        :param control_remote_voltage:</span>
+<span class="sd">        :param fill_gep:</span>
+<span class="sd">        :param fill_three_phase:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
+
+        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">:</span>
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span>
+                <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                <span class="n">apply_temperature</span><span class="o">=</span><span class="n">apply_temperature</span><span class="p">,</span>
+                <span class="n">branch_tolerance_mode</span><span class="o">=</span><span class="n">branch_tolerance_mode</span><span class="p">,</span>
+                <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
+                <span class="n">control_taps_phase</span><span class="o">=</span><span class="n">control_taps_phase</span><span class="p">,</span>
+                <span class="n">control_taps_modules</span><span class="o">=</span><span class="n">control_taps_modules</span><span class="p">,</span>
+                <span class="n">control_remote_voltage</span><span class="o">=</span><span class="n">control_remote_voltage</span><span class="p">,</span>
+                <span class="n">fill_gep</span><span class="o">=</span><span class="n">fill_gep</span><span class="p">,</span>
+                <span class="n">fill_three_phase</span><span class="o">=</span><span class="n">fill_three_phase</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">islands</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">Bentayga</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_bentayga</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ben</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculation_inputs_to_display</span> <span class="o">=</span> <span class="n">ben</span><span class="o">.</span><span class="n">get_snapshots_from_bentayga</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">NewtonPA</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_newton_pa</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculation_inputs_to_display</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">get_snapshots_from_newtonpa</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># fallback to VeraGrid</span>
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">islands</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CompiledArraysModule.get_structure">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model.CompiledArraysModule.get_structure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">structure_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a DataFrame with the input.</span>
+<span class="sd">        :param: structure_type: String representing structure type</span>
+<span class="sd">        :return: pandas DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">island</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">Sbus</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_power_injections_pu</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_simulation_indices</span><span class="p">(</span><span class="n">Sbus</span><span class="o">=</span><span class="n">Sbus</span><span class="p">)</span>
+
+        <span class="n">Qmax_bus</span><span class="p">,</span> <span class="n">Qmin_bus</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_reactive_power_limits</span><span class="p">()</span>
+
+        <span class="n">formulation</span> <span class="o">=</span> <span class="n">PfAdvancedFormulation</span><span class="p">(</span><span class="n">V0</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">,</span>
+                                            <span class="n">S0</span><span class="o">=</span><span class="n">Sbus</span><span class="p">,</span>
+                                            <span class="n">I0</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">get_current_injections_pu</span><span class="p">(),</span>
+                                            <span class="n">Y0</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">get_admittance_injections_pu</span><span class="p">(),</span>
+                                            <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin_bus</span><span class="p">,</span>
+                                            <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax_bus</span><span class="p">,</span>
+                                            <span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                                            <span class="n">options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+                                            <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;bus-active&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Active&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Voltage (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Va&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Voltage angles (rad)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Vm&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Voltage modules (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">Sbus</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Power (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">Sbus</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Power (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Q&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">Sbus</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Power (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;I-load&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">get_current_injections_pu</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Current (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Y-load&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">get_admittance_injections_pu</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Admittance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Y-shunt&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">get_Yshunt_bus_pu</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Admittance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Ybus&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;G&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="o">.</span><span class="n">imag</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Yf&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yf</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Yt&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yt</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Bbus&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_linear_admittance_matrices</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Bbus</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Bf&#39;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_linear_admittance_matrices</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Bf</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Cf&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">Cf</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Ct&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">Ct</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Yshunt&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">get_Yshunt_bus_pu</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Shunt admittance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Yseries&#39;</span><span class="p">:</span>
+            <span class="n">adms</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_series_admittance_matrices</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yseries</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s2">&quot;B&#39;&quot;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_fast_decoupled_amittances</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">adm</span><span class="o">.</span><span class="n">B1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">B1</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">B1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span> <span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">)]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">]</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s2">&quot;B&#39;&#39;&quot;</span><span class="p">:</span>
+            <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_fast_decoupled_amittances</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">adm</span><span class="o">.</span><span class="n">B2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">B2</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">B2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span> <span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">)]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">]</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Types&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Bus types&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;x0&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">var2x</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">get_x_names</span><span class="p">(),</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;f(x0)&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">fx</span><span class="p">(),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;f(x0)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">get_fx_names</span><span class="p">(),</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Jacobian&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">formulation</span><span class="o">.</span><span class="n">get_jacobian_df</span><span class="p">(</span><span class="n">autodiff</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Qmin&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">Qmin_bus</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Qmin&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Qmax&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">Qmax_bus</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Qmax&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;bus_ctrl&#39;</span><span class="p">:</span>
+            <span class="n">data1</span> <span class="o">=</span> <span class="p">[</span><span class="n">BusMode</span><span class="o">.</span><span class="n">as_str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">]</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data1</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bus_ctrl&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;branch_ctrl&#39;</span><span class="p">:</span>
+
+            <span class="n">data1</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">]</span>
+            <span class="n">data2</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">]</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span>
+                    <span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+                    <span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                    <span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_controlled_buses</span><span class="p">,</span>
+                    <span class="n">data1</span><span class="p">,</span>
+                    <span class="n">data2</span>
+                <span class="p">],</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bus F&#39;</span><span class="p">,</span> <span class="s1">&#39;bus T&#39;</span><span class="p">,</span> <span class="s1">&#39;V ctrl bus&#39;</span><span class="p">,</span> <span class="s1">&#39;m control&#39;</span><span class="p">,</span> <span class="s1">&#39;tau control&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">)],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;pq&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pq&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pq</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;pv&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pv&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pv</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;pqv&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="o">.</span><span class="n">pqv</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pqv&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">pqv</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">p</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;vd&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="o">.</span><span class="n">vd</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;vd&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="o">.</span><span class="n">vd</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;branch-active&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Active&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Resistance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Reactance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Conductance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Susceptance (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;tap-module&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Tap module (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;tap-angle&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Tap angle (rad)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;tap_f&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_f</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Virtual tap from (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;tap_t&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_t</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Virtual tap to (p.u.)&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dPf&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPf</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dPf&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPf</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dQf&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQf</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dQf&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQf</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dPt&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPt</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dPt&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPt</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dQt&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQt</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dQt&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQt</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dVa&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dVa</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dVa&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dVa</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dVm&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dVm</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dVm&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dVm</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dm&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dm</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dm&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dm</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;idx_dtau&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dtau</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idx_dtau&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dtau</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Pf_set&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">Pset</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPf</span><span class="p">],</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Pf_set&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPf</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Pt_set&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">Pset</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPt</span><span class="p">],</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Pt_set&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dPt</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Qf_set&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">Qset</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQf</span><span class="p">],</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Qf_set&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQf</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">structure_type</span> <span class="o">==</span> <span class="s1">&#39;Qt_set&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">PackDf</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">Qset</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQt</span><span class="p">],</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Qt_set&#39;</span><span class="p">],</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">formulation</span><span class="o">.</span><span class="n">idx_dQt</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;PF input: structure type not found&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">structure_type</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="CompiledArraysModule.export_to_excel">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Model.html#VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model.CompiledArraysModule.export_to_excel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_excel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export all to Excel</span>
+<span class="sd">        :param file_name: file name</span>
+<span class="sd">        :return: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xlsx&#39;</span><span class="p">):</span>
+            <span class="n">file_name</span> <span class="o">+=</span> <span class="s1">&#39;.xlsx&#39;</span>
+
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>  <span class="c1"># pylint: disable=abstract-class-instantiated</span>
+
+            <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">calc_input</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">):</span>
+
+                <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">elms_in_category</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_structures</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">elm_type</span> <span class="ow">in</span> <span class="n">elms_in_category</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">elm_type</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">structure_type</span><span class="o">=</span><span class="n">elm_type</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                            <span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">excel_writer</span><span class="o">=</span><span class="n">writer</span><span class="p">,</span>
+                                        <span class="n">sheet_name</span><span class="o">=</span><span class="n">name</span><span class="p">[:</span><span class="mi">31</span><span class="p">])</span>  <span class="c1"># excel supports 31 chars per sheet name</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

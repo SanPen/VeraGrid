@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Main.SubClasses.Settings.configuration &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Main.SubClasses.Settings.configuration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Main.SubClasses.Settings.configuration</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGrid.ThirdParty.qdarktheme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">qdarktheme</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_create_veragrid_folder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Main.SubClasses.Results.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsMain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">SchematicWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.generic_graphics</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_dark_mode</span><span class="p">,</span> <span class="n">set_light_mode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginsInfo</span><span class="p">,</span> <span class="n">PluginFunction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_menu_entry</span>
+
+
+<div class="viewcode-block" id="gui_struct_to_data">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.gui_struct_to_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gui_struct_to_data</span><span class="p">(</span><span class="n">data_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]]],</span>
+                       <span class="n">struct_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">any</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursive function to get the config dictionary from the GUI values</span>
+<span class="sd">    :param data_: Dictionary to fill</span>
+<span class="sd">    :param struct_: the result with self.get_config_structure()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">struct_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">gui_struct_to_data</span><span class="p">(</span><span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QRadioButton</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">data_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown structure </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="config_data_to_struct">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.config_data_to_struct">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">config_data_to_struct</span><span class="p">(</span><span class="n">data_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+                          <span class="n">struct_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursive function to set the GUI objects&#39; values from the config dictionary</span>
+<span class="sd">    :param data_: config dictionary with values from the file</span>
+<span class="sd">    :param struct_: result of self.get_config_structure()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">object_to_set</span> <span class="ow">in</span> <span class="n">struct_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="c1"># get the value in data_ that corresponds to the object to be set</span>
+        <span class="n">corresponding_data</span> <span class="o">=</span> <span class="n">data_</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">corresponding_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># print(&quot;config debug:&quot;, key, corresponding_data)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">config_data_to_struct</span><span class="p">(</span><span class="n">corresponding_data</span><span class="p">,</span> <span class="n">object_to_set</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">):</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">object_to_set</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">corresponding_data</span><span class="p">))</span>
+                <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">object_to_set</span><span class="o">.</span><span class="n">count</span><span class="p">():</span>
+                    <span class="n">object_to_set</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">):</span>
+                <span class="n">object_to_set</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">corresponding_data</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">):</span>
+                <span class="n">object_to_set</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">corresponding_data</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+                <span class="n">object_to_set</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">corresponding_data</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QRadioButton</span><span class="p">):</span>
+                <span class="n">object_to_set</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">corresponding_data</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_to_set</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;unknown structure&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has no entry in config&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigurationMain">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigurationMain</span><span class="p">(</span><span class="n">ResultsMain</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Diagrams Main</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        @param parent:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create main window</span>
+        <span class="n">ResultsMain</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="c1"># plugins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins_info</span> <span class="o">=</span> <span class="n">PluginsInfo</span><span class="p">()</span>
+
+        <span class="c1"># check boxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">dark_mode_checkBox</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">change_theme_mode</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins_investment_evaluation_method_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># DateTime change</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">snapshot_dateTimeEdit</span><span class="o">.</span><span class="n">dateTimeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshot_datetime_changed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_windows_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ConfigurationMain.change_theme_mode">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.change_theme_mode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_theme_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the GUI theme</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">custom_colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#00aa88ff&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;primary&gt;list.selectionBackground&quot;</span><span class="p">:</span> <span class="s2">&quot;#00aa88be&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">dark_mode_checkBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">set_dark_mode</span><span class="p">()</span>
+
+            <span class="n">qdarktheme</span><span class="o">.</span><span class="n">setup_theme</span><span class="p">(</span><span class="n">theme</span><span class="o">=</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span>
+                                   <span class="n">custom_colors</span><span class="o">=</span><span class="n">custom_colors</span><span class="p">,</span>
+                                   <span class="n">additional_qss</span><span class="o">=</span><span class="s2">&quot;QToolTip {color: white; background-color: black; border: 0px; }&quot;</span><span class="p">)</span>
+
+            <span class="c1"># note: The 0px border on the tooltips allow it to render properly</span>
+            <span class="k">for</span> <span class="n">diagram</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_widgets_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">SchematicWidget</span><span class="p">):</span>
+                    <span class="n">diagram</span><span class="o">.</span><span class="n">set_dark_mode</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">colour_diagrams</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">set_light_mode</span><span class="p">()</span>
+            <span class="n">qdarktheme</span><span class="o">.</span><span class="n">setup_theme</span><span class="p">(</span><span class="n">theme</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">,</span>
+                                   <span class="n">custom_colors</span><span class="o">=</span><span class="n">custom_colors</span><span class="p">,</span>
+                                   <span class="n">additional_qss</span><span class="o">=</span><span class="s2">&quot;QToolTip {color: black; background-color: white; border: 0px;}&quot;</span><span class="p">)</span>
+
+            <span class="c1"># note: The 0px border on the tooltips allow it to render properly</span>
+            <span class="k">for</span> <span class="n">diagram</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_widgets_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">SchematicWidget</span><span class="p">):</span>
+                    <span class="n">diagram</span><span class="o">.</span><span class="n">set_light_mode</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">colour_diagrams</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.config_file_path">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.config_file_path">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">config_file_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the config file path</span>
+<span class="sd">        :return: config file path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_create_veragrid_folder</span><span class="p">(),</span> <span class="s1">&#39;gui_config.json&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.config_file_exists">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.config_file_exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">config_file_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the config file exists</span>
+<span class="sd">        :return: True / False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_file_path</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.get_config_structure">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.get_config_structure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_config_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the settings configuration dictionary</span>
+<span class="sd">        This serves to collect automatically the settings</span>
+<span class="sd">        and apply the incomming setting automatically as well</span>
+<span class="sd">        :return: Dict[name, Dict[name, QtWidget]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;graphics&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;dark_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">dark_mode_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;palette&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">palette_comboBox</span><span class="p">,</span>
+                <span class="c1"># &quot;min_node_size&quot;: self.ui.min_node_size_spinBox,</span>
+                <span class="c1"># &quot;max_node_size&quot;: self.ui.max_node_size_spinBox,</span>
+                <span class="c1"># &quot;min_branch_size&quot;: self.ui.min_branch_size_spinBox,</span>
+                <span class="c1"># &quot;max_branch_size&quot;: self.ui.max_branch_size_spinBox,</span>
+                <span class="c1"># &quot;width_based_flow&quot;: self.ui.branch_width_based_on_flow_checkBox,</span>
+                <span class="s2">&quot;map_tile_provider&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tile_provider_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;plotting_style&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">plt_style_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;video_fps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">fps_spinBox</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;machine_learning&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;clustering&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;cluster_number&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">cluster_number_spinBox</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;node_grouping&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">node_distances_sigma_doubleSpinBox</span><span class="p">,</span>
+                    <span class="s2">&quot;n_elements&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">node_distances_elements_spinBox</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;investments_evaluation&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;investment_evaluation_method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">investment_evaluation_method_ComboBox</span><span class="p">,</span>
+                    <span class="s2">&quot;max_investments_evluation_number&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">max_investments_evluation_number_spinBox</span><span class="p">,</span>
+                    <span class="s2">&quot;investment_evaluation_obj_func&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">investment_evaluation_objfunc_ComboBox</span><span class="p">,</span>
+                    <span class="s2">&quot;firm_capacity_share&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">firmCapacityShareSpinBox</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;stochastic&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">stochastic_pf_method_comboBox</span><span class="p">,</span>
+                    <span class="s2">&quot;voltage_variance&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tolerance_stochastic_spinBox</span><span class="p">,</span>
+                    <span class="s2">&quot;number_of_samples&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">max_iterations_stochastic_spinBox</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;cascading&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;additional_islands&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">cascading_islands_spinBox</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;reliability&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">reliability_method_comboBox</span><span class="p">,</span>
+                    <span class="s2">&quot;number_of_samples&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">reliability_method_comboBox</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;ptdf_threshold&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ptdf_threshold_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;lodf_threshold&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">lodf_threshold_doubleSpinBox</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;power_flow&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;solver&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">solver_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;retry&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">helm_retry_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;distributed_slack&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">distributed_slack_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;ignore_single_node_islands&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ignore_single_node_islands_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;use_voltage_guess&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">use_voltage_guess_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tolerance_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;acceleration&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">muSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;max_iterations&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">max_iterations_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">verbositySpinBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;reactive_power_control_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">control_q_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;transformer_taps_module_control&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">control_tap_modules_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;transformer_taps_phase_control&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">control_tap_phase_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;remote_voltage_controls_switch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">control_remote_voltage_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;orthogonalize_controls&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">orthogonalize_pf_controls_checkBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;apply_temperature_correction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">temperature_correction_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;apply_impedance_tolerances&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">apply_impedance_tolerances_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;add_pf_report&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">addPowerFlowReportCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;initialize_angles&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">initialize_pf_angles_checkBox</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;state_estimation&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;solver&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_solver_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;tolerance&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_tolerance_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;max_iter&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_max_iterations_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;prefer_correct&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_prefer_correct_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;fixed_slack&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_fixed_slack_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;run_observability_analyis&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_observability_analysis_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;add_pseudo_measurements&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_add_pseudo_measurements_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;run_measurement_profiling&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">se_measurements_profiling_checkBox</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;optimal_power_flow&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">lpf_solver_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;time_grouping&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opf_time_grouping_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;zone_grouping&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opfZonalGroupByComboBox</span><span class="p">,</span>
+                <span class="s2">&quot;mip_solver&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mip_solver_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;contingency_tolerance&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opfContingencyToleranceSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;skip_generation_limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">skipOpfGenerationLimitsCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;consider_contingencies&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">considerContingenciesOpfCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;dispatch_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opfDispatchModeComboBox</span><span class="p">,</span>
+                <span class="s2">&quot;consider_ramps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opfConsiderRampsCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;consider_time_up_down&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opfConsiderUpDownTimeCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;area_spinning_reserve&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">opfSpinningReserveCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;add_opf_report&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">addOptimalPowerFlowReportCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;robust_mip&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">fixOpfCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;save_mip&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">save_mip_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;use_glsk_as_cost&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">useGslkAsCostsOpfCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;add_losses_approximation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">approximateLossesOpfCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;ips_method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ips_method_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;ips_tolerance&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ips_tolerance_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;ips_iterations&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ips_iterations_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;ips_trust_radius&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ips_trust_radius_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;ips_init_with_pf&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ips_initialize_with_pf_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;ips_control_Qlimits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ips_control_Qlimits_checkBox</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;continuation_power_flow&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;max_iterations&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">vs_max_iterations_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;stop_at&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">vc_stop_at_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;increase_system_loading&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">start_vs_from_default_radioButton</span><span class="p">,</span>
+                <span class="s2">&quot;lambda_factor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">alpha_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;points_from_time_series&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">start_vs_from_selected_radioButton</span><span class="p">,</span>
+                <span class="s2">&quot;now&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">vs_departure_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">vs_target_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;available_transfer_capacity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">atcRadioButton</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;net_transfer_capacity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;transfer_sensitivity_threshold&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">atcThresholdSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;transfer_method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">transferMethodComboBox</span><span class="p">,</span>
+                <span class="s2">&quot;Loading_threshold_to_report&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ntcReportLoadingThresholdSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;ntc_linear_consider_contingencies&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">n1ConsiderationCheckBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;skip_generation_limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">skipNtcGenerationLimitsCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;transmission_reliability_margin&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">trmSpinBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;use_branch_exchange_sensitivity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ntcSelectBasedOnExchangeSensitivityCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;branch_exchange_sensitivity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ntcAlphaSpinBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;use_branch_rating_contribution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ntcSelectBasedOnAcerCriteriaCheckBox</span><span class="p">,</span>
+                <span class="s2">&quot;branch_rating_contribution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ntcLoadRuleSpinBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;ntc_opt_consider_contingencies&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">consider_ntc_contingencies_checkBox</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;nodal_hosting_capacity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">nodal_capacity_method_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;sense&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">nodal_capacity_sense_SpinBox</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;general&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;base_power&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">sbase_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">fbase_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;default_bus_voltage&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">defaultBusVoltageSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">engineComboBox</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;contingencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;contingencies_engine&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">contingencyEngineComboBox</span><span class="p">,</span>
+                <span class="s2">&quot;use_srap&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">use_srap_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;srap_max_power&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">srap_limit_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;srap_top_n&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">srap_top_n_SpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;srap_deadband&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">srap_deadband_doubleSpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;contingency_deadband&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">contingency_deadband_SpinBox</span><span class="p">,</span>
+                <span class="s2">&quot;srap_revert_to_nominal_rating&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">srap_revert_to_nominal_rating_checkBox</span><span class="p">,</span>
+                <span class="s2">&quot;contingency_massive_report&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">contingency_detailed_massive_report_checkBox</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;store_results_in_file&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">saveResultsCheckBox</span><span class="p">,</span>
+                <span class="c1"># &quot;current_boundary_set&quot;: self.current_boundary_set,</span>
+                <span class="c1"># &quot;cgmes_selected_version&quot;: self.ui.cgmes_version_comboBox,</span>
+                <span class="c1"># &quot;cgmes_single_profile_per_file&quot;: self.ui.cgmes_single_profile_per_file_checkBox,</span>
+                <span class="c1"># &quot;map_regions_like_raw&quot;: self.ui.cgmes_map_regions_like_raw_checkBox,</span>
+                <span class="c1"># &quot;raw_selected_version&quot;: self.ui.raw_export_version_comboBox,</span>
+                <span class="c1"># &quot;cgmes_dc_as_hvdclines&quot;: self.ui.cgmes_dc_as_hvdclines_checkBox,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;dyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;rms_int_method_comboBox&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">rms_integration_method_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;rms_initialization_method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">rms_initialization_method_comboBox</span><span class="p">,</span>
+                <span class="s2">&quot;tolerance_rms_spinBox&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">tolerance_rms_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;sim_time_spinBox&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">rms_sim_time_spinBox</span><span class="p">,</span>
+                <span class="s2">&quot;h_spinBox&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">rms_h_spinBox</span><span class="p">,</span>
+
+                <span class="s2">&quot;ss_assessment_time_spinBox_2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">rms_ss_assessment_time_spinBox</span>
+            <span class="p">}</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.get_gui_config_data">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.get_gui_config_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_gui_config_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a dictionary with the GUI configuration data</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_structure</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">gui_struct_to_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">struct</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.save_gui_config">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.save_gui_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the GUI configuration</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_data</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_file_path</span><span class="p">(),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.apply_gui_config">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.apply_gui_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply GUI configuration dictionary</span>
+<span class="sd">        :param data: GUI configuration dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">struct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_structure</span><span class="p">()</span>
+        <span class="n">config_data_to_struct</span><span class="p">(</span><span class="n">data_</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">struct_</span><span class="o">=</span><span class="n">struct</span><span class="p">)</span>
+
+        <span class="c1"># light / dark mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">dark_mode_checkBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">set_dark_mode</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">set_light_mode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.load_gui_config">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.load_gui_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load GUI configuration from the local user folder</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_file_exists</span><span class="p">():</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_file_path</span><span class="p">(),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">apply_gui_config</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">change_theme_mode</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_gui_config</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GUI config file was erroneous, wrote a new one&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.snapshot_datetime_changed">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.snapshot_datetime_changed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">snapshot_datetime_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upon change of the snapshot datetime, change the circuit snapshot datetime</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date_time_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">snapshot_dateTimeEdit</span><span class="o">.</span><span class="n">dateTime</span><span class="p">()</span><span class="o">.</span><span class="n">toPython</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">snapshot_time</span> <span class="o">=</span> <span class="n">date_time_value</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.add_plugins">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.add_plugins">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add the plugins information and create the menu entries</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">menuplugins</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">menuplugins</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Reload&quot;</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/undo.png&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_plugins</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins_info</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># force refresh</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugins_investment_evaluation_method_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># for every plugin...</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">plugin_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins_info</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="c1"># maybe add the main function</span>
+            <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">main_fcn</span><span class="o">.</span><span class="n">function_ptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Really hard core magic to avoid lambdas shadow each other due to late binding</span>
+<span class="sd">                </span>
+<span class="sd">                lambda e, func=func: func(self)</span>
+<span class="sd">                </span>
+<span class="sd">                explanation:</span>
+<span class="sd">                - e is a bool parameter that the QAction sends when triggered</span>
+<span class="sd">                - func=func is there for the lambda to force the usage of the value of func </span>
+<span class="sd">                  during the iteration and not after the loop</span>
+<span class="sd">                - func(self) is then what I wanted to lambda in the first place                </span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="n">add_menu_entry</span><span class="p">(</span>
+                    <span class="n">menu</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">menuplugins</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/plugin.png&quot;</span><span class="p">,</span>
+                    <span class="n">icon_pixmap</span><span class="o">=</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">icon</span><span class="p">,</span>
+                    <span class="n">function_ptr</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">launch_plugin</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">main_fcn</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="c1"># maybe add the investments function</span>
+            <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">investments_fcn</span><span class="o">.</span><span class="n">function_ptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugins_investment_evaluation_method_dict</span><span class="p">[</span>
+                    <span class="n">plugin_info</span><span class="o">.</span><span class="n">investments_fcn</span><span class="o">.</span><span class="n">alias</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">investments_fcn</span><span class="o">.</span><span class="n">function_ptr</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationMain.launch_plugin">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Main.SubClasses.Settings.html#VeraGrid.Gui.Main.SubClasses.Settings.configuration.ConfigurationMain.launch_plugin">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">launch_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fcn</span><span class="p">:</span> <span class="n">PluginFunction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Action wrapper to launch the plugin</span>
+<span class="sd">        :param fcn: some PluginFunction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># call the main function of the plugin</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">fcn</span><span class="o">.</span><span class="n">get_pointer_lambda</span><span class="p">(</span><span class="n">gui_instance</span><span class="o">=</span><span class="bp">self</span><span class="p">)()</span>
+
+        <span class="k">if</span> <span class="n">fcn</span><span class="o">.</span><span class="n">call_gui</span> <span class="ow">and</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_windows_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>  <span class="c1"># This avoids the window to be garbage collected and be displayed</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

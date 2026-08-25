@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.ucte.devices.ucte_node &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.ucte.devices.ucte_node</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.ucte.devices.ucte_node</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">is_defined_number</span><span class="p">,</span>
+    <span class="n">sub_int</span><span class="p">,</span>
+    <span class="n">sub_optional_float</span><span class="p">,</span>
+    <span class="n">sub_str</span><span class="p">,</span>
+    <span class="n">try_float</span><span class="p">,</span>
+    <span class="n">try_int</span><span class="p">,</span>
+    <span class="n">try_optional_float</span><span class="p">,</span>
+    <span class="n">ucte_split</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+
+<div class="viewcode-block" id="get_default_power_limit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.get_default_power_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_default_power_limit</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mf">9999.0</span></div>
+
+
+
+<div class="viewcode-block" id="try_parse_voltage">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.try_parse_voltage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_parse_voltage</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse a UCTE nominal voltage code or a direct numeric value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ucte_voltage_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="mi">750</span><span class="p">,</span>
+        <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mi">380</span><span class="p">,</span>
+        <span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="mi">220</span><span class="p">,</span>
+        <span class="s2">&quot;3&quot;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
+        <span class="s2">&quot;4&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
+        <span class="s2">&quot;5&quot;</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span>
+        <span class="s2">&quot;6&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+        <span class="s2">&quot;7&quot;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+        <span class="s2">&quot;8&quot;</span><span class="p">:</span> <span class="mi">330</span><span class="p">,</span>
+        <span class="s2">&quot;9&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+        <span class="s2">&quot;E&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+        <span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+        <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+        <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+        <span class="s2">&quot;J&quot;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+        <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="mf">15.7</span><span class="p">,</span>
+        <span class="s2">&quot;L&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="mf">13.7</span><span class="p">,</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s2">&quot;O&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="s2">&quot;P&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s2">&quot;Q&quot;</span><span class="p">:</span> <span class="mf">9.8</span><span class="p">,</span>
+        <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s2">&quot;U&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="s2">&quot;V&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">val_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">val2</span> <span class="o">=</span> <span class="n">ucte_voltage_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">val_str</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">val2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Could not parse UCTE voltage&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+
+        <span class="k">if</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;UCTE voltage was not provided as a standard code, using the direct numeric value&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">f</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Provided UCTE voltage is zero&quot;</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">val2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UcteNode">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UcteNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    UcteNode</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_country</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># 0-7: Node (code)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geo_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># 9-20: Geographical name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 22: Status: 0 = real, 1 = equivalent</span>
+
+        <span class="c1"># Node type code (0 = P and Q constant (PQ node);</span>
+        <span class="c1"># 1 = Q and θ constant, 2 = P and U constant(PU node),</span>
+        <span class="c1"># 3 = U and θ constant(global slack node, only one in the whole network))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 24: Node type code</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># Nominal voltage derived from the node code.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 26-31: Voltage reference value (kV)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_load</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># 33-39: Active load (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># 41-47: Reactive load (MVAr)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 49-55: Active power generation (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 57-63: Reactive power generation (MVAr)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 65-71: Minimum permissible generation (MW) *</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 73-79: Maximum permissible generation (MW) *</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 81-87: Minimum permissible generation (MVAr) *</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 89-95: Maximum permissible generation (MVAr) *</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_primary_control</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 97-101: Static of primary control (%) *</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nominal_power_primary_control</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 103-109: Nominal power for primary control (MW) *</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">short_circuit_power</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 111-117: Three-phase short circuit power (MVA) **</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xr_ratio</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># 119-125: X/R ratio **</span>
+
+        <span class="c1"># H: hydro, N: nuclear, L: lignite,</span>
+        <span class="c1"># C: hard coal, G: gas, O: oil, W: wind, F: further</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># 127: Power plant type</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_voltage_window</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">110.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_looks_fixed_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param row:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">26</span>
+            <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">21</span><span class="p">:</span><span class="mi">22</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">23</span><span class="p">:</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">25</span><span class="p">:</span><span class="mi">26</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_nominal_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param logger:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">inferred_voltage</span> <span class="o">=</span> <span class="n">try_parse_voltage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inferred_voltage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">inferred_voltage</span>
+
+        <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Could not infer nominal voltage from node code, using voltage_reference as nominal voltage&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Could not infer nominal voltage from node code&quot;</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                         <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                         <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;8-character UCTE node code&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+
+<div class="viewcode-block" id="UcteNode.has_load">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.has_load">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_load</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_load</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteNode.is_regulating_voltage">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.is_regulating_voltage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_regulating_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteNode.is_generator">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.is_generator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_regulating_voltage</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span>
+            <span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteNode.has_gen">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.has_gen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_generator</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">min_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">max_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param value:</span>
+<span class="sd">        :param min_value:</span>
+<span class="sd">        :param max_value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">min_value</span><span class="p">):</span>
+            <span class="n">min_value</span> <span class="o">=</span> <span class="o">-</span><span class="n">get_default_power_limit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">max_value</span><span class="p">):</span>
+            <span class="n">max_value</span> <span class="o">=</span> <span class="n">get_default_power_limit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">min_value</span> <span class="o">&gt;</span> <span class="n">max_value</span><span class="p">:</span>
+            <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span> <span class="o">=</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">min_value</span>
+
+        <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">max_value</span><span class="p">:</span>
+                <span class="n">max_value</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">min_value</span><span class="p">:</span>
+                <span class="n">min_value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span>
+
+<div class="viewcode-block" id="UcteNode.normalize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.normalize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param logger:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">low_voltage_factor</span><span class="p">,</span> <span class="n">high_voltage_factor</span><span class="p">,</span> <span class="n">low_nominal_voltage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_voltage_window</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_generator</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_limits</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span><span class="p">,</span>
+                <span class="n">min_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span><span class="p">,</span>
+                <span class="n">max_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_regulating_voltage</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_limits</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span> <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span><span class="p">)</span> <span class="k">else</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="n">min_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span><span class="p">,</span>
+                <span class="n">max_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_regulating_voltage</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Voltage-regulating node has no valid voltage reference, switching it to PQ&quot;</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                                   <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">&gt;</span> <span class="n">low_nominal_voltage</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&lt;</span> <span class="n">low_voltage_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&gt;</span> <span class="n">high_voltage_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span>
+            <span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Voltage reference is far from the node nominal voltage&quot;</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                                   <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">,</span>
+                                   <span class="n">expected_value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">low_voltage_factor</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">voltage</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">..&quot;</span>
+                                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">high_voltage_factor</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">voltage</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_load</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_load</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="UcteNode.parse">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the node record.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;Node&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_looks_fixed_width</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node_code</span> <span class="o">=</span> <span class="n">sub_str</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;node_code&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geo_name</span> <span class="o">=</span> <span class="n">sub_str</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;geo_name&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">sub_int</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="o">=</span> <span class="n">sub_int</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;node_type&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;voltage_reference&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_load</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;active_load&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;reactive_load&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;active_gen&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;reactive_gen&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;min_gen_mw&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;max_gen_mw&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;min_gen_mvar&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;max_gen_mvar&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">static_primary_control</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;static_primary_control&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nominal_power_primary_control</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span>
+                <span class="n">row</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;nominal_power_primary_control&quot;</span><span class="p">,</span> <span class="n">logger</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">short_circuit_power</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">111</span><span class="p">,</span> <span class="mi">118</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;short_circuit_power&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xr_ratio</span> <span class="o">=</span> <span class="n">sub_optional_float</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">119</span><span class="p">,</span> <span class="mi">126</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;xr_ratio&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant_type</span> <span class="o">=</span> <span class="n">sub_str</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Non canonical line formatting, using tolerant tokenization&quot;</span><span class="p">,</span>
+                               <span class="n">device_class</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">),</span>
+                               <span class="n">expected_value</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+
+            <span class="n">chunks</span> <span class="o">=</span> <span class="n">ucte_split</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">prefix_lengths</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">total_fields</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">node_code</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geo_name</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">try_int</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span> <span class="o">=</span> <span class="n">try_int</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;node_type&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;voltage_reference&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_load</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;active_load&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reactive_load</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;reactive_load&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_gen</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;active_gen&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">9</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reactive_gen</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;reactive_gen&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mw</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;min_gen_mw&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">11</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mw</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;max_gen_mw&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_gen_mvar</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;min_gen_mvar&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">13</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_gen_mvar</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;max_gen_mvar&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">14</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">static_primary_control</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span>
+                    <span class="n">chunks</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;static_primary_control&quot;</span><span class="p">,</span> <span class="n">logger</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">15</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nominal_power_primary_control</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span>
+                    <span class="n">chunks</span><span class="p">[</span><span class="mi">14</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;nominal_power_primary_control&quot;</span><span class="p">,</span> <span class="n">logger</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">16</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">short_circuit_power</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">15</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;short_circuit_power&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">17</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xr_ratio</span> <span class="o">=</span> <span class="n">try_optional_float</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span> <span class="n">device</span><span class="p">,</span> <span class="s2">&quot;xr_ratio&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plant_type</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_nominal_voltage</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

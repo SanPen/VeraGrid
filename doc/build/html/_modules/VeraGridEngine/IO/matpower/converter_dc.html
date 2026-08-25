@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.matpower.converter_dc &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.matpower.converter_dc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.matpower.converter_dc</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<div class="viewcode-block" id="MatAcDcConverter">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MatAcDcConverter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to parse and write converter data from MATPOWER .m files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Initialize all attributes to default values</span>
+
+        <span class="c1"># Converter buses, control parameters and AC system data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">busdc_i</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># DC bus number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">busac_i</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># AC bus number</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CONVTYPE_DC constants</span>
+<span class="sd">        3 DCDROOP - DC voltage droop</span>
+<span class="sd">        2 DCSLACK - DC slack bus</span>
+<span class="sd">        1 DCNOSLACK -  constant active power bus</span>
+<span class="sd">        </span>
+<span class="sd">        CONVTYPE_AC constants</span>
+<span class="sd">        2 PVC - constant voltage converter control</span>
+<span class="sd">        1 PQC - constant reactive power converter control</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_dc</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># DC converter type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_ac</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># AC converter type</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_g</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Active power generation (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_g</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Reactive power generation (MVAr)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">islcc</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># is LCC?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vtar</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Target voltage (p.u.)</span>
+
+        <span class="c1"># Impedance values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rtf</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Transformer resistance (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xtf</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Transformer reactance (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Transformer presence flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tm</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Transformer tap ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bf</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Filter susceptance (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_flag</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Filter presence flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Reactor resistance (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Reactor reactance (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactor</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reactor presence flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_kvac</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Base AC voltage (kV)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmmax</span> <span class="o">=</span> <span class="mf">1.1</span>  <span class="c1"># Maximum AC voltage (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmmin</span> <span class="o">=</span> <span class="mf">0.9</span>  <span class="c1"># Minimum AC voltage (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imax</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Maximum current (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Converter status (1=In-service, 0=Out-of-service)</span>
+
+        <span class="c1"># Converter loss data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_a</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># a, constant loss coefficient (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_b</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># b, linear loss coefficient (kV)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_crec</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># r ec , rectifier quadratic loss coefficient (Ω)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_cinv</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># c i nv , inverter quadratic loss coefficient (Ω)</span>
+
+        <span class="c1"># DC voltage droop constants (optional)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">droop</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># k, DC voltage droop (MW/p.u)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdcset</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># voltage droop power set-point (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vdcset</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># voltage droop voltage set-point (p.u.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dvdcset</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># voltage droop voltage set-point (p.u.)</span>
+
+        <span class="c1"># Columns typically added after the power flow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pacmax</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Maximum AC active power (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pacmin</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Minimum AC active power (MW)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qacmax</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Maximum AC reactive power (MVAr)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qacmin</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Minimum AC reactive power (MVAr)</span>
+
+<div class="viewcode-block" id="MatAcDcConverter.parse_row">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter.parse_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses a single row of converter data and assigns values to the instance attributes.</span>
+<span class="sd">        :param row: List of values corresponding to a MATPOWER converter row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Assign values explicitly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">busdc_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># DC bus number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">busac_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># AC bus number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_dc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># DC converter type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_ac</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># AC converter type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_g</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># Active power generation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_g</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Reactive power generation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">islcc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>  <span class="c1"># Isolated operation flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vtar</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>  <span class="c1"># Target voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rtf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>  <span class="c1"># Transformer resistance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xtf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span>  <span class="c1"># Transformer reactance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>  <span class="c1"># Transformer presence flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">11</span><span class="p">])</span>  <span class="c1"># Transformer tap ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">12</span><span class="p">])</span>  <span class="c1"># Filter susceptance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_flag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">13</span><span class="p">])</span>  <span class="c1"># Filter presence flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">14</span><span class="p">])</span>  <span class="c1"># Reactor resistance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">15</span><span class="p">])</span>  <span class="c1"># Reactor reactance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">16</span><span class="p">])</span>  <span class="c1"># Reactor presence flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_kvac</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">17</span><span class="p">])</span>  <span class="c1"># Base AC voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">18</span><span class="p">])</span>  <span class="c1"># Maximum AC voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">19</span><span class="p">])</span>  <span class="c1"># Minimum AC voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">20</span><span class="p">])</span>  <span class="c1"># Maximum current</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">21</span><span class="p">])</span>  <span class="c1"># Converter status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">22</span><span class="p">])</span>  <span class="c1"># Loss coefficient A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">23</span><span class="p">])</span>  <span class="c1"># Loss coefficient B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_crec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">24</span><span class="p">])</span>  <span class="c1"># Rectifier constant loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_cinv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">25</span><span class="p">])</span>  <span class="c1"># Inverter constant loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">droop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">26</span><span class="p">])</span>  <span class="c1"># Droop control coefficient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdcset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">27</span><span class="p">])</span>  <span class="c1"># DC power setpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vdcset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">28</span><span class="p">])</span>  <span class="c1"># DC voltage setpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dvdcset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">29</span><span class="p">])</span>  <span class="c1"># DC voltage deviation setpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pacmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">30</span><span class="p">])</span>  <span class="c1"># Maximum AC active power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pacmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">31</span><span class="p">])</span>  <span class="c1"># Minimum AC active power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qacmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">32</span><span class="p">])</span>  <span class="c1"># Maximum AC reactive power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qacmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">33</span><span class="p">])</span>  <span class="c1"># Minimum AC reactive power</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.raw.raw_parser_writer &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.raw.raw_parser_writer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.raw.raw_parser_writer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">chardet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">AnyStr</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.raw_writer_comment_map</span><span class="w"> </span><span class="kn">import</span> <span class="n">comment_version_map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">PsseCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v29.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV29</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v30.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v31.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV31</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v32.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV32</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v33.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV33</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.substation_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationSwitchingDeviceV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.equipment_terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawEquipmentTerminalV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v34.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV34</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.substation_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationSwitchingDeviceV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.equipment_terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawEquipmentTerminalV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v35.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV35</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawZoneV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBusV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawLoadV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.fixed_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFixedShuntV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.switched_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSwitchedShuntV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGeneratorV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranchV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTransformerV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.two_terminal_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawTwoTerminalDCLineV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.vsc_dc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawVscDCLineV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.facts</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawFACTSV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.system_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSystemSwitchingDeviceV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.induction_machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInductionMachineV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.owner</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawOwnerV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.inter_area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawInterAreaV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSectionV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.impedance_correction_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawImpedanceCorrectionTableV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawNodeV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.substation_switching_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawSubstationSwitchingDeviceV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.equipment_terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawEquipmentTerminalV36</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.v36.gne_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawGneDeviceV36</span>
+
+<span class="n">SYSTEM_WIDE_SECTION_KEYS</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;GENERAL&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GAUSS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NEWTON&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ADJUST&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TYSL&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SOLVER&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RATING&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">KNOWN_CONTINUATION_HEADER_KEYS</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;VSREG&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="normalize_psse_version">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.normalize_psse_version">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_psse_version</span><span class="p">(</span><span class="n">version</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize a RAW version to the supported range.</span>
+
+<span class="sd">    :param version: Requested or detected PSSE version.</span>
+<span class="sd">    :return: Supported PSSE version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">version</span>
+
+    <span class="k">if</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="mi">36</span><span class="p">:</span>
+        <span class="n">normalized_version</span> <span class="o">=</span> <span class="mi">36</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">&lt;</span> <span class="mi">29</span><span class="p">:</span>
+        <span class="n">normalized_version</span> <span class="o">=</span> <span class="mi">33</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">normalized_version</span> <span class="o">=</span> <span class="n">version</span>
+
+    <span class="k">return</span> <span class="n">normalized_version</span></div>
+
+
+
+<div class="viewcode-block" id="delete_comment">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.delete_comment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_comment</span><span class="p">(</span><span class="n">raw_line</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param raw_line:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lne</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">text_active</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">raw_line</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">:</span>
+            <span class="n">text_active</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">text_active</span>
+
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text_active</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">lne</span>
+
+        <span class="n">lne</span> <span class="o">+=</span> <span class="n">c</span>
+
+    <span class="k">return</span> <span class="n">lne</span></div>
+
+
+
+<div class="viewcode-block" id="interpret_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.interpret_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpret_line</span><span class="p">(</span><span class="n">raw_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">splitter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split text into arguments and parse each of them to an appropriate format (int, float or string)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        raw_line: text line</span>
+<span class="sd">        splitter: value to split by</span>
+<span class="sd">    Returns: list of arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw_line</span> <span class="o">=</span> <span class="n">delete_comment</span><span class="p">(</span><span class="n">raw_line</span><span class="p">)</span>
+
+    <span class="c1"># Remove the last useless comma if it is there:</span>
+    <span class="k">if</span> <span class="n">raw_line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;,&quot;</span><span class="p">:</span>
+        <span class="n">lne</span> <span class="o">=</span> <span class="n">raw_line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lne</span> <span class="o">=</span> <span class="n">raw_line</span>
+
+    <span class="n">parsed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># Regular expression to split on commas but ignore commas within single quotes</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">splitter</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\s*(?=(?:[^&#39;]*&#39;[^&#39;]*&#39;)*[^&#39;]*$)&quot;</span>
+
+    <span class="c1"># Use re.split to apply the pattern</span>
+    <span class="n">elms</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">lne</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">elms</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="s2">&quot;&#39;&quot;</span> <span class="ow">in</span> <span class="n">elm</span><span class="p">:</span>
+            <span class="n">el</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">elm</span><span class="p">:</span>
+                <span class="c1"># the line might end with a comment &quot;/ whatever&quot; so we must delete the comment</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Comment detected:&quot;</span><span class="p">,</span> <span class="n">elm</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">ss</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">ss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; corrected to:&quot;</span><span class="p">,</span> <span class="n">elm</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># try int</span>
+                <span class="n">el</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex1</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># try float</span>
+                    <span class="n">el</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex2</span><span class="p">:</span>
+                    <span class="c1"># otherwise just leave it as string</span>
+                    <span class="n">el</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parsed</span></div>
+
+
+
+<div class="viewcode-block" id="read_and_split">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.read_and_split">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_and_split</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">,</span> <span class="n">AnyStr</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the text file and split it into sections</span>
+<span class="sd">    :return: list of sections, dictionary of sections by type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Detecting raw file encoding...&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">progress_func</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># make a guess of the file encoding</span>
+    <span class="n">detection</span> <span class="o">=</span> <span class="n">chardet</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="c1"># open the text file into a variable</span>
+
+    <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Reading raw file...&quot;</span><span class="p">)</span>
+
+    <span class="n">sections_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">sections_dict</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">detection</span><span class="p">[</span><span class="s1">&#39;encoding&#39;</span><span class="p">])</span> <span class="k">as</span> <span class="n">my_file</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">block_category</span> <span class="o">=</span> <span class="s2">&quot;bus&quot;</span>
+        <span class="k">for</span> <span class="n">line_</span> <span class="ow">in</span> <span class="n">my_file</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">line_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;@&#39;</span><span class="p">:</span>
+                <span class="c1"># delete garbage</span>
+                <span class="n">lne</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">line_</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">lne</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;program&quot;</span><span class="p">):</span>
+                    <span class="c1"># common header</span>
+                    <span class="n">block_category</span> <span class="o">=</span> <span class="s1">&#39;program&#39;</span>
+                    <span class="n">sections_dict</span><span class="p">[</span><span class="n">block_category</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sections_dict</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">interpret_line</span><span class="p">(</span><span class="n">raw_line</span><span class="o">=</span><span class="n">lne</span><span class="p">,</span> <span class="n">splitter</span><span class="o">=</span><span class="n">sep</span><span class="p">)]</span>
+                <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">sections_dict</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">lne</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">sections_dict</span><span class="p">[</span><span class="s1">&#39;comment2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">lne</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">record_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lne</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="n">record_key</span> <span class="ow">in</span> <span class="n">SYSTEM_WIDE_SECTION_KEYS</span><span class="p">:</span>
+                        <span class="n">block_category</span> <span class="o">=</span> <span class="s2">&quot;system-wide&quot;</span>
+                        <span class="k">if</span> <span class="n">block_category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sections_dict</span><span class="p">:</span>
+                            <span class="n">sections_dict</span><span class="p">[</span><span class="n">block_category</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="n">record_key</span> <span class="ow">in</span> <span class="n">KNOWN_CONTINUATION_HEADER_KEYS</span><span class="p">:</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+
+                    <span class="k">if</span> <span class="n">lne</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;0 /&quot;</span><span class="p">):</span>
+                        <span class="c1"># this is a category splitter</span>
+                        <span class="k">if</span> <span class="n">lne</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;cards&quot;</span><span class="p">):</span>
+                            <span class="c1"># MISO file</span>
+                            <span class="k">pass</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># common header</span>
+                            <span class="n">s</span> <span class="o">=</span> <span class="n">lne</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, begin&quot;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                                <span class="n">block_category</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                                <span class="n">sections_dict</span><span class="p">[</span><span class="n">block_category</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+                    <span class="k">elif</span> <span class="n">lne</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">):</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">lne</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                            <span class="n">sections_dict</span><span class="p">[</span><span class="n">block_category</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">interpret_line</span><span class="p">(</span><span class="n">raw_line</span><span class="o">=</span><span class="n">lne</span><span class="p">,</span> <span class="n">splitter</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span>
+                            <span class="p">)</span>
+
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># it is a header</span>
+                <span class="n">hdr</span> <span class="o">=</span> <span class="n">line_</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">sections_dict</span></div>
+
+
+
+<div class="viewcode-block" id="is_3w">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.is_3w">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_3w</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">bus_set</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If this a 3W transformer?</span>
+<span class="sd">    :param row: transformer file row</span>
+<span class="sd">    :param bus_set: Set of raw bus information</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">bus_set</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">bus_set</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="n">bus_set</span></div>
+
+
+
+<div class="viewcode-block" id="is_one_line_for_induction_machine">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.is_one_line_for_induction_machine">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_one_line_for_induction_machine</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Is this a one line induction machine?</span>
+<span class="sd">    :param row: file row</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">12</span></div>
+
+
+
+<div class="viewcode-block" id="check_end_of_impedance_table">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.check_end_of_impedance_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_end_of_impedance_table</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check the insane impedance line termination criteria</span>
+<span class="sd">    :param row:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_valid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.is_valid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="format_lines">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.format_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_lines</span><span class="p">(</span><span class="n">data1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format PSSe lines</span>
+<span class="sd">    :param data1:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">data1</span><span class="p">:</span>
+        <span class="n">sublist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="n">sublist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sublist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Invalid PSSe value&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sublist</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_substation_data_group">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.parse_substation_data_group">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_substation_data_group</span><span class="p">(</span>
+        <span class="n">lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">version</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">PsseCircuit</span><span class="p">,</span>
+        <span class="n">raw_substation_t</span><span class="p">,</span>
+        <span class="n">raw_node_t</span><span class="p">,</span>
+        <span class="n">raw_substation_switching_device_t</span><span class="p">,</span>
+        <span class="n">raw_equipment_terminal_t</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse the nested PSSE 34+ substation data group.</span>
+
+<span class="sd">    The RAW substation section is not a flat list of homogeneous records. Each</span>
+<span class="sd">    substation block contains one substation record, a node list terminated by</span>
+<span class="sd">    zero, a station-switch list terminated by zero, and an equipment-terminal</span>
+<span class="sd">    list terminated by zero.</span>
+
+<span class="sd">    :param lines: Flat list of already tokenized RAW records from the section.</span>
+<span class="sd">    :param version: PSSE version.</span>
+<span class="sd">    :param logger: Logger instance.</span>
+<span class="sd">    :param grid: Destination PSSE circuit.</span>
+<span class="sd">    :param raw_substation_t: Version-specific substation class.</span>
+<span class="sd">    :param raw_node_t: Version-specific node class.</span>
+<span class="sd">    :param raw_substation_switching_device_t: Version-specific station-switch class.</span>
+<span class="sd">    :param raw_equipment_terminal_t: Version-specific terminal class.</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="c1"># Consume one nested block at a time. The outer zero record terminates the</span>
+    <span class="c1"># whole section, while the inner zero records terminate the node, switch,</span>
+    <span class="c1"># and terminal subsections of the current substation.</span>
+    <span class="k">while</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="n">total_lines</span><span class="p">:</span>
+        <span class="n">substation_record</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">cursor</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">substation_record</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">substation_record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">substation</span> <span class="o">=</span> <span class="n">raw_substation_t</span><span class="p">()</span>
+            <span class="n">substation</span><span class="o">.</span><span class="n">parse</span><span class="p">([</span><span class="n">substation_record</span><span class="p">],</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">substations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">substation</span><span class="p">)</span>
+            <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">while</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="n">total_lines</span><span class="p">:</span>
+                <span class="n">node_record</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">cursor</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_record</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">node_record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">node</span> <span class="o">=</span> <span class="n">raw_node_t</span><span class="p">()</span>
+                    <span class="n">node</span><span class="o">.</span><span class="n">ISUB</span> <span class="o">=</span> <span class="n">substation</span><span class="o">.</span><span class="n">IS</span>
+                    <span class="n">node</span><span class="o">.</span><span class="n">parse</span><span class="p">([</span><span class="n">node_record</span><span class="p">],</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">while</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="n">total_lines</span><span class="p">:</span>
+                <span class="n">switch_record</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">cursor</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">switch_record</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">switch_record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">switch</span> <span class="o">=</span> <span class="n">raw_substation_switching_device_t</span><span class="p">()</span>
+                    <span class="n">switch</span><span class="o">.</span><span class="n">ISUB</span> <span class="o">=</span> <span class="n">substation</span><span class="o">.</span><span class="n">IS</span>
+                    <span class="n">switch</span><span class="o">.</span><span class="n">parse</span><span class="p">([</span><span class="n">switch_record</span><span class="p">],</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">substation_switching_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">switch</span><span class="p">)</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">while</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="n">total_lines</span><span class="p">:</span>
+                <span class="n">terminal_record</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">cursor</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">terminal_record</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">terminal_record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">terminal</span> <span class="o">=</span> <span class="n">raw_equipment_terminal_t</span><span class="p">()</span>
+                    <span class="n">terminal</span><span class="o">.</span><span class="n">ISUB</span> <span class="o">=</span> <span class="n">substation</span><span class="o">.</span><span class="n">IS</span>
+                    <span class="n">terminal</span><span class="o">.</span><span class="n">parse</span><span class="p">([</span><span class="n">terminal_record</span><span class="p">],</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">equipment_terminals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">terminal</span><span class="p">)</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">cursor</span> <span class="o">==</span> <span class="n">total_lines</span> <span class="ow">and</span> <span class="n">total_lines</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+            <span class="s1">&#39;Substation data group terminated without the expected zero record&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_raw">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.read_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_raw</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">text_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progress_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">PsseCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param filename:</span>
+<span class="sd">    :param text_func:</span>
+<span class="sd">    :param progress_func:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parser implemented according to:</span>
+<span class="sd">        - POM section 4.1.1 Power Flow Raw Data File Contents (v.29)</span>
+<span class="sd">        - POM section 5.2.1                                   (v.33)</span>
+<span class="sd">        - POM section 5.2.1                                   (v.32)</span>
+
+<span class="sd">    Returns: MultiCircuit, List[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">versions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">36</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">29</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Reading file...&quot;</span><span class="p">)</span>
+
+    <span class="n">sections_dict</span> <span class="o">=</span> <span class="n">read_and_split</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                   <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                   <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+
+    <span class="c1"># header -&gt; new grid</span>
+    <span class="c1"># grid = PSSeGrid(interpret_line(sections[0]))</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PsseCircuit</span><span class="p">()</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sections_dict</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">REV</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">versions</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;The PSSe version is not compatible. Compatible versions are:&#39;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">versions</span><span class="p">])</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grid</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">normalize_psse_version</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">REV</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">29</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV29</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV29</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV29</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV29</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV29</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV29</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV29</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV29</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV29</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV29</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV29</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV29</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV29</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV29</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV29</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV29</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV29</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV29</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV29</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV29</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV29</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">30</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV30</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV30</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV30</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV30</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV30</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV30</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV30</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV30</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV30</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV30</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV30</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV30</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV30</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV30</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV30</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV30</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV30</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV30</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV30</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV30</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV30</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">31</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV31</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV31</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV31</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV31</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV31</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV31</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV31</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV31</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV31</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV31</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV31</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV31</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV31</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV31</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV31</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV31</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV31</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV31</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV31</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV31</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV31</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV32</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV32</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV32</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV32</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV32</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV32</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV32</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV32</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV32</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV32</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV32</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV32</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV32</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV32</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV32</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV32</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV32</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV32</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV32</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV32</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV32</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">33</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV33</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV33</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV33</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV33</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV33</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV33</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV33</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV33</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV33</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV33</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV33</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV33</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV33</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV33</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV33</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV33</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV33</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV33</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV33</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV33</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV33</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">34</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV34</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV34</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV34</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV34</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV34</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV34</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV34</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV34</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV34</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV34</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV34</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV34</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV34</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV34</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV34</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV34</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV34</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV34</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV34</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV34</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSubstationSwitchingDeviceV34</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="n">RawEquipmentTerminalV34</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV34</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">35</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV35</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV35</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV35</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV35</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV35</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV35</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV35</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV35</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV35</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV35</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV35</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV35</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV35</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV35</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV35</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV35</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV35</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV35</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV35</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV35</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSubstationSwitchingDeviceV35</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="n">RawEquipmentTerminalV35</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV35</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">RawAreaT</span> <span class="o">=</span> <span class="n">RawAreaV36</span>
+        <span class="n">RawZoneT</span> <span class="o">=</span> <span class="n">RawZoneV36</span>
+        <span class="n">RawBusT</span> <span class="o">=</span> <span class="n">RawBusV36</span>
+        <span class="n">RawLoadT</span> <span class="o">=</span> <span class="n">RawLoadV36</span>
+        <span class="n">RawFixedShuntT</span> <span class="o">=</span> <span class="n">RawFixedShuntV36</span>
+        <span class="n">RawSwitchedShuntT</span> <span class="o">=</span> <span class="n">RawSwitchedShuntV36</span>
+        <span class="n">RawGeneratorT</span> <span class="o">=</span> <span class="n">RawGeneratorV36</span>
+        <span class="n">RawBranchT</span> <span class="o">=</span> <span class="n">RawBranchV36</span>
+        <span class="n">RawTransformerT</span> <span class="o">=</span> <span class="n">RawTransformerV36</span>
+        <span class="n">RawTwoTerminalDCLineT</span> <span class="o">=</span> <span class="n">RawTwoTerminalDCLineV36</span>
+        <span class="n">RawVscDCLineT</span> <span class="o">=</span> <span class="n">RawVscDCLineV36</span>
+        <span class="n">RawFACTST</span> <span class="o">=</span> <span class="n">RawFACTSV36</span>
+        <span class="n">RawSystemSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSystemSwitchingDeviceV36</span>
+        <span class="n">RawInductionMachineT</span> <span class="o">=</span> <span class="n">RawInductionMachineV36</span>
+        <span class="n">RawOwnerT</span> <span class="o">=</span> <span class="n">RawOwnerV36</span>
+        <span class="n">RawInterAreaT</span> <span class="o">=</span> <span class="n">RawInterAreaV36</span>
+        <span class="n">RawMultiLineSectionT</span> <span class="o">=</span> <span class="n">RawMultiLineSectionV36</span>
+        <span class="n">RawImpedanceCorrectionTableT</span> <span class="o">=</span> <span class="n">RawImpedanceCorrectionTableV36</span>
+        <span class="n">RawSubstationT</span> <span class="o">=</span> <span class="n">RawSubstationV36</span>
+        <span class="n">RawNodeT</span> <span class="o">=</span> <span class="n">RawNodeV36</span>
+        <span class="n">RawSubstationSwitchingDeviceT</span> <span class="o">=</span> <span class="n">RawSubstationSwitchingDeviceV36</span>
+        <span class="n">RawEquipmentTerminalT</span> <span class="o">=</span> <span class="n">RawEquipmentTerminalV36</span>
+        <span class="n">RawGneDeviceT</span> <span class="o">=</span> <span class="n">RawGneDeviceV36</span>
+
+    <span class="c1"># declare contents:</span>
+    <span class="c1"># section_idx, objects_list, expected_data_length, ObjectT, lines per objects</span>
+
+    <span class="c1"># SEQUENCE ORDER:logger.add_warning(&quot;RAW header contains 3 elements instead of the expected 6&quot;)</span>
+    <span class="c1"># 0:  Case Identification Data</span>
+    <span class="c1"># 1:  Bus Data</span>
+    <span class="c1"># 2:  Load Data</span>
+    <span class="c1"># 3:  Fixed Bus Shunt Data</span>
+    <span class="c1"># 4:  Generator Data</span>
+    <span class="c1"># 5:  Non-Transformer Branch Data</span>
+    <span class="c1"># 6:  Transformer Data</span>
+    <span class="c1"># 7:  Area Interchange Data</span>
+    <span class="c1"># 8:  Two-Terminal DC Transmission Line Data</span>
+    <span class="c1"># 9:  Voltage Source Converter (VSC) DC Transmission Line Data</span>
+    <span class="c1"># 10: Transformer Impedance Correction Tables</span>
+    <span class="c1"># 11: Multi-Terminal DC Transmission Line Data</span>
+    <span class="c1"># 12: Multi-Section Line Grouping Data</span>
+    <span class="c1"># 13: Zone Data</span>
+    <span class="c1"># 14: Inter-area Transfer Data</span>
+    <span class="c1"># 15: Owner Data</span>
+    <span class="c1"># 16: FACTS Device Data</span>
+    <span class="c1"># 17: Switched Shunt Data</span>
+    <span class="c1"># 18: GNE Device Data</span>
+    <span class="c1"># 19: Induction Machine Data</span>
+    <span class="c1"># 20: Q Record</span>
+
+    <span class="n">meta_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span> <span class="n">RawBusT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">RawLoadT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;fixed shunt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">fixed_shunts</span><span class="p">,</span> <span class="n">RawFixedShuntT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;fixed bus shunt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">fixed_shunts</span><span class="p">,</span> <span class="n">RawFixedShuntT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;shunt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">fixed_shunts</span><span class="p">,</span> <span class="n">RawFixedShuntT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;switched shunt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">switched_shunts</span><span class="p">,</span> <span class="n">RawSwitchedShuntT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;generator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">generators</span><span class="p">,</span> <span class="n">RawGeneratorT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;induction machine&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">induction_machines</span><span class="p">,</span> <span class="n">RawInductionMachineT</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;branch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">branches</span><span class="p">,</span> <span class="n">RawBranchT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;nontransformer branch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">branches</span><span class="p">,</span> <span class="n">RawBranchT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;system switching device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">switches</span><span class="p">,</span> <span class="n">RawSystemSwitchingDeviceT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">transformers</span><span class="p">,</span> <span class="n">RawTransformerT</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;two-terminal dc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">two_terminal_dc_lines</span><span class="p">,</span> <span class="n">RawTwoTerminalDCLineT</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;two-terminal dc line&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">two_terminal_dc_lines</span><span class="p">,</span> <span class="n">RawTwoTerminalDCLineT</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;vsc dc line&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">vsc_dc_lines</span><span class="p">,</span> <span class="n">RawVscDCLineT</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;facts device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">facts</span><span class="p">,</span> <span class="n">RawFACTST</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;facts control device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">facts</span><span class="p">,</span> <span class="n">RawFACTST</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;area data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">,</span> <span class="n">RawAreaT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">,</span> <span class="n">RawAreaT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;area interchange&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">,</span> <span class="n">RawAreaT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;inter-area transfer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">,</span> <span class="n">RawInterAreaT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;zone&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">zones</span><span class="p">,</span> <span class="n">RawZoneT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span> <span class="n">RawOwnerT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;gne&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">gne</span><span class="p">,</span> <span class="n">RawGneDeviceT</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;impedance correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">indiction_tables</span><span class="p">,</span> <span class="n">RawImpedanceCorrectionTableT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">meta_data</span><span class="p">[</span><span class="s1">&#39;multi-section line&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">multi_line_sections</span><span class="p">,</span> <span class="n">RawMultiLineSectionT</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">bus_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">lne</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">lne</span> <span class="ow">in</span> <span class="n">sections_dict</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">sections_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;substation&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">version</span> <span class="o">&gt;=</span> <span class="mi">34</span><span class="p">:</span>
+                <span class="n">parse_substation_data_group</span><span class="p">(</span>
+                    <span class="n">lines</span><span class="o">=</span><span class="n">lines</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">raw_substation_t</span><span class="o">=</span><span class="n">RawSubstationT</span><span class="p">,</span>
+                    <span class="n">raw_node_t</span><span class="o">=</span><span class="n">RawNodeT</span><span class="p">,</span>
+                    <span class="n">raw_substation_switching_device_t</span><span class="o">=</span><span class="n">RawSubstationSwitchingDeviceT</span><span class="p">,</span>
+                    <span class="n">raw_equipment_terminal_t</span><span class="o">=</span><span class="n">RawEquipmentTerminalT</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="s1">&#39;Substation data group is not defined before PSSE 34 and will be ignored&#39;</span><span class="p">,</span>
+                    <span class="n">key</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="p">:</span>
+
+            <span class="c1"># get the parsers for the declared object type</span>
+            <span class="n">objects_list</span><span class="p">,</span> <span class="n">ObjectT</span><span class="p">,</span> <span class="n">lines_per_object</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="s2">&quot;Converting </span><span class="si">{0}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sections_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+                <span class="c1"># iterate ove the object&#39;s lines to pack them as expected</span>
+                <span class="c1"># (normally 1 per object except transformers...)</span>
+                <span class="n">l_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">l_count</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+
+                    <span class="c1"># lines_per_object2 = lines_per_object</span>
+                    <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;transformer&#39;</span><span class="p">:</span>
+                        <span class="c1"># as you know the PSS/e raw format is nuts, that is why for v29 (onwards probably)</span>
+                        <span class="c1"># the transformers may have 4 or 5 lines to define them</span>
+                        <span class="c1"># so, to be able to know, we look at the line &quot;l&quot; and check if the first arguments</span>
+                        <span class="c1"># are 2 or 3 buses</span>
+                        <span class="k">if</span> <span class="n">is_3w</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">],</span> <span class="n">bus_set</span><span class="p">):</span>
+                            <span class="c1"># 3 - windings (5 lines)</span>
+                            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                                <span class="n">l_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># 2-windings (4 lines)</span>
+                            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                                <span class="n">l_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;induction machine&#39;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">is_one_line_for_induction_machine</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">]):</span>
+                            <span class="c1"># only one line</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                            <span class="n">l_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lines_per_object</span><span class="p">):</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                                <span class="n">l_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;impedance correction&#39;</span> <span class="ow">and</span> <span class="n">version</span> <span class="o">&gt;=</span> <span class="mi">35</span><span class="p">:</span>
+                        <span class="c1"># since PSSe is nothing but a very questionable set of legacy software,</span>
+                        <span class="c1"># when we&#39;re dealing with impedance tables, the number of lines is unknown</span>
+                        <span class="c1"># and determined by the termination criteria 0.0, 0.0, 0.0</span>
+                        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                            <span class="n">done</span> <span class="o">=</span> <span class="n">check_end_of_impedance_table</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                            <span class="n">l_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lines_per_object</span><span class="p">):</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">l_count</span><span class="p">])</span>
+                            <span class="n">l_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># pick the line that matches the object and split it by line returns \n</span>
+                    <span class="c1"># object_lines = line.split(&#39;\n&#39;)</span>
+
+                    <span class="c1"># interpret each line of the object and store into data.</span>
+                    <span class="c1"># data is a vector of vectors with data definitions</span>
+                    <span class="c1"># for the buses, branches, loads etc. data contains 1 vector,</span>
+                    <span class="c1"># for the transformers data contains 4 vectors</span>
+                    <span class="c1"># data = [interpret_line(object_lines[k]) for k in range(lines_per_object)]</span>
+
+                    <span class="c1"># pass the data to the according object to assign it to the matching variables</span>
+                    <span class="n">data2</span> <span class="o">=</span> <span class="n">format_lines</span><span class="p">(</span><span class="n">data1</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="n">obj</span> <span class="o">=</span> <span class="n">ObjectT</span><span class="p">()</span>
+                    <span class="n">obj</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data2</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                    <span class="n">objects_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">progress_func</span><span class="p">((</span><span class="n">l_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;comment2&#39;</span><span class="p">,</span> <span class="s1">&#39;system-wide&#39;</span><span class="p">]:</span>
+                <span class="c1"># add logs for the non parsed objects</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s1">&#39;Not implemented in the parser&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># check all primary keys</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">check_primary_keys</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid</span></div>
+
+
+
+<div class="viewcode-block" id="write_substation_data_group">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.write_substation_data_group">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_substation_data_group</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span>
+                                <span class="n">psse_model</span><span class="p">:</span> <span class="n">PsseCircuit</span><span class="p">,</span>
+                                <span class="n">version</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write the nested PSSE 34+ substation data group.</span>
+
+<span class="sd">    :param handle: Open output handle.</span>
+<span class="sd">    :param psse_model: PSSE model to serialize.</span>
+<span class="sd">    :param version: Target RAW version.</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nodes_by_substation</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">switches_by_substation</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">terminals_by_substation</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">ISUB</span> <span class="ow">in</span> <span class="n">nodes_by_substation</span><span class="p">:</span>
+            <span class="n">nodes_by_substation</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">ISUB</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nodes_by_substation</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">ISUB</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">substation_switching_devices</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">switch</span><span class="o">.</span><span class="n">ISUB</span> <span class="ow">in</span> <span class="n">switches_by_substation</span><span class="p">:</span>
+            <span class="n">switches_by_substation</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">ISUB</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">switch</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">switches_by_substation</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">ISUB</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">switch</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">terminal</span> <span class="ow">in</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">equipment_terminals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">ISUB</span> <span class="ow">in</span> <span class="n">terminals_by_substation</span><span class="p">:</span>
+            <span class="n">terminals_by_substation</span><span class="p">[</span><span class="n">terminal</span><span class="o">.</span><span class="n">ISUB</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">terminal</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">terminals_by_substation</span><span class="p">[</span><span class="n">terminal</span><span class="o">.</span><span class="n">ISUB</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">terminal</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">substation</span> <span class="ow">in</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">substations</span><span class="p">:</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">substation</span><span class="o">.</span><span class="n">get_raw_line</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">substation_nodes</span> <span class="o">=</span> <span class="n">nodes_by_substation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">substation</span><span class="o">.</span><span class="n">IS</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">substation_nodes</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_raw_line</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">substation_switches</span> <span class="o">=</span> <span class="n">switches_by_substation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">substation</span><span class="o">.</span><span class="n">IS</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">substation_switches</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">switch</span><span class="o">.</span><span class="n">get_raw_line</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">substation_terminals</span> <span class="o">=</span> <span class="n">terminals_by_substation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">substation</span><span class="o">.</span><span class="n">IS</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">terminal</span> <span class="ow">in</span> <span class="n">substation_terminals</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">get_raw_line</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="write_raw">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_parser_writer.write_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_raw</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">psse_model</span><span class="p">:</span> <span class="n">PsseCircuit</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">33</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write PsseCircuit as .raw version 33</span>
+<span class="sd">    :param file_name: name of the file</span>
+<span class="sd">    :param psse_model: PsseCircuit instance</span>
+<span class="sd">    :param version: RAW version</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">version</span> <span class="o">=</span> <span class="n">normalize_psse_version</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">29</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV29</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">30</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV30</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">31</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV31</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV32</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">33</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV33</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">34</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV34</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">35</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV35</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">owner_t</span> <span class="o">=</span> <span class="n">RawOwnerV36</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">psse_model</span><span class="o">.</span><span class="n">owners</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ow</span> <span class="o">=</span> <span class="n">owner_t</span><span class="p">()</span>
+        <span class="n">ow</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">ow</span><span class="o">.</span><span class="n">OWNAME</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+        <span class="n">psse_model</span><span class="o">.</span><span class="n">owners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ow</span><span class="p">)</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
+
+        <span class="n">comment_map</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">comment_version_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">comment_map</span> <span class="o">=</span> <span class="n">comment_version_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+
+        <span class="c1"># IC,SBASE,REV,XFRRAT,NXFRAT,BASFRQ</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="o">&gt;=</span> <span class="mi">35</span><span class="p">:</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@!IC,SBASE,REV,XFRRAT,NXFRAT,BASFRQ</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">     / Created with VeraGrid</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">psse_model</span><span class="o">.</span><span class="n">IC</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">SBASE</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span>
+                                                                         <span class="n">psse_model</span><span class="o">.</span><span class="n">XFRRAT</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">NXFRAT</span><span class="p">,</span>
+                                                                         <span class="n">psse_model</span><span class="o">.</span><span class="n">BASFRQ</span><span class="p">))</span>
+
+        <span class="c1"># comment 1</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">now</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;)  HORIZON: 20241205 00H DEM: 25029.8MW</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Using fake values</span>
+
+        <span class="c1"># comment 2</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;HID:4644MW,TERM:10747MW,EOL:6503MW,FV:0MW,OK</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="o">&gt;=</span> <span class="mi">35</span><span class="p">:</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;GENERAL, THRSHZ=0.0001, PQBRAK=0.7, BLOWUP=5.0, MaxIsolLvls=4, CAMaxReptSln=20, ChkDupCntLbl=0</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;GAUSS, ITMX=100, ACCP=1.6, ACCQ=1.6, ACCM=1.0, TOL=0.0001</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;NEWTON, ITMXN=20, ACCN=1.0, TOLN=0.1, VCTOLQ=0.1, VCTOLV=0.00001, DVLIM=0.99, NDVFCT=0.99</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;ADJUST, ADJTHR=0.005, ACCTAP=1.0, TAPLIM=0.05, SWVBND=100.0, MXTPSS=99, MXSWIM=10</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;TYSL, ITMXTY=20, ACCTY=1.0, TOLTY=0.00001</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;SOLVER, FNSL, ACTAPS=0, AREAIN=0, PHSHFT=0, DCTAPS=0, SWSHNT=0, FLATST=0, VARLIM=99, NONDIV=0</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s1">&#39;RATING, 1, &quot;RATE1 &quot;, &quot;RATING SET 1                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 2, &quot;RATE2 &quot;, &quot;RATING SET 2                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 3, &quot;RATE3 &quot;, &quot;RATING SET 3                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 4, &quot;RATE4 &quot;, &quot;RATING SET 4                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 5, &quot;RATE5 &quot;, &quot;RATING SET 5                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 6, &quot;RATE6 &quot;, &quot;RATING SET 6                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 7, &quot;RATE7 &quot;, &quot;RATING SET 7                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 8, &quot;RATE8 &quot;, &quot;RATING SET 8                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING, 9, &quot;RATE9 &quot;, &quot;RATING SET 9                    &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING,10, &quot;RATE10&quot;, &quot;RATING SET 10                   &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING,11, &quot;RATE11&quot;, &quot;RATING SET 11                   &quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;RATING,12, &quot;RATE12&quot;, &quot;RATING SET 12                   &quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Using fake values</span>
+
+            <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;BUS&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">buses</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;LOAD&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">loads</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;FIXED SHUNT&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">fixed_shunts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GENERATOR&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">generators</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;BRANCH&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">branches</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SYSTEM SWITCHING DEVICE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">switches</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;TRANSFORMER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">transformers</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;AREA INTERCHANGE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">areas</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;TWO-TERMINAL DC LINE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">two_terminal_dc_lines</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;VSC DC LINE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">vsc_dc_lines</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;IMPEDANCE CORRECTION&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;MULTI-TERMINAL DC LINE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;MULTI-SECTION LINE GROUP&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">multi_line_sections</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;ZONE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">zones</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;INTER-AREA TRANSFER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">inter_areas</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;OWNER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">owners</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;FACTS DEVICE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">facts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SWITCHED SHUNT&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">switched_shunts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SUBSTATION&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">substations</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GNE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">gne</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">34</span><span class="p">:</span>
+            <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;BUS&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">buses</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;LOAD&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">loads</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;FIXED SHUNT&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">fixed_shunts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GENERATOR&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">generators</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;BRANCH&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">branches</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SYSTEM SWITCHING DEVICE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">switches</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;TRANSFORMER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">transformers</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;AREA INTERCHANGE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">areas</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;TWO-TERMINAL DC LINE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">two_terminal_dc_lines</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;VSC DC LINE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">vsc_dc_lines</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;IMPEDANCE CORRECTION&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;MULTI-TERMINAL DC LINE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;MULTI-SECTION LINE GROUP&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">multi_line_sections</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;ZONE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">zones</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;INTER-AREA TRANSFER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">inter_areas</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;OWNER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">owners</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;FACTS DEVICE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">facts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SWITCHED SHUNT&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">switched_shunts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SUBSTATION&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">substations</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GNE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">gne</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">33</span><span class="p">:</span>
+            <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;BUS&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">buses</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;LOAD&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">loads</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;FIXED SHUNT&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">fixed_shunts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GENERATOR&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">generators</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;BRANCH&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">branches</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;TRANSFORMER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">transformers</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;AREA INTERCHANGE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">areas</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;TWO-TERMINAL DC LINE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">two_terminal_dc_lines</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;VSC DC LINE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">vsc_dc_lines</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;IMPEDANCE CORRECTION&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>  <span class="c1"># TODO implement impedance correction data</span>
+                <span class="p">(</span><span class="s2">&quot;MULTI-TERMINAL DC LINE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>  <span class="c1"># todo: implement multi terminal dc line data</span>
+                <span class="p">(</span><span class="s2">&quot;MULTI-SECTION LINE GROUP&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">multi_line_sections</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;ZONE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">zones</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;INTER-AREA TRANSFER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">inter_areas</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;OWNER&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">owners</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;FACTS DEVICE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">facts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;SWITCHED SHUNT&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">switched_shunts</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;GNE&quot;</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">.</span><span class="n">gne</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Version not supported&quot;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">logger</span>
+
+        <span class="n">prev_section</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">s_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="o">&gt;=</span> <span class="mi">35</span><span class="p">:</span>
+            <span class="n">prev_section</span> <span class="o">=</span> <span class="s2">&quot;SYSTEM-WIDE&quot;</span>
+        <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">34</span> <span class="ow">or</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">33</span><span class="p">:</span>
+            <span class="n">prev_section</span> <span class="o">=</span> <span class="s2">&quot;BUS&quot;</span>
+
+        <span class="k">for</span> <span class="n">section_name</span><span class="p">,</span> <span class="n">objects_list</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s_count</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">33</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0 / END OF &quot;</span> <span class="o">+</span> <span class="n">prev_section</span> <span class="o">+</span> <span class="s2">&quot; DATA, BEGIN &quot;</span> <span class="o">+</span> <span class="n">section_name</span> <span class="o">+</span> <span class="s2">&quot; DATA</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">comment_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="n">comment_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">comment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Missing comment for section&quot;</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">section_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">objects_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">section_name</span> <span class="o">==</span> <span class="s2">&quot;SUBSTATION&quot;</span><span class="p">:</span>
+                    <span class="n">write_substation_data_group</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">psse_model</span><span class="o">=</span><span class="n">psse_model</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects_list</span><span class="p">:</span>
+                        <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">get_raw_line</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">prev_section</span> <span class="o">=</span> <span class="n">section_name</span>
+            <span class="n">s_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0 / END OF &quot;</span> <span class="o">+</span> <span class="n">prev_section</span> <span class="o">+</span> <span class="s2">&quot; DATA</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Q</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

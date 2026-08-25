@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.DynamicModelEditor.source_emt_dialog &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.DynamicModelEditor.source_emt_dialog</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.DynamicModelEditor.source_emt_dialog</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockType</span>
+
+
+<div class="viewcode-block" id="SourceEmtDialog">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.source_emt_dialog.SourceEmtDialog">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SourceEmtDialog</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modal dialog used to configure one sinusoidal EMT source block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_block_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_phase_checks&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_amplitude_spins&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_phase_deg_spins&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_offset_spins&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_frequency_spin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_conductance_spin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_amplitude_group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_conductance_group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_info_label&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">block_type</span><span class="p">:</span> <span class="n">BlockType</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span><span class="p">:</span> <span class="n">BlockType</span> <span class="o">=</span> <span class="n">block_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_deg_spins</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offset_spins</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_dialog_title</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">520</span><span class="p">,</span> <span class="mi">560</span><span class="p">)</span>
+
+        <span class="n">main_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">description_label</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_description_text</span><span class="p">(),</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">description_label</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">description_label</span><span class="p">)</span>
+
+        <span class="n">phase_group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Active Phases&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">phase_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="n">phase_group</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span>
+            <span class="n">checkbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="n">phase_label</span><span class="p">,</span> <span class="n">phase_group</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkbox</span>
+            <span class="n">phase_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">checkbox</span><span class="p">)</span>
+        <span class="n">phase_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">phase_group</span><span class="p">)</span>
+
+        <span class="n">common_group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Wave Parameters&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">common_form</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="n">common_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">(</span><span class="n">common_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0e6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">common_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Frequency [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">common_group</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_amplitude_group_title</span><span class="p">(),</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">amplitude_form</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span>
+            <span class="n">amplitude_spin</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span><span class="p">)</span>
+            <span class="n">amplitude_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0e6</span><span class="p">,</span> <span class="mf">1.0e6</span><span class="p">)</span>
+            <span class="n">amplitude_spin</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">amplitude_spin</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">amplitude_spin</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">amplitude_spin</span>
+            <span class="n">amplitude_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2"> amplitude&quot;</span><span class="p">,</span> <span class="n">amplitude_spin</span><span class="p">)</span>
+
+            <span class="n">phase_spin</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span><span class="p">)</span>
+            <span class="n">phase_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="mf">3600.0</span><span class="p">,</span> <span class="mf">3600.0</span><span class="p">)</span>
+            <span class="n">phase_spin</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+            <span class="n">phase_spin</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">phase_spin</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_phase_deg_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_spin</span>
+            <span class="n">amplitude_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2"> phase [deg]&quot;</span><span class="p">,</span> <span class="n">phase_spin</span><span class="p">)</span>
+
+            <span class="n">offset_spin</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span><span class="p">)</span>
+            <span class="n">offset_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0e6</span><span class="p">,</span> <span class="mf">1.0e6</span><span class="p">)</span>
+            <span class="n">offset_spin</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">offset_spin</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">offset_spin</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_offset_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset_spin</span>
+            <span class="n">amplitude_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2"> offset&quot;</span><span class="p">,</span> <span class="n">offset_spin</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Norton Conductance&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">conductance_form</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_conductance_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_conductance_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0e9</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">conductance_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Conductance&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_conductance_group</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info_label</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_label</span><span class="p">)</span>
+
+        <span class="n">buttons</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Ok</span> <span class="o">|</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Cancel</span><span class="p">,</span>
+            <span class="bp">self</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">buttons</span><span class="o">.</span><span class="n">accepted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accept_dialog</span><span class="p">)</span>
+        <span class="n">buttons</span><span class="o">.</span><span class="n">rejected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_default_values</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">initial_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">apply_initial_configuration</span><span class="p">(</span><span class="n">initial_config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_visibility</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_dialog_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">VOLTAGE_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Configure Sinusoidal EMT Voltage Source&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CURRENT_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Configure Sinusoidal EMT Current Source&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_VOLTAGE_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Configure Controlled Sinusoidal EMT Voltage Source&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Configure Controlled Sinusoidal EMT Current Source&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_description_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">VOLTAGE_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Define one sinusoidal EMT voltage source. Each active phase uses amplitude, phase, frequency, and offset. The bus sees one Norton equivalent defined by the configured conductance.&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CURRENT_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Define one sinusoidal EMT current source. Each active phase injects one internally generated sine wave with amplitude, phase, frequency, and offset.&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_VOLTAGE_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Define one controlled sinusoidal EMT voltage source. Each command input sets the sinusoidal amplitude of its phase, while frequency, phase offset, and DC offset stay fixed in the dialog.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Define one controlled sinusoidal EMT current source. Each command input sets the sinusoidal amplitude of its phase, while frequency, phase offset, and DC offset stay fixed in the dialog.&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_amplitude_group_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_VOLTAGE_SOURCE_EMT</span><span class="p">,</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_CURRENT_SOURCE_EMT</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="s2">&quot;Fixed Phase Offsets&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">VOLTAGE_SOURCE_EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Voltage Wave Values&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Current Wave Values&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_uses_fixed_amplitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">BlockType</span><span class="o">.</span><span class="n">VOLTAGE_SOURCE_EMT</span><span class="p">,</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CURRENT_SOURCE_EMT</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_uses_source_conductance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">BlockType</span><span class="o">.</span><span class="n">VOLTAGE_SOURCE_EMT</span><span class="p">,</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_VOLTAGE_SOURCE_EMT</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_default_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+
+        <span class="n">default_phase_deg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">120.0</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mf">120.0</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_phase_deg_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">default_phase_deg</span><span class="p">[</span><span class="n">phase_label</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_offset_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_VOLTAGE_SOURCE_EMT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_info_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;The command inputs are per-phase sinusoidal voltage amplitudes. Conductance controls how stiff the source behaves against the bus voltage.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block_type</span> <span class="o">==</span> <span class="n">BlockType</span><span class="o">.</span><span class="n">CONTROLLED_CURRENT_SOURCE_EMT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_info_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;The command inputs are per-phase sinusoidal current amplitudes.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_info_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_refresh_visibility</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">amplitude_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uses_fixed_amplitudes</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">amplitude_visible</span><span class="p">)</span>
+            <span class="n">amplitude_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_group</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">labelForField</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="p">[</span><span class="n">phase_label</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">amplitude_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">amplitude_label</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">amplitude_visible</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_group</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_uses_source_conductance</span><span class="p">())</span>
+
+<div class="viewcode-block" id="SourceEmtDialog.accept_dialog">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.source_emt_dialog.SourceEmtDialog.accept_dialog">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">checkbox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="k">for</span> <span class="n">checkbox</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;EMT Source&quot;</span><span class="p">,</span> <span class="s2">&quot;Enable at least one terminal.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;EMT Source&quot;</span><span class="p">,</span> <span class="s2">&quot;The sinusoidal frequency must be greater than zero.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SourceEmtDialog.get_configuration">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.source_emt_dialog.SourceEmtDialog.get_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">({</span>
+            <span class="s2">&quot;phase_n&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()),</span>
+            <span class="s2">&quot;phase_a&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()),</span>
+            <span class="s2">&quot;phase_b&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()),</span>
+            <span class="s2">&quot;phase_c&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()),</span>
+            <span class="s2">&quot;source_frequency_hz&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">value</span><span class="p">()),</span>
+            <span class="s2">&quot;source_phase_amplitudes&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">({</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">spin</span><span class="o">.</span><span class="n">value</span><span class="p">())</span> <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">spin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="o">.</span><span class="n">items</span><span class="p">()}),</span>
+            <span class="s2">&quot;source_phase_angle_deg&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">({</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">spin</span><span class="o">.</span><span class="n">value</span><span class="p">())</span> <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">spin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_deg_spins</span><span class="o">.</span><span class="n">items</span><span class="p">()}),</span>
+            <span class="s2">&quot;source_phase_offsets&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">({</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">spin</span><span class="o">.</span><span class="n">value</span><span class="p">())</span> <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">spin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_spins</span><span class="o">.</span><span class="n">items</span><span class="p">()}),</span>
+            <span class="s2">&quot;source_conductance_value&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">value</span><span class="p">()),</span>
+        <span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="SourceEmtDialog.apply_initial_configuration">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.source_emt_dialog.SourceEmtDialog.apply_initial_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_initial_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">phase_key_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="s2">&quot;phase_n&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;phase_a&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="s2">&quot;phase_b&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="s2">&quot;phase_c&quot;</span><span class="p">}</span>
+        <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">config_key</span> <span class="ow">in</span> <span class="n">phase_key_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">config_key</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="s2">&quot;source_frequency_hz&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;source_frequency_hz&quot;</span><span class="p">]))</span>
+
+        <span class="n">source_phase_amplitudes</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source_phase_amplitudes&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_phase_amplitudes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">spin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude_spins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">source_phase_amplitudes</span><span class="p">:</span>
+                    <span class="n">spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_phase_amplitudes</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]))</span>
+
+        <span class="n">source_phase_angle_deg</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source_phase_angle_deg&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_phase_angle_deg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">spin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_deg_spins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">source_phase_angle_deg</span><span class="p">:</span>
+                    <span class="n">spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_phase_angle_deg</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]))</span>
+
+        <span class="n">source_phase_offsets</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source_phase_offsets&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_phase_offsets</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">phase_label</span><span class="p">,</span> <span class="n">spin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_spins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">source_phase_offsets</span><span class="p">:</span>
+                    <span class="n">spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_phase_offsets</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="s2">&quot;source_conductance_value&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_conductance_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;source_conductance_value&quot;</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_visibility</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

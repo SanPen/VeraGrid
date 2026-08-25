@@ -1,0 +1,858 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.matpower.matpower_to_veragrid &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.matpower.matpower_to_veragrid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.matpower.matpower_to_veragrid</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.matpower_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatpowerCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">ConverterControlType</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+
+<div class="viewcode-block" id="convert_areas">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_areas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_areas</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse Matpower / FUBM Matpower area data into VeraGrid</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param m_grid: MatpowerCircuit</span>
+<span class="sd">    :return: area index -&gt; object dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">area_idx_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m_grid</span><span class="o">.</span><span class="n">areas</span><span class="p">)):</span>
+        <span class="n">m_area</span> <span class="o">=</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">areas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Area &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">m_area</span><span class="o">.</span><span class="n">area_i</span><span class="p">),</span> <span class="n">code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">m_area</span><span class="o">.</span><span class="n">area_i</span><span class="p">))</span>
+        <span class="n">area_idx_dict</span><span class="p">[</span><span class="n">m_area</span><span class="o">.</span><span class="n">area_i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m_area</span><span class="o">.</span><span class="n">bus_i</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_area</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">area_idx_dict</span></div>
+
+
+
+<div class="viewcode-block" id="convert_buses">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_buses</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span>
+                  <span class="n">area_idx_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse Matpower / FUBM Matpower bus data into VeraGrid</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param m_grid: MatpowerCircuit</span>
+<span class="sd">    :param area_idx_dict: area index -&gt; object dictionary</span>
+<span class="sd">    :return: bus index -&gt; object dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># define bus types</span>
+    <span class="n">PQ</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">PV</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">REF</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="c1"># Buses</span>
+    <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m_grid</span><span class="o">.</span><span class="n">buses</span><span class="p">)):</span>
+
+        <span class="n">m_bus</span> <span class="o">=</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Create bus</span>
+        <span class="c1"># area_idx = int(table[i, matpower_buses.BUS_AREA])</span>
+        <span class="c1"># bus_idx = int(table[i, matpower_buses.BUS_I])</span>
+        <span class="n">is_slack</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">bus_area</span> <span class="ow">in</span> <span class="n">area_idx_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">area</span><span class="p">,</span> <span class="n">ref_idx</span> <span class="o">=</span> <span class="n">area_idx_dict</span><span class="p">[</span><span class="n">m_bus</span><span class="o">.</span><span class="n">bus_area</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ref_idx</span> <span class="o">==</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">bus_i</span><span class="p">:</span>
+                <span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">m_bus</span><span class="o">.</span><span class="n">bus_i</span><span class="p">)</span>
+
+        <span class="n">bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                      <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                      <span class="n">Vnom</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">base_kv</span><span class="p">,</span>
+                      <span class="n">vmax</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">vmax</span><span class="p">,</span>
+                      <span class="n">vmin</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">vmin</span><span class="p">,</span>
+                      <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span>
+                      <span class="n">is_slack</span><span class="o">=</span><span class="n">is_slack</span><span class="p">,</span>
+                      <span class="n">Vm0</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">vm</span><span class="p">,</span>
+                      <span class="n">Va0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">m_bus</span><span class="o">.</span><span class="n">va</span><span class="p">))</span>
+
+        <span class="c1"># store the given bus index in relation to its real index in the table for later</span>
+        <span class="n">bus_dict</span><span class="p">[</span><span class="n">m_bus</span><span class="o">.</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus</span>
+
+        <span class="c1"># determine if the bus is set as slack manually</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">bus_type</span> <span class="o">==</span> <span class="n">REF</span>
+
+        <span class="c1"># Add the bus to the circuit buses</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+
+        <span class="c1"># Add the load</span>
+        <span class="k">if</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">pd</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">qd</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">load</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">pd</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">qd</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load</span><span class="p">)</span>
+
+        <span class="c1"># Add the shunt</span>
+        <span class="k">if</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">gs</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">bs</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">shunt</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span><span class="n">G</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">gs</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">bs</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">shunt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">bus_dict</span></div>
+
+
+
+<div class="viewcode-block" id="convert_dc_buses">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_dc_buses</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span>
+                     <span class="n">area_idx_dict</span><span class="p">,</span>
+                     <span class="n">freq</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse Matpower / FUBM Matpower bus data into VeraGrid</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param m_grid: MatpowerCircuit</span>
+<span class="sd">    :param area_idx_dict: area index -&gt; object dictionary</span>
+<span class="sd">    :param freq: frequency in Hz</span>
+<span class="sd">    :return: bus index -&gt; object dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Buses</span>
+    <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">m_bus</span> <span class="ow">in</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">dc_buses</span><span class="p">:</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">m_bus</span><span class="o">.</span><span class="n">busdc_i</span><span class="p">)</span>
+
+        <span class="n">bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                      <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                      <span class="n">is_dc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">Vnom</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">base_kvdc</span><span class="p">,</span>
+                      <span class="n">vmax</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">vdcmax</span><span class="p">,</span>
+                      <span class="n">vmin</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">vdcmin</span><span class="p">,</span>
+                      <span class="n">Vm0</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">vdc</span><span class="p">,</span>
+                      <span class="n">Va0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># store the given bus index in relation to its real index in the table for later</span>
+        <span class="n">bus_dict</span><span class="p">[</span><span class="n">m_bus</span><span class="o">.</span><span class="n">busdc_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus</span>
+
+        <span class="c1"># Add the bus to the circuit buses</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+
+        <span class="c1"># Add the load</span>
+        <span class="k">if</span> <span class="n">m_bus</span><span class="o">.</span><span class="n">pdc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">load</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">P</span><span class="o">=</span><span class="n">m_bus</span><span class="o">.</span><span class="n">pdc</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load</span><span class="p">)</span>
+
+        <span class="c1"># Add the shunt (not used in power flow...)</span>
+        <span class="c1"># if m_bus.cdc != 0:</span>
+        <span class="c1">#     g = 1e-6 * 2.0 * np.pi * freq * (m_bus.base_kvdc * 1e3) ** 2  # MW @ v=1 p.u.</span>
+        <span class="c1">#     shunt = dev.Shunt(G=g, B=0.0)</span>
+        <span class="c1">#     circuit.add_shunt(bus=bus, api_obj=shunt)</span>
+
+    <span class="k">return</span> <span class="n">bus_dict</span></div>
+
+
+
+<div class="viewcode-block" id="convert_generators">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_generators">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_generators</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                       <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span>
+                       <span class="n">bus_idx_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse Matpower / FUBM Matpower generator data into VeraGrid</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param m_grid: MatpowerCircuit</span>
+<span class="sd">    :param bus_idx_dict: matpower bus index -&gt; object dictionary</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">m_gen</span> <span class="ow">in</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">generators</span><span class="p">:</span>
+        <span class="c1"># TODO: Calculate pf based on reactive_power</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">m_gen</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">pg</span><span class="p">),</span>
+                            <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">vg</span><span class="p">),</span>
+                            <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">qmax</span><span class="p">),</span>
+                            <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">qmin</span><span class="p">),</span>
+                            <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">gen_status</span><span class="p">),</span>
+                            <span class="n">Pmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">pmin</span><span class="p">),</span>
+                            <span class="n">Pmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">pmax</span><span class="p">),</span>
+                            <span class="n">Cost0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">Cost0</span><span class="p">),</span>
+                            <span class="n">Cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">Cost</span><span class="p">),</span>
+                            <span class="n">Cost2</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">Cost2</span><span class="p">),</span>
+                            <span class="p">)</span>
+
+        <span class="c1"># Add the generator to the bus</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">bus_idx_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">m_gen</span><span class="o">.</span><span class="n">gen_bus</span><span class="p">)]</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">gen</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_branches">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_branches">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_branches</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span>
+                     <span class="n">bus_idx_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                     <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse Matpower / FUBM Matpower branch data into VeraGrid</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param m_grid: MatpowerCircuit</span>
+<span class="sd">    :param bus_idx_dict: bus index -&gt; object dictionary</span>
+<span class="sd">    :param logger: Logger</span>
+<span class="sd">    :return: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">branches</span><span class="p">:</span>
+
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">bus_idx_dict</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">f_bus</span><span class="p">]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_idx_dict</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">t_bus</span><span class="p">]</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">_1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">f_bus</span><span class="p">,</span> <span class="n">br</span><span class="o">.</span><span class="n">t_bus</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">br</span><span class="o">.</span><span class="n">is_fubm</span><span class="p">:</span>  <span class="c1"># FUBM model</span>
+
+            <span class="c1"># converter type (I, II, III)</span>
+            <span class="n">matpower_converter_mode</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">conv_a</span>
+
+            <span class="c1"># determine the converter control mode</span>
+            <span class="n">Pfset</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">pf</span>
+            <span class="n">Ptset</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">pt</span>
+            <span class="n">Vt_set</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">vt_set</span>
+            <span class="n">Vf_set</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">vf_set</span>  <span class="c1"># dc voltage</span>
+            <span class="n">Qfset</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">qf</span>
+            <span class="n">Qtset</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">qt</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">tap</span> <span class="k">if</span> <span class="n">br</span><span class="o">.</span><span class="n">tap</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+            <span class="n">tap_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
+            <span class="n">v_set</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">Pset</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">Qset</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">control_bus</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">is_transformer</span> <span class="o">=</span> <span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">!=</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span> <span class="ow">or</span>
+                              <span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">tap</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">br</span><span class="o">.</span><span class="n">tap</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span>
+                              <span class="n">br</span><span class="o">.</span><span class="n">shift</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span>
+                              <span class="n">Pfset</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span>
+                              <span class="n">Ptset</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span>
+                              <span class="n">Qtset</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span>
+                              <span class="n">Qfset</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span>
+                              <span class="n">Vf_set</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span>
+                              <span class="n">Vt_set</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="c1"># tau based controls</span>
+            <span class="k">if</span> <span class="n">Pfset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">tap_phase_control_mode</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">Pf</span>
+                <span class="n">Pset</span> <span class="o">=</span> <span class="n">Pfset</span>
+            <span class="k">elif</span> <span class="n">Ptset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">tap_phase_control_mode</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">Pt</span>
+                <span class="n">Pset</span> <span class="o">=</span> <span class="n">Ptset</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tap_phase_control_mode</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">fixed</span>
+
+            <span class="c1"># m based controls</span>
+            <span class="k">if</span> <span class="n">Qtset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Qt</span>
+                <span class="n">Qset</span> <span class="o">=</span> <span class="n">Qtset</span>
+            <span class="k">elif</span> <span class="n">Qfset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Qf</span>
+                <span class="n">Qset</span> <span class="o">=</span> <span class="n">Qtset</span>
+            <span class="k">elif</span> <span class="n">Vt_set</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span>
+                <span class="n">v_set</span> <span class="o">=</span> <span class="n">Vt_set</span>
+                <span class="n">control_bus</span> <span class="o">=</span> <span class="n">bus_t</span>
+            <span class="k">elif</span> <span class="n">Vf_set</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span>
+                <span class="n">v_set</span> <span class="o">=</span> <span class="n">Vf_set</span>
+                <span class="n">control_bus</span> <span class="o">=</span> <span class="n">bus_f</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">fixed</span>
+
+            <span class="k">if</span> <span class="n">matpower_converter_mode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># it is a converter</span>
+
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                FUBM control chart</span>
+
+<span class="sd">                Type I are the ones making Qf = 0, therefore each DC grid must have at least one</span>
+<span class="sd">                Type II control the voltage, and DC grids must have at least one</span>
+<span class="sd">                Type III are the droop controlled ones, there may be one</span>
+
+<span class="sd">                Control Mode    Constraint1     Constraint2     VSC type</span>
+<span class="sd">                1               Pf              vdc -&gt; Vf       I</span>
+<span class="sd">                2               Pf              Qac -&gt; Qt       I   </span>
+<span class="sd">                3               Pf              vac -&gt; Vt       I</span>
+
+<span class="sd">                4               vdc -&gt; Vf       Qac -&gt; Qt       II</span>
+<span class="sd">                5               vdc -&gt; Vf       vac -&gt; Vt       II</span>
+
+<span class="sd">                6               vdc droop       Qac -&gt; Qt       III</span>
+<span class="sd">                7               vdc droop       vac -&gt; Vt       III</span>
+
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="n">control1</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">control2</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">control1val</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">control2val</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+                <span class="c1"># tau based controls</span>
+                <span class="k">if</span> <span class="n">Pfset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pdc</span>
+                    <span class="n">control1val</span> <span class="o">=</span> <span class="n">Pfset</span>
+                    <span class="n">control1_dev</span> <span class="o">=</span> <span class="n">bus_f</span>
+                <span class="k">elif</span> <span class="n">Ptset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pac</span>
+                    <span class="n">control1val</span> <span class="o">=</span> <span class="n">Ptset</span>
+                    <span class="n">control1_dev</span> <span class="o">=</span> <span class="n">bus_t</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+                    <span class="n">control1val</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="n">control1_dev</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># m based controls</span>
+                <span class="k">if</span> <span class="n">Qtset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+                    <span class="n">control2val</span> <span class="o">=</span> <span class="n">Qtset</span>
+                    <span class="n">control2_dev</span> <span class="o">=</span> <span class="n">bus_t</span>
+                <span class="k">elif</span> <span class="n">Qfset</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+                    <span class="n">control2val</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="n">control2_dev</span> <span class="o">=</span> <span class="n">bus_t</span>
+                <span class="k">elif</span> <span class="n">Vt_set</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_ac</span>
+                    <span class="n">control2val</span> <span class="o">=</span> <span class="n">Vt_set</span>
+                    <span class="n">control2_dev</span> <span class="o">=</span> <span class="n">bus_t</span>
+                <span class="k">elif</span> <span class="n">Vf_set</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span>
+                    <span class="n">control2val</span> <span class="o">=</span> <span class="n">Vf_set</span>
+                    <span class="n">control2_dev</span> <span class="o">=</span> <span class="n">bus_f</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+                    <span class="n">control2val</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="n">control2_dev</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># set the from bus as a DC bus</span>
+                <span class="c1"># this is by design of the matpower FUBM model,</span>
+                <span class="c1"># if it is a converter,</span>
+                <span class="c1"># the DC bus is always the &quot;from&quot; bus</span>
+                <span class="n">bus_f</span><span class="o">.</span><span class="n">is_dc</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">if</span> <span class="n">matpower_converter_mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Type I: normal converter</span>
+                    <span class="k">pass</span>
+
+                <span class="k">elif</span> <span class="n">matpower_converter_mode</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Type II: voltage controlling converter (slack converter)</span>
+                    <span class="k">pass</span>
+
+                <span class="k">elif</span> <span class="n">matpower_converter_mode</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Type III: Power-voltage droop</span>
+                    <span class="k">pass</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">br</span><span class="o">.</span><span class="n">rate_a</span><span class="p">,</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_b</span><span class="p">,</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_c</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                    <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="c1"># TODO: Figure this one out</span>
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VSC</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                 <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                 <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;VSC&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">vsc_devices</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                 <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_status</span><span class="p">),</span>
+                                 <span class="c1"># r=table[i, matpower_branches.BR_R],</span>
+                                 <span class="c1"># x=table[i, matpower_branches.BR_X],</span>
+                                 <span class="c1"># tap_module=m,</span>
+                                 <span class="c1"># tap_module_max=table[i, matpower_branches.MA_MAX],</span>
+                                 <span class="c1"># tap_module_min=table[i, matpower_branches.MA_MIN],</span>
+                                 <span class="c1"># tap_phase=tap_phase,</span>
+                                 <span class="c1"># tap_phase_max=np.deg2rad(table[i, matpower_branches.SH_MAX]),</span>
+                                 <span class="c1"># tap_phase_min=np.deg2rad(table[i, matpower_branches.SH_MIN]),</span>
+                                 <span class="c1"># G0sw=table[i, matpower_branches.GSW],</span>
+                                 <span class="c1"># Beq=table[i, matpower_branches.BEQ],</span>
+                                 <span class="c1"># Beq_max=table[i, matpower_branches.BEQ_MAX],</span>
+                                 <span class="c1"># Beq_min=table[i, matpower_branches.BEQ_MIN],</span>
+                                 <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                 <span class="n">control1_droop</span><span class="o">=</span><span class="n">br</span><span class="o">.</span><span class="n">kdp</span><span class="p">,</span>
+                                 <span class="c1"># tap_phase_control_mode=tap_phase_control_mode,</span>
+                                 <span class="c1"># tap_module_control_mode=tap_module_control_mode,</span>
+                                 <span class="c1"># Pset=Pset,</span>
+                                 <span class="c1"># Qset=Qset,</span>
+                                 <span class="c1"># vset=v_set,</span>
+                                 <span class="n">alpha1</span><span class="o">=</span><span class="n">br</span><span class="o">.</span><span class="n">alpha1</span><span class="p">,</span>
+                                 <span class="n">alpha2</span><span class="o">=</span><span class="n">br</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span>
+                                 <span class="n">alpha3</span><span class="o">=</span><span class="n">br</span><span class="o">.</span><span class="n">alpha3</span><span class="p">,</span>
+                                 <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                 <span class="n">control1</span><span class="o">=</span><span class="n">control1</span><span class="p">,</span>
+                                 <span class="n">control2</span><span class="o">=</span><span class="n">control2</span><span class="p">,</span>
+                                 <span class="n">control1_val</span><span class="o">=</span><span class="n">control1val</span><span class="p">,</span>
+                                 <span class="n">control2_val</span><span class="o">=</span><span class="n">control2val</span><span class="p">,</span>
+                                 <span class="n">control1_dev</span><span class="o">=</span><span class="n">control1_dev</span><span class="p">,</span>
+                                 <span class="n">control2_dev</span><span class="o">=</span><span class="n">control2_dev</span><span class="p">)</span>
+
+
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_vsc</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as converter&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">is_transformer</span><span class="p">:</span>
+
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_a</span>
+
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                    <span class="n">rate</span> <span class="o">=</span> <span class="mf">10000.0</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                           <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                           <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                           <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                           <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_r</span><span class="p">),</span>
+                                           <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_x</span><span class="p">),</span>
+                                           <span class="n">g</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                           <span class="n">b</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_b</span><span class="p">),</span>
+                                           <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                           <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_status</span><span class="p">),</span>
+                                           <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                           <span class="n">tap_module</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>
+                                           <span class="n">tap_module_max</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">ma_max</span><span class="p">),</span>
+                                           <span class="n">tap_module_min</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">ma_min</span><span class="p">),</span>
+                                           <span class="n">tap_phase</span><span class="o">=</span><span class="n">tap_phase</span><span class="p">,</span>
+                                           <span class="n">tap_phase_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">sh_max</span><span class="p">),</span>
+                                           <span class="n">tap_phase_min</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">sh_min</span><span class="p">),</span>
+                                           <span class="n">tap_phase_control_mode</span><span class="o">=</span><span class="n">tap_phase_control_mode</span><span class="p">,</span>
+                                           <span class="n">tap_module_control_mode</span><span class="o">=</span><span class="n">tap_module_control_mode</span><span class="p">,</span>
+                                           <span class="n">Pset</span><span class="o">=</span><span class="n">Pset</span><span class="p">,</span>
+                                           <span class="n">Qset</span><span class="o">=</span><span class="n">Qset</span><span class="p">,</span>
+                                           <span class="n">vset</span><span class="o">=</span><span class="n">v_set</span><span class="p">)</span>
+                <span class="n">branch</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="o">=</span> <span class="n">control_bus</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as 2w transformer&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_a</span>
+
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                    <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                  <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                  <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                  <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                  <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_r</span><span class="p">),</span>
+                                  <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_x</span><span class="p">),</span>
+                                  <span class="n">b</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_b</span><span class="p">),</span>
+                                  <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                  <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                  <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_status</span><span class="p">))</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as line&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">!=</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span> <span class="ow">or</span>
+                    <span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">tap</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">br</span><span class="o">.</span><span class="n">tap</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span>
+                    <span class="n">br</span><span class="o">.</span><span class="n">shift</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">):</span>
+
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_a</span>
+
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                    <span class="n">rate</span> <span class="o">=</span> <span class="mf">10000.0</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch not limited by rating&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                           <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                           <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                           <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                           <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_r</span><span class="p">),</span>
+                                           <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_x</span><span class="p">),</span>
+                                           <span class="n">g</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                           <span class="n">b</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_b</span><span class="p">),</span>
+                                           <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                           <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                           <span class="n">tap_module</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">tap</span><span class="p">),</span>
+                                           <span class="n">tap_phase</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">shift</span><span class="p">),</span>  <span class="c1"># * np.pi / 180,</span>
+                                           <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_status</span><span class="p">))</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as 2w transformer&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_a</span>
+
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                    <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                  <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                  <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                  <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                  <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_r</span><span class="p">),</span>
+                                  <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_x</span><span class="p">),</span>
+                                  <span class="n">b</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_b</span><span class="p">),</span>
+                                  <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                  <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                  <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">br_status</span><span class="p">))</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as line&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># convert normal lines into DC-lines if needed</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">is_dc</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+            <span class="n">dc_line</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">DcLine</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">bus_from</span><span class="p">,</span>
+                                 <span class="n">bus_to</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">bus_to</span><span class="p">,</span>
+                                 <span class="n">code</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                 <span class="n">active</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                                 <span class="n">rate</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                                 <span class="n">r</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
+
+            <span class="n">dc_line</span><span class="o">.</span><span class="n">active_prof</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">active_prof</span>
+            <span class="n">dc_line</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rate_prof</span>
+
+            <span class="c1"># add device to the circuit</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_dc_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">dc_line</span><span class="p">)</span>
+
+            <span class="c1"># delete_with_dialogue the line from the circuit</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">delete_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Converted to DC line&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_dc_branches">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_branches">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_dc_branches</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                        <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span>
+                        <span class="n">dc_bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit:</span>
+<span class="sd">    :param m_grid:</span>
+<span class="sd">    :param dc_bus_dict:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">dc_branches</span><span class="p">:</span>
+
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">dc_bus_dict</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">fbusdc</span><span class="p">]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">dc_bus_dict</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">tbusdc</span><span class="p">]</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">_1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">fbusdc</span><span class="p">,</span> <span class="n">br</span><span class="o">.</span><span class="n">tbusdc</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">!=</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">:</span>
+
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_a</span>
+
+            <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
+                <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                       <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                       <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                       <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                       <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">r</span><span class="p">),</span>
+                                       <span class="c1"># x=float(br.br_x),</span>
+                                       <span class="n">g</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                       <span class="c1"># b=float(br.br_b),</span>
+                                       <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                       <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                       <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">status</span><span class="p">))</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as 2w transformer&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">rate_a</span>
+
+            <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
+                <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">DcLine</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">r</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">r</span><span class="p">),</span>
+                                <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                                <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">status</span><span class="p">))</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_dc_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as line&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_converters">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_converters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_converters</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                       <span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span>
+                       <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                       <span class="n">dc_bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                       <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">converters</span><span class="p">:</span>
+
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">dc_bus_dict</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">busdc_i</span><span class="p">]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">busac_i</span><span class="p">]</span>
+
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">_1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">busdc_i</span><span class="p">,</span> <span class="n">br</span><span class="o">.</span><span class="n">busac_i</span><span class="p">)</span>
+
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">imax</span> <span class="o">*</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># using the current at the AC side</span>
+
+        <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="c1"># in matpower rate=0 means not limited by rating</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="mf">10000.0</span>
+            <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">br</span><span class="o">.</span><span class="n">type_dc</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">br</span><span class="o">.</span><span class="n">type_ac</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pac</span>
+            <span class="n">control1_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">p_g</span>
+            <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+            <span class="n">control2_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">q_g</span>
+
+        <span class="k">elif</span> <span class="n">br</span><span class="o">.</span><span class="n">type_dc</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">br</span><span class="o">.</span><span class="n">type_ac</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pac</span>
+            <span class="n">control1_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">p_g</span>
+            <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_ac</span>
+            <span class="n">control2_val</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">vtar</span>
+
+        <span class="k">elif</span> <span class="n">br</span><span class="o">.</span><span class="n">type_dc</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">br</span><span class="o">.</span><span class="n">type_ac</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span>
+            <span class="n">control1_val</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">vtar</span>
+            <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+            <span class="n">control2_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">q_g</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pac</span>
+            <span class="n">control1_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">p_g</span>
+            <span class="n">control2</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span>
+            <span class="n">control2_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">q_g</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        convmode    =   sign(Pc);       %% converter operation mode</span>
+<span class="sd">        rectifier   =   convmode&gt;0;</span>
+<span class="sd">        inverter    =   convmode&lt;0;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Ibase</span> <span class="o">=</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">br</span><span class="o">.</span><span class="n">base_kvac</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">br</span><span class="o">.</span><span class="n">p_g</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">alpha3</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">loss_crec</span> <span class="o">*</span> <span class="n">Ibase</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">Sbase</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alpha3</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">loss_cinv</span> <span class="o">*</span> <span class="n">Ibase</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">Sbase</span>
+
+        <span class="n">alpha2</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">loss_b</span> <span class="o">*</span> <span class="n">Ibase</span> <span class="o">/</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">Sbase</span>
+        <span class="n">alpha1</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="n">loss_a</span> <span class="o">/</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">Sbase</span>
+
+        <span class="n">branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VSC</span><span class="p">(</span>
+            <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+            <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+            <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+            <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+            <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+            <span class="n">alpha3</span><span class="o">=</span><span class="n">alpha3</span><span class="p">,</span>
+            <span class="n">alpha2</span><span class="o">=</span><span class="n">alpha2</span><span class="p">,</span>
+            <span class="n">alpha1</span><span class="o">=</span><span class="n">alpha1</span><span class="p">,</span>
+            <span class="n">control1_droop</span><span class="o">=</span><span class="n">br</span><span class="o">.</span><span class="n">droop</span><span class="p">,</span>
+            <span class="n">control1</span><span class="o">=</span><span class="n">control1</span><span class="p">,</span>
+            <span class="n">control1_val</span><span class="o">=</span><span class="n">control1_val</span><span class="p">,</span>
+            <span class="n">control2</span><span class="o">=</span><span class="n">control2</span><span class="p">,</span>
+            <span class="n">control2_val</span><span class="o">=</span><span class="n">control2_val</span>
+        <span class="p">)</span>
+
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_vsc</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Branch as 2w transformer&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Branch </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="matpower_to_veragrid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.matpower_to_veragrid.matpower_to_veragrid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">matpower_to_veragrid</span><span class="p">(</span><span class="n">m_grid</span><span class="p">:</span> <span class="n">MatpowerCircuit</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param m_grid:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">()</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">=</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">Sbase</span>
+
+    <span class="c1"># register the parsing logs</span>
+    <span class="n">logger</span> <span class="o">+=</span> <span class="n">m_grid</span><span class="o">.</span><span class="n">logger</span>
+
+    <span class="n">area_dict</span> <span class="o">=</span> <span class="n">convert_areas</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">)</span>
+    <span class="n">bus_dict</span> <span class="o">=</span> <span class="n">convert_buses</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">,</span> <span class="n">area_dict</span><span class="p">)</span>
+
+    <span class="n">dc_bus_dict</span> <span class="o">=</span> <span class="n">convert_dc_buses</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">,</span> <span class="n">area_dict</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+
+    <span class="n">convert_generators</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">)</span>
+
+    <span class="n">convert_branches</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">convert_converters</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">dc_bus_dict</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">convert_dc_branches</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">m_grid</span><span class="p">,</span> <span class="n">dc_bus_dict</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

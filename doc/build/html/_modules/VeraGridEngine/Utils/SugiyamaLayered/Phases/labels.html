@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.Phases.labels &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.Phases.labels</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.SugiyamaLayered.Phases.labels</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.model</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SugiyamaEdge</span><span class="p">,</span>
+    <span class="n">SugiyamaEdgeSection</span><span class="p">,</span>
+    <span class="n">SugiyamaLabel</span><span class="p">,</span>
+    <span class="n">SugiyamaNode</span><span class="p">,</span>
+    <span class="n">SugiyamaPort</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutDirection</span><span class="p">,</span> <span class="n">PortSide</span><span class="p">,</span> <span class="n">coerce_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutContext</span><span class="p">,</span> <span class="n">LayoutPhaseBase</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_section_path_points</span><span class="p">(</span><span class="n">section</span><span class="p">:</span> <span class="n">SugiyamaEdgeSection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all explicit points of one routed edge section.</span>
+
+<span class="sd">    :param section: Edge section to inspect.</span>
+<span class="sd">    :returns: Ordered list of start, bend and end points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">start_point</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
+
+    <span class="n">points</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">bend_points</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">end_point</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
+
+    <span class="k">return</span> <span class="n">points</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_polyline_midpoint</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the midpoint along a polyline.</span>
+
+<span class="sd">    :param points: Ordered polyline points.</span>
+<span class="sd">    :returns: Midpoint on the polyline or ``None`` when empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">midpoint</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">points</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">midpoint</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">segment_lengths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">total_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">segment_index</span><span class="p">:</span> <span class="nb">int</span>
+
+            <span class="c1"># The edge-label placement needs an arc-length midpoint instead of the</span>
+            <span class="c1"># geometric center so labels remain stable on routed orthogonal polylines.</span>
+            <span class="k">for</span> <span class="n">segment_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">x_start</span><span class="p">:</span> <span class="nb">float</span>
+                <span class="n">y_start</span><span class="p">:</span> <span class="nb">float</span>
+                <span class="n">x_end</span><span class="p">:</span> <span class="nb">float</span>
+                <span class="n">y_end</span><span class="p">:</span> <span class="nb">float</span>
+                <span class="n">x_start</span><span class="p">,</span> <span class="n">y_start</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">segment_index</span><span class="p">]</span>
+                <span class="n">x_end</span><span class="p">,</span> <span class="n">y_end</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">segment_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">segment_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_end</span> <span class="o">-</span> <span class="n">x_start</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_end</span> <span class="o">-</span> <span class="n">y_start</span><span class="p">)</span>
+                <span class="n">segment_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment_length</span><span class="p">)</span>
+                <span class="n">total_length</span> <span class="o">+=</span> <span class="n">segment_length</span>
+
+            <span class="k">if</span> <span class="n">total_length</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">midpoint</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">halfway</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">total_length</span> <span class="o">/</span> <span class="mf">2.0</span>
+                <span class="n">walked_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+                <span class="k">for</span> <span class="n">segment_index</span><span class="p">,</span> <span class="n">segment_length</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">segment_lengths</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">walked_length</span> <span class="o">+</span> <span class="n">segment_length</span> <span class="o">&gt;=</span> <span class="n">halfway</span> <span class="ow">and</span> <span class="n">segment_length</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">x_start</span><span class="p">,</span> <span class="n">y_start</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">segment_index</span><span class="p">]</span>
+                        <span class="n">x_end</span><span class="p">,</span> <span class="n">y_end</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">segment_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                        <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">halfway</span> <span class="o">-</span> <span class="n">walked_length</span><span class="p">)</span> <span class="o">/</span> <span class="n">segment_length</span>
+                        <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">x_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_end</span> <span class="o">-</span> <span class="n">x_start</span><span class="p">)</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">,</span>
+                            <span class="n">y_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_end</span> <span class="o">-</span> <span class="n">y_start</span><span class="p">)</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">walked_length</span> <span class="o">+=</span> <span class="n">segment_length</span>
+
+                <span class="k">if</span> <span class="n">midpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">midpoint</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">midpoint</span> <span class="o">=</span> <span class="n">midpoint</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">midpoint</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">midpoint</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_longest_segment_midpoint</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the midpoint of the longest segment in a polyline.</span>
+
+<span class="sd">    :param points: Ordered polyline points.</span>
+<span class="sd">    :returns: Midpoint of the longest segment or a polyline midpoint fallback.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">midpoint</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">best_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="n">segment_index</span><span class="p">:</span> <span class="nb">int</span>
+
+        <span class="c1"># Using the longest segment tends to place labels on the visually dominant</span>
+        <span class="c1"># part of the edge, which is more stable than using short dogleg segments.</span>
+        <span class="k">for</span> <span class="n">segment_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">x_start</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">y_start</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">x_end</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">y_end</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">x_start</span><span class="p">,</span> <span class="n">y_start</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">segment_index</span><span class="p">]</span>
+            <span class="n">x_end</span><span class="p">,</span> <span class="n">y_end</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">segment_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">segment_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_end</span> <span class="o">-</span> <span class="n">x_start</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_end</span> <span class="o">-</span> <span class="n">y_start</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">segment_length</span> <span class="o">&gt;</span> <span class="n">best_length</span><span class="p">:</span>
+                <span class="n">best_length</span> <span class="o">=</span> <span class="n">segment_length</span>
+                <span class="n">midpoint</span> <span class="o">=</span> <span class="p">((</span><span class="n">x_start</span> <span class="o">+</span> <span class="n">x_end</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="p">(</span><span class="n">y_start</span> <span class="o">+</span> <span class="n">y_end</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">best_length</span> <span class="o">=</span> <span class="n">best_length</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">midpoint</span> <span class="o">=</span> <span class="n">_polyline_midpoint</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">midpoint</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_update_bounds_with_rectangle</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">top</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">right</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">bottom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rectangle_left</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">rectangle_top</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">rectangle_right</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">rectangle_bottom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand bounds to include one rectangle.</span>
+
+<span class="sd">    :param left: Current left bound.</span>
+<span class="sd">    :param top: Current top bound.</span>
+<span class="sd">    :param right: Current right bound.</span>
+<span class="sd">    :param bottom: Current bottom bound.</span>
+<span class="sd">    :param rectangle_left: Rectangle left coordinate.</span>
+<span class="sd">    :param rectangle_top: Rectangle top coordinate.</span>
+<span class="sd">    :param rectangle_right: Rectangle right coordinate.</span>
+<span class="sd">    :param rectangle_bottom: Rectangle bottom coordinate.</span>
+<span class="sd">    :returns: Updated finite bounds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_left</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">rectangle_left</span> <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">rectangle_left</span><span class="p">)</span>
+    <span class="n">resolved_top</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">rectangle_top</span> <span class="k">if</span> <span class="n">top</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">rectangle_top</span><span class="p">)</span>
+    <span class="n">resolved_right</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">rectangle_right</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">rectangle_right</span><span class="p">)</span>
+    <span class="n">resolved_bottom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">rectangle_bottom</span> <span class="k">if</span> <span class="n">bottom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">bottom</span><span class="p">,</span> <span class="n">rectangle_bottom</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resolved_left</span><span class="p">,</span> <span class="n">resolved_top</span><span class="p">,</span> <span class="n">resolved_right</span><span class="p">,</span> <span class="n">resolved_bottom</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_update_bounds_with_label</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">top</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">right</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">bottom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand bounds to include one positioned label.</span>
+
+<span class="sd">    :param left: Current left bound.</span>
+<span class="sd">    :param top: Current top bound.</span>
+<span class="sd">    :param right: Current right bound.</span>
+<span class="sd">    :param bottom: Current bottom bound.</span>
+<span class="sd">    :param label: Label to include.</span>
+<span class="sd">    :returns: Updated bounds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">updated_left</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">left</span>
+    <span class="n">updated_top</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">top</span>
+    <span class="n">updated_right</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">right</span>
+    <span class="n">updated_bottom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">bottom</span>
+
+    <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">updated_left</span><span class="p">,</span> <span class="n">updated_top</span><span class="p">,</span> <span class="n">updated_right</span><span class="p">,</span> <span class="n">updated_bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_rectangle</span><span class="p">(</span>
+            <span class="n">left</span><span class="p">,</span>
+            <span class="n">top</span><span class="p">,</span>
+            <span class="n">right</span><span class="p">,</span>
+            <span class="n">bottom</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">updated_left</span> <span class="o">=</span> <span class="n">updated_left</span>
+
+    <span class="k">return</span> <span class="n">updated_left</span><span class="p">,</span> <span class="n">updated_top</span><span class="p">,</span> <span class="n">updated_right</span><span class="p">,</span> <span class="n">updated_bottom</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_graph_bounds</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the overall bounds of the laid out graph.</span>
+
+<span class="sd">    :param context: Shared pipeline context.</span>
+<span class="sd">    :returns: Graph bounds or ``None`` when no positioned geometry exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">top</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">right</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bottom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span>
+
+    <span class="c1"># The final layout needs normalization to positive coordinates, so the phase</span>
+    <span class="c1"># measures all node, port, edge and label geometry before applying the shift.</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_rectangle</span><span class="p">(</span>
+                <span class="n">left</span><span class="p">,</span>
+                <span class="n">top</span><span class="p">,</span>
+                <span class="n">right</span><span class="p">,</span>
+                <span class="n">bottom</span><span class="p">,</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">node</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">node</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+
+        <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_label</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+        <span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span>
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_rectangle</span><span class="p">(</span>
+                    <span class="n">left</span><span class="p">,</span>
+                    <span class="n">top</span><span class="p">,</span>
+                    <span class="n">right</span><span class="p">,</span>
+                    <span class="n">bottom</span><span class="p">,</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">port</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">port</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_label</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="n">edge</span><span class="p">:</span> <span class="n">SugiyamaEdge</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">section</span><span class="p">:</span> <span class="n">SugiyamaEdgeSection</span>
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">sections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">y_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_rectangle</span><span class="p">(</span>
+                    <span class="n">left</span><span class="p">,</span>
+                    <span class="n">top</span><span class="p">,</span>
+                    <span class="n">right</span><span class="p">,</span>
+                    <span class="n">bottom</span><span class="p">,</span>
+                    <span class="n">x_start</span><span class="p">,</span>
+                    <span class="n">y_start</span><span class="p">,</span>
+                    <span class="n">x_start</span><span class="p">,</span>
+                    <span class="n">y_start</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+
+            <span class="n">bend_point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">bend_point</span> <span class="ow">in</span> <span class="n">section</span><span class="o">.</span><span class="n">bend_points</span><span class="p">:</span>
+                <span class="n">bend_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bend_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">bend_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bend_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_rectangle</span><span class="p">(</span>
+                    <span class="n">left</span><span class="p">,</span>
+                    <span class="n">top</span><span class="p">,</span>
+                    <span class="n">right</span><span class="p">,</span>
+                    <span class="n">bottom</span><span class="p">,</span>
+                    <span class="n">bend_x</span><span class="p">,</span>
+                    <span class="n">bend_y</span><span class="p">,</span>
+                    <span class="n">bend_x</span><span class="p">,</span>
+                    <span class="n">bend_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x_end</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">y_end</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_rectangle</span><span class="p">(</span>
+                    <span class="n">left</span><span class="p">,</span>
+                    <span class="n">top</span><span class="p">,</span>
+                    <span class="n">right</span><span class="p">,</span>
+                    <span class="n">bottom</span><span class="p">,</span>
+                    <span class="n">x_end</span><span class="p">,</span>
+                    <span class="n">y_end</span><span class="p">,</span>
+                    <span class="n">x_end</span><span class="p">,</span>
+                    <span class="n">y_end</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_update_bounds_with_label</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">right</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bottom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_shift_layout</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate the whole layout by a constant offset.</span>
+
+<span class="sd">    :param context: Shared pipeline context.</span>
+<span class="sd">    :param dx: X displacement.</span>
+<span class="sd">    :param dy: Y displacement.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-9</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="c1"># The normalization shift happens only once after all coordinates exist, so</span>
+        <span class="c1"># every geometric primitive is translated coherently by the same offset.</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span>
+
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span>
+
+                <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span>
+            <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span>
+
+                <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span>
+
+                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span>
+
+                    <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="n">edge</span><span class="p">:</span> <span class="n">SugiyamaEdge</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+            <span class="n">section</span><span class="p">:</span> <span class="n">SugiyamaEdgeSection</span>
+            <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">sections</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">start_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dy</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">start_point</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">start_point</span>
+
+                <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">end_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dy</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">end_point</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">end_point</span>
+
+                <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">bend_points</span><span class="p">:</span>
+                    <span class="n">shifted_bend_points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                    <span class="n">bend_point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">bend_point</span> <span class="ow">in</span> <span class="n">section</span><span class="o">.</span><span class="n">bend_points</span><span class="p">:</span>
+                        <span class="n">shifted_bend_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bend_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="n">bend_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dy</span><span class="p">))</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">clear_bend_points</span><span class="p">()</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">extend_bend_points</span><span class="p">(</span><span class="n">shifted_bend_points</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">section</span><span class="o">.</span><span class="n">clear_bend_points</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">x</span>
+
+                <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">y</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_layout_direction</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LayoutDirection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the layout direction.</span>
+
+<span class="sd">    :param context: Shared pipeline context.</span>
+<span class="sd">    :returns: Normalized layout direction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">option_resolver</span><span class="o">.</span><span class="n">resolve_for_element</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">layout_options</span><span class="p">)</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n">LayoutDirection</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;org.vera.sugiyama.direction&quot;</span><span class="p">,</span> <span class="n">LayoutDirection</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">direction</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_port_side</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PortSide</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the explicit port side.</span>
+
+<span class="sd">    :param port: Port to inspect.</span>
+<span class="sd">    :returns: Normalized port side.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">side_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">port</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span><span class="s2">&quot;org.vera.sugiyama.port.side&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">port</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">side</span><span class="p">:</span> <span class="n">PortSide</span> <span class="o">=</span> <span class="n">coerce_enum_value</span><span class="p">(</span><span class="n">PortSide</span><span class="p">,</span> <span class="n">side_value</span><span class="p">,</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">UNDEFINED</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">side</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_effective_port_side</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="n">LayoutDirection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PortSide</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the effective side of a port.</span>
+
+<span class="sd">    :param port: Port to inspect.</span>
+<span class="sd">    :param role: Port role string.</span>
+<span class="sd">    :param direction: Layout direction.</span>
+<span class="sd">    :returns: Effective port side.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">explicit_side</span><span class="p">:</span> <span class="n">PortSide</span> <span class="o">=</span> <span class="n">_port_side</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+    <span class="n">resolved_side</span><span class="p">:</span> <span class="n">PortSide</span> <span class="o">=</span> <span class="n">explicit_side</span>
+
+    <span class="k">if</span> <span class="n">explicit_side</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">UNDEFINED</span><span class="p">:</span>
+        <span class="n">resolved_side</span> <span class="o">=</span> <span class="n">explicit_side</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">is</span> <span class="n">LayoutDirection</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+            <span class="n">resolved_side</span> <span class="o">=</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">WEST</span> <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span> <span class="k">else</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">EAST</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">direction</span> <span class="ow">is</span> <span class="n">LayoutDirection</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+                <span class="n">resolved_side</span> <span class="o">=</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">SOUTH</span> <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span> <span class="k">else</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">NORTH</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">direction</span> <span class="ow">is</span> <span class="n">LayoutDirection</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+                    <span class="n">resolved_side</span> <span class="o">=</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">NORTH</span> <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span> <span class="k">else</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">SOUTH</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resolved_side</span> <span class="o">=</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">EAST</span> <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span> <span class="k">else</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">WEST</span>
+
+    <span class="k">return</span> <span class="n">resolved_side</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_place_node_labels</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place labels attached directly to one node.</span>
+
+<span class="sd">    :param node: Node being annotated.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span>
+
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="nb">max</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_place_port_labels</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="n">LayoutDirection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place labels attached to the ports of one node.</span>
+
+<span class="sd">    :param node: Node whose ports are processed.</span>
+<span class="sd">    :param direction: Layout direction.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span>
+
+    <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">side</span><span class="p">:</span> <span class="n">PortSide</span> <span class="o">=</span> <span class="n">_effective_port_side</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">role</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">side</span> <span class="ow">is</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">WEST</span><span class="p">:</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mf">4.0</span>
+                    <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="nb">max</span><span class="p">((</span><span class="n">port</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">side</span> <span class="ow">is</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">EAST</span><span class="p">:</span>
+                        <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">port</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mf">4.0</span>
+                        <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="nb">max</span><span class="p">((</span><span class="n">port</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">side</span> <span class="ow">is</span> <span class="n">PortSide</span><span class="o">.</span><span class="n">NORTH</span><span class="p">:</span>
+                            <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="nb">max</span><span class="p">((</span><span class="n">port</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                            <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mf">4.0</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="nb">max</span><span class="p">((</span><span class="n">port</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                            <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">port</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mf">4.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_place_edge_labels</span><span class="p">(</span><span class="n">edge</span><span class="p">:</span> <span class="n">SugiyamaEdge</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place labels on one edge using its first section.</span>
+
+<span class="sd">    :param edge: Edge being annotated.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">midpoint</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">sections</span><span class="p">:</span>
+        <span class="n">section</span><span class="p">:</span> <span class="n">SugiyamaEdgeSection</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">midpoint</span> <span class="o">=</span> <span class="n">_longest_segment_midpoint</span><span class="p">(</span><span class="n">_section_path_points</span><span class="p">(</span><span class="n">section</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">midpoint</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">midpoint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">midpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">midpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">midpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">label</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mf">4.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">midpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="LabelPlacementPhase">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelPlacementPhase</span><span class="p">(</span><span class="n">LayoutPhaseBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place node, port and edge labels and normalize the final layout.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;labels&quot;</span>
+
+<div class="viewcode-block" id="LabelPlacementPhase.run">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.labels.LabelPlacementPhase.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the label-placement phase.</span>
+
+<span class="sd">        :param context: Shared pipeline context.</span>
+<span class="sd">        :returns: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">direction</span><span class="p">:</span> <span class="n">LayoutDirection</span> <span class="o">=</span> <span class="n">_layout_direction</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span>
+        <span class="n">edge</span><span class="p">:</span> <span class="n">SugiyamaEdge</span>
+
+        <span class="c1"># Labels are placed after node and edge geometry exists because they depend on</span>
+        <span class="c1"># the final routed positions of every primitive.</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">():</span>
+            <span class="n">_place_node_labels</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">_place_port_labels</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+            <span class="n">_place_edge_labels</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+
+        <span class="n">bounds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_graph_bounds</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">left</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">top</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">right</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">bottom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">_shift_layout</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="o">-</span><span class="n">left</span><span class="p">,</span> <span class="o">-</span><span class="n">top</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bottom</span> <span class="o">-</span> <span class="n">top</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

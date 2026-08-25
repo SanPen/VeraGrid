@@ -1,0 +1,60 @@
+# a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)
+
+This is Basic Block Catalog type `309` (`a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 5.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x}{dt} = a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{dx}
+$$
+
+$$
+0 = (a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{dx} - \frac{yi - x}{a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{Ta}})
+$$
+
+$$
+0 = (yo - a23 \cdot (x + a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{Tb} \cdot a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{dx}))
+$$
+
+$$
+a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{Tb}(t_0) = ((a11 - \frac{a13 \cdot a21}{a23}) \cdot Tw)
+$$
+
+$$
+a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)_{Ta}(t_0) = (a11 \cdot Tw)
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)__x` | Internal dynamic state | model-dependent |
+| Parameter | `a11` | Configurable model parameter | model-dependent |
+| Parameter | `a13` | Configurable model parameter | model-dependent |
+| Parameter | `a21` | Configurable model parameter | model-dependent |
+| Parameter | `a23` | Configurable model parameter | model-dependent |
+| Parameter | `Tw` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.db package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.db package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.cim.db.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-cim-db-package">
+<h1>VeraGridEngine.IO.cim.db package<a class="headerlink" href="#veragridengine-io-cim-db-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.cim.db.base_db">
+<span id="veragridengine-io-cim-db-base-db-module"></span><h2>VeraGridEngine.IO.cim.db.base_db module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.db.base_db" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.base_db.</span></span><span class="sig-name descname"><span class="pre">BaseDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.get_last_file_path">
+<span class="sig-name descname"><span class="pre">get_last_file_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.get_last_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.get_last_file_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.get_list_of_db_files">
+<span class="sig-name descname"><span class="pre">get_list_of_db_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.get_list_of_db_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.get_list_of_db_files" title="Link to this definition"></a></dt>
+<dd><p>Get list of db files
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.get_structures_names">
+<span class="sig-name descname"><span class="pre">get_structures_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.get_structures_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.get_structures_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.open_config">
+<span class="sig-name descname"><span class="pre">open_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.open_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.open_config" title="Link to this definition"></a></dt>
+<dd><p>Save configuration file
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.read_db_file">
+<span class="sig-name descname"><span class="pre">read_db_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.read_db_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.read_db_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.refresh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.base_db.BaseDb.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/base_db.html#BaseDb.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb.save_config" title="Link to this definition"></a></dt>
+<dd><p>Save configuration file
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.db.cgmes_lookup_db">
+<span id="veragridengine-io-cim-db-cgmes-lookup-db-module"></span><h2>VeraGridEngine.IO.cim.db.cgmes_lookup_db module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.db.cgmes_lookup_db" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.cgmes_lookup_db.CgmesLookUpDb">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.cgmes_lookup_db.</span></span><span class="sig-name descname"><span class="pre">CgmesLookUpDb</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/cgmes_lookup_db.html#CgmesLookUpDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.cgmes_lookup_db.CgmesLookUpDb" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb" title="VeraGridEngine.IO.cim.db.base_db.BaseDb"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDb</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.cgmes_lookup_db.CgmesLookUpDb.get_structures_names">
+<span class="sig-name descname"><span class="pre">get_structures_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/cgmes_lookup_db.html#CgmesLookUpDb.get_structures_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.cgmes_lookup_db.CgmesLookUpDb.get_structures_names" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.cgmes_lookup_db.CgmesLookUpDb.read_db_file">
+<span class="sig-name descname"><span class="pre">read_db_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/cgmes_lookup_db.html#CgmesLookUpDb.read_db_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.cgmes_lookup_db.CgmesLookUpDb.read_db_file" title="Link to this definition"></a></dt>
+<dd><p>Read CGMES database file
+:param file_name:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.db.db_handler">
+<span id="veragridengine-io-cim-db-db-handler-module"></span><h2>VeraGridEngine.IO.cim.db.db_handler module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.db.db_handler" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.db_handler.DbHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.db_handler.</span></span><span class="sig-name descname"><span class="pre">DbHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/db_handler.html#DbHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.db_handler.DbHandler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.db.file_system">
+<span id="veragridengine-io-cim-db-file-system-module"></span><h2>VeraGridEngine.IO.cim.db.file_system module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.db.file_system" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.file_system.get_create_roseta_db_folder">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.file_system.</span></span><span class="sig-name descname"><span class="pre">get_create_roseta_db_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/file_system.html#get_create_roseta_db_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.file_system.get_create_roseta_db_folder" title="Link to this definition"></a></dt>
+<dd><p>Get the home folder of Roseta, and if it does not exist, create it
+:return: folder path string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.file_system.get_create_roseta_folder">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.file_system.</span></span><span class="sig-name descname"><span class="pre">get_create_roseta_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/file_system.html#get_create_roseta_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.file_system.get_create_roseta_folder" title="Link to this definition"></a></dt>
+<dd><p>Get the home folder of Roseta, and if it does not exist, create it
+:return: folder path string</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.db.psse_lookup_db">
+<span id="veragridengine-io-cim-db-psse-lookup-db-module"></span><h2>VeraGridEngine.IO.cim.db.psse_lookup_db module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.db.psse_lookup_db" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.psse_lookup_db.</span></span><span class="sig-name descname"><span class="pre">PSSeLookUpDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.cim.db.base_db.BaseDb" title="VeraGridEngine.IO.cim.db.base_db.BaseDb"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDb</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_available_table_names">
+<span class="sig-name descname"><span class="pre">get_available_table_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb.get_available_table_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_available_table_names" title="Link to this definition"></a></dt>
+<dd><p>Get a list of the available tables
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_df">
+<span class="sig-name descname"><span class="pre">get_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb.get_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_df" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_from_psse_lookup">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_from_psse_lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb.get_from_psse_lookup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_from_psse_lookup" title="Link to this definition"></a></dt>
+<dd><p>Get a dictionary with the PSSe id as key and the RDFID as value
+:param df: lookup DataFrame
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_structures_names">
+<span class="sig-name descname"><span class="pre">get_structures_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb.get_structures_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.get_structures_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.read_db_file">
+<span class="sig-name descname"><span class="pre">read_db_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb.read_db_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.read_db_file" title="Link to this definition"></a></dt>
+<dd><p>This function reads the DB from an excel file
+:param file_name: name of the file (not the path)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.write_db_file">
+<span class="sig-name descname"><span class="pre">write_db_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#PSSeLookUpDb.write_db_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb.write_db_file" title="Link to this definition"></a></dt>
+<dd><p>Write DB to excel
+:param file_name: name of the file (not the path)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.db.psse_lookup_db.create_PSSeLookUpDb">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.db.psse_lookup_db.</span></span><span class="sig-name descname"><span class="pre">create_PSSeLookUpDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_circuit.PsseCircuit" title="VeraGridEngine.IO.raw.psse_circuit.PsseCircuit"><span class="pre">PsseCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb" title="VeraGridEngine.IO.cim.db.psse_lookup_db.PSSeLookUpDb"><span class="pre">PSSeLookUpDb</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/db/psse_lookup_db.html#create_PSSeLookUpDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.db.psse_lookup_db.create_PSSeLookUpDb" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.cim.db" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Rms.load_motor_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Rms.load_motor_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Rms.load_motor_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds an RMS model template for an induction motor load.</span>
+<span class="sd">    </span>
+<span class="sd">    Implements a detailed induction motor model with transient and subtransient dynamics.</span>
+<span class="sd">    The model includes:</span>
+<span class="sd">    - Electrical dynamics: Transient and subtransient voltage equations (Ed&#39;, Eq&#39;, Ed&#39;&#39;, Eq&#39;&#39;)</span>
+<span class="sd">    - Mechanical dynamics: Rotor speed (omega/slip) with inertia and load torque</span>
+<span class="sd">    - Algebraic equations: Currents, voltages, and power calculations in dq-reference frame</span>
+<span class="sd">    </span>
+<span class="sd">    The motor is represented by its equivalent circuit parameters including stator resistance,</span>
+<span class="sd">    leakage inductances, and magnetizing inductance. The model captures motor behavior during</span>
+<span class="sd">    voltage disturbances, including stall and recovery characteristics.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Name of the motor load model</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RmsModelTemplate: Configured RMS model template for induction motor simulation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="MotorLoadBuild">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.load_motor_template.MotorLoadBuild">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">MotorLoadBuild</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="c1"># Inputs:</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vm&#39;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">),</span>
+              <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Va&#39;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">)]</span>
+    <span class="n">Vm</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">Va</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># Variables:</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;omega&#39;</span><span class="p">)</span>
+    <span class="n">Id</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Id&#39;</span><span class="p">)</span>
+    <span class="n">Iq</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Iq&#39;</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pl&#39;</span><span class="p">)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ql&#39;</span><span class="p">)</span>
+    <span class="n">Vq</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vq&#39;</span><span class="p">)</span>
+    <span class="n">Vd</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vd&#39;</span><span class="p">)</span>
+    <span class="n">Ed_prime</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ed_prime&#39;</span><span class="p">)</span>
+    <span class="n">Eq_prime</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Eq_prime&#39;</span><span class="p">)</span>
+    <span class="n">Ed_2prime</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ed_2prime&#39;</span><span class="p">)</span>
+    <span class="n">Eq_2prime</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Eq_2prime&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Parameters:</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">)</span>
+    <span class="n">Ls</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ls&#39;</span><span class="p">)</span>
+    <span class="n">Lp</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Lp&#39;</span><span class="p">)</span>
+    <span class="n">Rs</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ra&#39;</span><span class="p">)</span>
+    <span class="n">Tp0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Tp0&#39;</span><span class="p">)</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">)</span>
+    <span class="n">VT</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;VT&#39;</span><span class="p">)</span>
+    <span class="n">TV</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;TV&#39;</span><span class="p">)</span>
+    <span class="n">Lpp</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Lpp&#39;</span><span class="p">)</span>
+    <span class="n">Cl0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Cl0&#39;</span><span class="p">)</span>
+    <span class="n">Tpp0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Tpp0&#39;</span><span class="p">)</span>
+    <span class="n">omega_s</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;omega_s&#39;</span><span class="p">)</span>
+    <span class="n">omega0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;omega_0&#39;</span><span class="p">)</span>
+    <span class="n">SLIP0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;SLIP0&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Shunt Parameters</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+
+    <span class="n">events_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># Electrical (induction motor typical ranges)</span>
+        <span class="n">Rs</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.015</span><span class="p">),</span>  <span class="c1"># Stator resistance (pu) ~ 0.01–0.03</span>
+        <span class="n">Ls</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.15</span><span class="p">),</span>  <span class="c1"># Stator leakage inductance (pu) ~ 0.10–0.25</span>
+        <span class="n">Lp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">3.00</span><span class="p">),</span>  <span class="c1"># Magnetising (mutual) inductance (pu) ~ 2–5</span>
+
+        <span class="c1"># Transient / rotor dynamics (approx. rotor open-circuit constants)</span>
+        <span class="n">Tp0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.60</span><span class="p">),</span>  <span class="c1"># &quot;Transient&quot; time constant (s) ~ 0.2–1.0</span>
+        <span class="n">Lpp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.12</span><span class="p">),</span>  <span class="c1"># Subtransient/leakage-like inductance (pu), &lt; Ls</span>
+        <span class="n">Tpp0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>  <span class="c1"># Fast electrical time constant (s) ~ 0.02–0.10</span>
+
+        <span class="c1"># Mechanical</span>
+        <span class="n">H</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.8</span><span class="p">),</span>  <span class="c1"># Inertia constant (s) ~ 0.2–1.5</span>
+        <span class="n">D</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>  <span class="c1"># Damping (often 0 unless explicitly modelled)</span>
+        <span class="n">n</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># Exponent of the torque speed dependency (unitless)</span>
+        <span class="n">Cl0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>  <span class="c1"># Initial load torque	(pu)</span>
+        <span class="n">SLIP0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>  <span class="c1"># Initial load torque	(pu)</span>
+
+        <span class="c1"># Voltage measurement / filtering</span>
+        <span class="n">VT</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># Nominal terminal voltage (pu)</span>
+        <span class="n">TV</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>  <span class="c1"># Voltage transducer / RMS estimator time (s)</span>
+        <span class="n">u</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+        <span class="c1"># frequency</span>
+        <span class="n">omega_s</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># nominal frequency in pu</span>
+        <span class="n">omega0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>  <span class="c1"># initial frequency in pu</span>
+
+        <span class="n">g</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">b</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">SLIP</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">omega</span>
+    <span class="n">dt_Ed</span> <span class="o">=</span> <span class="n">Eq_prime</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span> <span class="o">-</span> <span class="p">(</span><span class="n">Iq</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ls</span> <span class="o">-</span> <span class="n">Lp</span><span class="p">)</span> <span class="o">+</span> <span class="n">Ed_prime</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tp0</span>
+    <span class="n">dt_Eq</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ed_prime</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">Id</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ls</span> <span class="o">-</span> <span class="n">Lp</span><span class="p">)</span> <span class="o">+</span> <span class="n">Eq_prime</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tp0</span>
+    <span class="n">block1</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="n">dt_Ed</span><span class="p">,</span>  <span class="c1"># dt Ed_prime</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="n">dt_Eq</span><span class="p">,</span>  <span class="c1"># dt Eq_prime</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">Eq_prime</span> <span class="o">-</span> <span class="n">Eq_2prime</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span> <span class="o">-</span> <span class="p">(</span><span class="n">Ed_prime</span> <span class="o">-</span> <span class="n">Eq_2prime</span> <span class="o">-</span> <span class="p">(</span><span class="n">Lp</span> <span class="o">-</span> <span class="n">Lpp</span><span class="p">)</span> <span class="o">*</span> <span class="n">Iq</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tpp0</span> <span class="o">+</span> <span class="n">dt_Ed</span><span class="p">),</span>
+            <span class="c1"># dt Ed_2prime</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">((</span><span class="n">Ed_prime</span> <span class="o">-</span> <span class="n">Ed_2prime</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span> <span class="o">-</span> <span class="p">(</span><span class="n">Eq_prime</span> <span class="o">-</span> <span class="n">Ed_2prime</span> <span class="o">+</span> <span class="p">(</span><span class="n">Lp</span> <span class="o">-</span> <span class="n">Lpp</span><span class="p">)</span> <span class="o">*</span> <span class="n">Id</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tpp0</span> <span class="o">+</span> <span class="n">dt_Eq</span><span class="p">),</span>
+            <span class="c1"># dt Eq_2prime</span>
+        <span class="p">],</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Ed_prime</span><span class="p">,</span> <span class="n">Eq_prime</span><span class="p">,</span> <span class="n">Ed_2prime</span><span class="p">,</span> <span class="n">Eq_2prime</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">Te</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Te&#39;</span><span class="p">)</span>
+    <span class="n">block2</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">((</span><span class="n">Eq_2prime</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">Ed_2prime</span> <span class="o">*</span> <span class="n">Id</span><span class="p">)</span> <span class="o">-</span> <span class="n">Cl0</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">omega</span> <span class="o">/</span> <span class="n">omega0</span><span class="p">)</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">H</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">omega</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Te</span> <span class="o">-</span> <span class="p">(</span><span class="n">Eq_2prime</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">Ed_2prime</span> <span class="o">*</span> <span class="n">Id</span><span class="p">),</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vd</span> <span class="o">-</span> <span class="n">Ed_2prime</span> <span class="o">+</span> <span class="n">Rs</span> <span class="o">*</span> <span class="n">Id</span> <span class="o">-</span> <span class="n">Lpp</span> <span class="o">*</span> <span class="n">Iq</span><span class="p">),</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vq</span> <span class="o">-</span> <span class="n">Eq_2prime</span> <span class="o">+</span> <span class="n">Rs</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">Lpp</span> <span class="o">*</span> <span class="n">Id</span><span class="p">),</span>
+            <span class="n">Vd</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Va</span><span class="p">)),</span>
+            <span class="n">Vq</span> <span class="o">-</span> <span class="p">(</span><span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">Va</span><span class="p">)),</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">P</span> <span class="o">-</span> <span class="p">(</span><span class="n">Vd</span> <span class="o">*</span> <span class="n">Id</span> <span class="o">+</span> <span class="n">Vq</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">Vm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span>
+            <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q</span> <span class="o">-</span> <span class="p">(</span><span class="n">Vq</span> <span class="o">*</span> <span class="n">Id</span> <span class="o">-</span> <span class="n">Vd</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">Vm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Id</span><span class="p">,</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">Vd</span><span class="p">,</span> <span class="n">Vq</span><span class="p">,</span> <span class="n">Te</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">res_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">[</span><span class="n">block1</span><span class="p">,</span> <span class="n">block2</span><span class="p">])</span>
+    <span class="n">res_block</span><span class="o">.</span><span class="n">event_dict</span> <span class="o">=</span> <span class="n">events_dict</span>
+    <span class="n">res_block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">Q</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">res_block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+
+    <span class="n">I</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Q</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Va</span><span class="p">))</span>
+    <span class="n">Ii</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">Ir</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">Vi</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Va</span><span class="p">))</span>
+    <span class="n">Vr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Va</span><span class="p">))</span>
+
+    <span class="n">SLIP</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">omega</span>
+    <span class="n">dt_Ed</span> <span class="o">=</span> <span class="n">Eq_prime</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span> <span class="o">-</span> <span class="p">(</span><span class="n">Iq</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ls</span> <span class="o">-</span> <span class="n">Lp</span><span class="p">)</span> <span class="o">+</span> <span class="n">Ed_prime</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tp0</span>
+    <span class="n">dt_Eq</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ed_prime</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">Id</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ls</span> <span class="o">-</span> <span class="n">Lp</span><span class="p">)</span> <span class="o">+</span> <span class="n">Eq_prime</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tp0</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Tp0</span> <span class="o">*</span> <span class="n">omega_s</span> <span class="o">*</span> <span class="n">SLIP</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ls</span> <span class="o">-</span> <span class="n">Lp</span><span class="p">)</span>
+    <span class="n">Ed_prime_calc</span> <span class="o">=</span> <span class="n">L</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">Iq</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">Id</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">Eq_prime_calc</span> <span class="o">=</span> <span class="n">L</span> <span class="o">*</span> <span class="p">(</span><span class="n">Id</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">Iq</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">A_val</span> <span class="o">=</span> <span class="p">(</span><span class="n">Iq</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ls</span> <span class="o">-</span> <span class="n">Lp</span><span class="p">)</span> <span class="o">+</span> <span class="n">Ed_prime_calc</span><span class="p">)</span> <span class="o">/</span> <span class="n">Tp0</span>
+    <span class="n">omega_init</span> <span class="o">=</span> <span class="o">-</span><span class="n">A_val</span> <span class="o">/</span> <span class="p">(</span><span class="n">omega_s</span> <span class="o">*</span> <span class="n">Eq_prime_calc</span><span class="p">)</span> <span class="o">+</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">res_block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">Vd</span><span class="p">:</span> <span class="o">-</span><span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Va</span><span class="p">),</span>
+        <span class="n">Vq</span><span class="p">:</span> <span class="n">Vm</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">Va</span><span class="p">),</span>
+        <span class="n">Id</span><span class="p">:</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Vd</span> <span class="o">+</span> <span class="n">Q</span> <span class="o">*</span> <span class="n">Vq</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vd</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">Vq</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">Iq</span><span class="p">:</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Vq</span> <span class="o">-</span> <span class="n">Q</span> <span class="o">*</span> <span class="n">Vd</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vd</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">Vq</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">Ed_2prime</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vd</span> <span class="o">+</span> <span class="p">(</span><span class="n">Rs</span> <span class="o">*</span> <span class="n">Id</span> <span class="o">-</span> <span class="n">Lpp</span> <span class="o">*</span> <span class="n">Iq</span><span class="p">)),</span>
+        <span class="n">Eq_2prime</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vq</span> <span class="o">+</span> <span class="p">(</span><span class="n">Rs</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">Lpp</span> <span class="o">*</span> <span class="n">Id</span><span class="p">)),</span>
+        <span class="n">Te</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Eq_2prime</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">Ed_2prime</span> <span class="o">*</span> <span class="n">Id</span><span class="p">),</span>
+        <span class="n">Cl0</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Eq_2prime</span> <span class="o">*</span> <span class="n">Iq</span> <span class="o">+</span> <span class="n">Ed_2prime</span> <span class="o">*</span> <span class="n">Id</span><span class="p">),</span>
+        <span class="n">omega</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="n">omega_init</span><span class="p">,</span>
+        <span class="n">Ed_prime</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Ed_prime_calc</span><span class="p">,</span>
+        <span class="n">Eq_prime</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Eq_prime_calc</span><span class="p">,</span>
+        <span class="n">omega0</span><span class="p">:</span> <span class="n">omega</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">res_block</span>
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

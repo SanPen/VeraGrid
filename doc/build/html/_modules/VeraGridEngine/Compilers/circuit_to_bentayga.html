@@ -1,0 +1,960 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Compilers.circuit_to_bentayga &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Compilers.circuit_to_bentayga</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Compilers.circuit_to_bentayga</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SolverType</span><span class="p">,</span> <span class="n">HvdcControlType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_create_veragrid_folder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvergenceReport</span>
+
+
+<span class="n">BENTAYGA_RECOMMENDED_VERSION</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+<span class="n">BENTAYGA_VERSION</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">bentayga</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">btg</span>
+
+    <span class="c1"># activate</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">btg</span><span class="o">.</span><span class="n">is_license_activated</span><span class="p">():</span>
+        <span class="n">btg_license</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_create_veragrid_folder</span><span class="p">(),</span> <span class="s1">&#39;bentayga.lic&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">btg_license</span><span class="p">):</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">btg</span><span class="o">.</span><span class="n">activate_license</span><span class="p">(</span><span class="n">btg_license</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">btg</span><span class="o">.</span><span class="n">is_license_activated</span><span class="p">():</span>
+                    <span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">BENTAYGA_VERSION</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">get_version</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                <span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">btg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">BENTAYGA_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># numpy integer type for bentayga&#39;s uword</span>
+<span class="n">BINT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ulonglong</span>
+
+
+<div class="viewcode-block" id="add_btg_buses">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.add_btg_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_btg_buses</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the buses to bentayga buses</span>
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise, just the snapshot</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    :return: bus dictionary buses[uuid] -&gt; Bus</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">areas_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">areas</span><span class="p">)}</span>
+    <span class="n">bus_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">):</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                       <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                       <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                       <span class="n">is_slack</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span><span class="p">,</span>
+                       <span class="n">is_dc</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                       <span class="n">nominal_voltage</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span> <span class="ow">and</span> <span class="n">ntime</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">register_new_node</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+        <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+    <span class="k">return</span> <span class="n">bus_dict</span></div>
+
+
+
+<div class="viewcode-block" id="add_btg_loads">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.add_btg_loads">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_btg_loads</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_loads</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">devices</span><span class="p">):</span>
+
+        <span class="n">load</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="n">bus</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                        <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                        <span class="n">P0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">Q0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">P_prof</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Q_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">load</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_btg_static_generators">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.add_btg_static_generators">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_btg_static_generators</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ntime</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_static_generators</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">devices</span><span class="p">):</span>
+
+        <span class="n">load</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="n">bus</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                        <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                        <span class="n">P0</span><span class="o">=-</span><span class="n">elm</span><span class="o">.</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">Q0</span><span class="o">=-</span><span class="n">elm</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">P_prof</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">Q_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">load</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">load</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_btg_shunts">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.add_btg_shunts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_btg_shunts</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_shunts</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">devices</span><span class="p">):</span>
+
+        <span class="n">sh</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">ShuntFixed</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">bus</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                            <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                            <span class="n">G0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+                            <span class="n">B0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">sh</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">sh</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">G_prof</span>
+            <span class="n">sh</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">B_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sh</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_shunt_fixed</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_btg_generators">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.add_btg_generators">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_btg_generators</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_generators</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">devices</span><span class="p">):</span>
+
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">bus</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                            <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                            <span class="n">P0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">P</span><span class="p">,</span>
+                            <span class="n">Q0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">Vset0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vset</span><span class="p">)</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Qmin</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Qmin</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Qmax</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Qmax</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Pmin</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Pmin</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Pmax</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Pmax</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">generation_cost</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Cost</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">P_prof</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">vset</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Vset_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">P</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">vset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">Vset</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_battery_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_battery_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_battery_data</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_batteries</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">devices</span><span class="p">):</span>
+
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                          <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                          <span class="n">bus</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                          <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                          <span class="n">capacity</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Enom</span><span class="p">,</span>
+                          <span class="n">P0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">P</span><span class="p">,</span>
+                          <span class="n">Q0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                          <span class="n">Vset0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vset</span><span class="p">)</span>
+
+        <span class="n">gen</span><span class="o">.</span><span class="n">soc_max</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_soc</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">soc_min</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">min_soc</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">charge_efficiency</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">charge_efficiency</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">discharge_efficiency</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">discharge_efficiency</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">generation_cost</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Cost</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Qmin</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Qmin</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Qmax</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Qmax</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Pmin</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Pmin</span>
+        <span class="n">gen</span><span class="o">.</span><span class="n">Pmax</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Pmax</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">P_prof</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">vset</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Vset_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">P</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">vset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">Vset</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_battery</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_btg_line">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.add_btg_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_btg_line</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Compile the lines</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">lines</span><span class="p">):</span>
+        <span class="n">lne</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">AcLine</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">node_from</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                         <span class="n">node_to</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                         <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                         <span class="n">length</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                         <span class="n">rate</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                         <span class="n">active_default</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                         <span class="n">r1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                         <span class="n">x1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                         <span class="n">b1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+        <span class="n">lne</span><span class="o">.</span><span class="n">monitor_loading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">monitor_loading</span><span class="p">)</span>
+        <span class="n">lne</span><span class="o">.</span><span class="n">contingency_enabled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_enabled</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">lne</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">lne</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span>
+            <span class="n">lne</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_ac_line</span><span class="p">(</span><span class="n">lne</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_transformer_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_transformer_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_transformer_data</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">transformers2w</span><span class="p">):</span>
+        <span class="n">tr2</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Transformer2WAll</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                                   <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                   <span class="n">node_from</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                                   <span class="n">node_to</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                                   <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                                   <span class="n">HV</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">HV</span><span class="p">,</span>
+                                   <span class="n">LV</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">LV</span><span class="p">,</span>
+                                   <span class="n">rate</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                                   <span class="n">active_default</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                                   <span class="n">r1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                                   <span class="n">x1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                                   <span class="n">g1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+                                   <span class="n">b1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+        <span class="n">tr2</span><span class="o">.</span><span class="n">monitor_loading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">monitor_loading</span><span class="p">)</span>
+        <span class="n">tr2</span><span class="o">.</span><span class="n">contingency_enabled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_enabled</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">tap</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">tap_module_prof</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">tap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span>
+            <span class="n">tr2</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">tap_phase</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_transformer_all</span><span class="p">(</span><span class="n">tr2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_vsc_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_vsc_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_vsc_data</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">vsc_devices</span><span class="p">):</span>
+        <span class="n">vsc</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">VSC</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                      <span class="n">node_from</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                      <span class="n">node_to</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                      <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                      <span class="n">rate</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                      <span class="n">active_default</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                      <span class="n">r</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                      <span class="n">x</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                      <span class="n">g0</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">G0sw</span><span class="p">,</span>
+                      <span class="n">beq</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Beq</span><span class="p">,</span>
+                      <span class="n">beq_max</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Beq_max</span><span class="p">,</span>
+                      <span class="n">beq_min</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Beq_min</span><span class="p">,</span>
+                      <span class="n">k</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+                      <span class="n">tap</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span><span class="p">,</span>
+                      <span class="n">tap_max</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_max</span><span class="p">,</span>
+                      <span class="n">tap_min</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_module_min</span><span class="p">,</span>
+                      <span class="n">phase</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">,</span>
+                      <span class="n">phase_max</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_max</span><span class="p">,</span>
+                      <span class="n">phase_min</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_phase_min</span><span class="p">,</span>
+                      <span class="n">Pf_set</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pdc_set</span><span class="p">,</span>
+                      <span class="n">vac_set</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vac_set</span><span class="p">,</span>
+                      <span class="n">vdc_set</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vdc_set</span><span class="p">,</span>
+                      <span class="n">kdp</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">control1_val_droop</span><span class="p">,</span>
+                      <span class="n">alpha1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">alpha1</span><span class="p">,</span>
+                      <span class="n">alpha2</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span>
+                      <span class="n">alpha3</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">alpha3</span><span class="p">)</span>
+
+        <span class="n">vsc</span><span class="o">.</span><span class="n">monitor_loading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">monitor_loading</span><span class="p">)</span>
+        <span class="n">vsc</span><span class="o">.</span><span class="n">contingency_enabled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_enabled</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">vsc</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">vsc</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span>
+            <span class="n">vsc</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_vsc</span><span class="p">(</span><span class="n">vsc</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_dc_line_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_dc_line_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dc_line_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span>
+                     <span class="n">bus_dict</span><span class="p">,</span>
+                     <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">ntime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compile the lines</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">dc_lines</span><span class="p">):</span>
+        <span class="n">lne</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">DcLine</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">node_from</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                         <span class="n">node_to</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                         <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                         <span class="n">length</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                         <span class="n">rate</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                         <span class="n">active_default</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                         <span class="n">r1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
+
+        <span class="n">lne</span><span class="o">.</span><span class="n">monitor_loading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">monitor_loading</span><span class="p">)</span>
+        <span class="n">lne</span><span class="o">.</span><span class="n">contingency_enabled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BINT</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">contingency_enabled</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">lne</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">lne</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span>
+            <span class="n">lne</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_dc_line</span><span class="p">(</span><span class="n">lne</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_hvdc_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_hvdc_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_hvdc_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ntime</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit: VeraGrid circuit</span>
+<span class="sd">    :param btg_circuit: bentayga circuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param bus_dict: dictionary of bus id to bentayga bus object</span>
+<span class="sd">    :param ntime: number of time steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cmode_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_0_free</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">HvdcControlType</span><span class="o">.</span><span class="n">free</span><span class="p">,</span>
+                  <span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_1_Pset</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">HvdcControlType</span><span class="o">.</span><span class="n">Pdc</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">hvdc_lines</span><span class="p">):</span>
+        <span class="n">hvdc</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">HvdcLine</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">node_from</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                            <span class="n">node_to</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span><span class="p">],</span>
+                            <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">,</span>
+                            <span class="n">length</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                            <span class="n">rate</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                            <span class="n">active_default</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">r1</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                            <span class="n">Pset</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Pset</span><span class="p">,</span>
+                            <span class="n">v_set_f</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vset_f</span><span class="p">,</span>
+                            <span class="n">v_set_t</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">Vset_t</span><span class="p">,</span>
+                            <span class="n">min_firing_angle_f</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">min_firing_angle_f</span><span class="p">,</span>
+                            <span class="n">min_firing_angle_t</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">min_firing_angle_t</span><span class="p">,</span>
+                            <span class="n">max_firing_angle_f</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">max_firing_angle_f</span><span class="p">,</span>
+                            <span class="n">max_firing_angle_t</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">max_firing_angle_t</span><span class="p">,</span>
+                            <span class="n">control_mode</span><span class="o">=</span><span class="n">cmode_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">control_mode</span><span class="p">])</span>
+
+        <span class="c1"># hvdc.monitor_loading = elm.monitor_loading</span>
+        <span class="c1"># hvdc.contingency_enabled = elm.contingency_enabled</span>
+
+        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">BINT</span><span class="p">)</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">v_set_f</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Vset_f_prof</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">v_set_t</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Vset_t_prof</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">angle_droop</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">angle_droop_prof</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">rate</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor</span>
+            <span class="n">hvdc</span><span class="o">.</span><span class="n">angle_droop</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">angle_droop</span>
+
+        <span class="n">btg_circuit</span><span class="o">.</span><span class="n">add_hvdc_line</span><span class="p">(</span><span class="n">hvdc</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_bentayga">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.to_bentayga">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_bentayga</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert VeraGrid circuit to Bentayga</span>
+<span class="sd">    :param circuit: MultiCircuit</span>
+<span class="sd">    :param time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :return: btg.Circuit instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ntime</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span> <span class="k">if</span> <span class="n">time_series</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">ntime</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ntime</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">btgCircuit</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Circuit</span><span class="p">(</span><span class="n">uuid</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">ntime</span><span class="p">)</span>
+
+    <span class="n">bus_dict</span> <span class="o">=</span> <span class="n">add_btg_buses</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">add_btg_loads</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">add_btg_static_generators</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">add_btg_shunts</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">add_btg_generators</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">get_battery_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">add_btg_line</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">get_transformer_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">get_vsc_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">get_dc_line_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+    <span class="n">get_hvdc_data</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">btgCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">ntime</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">btgCircuit</span></div>
+
+
+
+<div class="viewcode-block" id="FakeAdmittances">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.FakeAdmittances">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeAdmittances</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ybus</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Yf</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Yt</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="get_snapshots_from_bentayga">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_snapshots_from_bentayga">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_snapshots_from_bentayga</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+
+    <span class="n">btgCircuit</span> <span class="o">=</span> <span class="n">to_bentayga</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">btg_data_lst</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">compile_at</span><span class="p">(</span><span class="n">btgCircuit</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">data_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">btg_data</span> <span class="ow">in</span> <span class="n">btg_data_lst</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">NumericalCircuit</span><span class="p">(</span><span class="n">nbus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nbr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nhvdc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nvsc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nload</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">ngen</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nbatt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nshunt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidnode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidturbine</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidpump</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidp2x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidpath</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">sbase</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Vbus_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Vbus</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Sbus_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Sbus</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Ibus_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Ibus</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">btg_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_f</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_f</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_t</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_t</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">btg_data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span> <span class="o">=</span> <span class="n">FakeAdmittances</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span><span class="o">.</span><span class="n">Ybus</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">admittances</span><span class="o">.</span><span class="n">Ybus</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span><span class="o">.</span><span class="n">Yf</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">admittances</span><span class="o">.</span><span class="n">Yf</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span><span class="o">.</span><span class="n">Yt</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">admittances</span><span class="o">.</span><span class="n">Yt</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Bbus_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">linear_admittances</span><span class="o">.</span><span class="n">Bbus</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Bf_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">linear_admittances</span><span class="o">.</span><span class="n">Bf</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Yseries_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">split_admittances</span><span class="o">.</span><span class="n">Yseries</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Yshunt_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">split_admittances</span><span class="o">.</span><span class="n">Yshunt</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">B1_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">fast_decoupled_admittances</span><span class="o">.</span><span class="n">B1</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">B2_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">fast_decoupled_admittances</span><span class="o">.</span><span class="n">B2</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Cf_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Cf</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Ct_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Ct</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pq_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">bus_types_data</span><span class="o">.</span><span class="n">pq</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pv_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">bus_types_data</span><span class="o">.</span><span class="n">pv</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">vd_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">bus_types_data</span><span class="o">.</span><span class="n">vd</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pqpv_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">bus_types_data</span><span class="o">.</span><span class="n">pqpv</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_indices</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_indices</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Qmax_bus_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Qmax_bus</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Qmin_bus_</span> <span class="o">=</span> <span class="n">btg_data</span><span class="o">.</span><span class="n">Qmin_bus</span>
+
+        <span class="n">data_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data_lst</span></div>
+
+
+
+<div class="viewcode-block" id="get_bentayga_pf_options">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.get_bentayga_pf_options">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bentayga_pf_options</span><span class="p">(</span><span class="n">opt</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate VeraGrid power flow options to Bentayga power flow options</span>
+<span class="sd">    :param opt:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">solver_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">PowerFlowSolvers</span><span class="o">.</span><span class="n">NewtonRaphson</span><span class="p">,</span>
+                   <span class="n">SolverType</span><span class="o">.</span><span class="n">Linear</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">PowerFlowSolvers</span><span class="o">.</span><span class="n">LinearDc</span><span class="p">,</span>
+                   <span class="c1"># SolverType.HELM: nn.NativeSolverType.HELM,</span>
+                   <span class="c1"># SolverType.IWAMOTO: nn.NativeSolverType.IWAMOTO,</span>
+                   <span class="n">SolverType</span><span class="o">.</span><span class="n">LM</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">PowerFlowSolvers</span><span class="o">.</span><span class="n">LevenbergMarquardt</span><span class="p">,</span>
+                   <span class="c1"># SolverType.LACPF: nn.NativeSolverType.LACPF,</span>
+                   <span class="n">SolverType</span><span class="o">.</span><span class="n">FASTDECOUPLED</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">PowerFlowSolvers</span><span class="o">.</span><span class="n">FastDecoupled</span>
+                   <span class="p">}</span>
+
+    <span class="n">q_control_dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">QControlMode</span><span class="o">.</span><span class="n">NoControl</span><span class="p">,</span>
+                      <span class="kc">True</span><span class="p">:</span> <span class="n">btg</span><span class="o">.</span><span class="n">QControlMode</span><span class="o">.</span><span class="n">Direct</span><span class="p">}</span>
+
+    <span class="n">solver_type</span> <span class="o">=</span> <span class="n">solver_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">solver_type</span><span class="p">,</span> <span class="n">btg</span><span class="o">.</span><span class="n">PowerFlowSolvers</span><span class="o">.</span><span class="n">NewtonRaphson</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">btg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">solver_type</span><span class="p">,</span>
+                                <span class="n">tolerance</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                                <span class="n">max_iter</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+                                <span class="n">retry_with_other_methods</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">retry_with_other_methods</span><span class="p">,</span>
+                                <span class="n">q_control_mode</span><span class="o">=</span><span class="n">q_control_dict</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">control_Q</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="bentayga_pf">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.bentayga_pf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bentayga_pf</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">opt</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bentayga power flow</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param opt: Power Flow Options</span>
+<span class="sd">    :param time_series: Compile with VeraGrid time series?</span>
+<span class="sd">    :return: Bentayga Power flow results object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">btgCircuit</span> <span class="o">=</span> <span class="n">to_bentayga</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="n">time_series</span><span class="p">)</span>
+
+    <span class="n">pf_options</span> <span class="o">=</span> <span class="n">get_bentayga_pf_options</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+    <span class="n">pf_res</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">run_power_flow</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">btgCircuit</span><span class="p">,</span>
+                                <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">,</span>
+                                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                                <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pf_res</span></div>
+
+
+
+<div class="viewcode-block" id="bentayga_linear_matrices">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.bentayga_linear_matrices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bentayga_linear_matrices</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">distributed_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bentayga linear analysis</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param distributed_slack: distribute the PTDF slack</span>
+<span class="sd">    :return: Bentayga LinearAnalysisMatrices object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">btg_circuit</span> <span class="o">=</span> <span class="n">to_bentayga</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">lin_mat</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">compute_linear_matrices_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">circuit</span><span class="o">=</span><span class="n">btg_circuit</span><span class="p">,</span>
+                                             <span class="n">distributed_slack</span><span class="o">=</span><span class="n">distributed_slack</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lin_mat</span></div>
+
+
+
+<div class="viewcode-block" id="translate_bentayga_pf_results">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.translate_bentayga_pf_results">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">translate_bentayga_pf_results</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param grid:</span>
+<span class="sd">    :param res:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">PowerFlowResults</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span>
+                               <span class="n">m</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branch_number</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                               <span class="n">n_hvdc</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_hvdc_number</span><span class="p">(),</span>
+                               <span class="n">n_vsc</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_vsc_number</span><span class="p">(),</span>
+                               <span class="n">n_gen</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_generators_number</span><span class="p">(),</span>
+                               <span class="n">n_batt</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_batteries_number</span><span class="p">(),</span>
+                               <span class="n">n_sh</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_shunt_like_device_number</span><span class="p">(),</span>
+                               <span class="n">bus_names</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                               <span class="n">branch_names</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                               <span class="n">hvdc_names</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">hvdc_names</span><span class="p">,</span>
+                               <span class="n">vsc_names</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_vsc_names</span><span class="p">(),</span>
+                               <span class="n">gen_names</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_generator_names</span><span class="p">(),</span>
+                               <span class="n">batt_names</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_battery_names</span><span class="p">(),</span>
+                               <span class="n">sh_names</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_shunt_like_devices_names</span><span class="p">(),</span>
+                               <span class="n">bus_types</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">bus_types</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Sbus</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Sf</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">St</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">loading</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">loading</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">losses</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Vbranch</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">Vbranch</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">If</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">If</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">It</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">It</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Beq</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">Beq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">tap_modules</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">tap_angle</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">tap_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">F</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">hvdc_F</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">F_hvdc</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">hvdc_T</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">T_hvdc</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Pf_hvdc</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">Pf_hvdc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Pt_hvdc</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">Pt_hvdc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">loading_hvdc</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">loading_hvdc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">losses_hvdc</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">losses_hvdc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">bus_area_indices</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_area_indices</span><span class="p">()</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">area_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">rep</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="n">ConvergenceReport</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rep</span><span class="o">.</span><span class="n">converged</span><span class="p">)):</span>
+            <span class="n">report</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">rep</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                       <span class="n">converged</span><span class="o">=</span><span class="n">rep</span><span class="o">.</span><span class="n">converged</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">error</span><span class="o">=</span><span class="n">rep</span><span class="o">.</span><span class="n">norm_f</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">elapsed</span><span class="o">=</span><span class="n">rep</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">iterations</span><span class="o">=</span><span class="n">rep</span><span class="o">.</span><span class="n">iterations</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">convergence_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="debug_bentayga_circuit_at">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_bentayga.debug_bentayga_circuit_at">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">debug_bentayga_circuit_at</span><span class="p">(</span><span class="n">btg_circuit</span><span class="p">:</span> <span class="s2">&quot;btg.Circuit&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">compile_at</span><span class="p">(</span><span class="n">btg_circuit</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;_&#39;</span> <span class="o">*</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Island&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;_&#39;</span> <span class="o">*</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ybus&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">admittances</span><span class="o">.</span><span class="n">Ybus</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Yseries&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split_admittances</span><span class="o">.</span><span class="n">Yseries</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Yshunt&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split_admittances</span><span class="o">.</span><span class="n">Yshunt</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bbus&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">linear_admittances</span><span class="o">.</span><span class="n">Bbus</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;B1&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fast_decoupled_admittances</span><span class="o">.</span><span class="n">B1</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;B2&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fast_decoupled_admittances</span><span class="o">.</span><span class="n">B2</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sbus&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Sbus</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vbus&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Vbus</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Qmin&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Qmin_bus</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Qmax&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Qmax_bus</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1005 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CpfParametrization</span><span class="p">,</span> <span class="n">CpfStopAt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Derivatives.ac_jacobian</span><span class="w"> </span><span class="kn">import</span> <span class="n">AC_jacobianVc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls</span><span class="w"> </span><span class="kn">import</span> <span class="n">control_q_direct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.simulation_indices</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">polar_to_rect</span><span class="p">,</span>
+                                                                                    <span class="n">compute_power</span><span class="p">,</span>
+                                                                                    <span class="n">compute_zip_power</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">IntVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc2</span><span class="w"> </span><span class="kn">import</span> <span class="n">spsolve_csc</span><span class="p">,</span> <span class="n">extend</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">320</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CpfNumericResults">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CpfNumericResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CpfNumericResults</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sbus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lmbda&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;St&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loading&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;losses&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;normF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sbus</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sf</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">St</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loading</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normF</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CpfNumericResults.add">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.add">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">sbus</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Sf</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">St</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">lam</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">losses</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">loading</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">normf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param v:</span>
+<span class="sd">        :param sbus:</span>
+<span class="sd">        :param Sf:</span>
+<span class="sd">        :param St:</span>
+<span class="sd">        :param lam:</span>
+<span class="sd">        :param losses:</span>
+<span class="sd">        :param loading:</span>
+<span class="sd">        :param normf:</span>
+<span class="sd">        :param converged:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sbus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sbus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmbda</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Sf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">St</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">St</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loading</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loading</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normF</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">normf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cpf_p">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.cpf_p">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cpf_p</span><span class="p">(</span><span class="n">parametrization</span><span class="p">:</span> <span class="n">CpfParametrization</span><span class="p">,</span>
+          <span class="n">step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+          <span class="n">z</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+          <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+          <span class="n">lam</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+          <span class="n">V_prev</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+          <span class="n">lamprv</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+          <span class="n">idx_dtheta</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+          <span class="n">idx_dVm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the value of the Current Parametrization Function</span>
+<span class="sd">    :param parametrization: Value of  option (1: Natural, 2:Arc-length, 3: pseudo arc-length)</span>
+<span class="sd">    :param step: continuation step size</span>
+<span class="sd">    :param z: normalized tangent prediction vector from previous step</span>
+<span class="sd">    :param V: complex bus voltage vector at current solution</span>
+<span class="sd">    :param lam: scalar lambda value at current solution</span>
+<span class="sd">    :param V_prev: complex bus voltage vector at previous solution</span>
+<span class="sd">    :param lamprv: scalar lambda value at previous solution</span>
+<span class="sd">    :param idx_dtheta: vector of indices of PV|PQ|PQV|P buses</span>
+<span class="sd">    :param idx_dVm: vector of indices of PQ|P buses</span>
+<span class="sd">    :return: value of the parametrization function at the current point</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    #CPF_P Computes the value of the CPF parametrization function.</span>
+<span class="sd">    #</span>
+<span class="sd">    #   P = CPF_P(parametrization, STEP, Z, V, LAM, VPRV, LAMPRV, PV, PQ)</span>
+<span class="sd">    #</span>
+<span class="sd">    #   Computes the value of the parametrization function at the current</span>
+<span class="sd">    #   solution point.</span>
+<span class="sd">    #</span>
+<span class="sd">    #   Inputs:</span>
+<span class="sd">    #       parametrization : Value of cpf.parametrization option</span>
+<span class="sd">    #       STEP : continuation step size</span>
+<span class="sd">    #       Z : normalized tangent prediction vector from previous step</span>
+<span class="sd">    #       V : complex bus voltage vector at current solution</span>
+<span class="sd">    #       LAM : scalar lambda value at current solution</span>
+<span class="sd">    #       VPRV : complex bus voltage vector at previous solution</span>
+<span class="sd">    #       LAMPRV : scalar lambda value at previous solution</span>
+<span class="sd">    #       PV : vector of indices of PV buses</span>
+<span class="sd">    #       PQ : vector of indices of PQ buses</span>
+<span class="sd">    #</span>
+<span class="sd">    #   Outputs:</span>
+<span class="sd">    #       P : value of the parametrization function at the current point</span>
+<span class="sd">    #</span>
+<span class="sd">    #   See also CPF_PREDICTOR, CPF_CORRECTOR.</span>
+
+<span class="sd">    #   MATPOWER</span>
+<span class="sd">    #   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)</span>
+<span class="sd">    #   by Shrirang Abhyankar, Argonne National Laboratory</span>
+<span class="sd">    #   and Ray Zimmerman, PSERC Cornell</span>
+<span class="sd">    #</span>
+<span class="sd">    #   $Id: cpf_p.m 2644 2015-03-11 19:34:22Z ray $</span>
+<span class="sd">    #</span>
+<span class="sd">    #   This file is part of MATPOWER.</span>
+<span class="sd">    #   Covered by the 3-clause BSD License (see LICENSE file for details).</span>
+<span class="sd">    #   See http://www.pserc.cornell.edu/matpower/ for more info.</span>
+
+<span class="sd">    ## evaluate P(x0, lambda0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">parametrization</span> <span class="o">==</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">Natural</span><span class="p">:</span>  <span class="c1"># natural</span>
+        <span class="k">if</span> <span class="n">lam</span> <span class="o">&gt;=</span> <span class="n">lamprv</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">-</span> <span class="n">lamprv</span> <span class="o">-</span> <span class="n">step</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">lamprv</span> <span class="o">-</span> <span class="n">lam</span> <span class="o">-</span> <span class="n">step</span>
+
+    <span class="k">elif</span> <span class="n">parametrization</span> <span class="o">==</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">ArcLength</span><span class="p">:</span>  <span class="c1"># arc length</span>
+        <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Va_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V_prev</span><span class="p">)</span>
+        <span class="n">Vm_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V_prev</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Va</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">],</span> <span class="n">Vm</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">],</span> <span class="n">lam</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Va_prev</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">],</span> <span class="n">Vm_prev</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">],</span> <span class="n">lamprv</span><span class="p">]</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">parametrization</span> <span class="o">==</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">PseudoArcLength</span><span class="p">:</span>  <span class="c1"># pseudo arc length</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Va_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V_prev</span><span class="p">)</span>
+        <span class="n">Vm_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V_prev</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">nb</span> <span class="o">+</span> <span class="n">idx_dVm</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span><span class="p">]]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Va</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">],</span> <span class="n">Vm</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">],</span> <span class="n">lam</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Va_prev</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">],</span> <span class="n">Vm_prev</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">],</span> <span class="n">lamprv</span><span class="p">]</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="n">step</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># natural</span>
+        <span class="k">if</span> <span class="n">lam</span> <span class="o">&gt;=</span> <span class="n">lamprv</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">-</span> <span class="n">lamprv</span> <span class="o">-</span> <span class="n">step</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">lamprv</span> <span class="o">-</span> <span class="n">lam</span> <span class="o">-</span> <span class="n">step</span>
+
+    <span class="k">return</span> <span class="n">P</span></div>
+
+
+
+<div class="viewcode-block" id="cpf_p_jac">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.cpf_p_jac">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cpf_p_jac</span><span class="p">(</span><span class="n">parametrization</span><span class="p">:</span> <span class="n">CpfParametrization</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span>
+              <span class="n">idx_dtheta</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes partial derivatives of Current Parametrization Function (CPF).</span>
+<span class="sd">    :param parametrization:</span>
+<span class="sd">    :param z: normalized tangent prediction vector from previous step</span>
+<span class="sd">    :param V: complex bus voltage vector at current solution</span>
+<span class="sd">    :param lam: scalar lambda value at current solution</span>
+<span class="sd">    :param Vprv: complex bus voltage vector at previous solution</span>
+<span class="sd">    :param lamprv: scalar lambda value at previous solution</span>
+<span class="sd">    :param idx_dtheta: vector of indices of PV|PQ|PQV|P buses</span>
+<span class="sd">    :param idx_dVm: vector of indices of PQ|P buses</span>
+<span class="sd">    :return:  partial of parametrization function w.r.t. voltages</span>
+<span class="sd">              partial of parametrization function w.r.t. lambda</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    #CPF_P_JAC Computes partial derivatives of CPF parametrization function.</span>
+<span class="sd">    #</span>
+<span class="sd">    #   [DP_DV, DP_DLAM ] = CPF_P_JAC(parametrization, Z, V, LAM, ...</span>
+<span class="sd">    #                                                   VPRV, LAMPRV, PV, PQ)</span>
+<span class="sd">    #</span>
+<span class="sd">    #   Computes the partial derivatives of the continuation power flow</span>
+<span class="sd">    #   parametrization function w.r.t. bus voltages and the continuation</span>
+<span class="sd">    #   parameter lambda.</span>
+<span class="sd">    #</span>
+<span class="sd">    #   Inputs:</span>
+<span class="sd">    #       parametrization : Value of cpf.parametrization option.</span>
+<span class="sd">    #       Z : normalized tangent prediction vector from previous step</span>
+<span class="sd">    #       V : complex bus voltage vector at current solution</span>
+<span class="sd">    #       LAM : scalar lambda value at current solution</span>
+<span class="sd">    #       VPRV : complex bus voltage vector at previous solution</span>
+<span class="sd">    #       LAMPRV : scalar lambda value at previous solution</span>
+<span class="sd">    #       PV : vector of indices of PV buses</span>
+<span class="sd">    #       PQ : vector of indices of PQ buses</span>
+<span class="sd">    #</span>
+<span class="sd">    #   Outputs:</span>
+<span class="sd">    #       DP_DV : partial of parametrization function w.r.t. voltages</span>
+<span class="sd">    #       DP_DLAM : partial of parametrization function w.r.t. lambda</span>
+<span class="sd">    #</span>
+<span class="sd">    #   See also CPF_PREDICTOR, CPF_CORRECTOR.</span>
+
+<span class="sd">    #   MATPOWER</span>
+<span class="sd">    #   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)</span>
+<span class="sd">    #   by Shrirang Abhyankar, Argonne National Laboratory</span>
+<span class="sd">    #   and Ray Zimmerman, PSERC Cornell</span>
+<span class="sd">    #</span>
+<span class="sd">    #   $Id: cpf_p_jac.m 2644 2015-03-11 19:34:22Z ray $</span>
+<span class="sd">    #</span>
+<span class="sd">    #   This file is part of MATPOWER.</span>
+<span class="sd">    #   Covered by the 3-clause BSD License (see LICENSE file for details).</span>
+<span class="sd">    #   See http://www.pserc.cornell.edu/matpower/ for more info.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">parametrization</span> <span class="o">==</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">Natural</span><span class="p">:</span>  <span class="c1"># natural</span>
+        <span class="n">dP_dV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx_dtheta</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dVm</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">lam</span> <span class="o">&gt;=</span> <span class="n">lamprv</span><span class="p">:</span>
+            <span class="n">dP_dlam</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dP_dlam</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+
+    <span class="k">elif</span> <span class="n">parametrization</span> <span class="o">==</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">ArcLength</span><span class="p">:</span>  <span class="c1"># arc length</span>
+        <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Vaprv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">Vprv</span><span class="p">)</span>
+        <span class="n">Vmprv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Vprv</span><span class="p">)</span>
+        <span class="n">dP_dV</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Va</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">],</span> <span class="n">Vm</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Vaprv</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">],</span> <span class="n">Vmprv</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]])</span>
+
+        <span class="k">if</span> <span class="n">lam</span> <span class="o">==</span> <span class="n">lamprv</span><span class="p">:</span>  <span class="c1"># first step</span>
+            <span class="n">dP_dlam</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># avoid singular Jacobian that would result from [dP_dV, dP_dlam] = 0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dP_dlam</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">lam</span> <span class="o">-</span> <span class="n">lamprv</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">parametrization</span> <span class="o">==</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">PseudoArcLength</span><span class="p">:</span>  <span class="c1"># pseudo arc length</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">dP_dV</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">nb</span> <span class="o">+</span> <span class="n">idx_dVm</span><span class="p">]]</span>
+        <span class="n">dP_dlam</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># pseudo arc length for any other case</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">dP_dV</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">nb</span> <span class="o">+</span> <span class="n">idx_dVm</span><span class="p">]]</span>
+        <span class="n">dP_dlam</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dP_dV</span><span class="p">,</span> <span class="n">dP_dlam</span></div>
+
+
+
+<div class="viewcode-block" id="predictor">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.predictor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">predictor</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">Ybus</span><span class="p">,</span> <span class="n">Sxfr</span><span class="p">,</span>
+              <span class="n">idx_dtheta</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dP</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+              <span class="n">step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span>
+              <span class="n">parametrization</span><span class="p">:</span> <span class="n">CpfParametrization</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes a prediction (approximation) to the next solution of the</span>
+<span class="sd">    continuation power flow using a normalized tangent predictor.</span>
+<span class="sd">    :param V: complex bus voltage vector at current solution</span>
+<span class="sd">    :param lam: scalar lambda value at current solution</span>
+<span class="sd">    :param Ybus: complex bus admittance matrix</span>
+<span class="sd">    :param Sxfr: complex vector of scheduled transfers (difference between bus Injections in base and target cases)</span>
+<span class="sd">    :param idx_dtheta: vector of indices of PV|PQ|PQV|P buses</span>
+<span class="sd">    :param idx_dVm: vector of indices of PQ|P buses</span>
+<span class="sd">    :param idx_dP: vector of indices of PV|PQ|PQV|P buses</span>
+<span class="sd">    :param idx_dQ: vector of indices of PQ|PQV buses</span>
+<span class="sd">    :param step: continuation step length</span>
+<span class="sd">    :param z: normalized tangent prediction vector from previous step</span>
+<span class="sd">    :param Vprv: complex bus voltage vector at previous solution</span>
+<span class="sd">    :param lamprv: scalar lambda value at previous solution</span>
+<span class="sd">    :param parametrization: Value of cpf parametrization option.</span>
+<span class="sd">    :return: V0 : predicted complex bus voltage vector</span>
+<span class="sd">             LAM0 : predicted lambda continuation parameter</span>
+<span class="sd">             Z : the normalized tangent prediction vector</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># sizes</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="c1"># npv = len(pv)</span>
+    <span class="c1"># npq = len(pq)</span>
+    <span class="c1"># pvpq = np.r_[pv, pq]</span>
+    <span class="c1"># nj = npv + npq * 2</span>
+
+    <span class="c1"># compute Jacobian for the power flow equations</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">AC_jacobianVc</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">)</span>
+
+    <span class="n">dF_dlam</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
+        <span class="n">Sxfr</span><span class="p">[</span><span class="n">idx_dP</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+        <span class="n">Sxfr</span><span class="p">[</span><span class="n">idx_dQ</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+    <span class="p">]</span>
+
+    <span class="n">dP_dV</span><span class="p">,</span> <span class="n">dP_dlam</span> <span class="o">=</span> <span class="n">cpf_p_jac</span><span class="p">(</span><span class="n">parametrization</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">)</span>
+
+    <span class="c1"># linear operator for computing the tangent predictor</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    J2 = [   J   dF_dlam</span>
+<span class="sd">           dP_dV dP_dlam ]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># last_col = np.empty((nj, 1))</span>
+    <span class="c1"># last_col[:, 0] = dF_dlam</span>
+    <span class="c1">#</span>
+    <span class="c1"># last_row = np.empty((1, nj + 1))</span>
+    <span class="c1"># last_row[0, :nj] = dP_dV</span>
+    <span class="c1"># last_row[0, nj] = dP_dlam</span>
+
+    <span class="n">J2</span> <span class="o">=</span> <span class="n">extend</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">dF_dlam</span><span class="p">,</span> <span class="n">dP_dV</span><span class="p">,</span> <span class="n">dP_dlam</span><span class="p">)</span>
+
+    <span class="n">Va_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">Vm_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+    <span class="c1"># compute normalized tangent predictor</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx_dP</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dQ</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># increase in the direction of lambda</span>
+    <span class="n">s</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">idx_dP</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dQ</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># tangent vector</span>
+    <span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">idx_dP</span><span class="p">,</span> <span class="n">nb</span> <span class="o">+</span> <span class="n">idx_dQ</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span><span class="p">]],</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">spsolve_csc</span><span class="p">(</span><span class="n">J2</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="c1"># normalize_string tangent predictor  (dividing by the euclidean norm)</span>
+        <span class="n">z</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="n">Va0</span> <span class="o">=</span> <span class="n">Va_prev</span>
+        <span class="n">Vm0</span> <span class="o">=</span> <span class="n">Vm_prev</span>
+        <span class="c1"># lam0 = lam</span>
+
+        <span class="c1"># prediction for next step</span>
+        <span class="n">Va0</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">]</span> <span class="o">=</span> <span class="n">Va_prev</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">]</span> <span class="o">+</span> <span class="n">step</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">]</span>
+        <span class="n">Vm0</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]</span> <span class="o">=</span> <span class="n">Vm_prev</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]</span> <span class="o">+</span> <span class="n">step</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">idx_dVm</span> <span class="o">+</span> <span class="n">nb</span><span class="p">]</span>
+        <span class="n">lam0</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">+</span> <span class="n">step</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span><span class="p">]</span>
+        <span class="n">V0</span> <span class="o">=</span> <span class="n">Vm0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Va0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">V0</span><span class="p">,</span> <span class="n">lam0</span><span class="p">,</span> <span class="n">z</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">z</span></div>
+
+
+
+<div class="viewcode-block" id="corrector">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.corrector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">corrector</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">I0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Y0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+              <span class="n">idx_dtheta</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dP</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+              <span class="n">lam0</span><span class="p">,</span> <span class="n">Sxfr</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">parametrization</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">max_it</span><span class="p">,</span>
+              <span class="n">verbose</span><span class="p">,</span> <span class="n">mu_0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">acceleration_parameter</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves the corrector step of a continuation power flow using a full Newton method</span>
+<span class="sd">    with selected parametrization scheme.</span>
+
+<span class="sd">    solves for bus voltages and lambda given the full system admittance</span>
+<span class="sd">    matrix (for all buses), the complex bus power injection vector (for</span>
+<span class="sd">    all buses), the initial vector of complex bus voltages, and column</span>
+<span class="sd">    vectors with the lists of bus indices for the swing bus, PV buses, and</span>
+<span class="sd">    PQ buses, respectively. The bus voltage vector contains the set point</span>
+<span class="sd">    for generator (including ref bus) buses, and the reference angle of the</span>
+<span class="sd">    swing bus, as well as an initial guess for remaining magnitudes and</span>
+<span class="sd">    angles.</span>
+
+<span class="sd">     Uses default options if this parameter is not given. Returns the</span>
+<span class="sd">     final complex voltages, a flag which indicates whether it converged or not,</span>
+<span class="sd">     the number of iterations performed, and the final lambda.</span>
+
+<span class="sd">    :param Ybus: Admittance matrix (CSC sparse)</span>
+<span class="sd">    :param S0: Bus power Injections (MVA)</span>
+<span class="sd">    :param I0: Bus current Injections (MVA at v=1 p.u.)</span>
+<span class="sd">    :param Y0: Bus admittance Injections (MVA at v=1 p.u.)</span>
+<span class="sd">    :param V0:  Bus initial voltages</span>
+<span class="sd">    :param idx_dtheta: vector of indices of PV|PQ|PQV|P buses</span>
+<span class="sd">    :param idx_dVm: vector of indices of PQ|P buses</span>
+<span class="sd">    :param idx_dP: vector of indices of PV|PQ|PQV|P buses</span>
+<span class="sd">    :param idx_dQ: vector of indices of PQ|PQV buses</span>
+<span class="sd">    :param lam0: initial value of lambda (loading parameter)</span>
+<span class="sd">    :param Sxfr: [delP+j*delQ] transfer/loading vector for all buses</span>
+<span class="sd">    :param Vprv: final complex V corrector solution from previous continuation step</span>
+<span class="sd">    :param lamprv: final lambda corrector solution from previous continuation step</span>
+<span class="sd">    :param z: normalized predictor for all buses</span>
+<span class="sd">    :param step: continuation step size</span>
+<span class="sd">    :param parametrization:</span>
+<span class="sd">    :param tol: Tolerance (p.u.)</span>
+<span class="sd">    :param max_it: max iterations</span>
+<span class="sd">    :param verbose: print information?</span>
+<span class="sd">    :param mu_0:</span>
+<span class="sd">    :param acceleration_parameter:</span>
+<span class="sd">    :return: Voltage, converged, iterations, lambda, power error, calculated power</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># initialize</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span>
+    <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="n">lam0</span>  <span class="c1"># set lam to initial lam0</span>
+    <span class="n">dVa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Va</span><span class="p">)</span>
+    <span class="n">dVm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Vm</span><span class="p">)</span>
+    <span class="c1"># dlam = 0</span>
+
+    <span class="c1"># set up indexing for updating V</span>
+    <span class="c1"># npv = len(pv)</span>
+    <span class="c1"># npq = len(pq)</span>
+    <span class="c1"># pvpq = np.r_[pv, pq]</span>
+    <span class="c1"># nj = npv + npq * 2</span>
+
+    <span class="c1"># j1:j2 - V angle of pv and pq buses</span>
+    <span class="n">j1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">j2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dtheta</span><span class="p">)</span>
+    <span class="c1"># j2:j3 - V mag of pq buses</span>
+    <span class="n">j3</span> <span class="o">=</span> <span class="n">j2</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dVm</span><span class="p">)</span>
+
+    <span class="c1"># evaluate F(x0, lam0), including Sxfr transfer/loading</span>
+    <span class="n">Scalc</span> <span class="o">=</span> <span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">S0</span> <span class="o">=</span> <span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="o">=</span><span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="o">=</span><span class="n">Y0</span><span class="p">,</span> <span class="n">Vm</span><span class="o">=</span><span class="n">Vm</span><span class="p">)</span>
+    <span class="n">mismatch</span> <span class="o">=</span> <span class="n">Scalc</span> <span class="o">-</span> <span class="n">S0</span> <span class="o">-</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">Sxfr</span>
+    <span class="c1"># F = np.r_[mismatch[pvpq].real, mismatch[pq].imag]</span>
+
+    <span class="c1"># evaluate P(x0, lambda0)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">cpf_p</span><span class="p">(</span><span class="n">parametrization</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">)</span>
+
+    <span class="c1"># augment F(x,lambda) with P(x,lambda)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
+        <span class="n">mismatch</span><span class="p">[</span><span class="n">idx_dP</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+        <span class="n">mismatch</span><span class="p">[</span><span class="n">idx_dQ</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+        <span class="n">P</span>
+    <span class="p">]</span>
+
+    <span class="c1"># check tolerance</span>
+    <span class="n">normF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+    <span class="n">converged</span> <span class="o">=</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="n">tol</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Converged!</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">dF_dlam</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
+        <span class="n">Sxfr</span><span class="p">[</span><span class="n">idx_dP</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+        <span class="n">Sxfr</span><span class="p">[</span><span class="n">idx_dQ</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+    <span class="p">]</span>
+
+    <span class="c1"># do Newton iterations</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_it</span><span class="p">:</span>
+
+        <span class="c1"># update iteration counter</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># evaluate Jacobian</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">AC_jacobianVc</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">)</span>
+
+        <span class="n">dP_dV</span><span class="p">,</span> <span class="n">dP_dlam</span> <span class="o">=</span> <span class="n">cpf_p_jac</span><span class="p">(</span><span class="n">parametrization</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">)</span>
+
+        <span class="c1"># augment J with real/imag - Sxfr and z^T</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        J = [   J   dF_dlam </span>
+<span class="sd">              dP_dV dP_dlam ]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># J = sp.vstack([sp.hstack([J, dF_dlam.reshape(nj, 1)]),</span>
+        <span class="c1">#                sp.hstack([dP_dV, dP_dlam])], format=&quot;csc&quot;)</span>
+
+        <span class="c1"># last_col = np.empty((nj, 1))</span>
+        <span class="c1"># last_col[:, 0] = dF_dlam</span>
+        <span class="c1">#</span>
+        <span class="c1"># last_row = np.empty((1, nj + 1))</span>
+        <span class="c1"># last_row[0, :nj] = dP_dV</span>
+        <span class="c1"># last_row[0, nj] = dP_dlam</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="n">extend</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">dF_dlam</span><span class="p">,</span> <span class="n">dP_dV</span><span class="p">,</span> <span class="n">dP_dlam</span><span class="p">)</span>
+
+        <span class="c1"># compute update step</span>
+        <span class="n">dx</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">spsolve_csc</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+        <span class="n">dVa</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span><span class="p">[</span><span class="n">j1</span><span class="p">:</span><span class="n">j2</span><span class="p">]</span>
+        <span class="n">dVm</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span><span class="p">[</span><span class="n">j2</span><span class="p">:</span><span class="n">j3</span><span class="p">]</span>
+        <span class="n">dlam</span> <span class="o">=</span> <span class="n">dx</span><span class="p">[</span><span class="n">j3</span><span class="p">]</span>
+
+        <span class="c1"># set the restoration values</span>
+        <span class="n">prev_Vm</span> <span class="o">=</span> <span class="n">Vm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">prev_Va</span> <span class="o">=</span> <span class="n">Va</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">prev_lam</span> <span class="o">=</span> <span class="n">lam</span>
+
+        <span class="c1"># set the values and correct with an adaptive mu if needed</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">mu_0</span>  <span class="c1"># ideally 1.0</span>
+        <span class="n">back_track_condition</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">l_iter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">normF_new</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">while</span> <span class="n">back_track_condition</span> <span class="ow">and</span> <span class="n">l_iter</span> <span class="o">&lt;</span> <span class="n">max_it</span> <span class="ow">and</span> <span class="n">mu</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+
+            <span class="c1"># restore the previous values if we are backtracking (the first iteration is the normal NR procedure)</span>
+            <span class="k">if</span> <span class="n">l_iter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">Va</span> <span class="o">=</span> <span class="n">prev_Va</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">Vm</span> <span class="o">=</span> <span class="n">prev_Vm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">lam</span> <span class="o">=</span> <span class="n">prev_lam</span>
+
+            <span class="c1"># update the variables from the solution</span>
+            <span class="n">Va</span> <span class="o">-=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">dVa</span>
+            <span class="n">Vm</span> <span class="o">-=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">dVm</span>
+            <span class="n">lam</span> <span class="o">-=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">dlam</span>
+
+            <span class="c1"># update Vm and Va again in case we wrapped around with a negative Vm</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">polar_to_rect</span><span class="p">(</span><span class="n">Vm</span><span class="p">,</span> <span class="n">Va</span><span class="p">)</span>
+
+            <span class="c1"># evaluate F(x, lam)</span>
+            <span class="n">Scalc</span> <span class="o">=</span> <span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+            <span class="n">Sbus</span> <span class="o">=</span> <span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="o">=</span><span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="o">=</span><span class="n">Y0</span><span class="p">,</span> <span class="n">Vm</span><span class="o">=</span><span class="n">Vm</span><span class="p">)</span>
+            <span class="n">mismatch</span> <span class="o">=</span> <span class="n">Scalc</span> <span class="o">-</span> <span class="n">Sbus</span> <span class="o">-</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">Sxfr</span>
+
+            <span class="c1"># evaluate the parametrization function P(x, lambda)</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">cpf_p</span><span class="p">(</span><span class="n">parametrization</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">Vprv</span><span class="p">,</span> <span class="n">lamprv</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">)</span>
+
+            <span class="c1"># compose the mismatch vector</span>
+            <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">mismatch</span><span class="p">[</span><span class="n">idx_dP</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">mismatch</span><span class="p">[</span><span class="n">idx_dQ</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">P</span><span class="p">]</span>
+
+            <span class="c1"># check for convergence</span>
+            <span class="n">normF_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+            <span class="n">back_track_condition</span> <span class="o">=</span> <span class="n">normF_new</span> <span class="o">&gt;</span> <span class="n">normF</span>
+            <span class="n">mu</span> <span class="o">*=</span> <span class="n">acceleration_parameter</span>
+            <span class="n">l_iter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">#3d        #10.3e&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">normF</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">l_iter</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">back_track_condition</span><span class="p">:</span>
+            <span class="c1"># this means that not even the backtracking was able to correct the solution so, restore and end</span>
+            <span class="n">Va</span> <span class="o">=</span> <span class="n">prev_Va</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">Vm</span> <span class="o">=</span> <span class="n">prev_Vm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">Vm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span><span class="n">j</span> <span class="o">*</span> <span class="n">Va</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">normF</span><span class="p">,</span> <span class="n">Scalc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">normF</span> <span class="o">=</span> <span class="n">normF_new</span>
+
+        <span class="n">converged</span> <span class="o">=</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="n">tol</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Newton&#39;&#39;s method corrector converged in &#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39; iterations.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">converged</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Newton method corrector did not converge in  &#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39; iterations.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">normF</span><span class="p">,</span> <span class="n">Scalc</span></div>
+
+
+
+<div class="viewcode-block" id="continuation_nr">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.html#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.continuation_nr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">continuation_nr</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">Cf</span><span class="p">,</span> <span class="n">Ct</span><span class="p">,</span> <span class="n">Yf</span><span class="p">,</span> <span class="n">Yt</span><span class="p">,</span>
+                    <span class="n">branch_rates</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                    <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">Sbus_base</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                    <span class="n">I0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Y0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                    <span class="n">Sbus_target</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                    <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                    <span class="n">distributed_slack</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                    <span class="n">bus_installed_power</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                    <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                    <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                    <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                    <span class="n">pqv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                    <span class="n">p</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                    <span class="n">step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">approximation_order</span><span class="p">:</span> <span class="n">CpfParametrization</span><span class="p">,</span>
+                    <span class="n">adapt_step</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                    <span class="n">step_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">step_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">error_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+                    <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+                    <span class="n">max_it</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+                    <span class="n">stop_at</span><span class="o">=</span><span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Nose</span><span class="p">,</span>
+                    <span class="n">control_q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">qmax_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">qmin_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">original_bus_types</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">base_overload_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">call_back_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CpfNumericResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs a full AC continuation power flow using a normalized tangent</span>
+<span class="sd">    predictor and selected approximation_order scheme.</span>
+<span class="sd">    :param Ybus: Admittance matrix</span>
+<span class="sd">    :param Cf: Connectivity matrix of the Branches and the &quot;from&quot; nodes</span>
+<span class="sd">    :param Ct: Connectivity matrix of the Branches and the &quot;to&quot; nodes</span>
+<span class="sd">    :param Yf: Admittance matrix of the &quot;from&quot; nodes</span>
+<span class="sd">    :param Yt: Admittance matrix of the &quot;to&quot; nodes</span>
+<span class="sd">    :param branch_rates: array of branch rates to check the overload condition</span>
+<span class="sd">    :param Sbase:</span>
+<span class="sd">    :param Sbus_base: Power array of the base solvable case</span>
+<span class="sd">    :param I0: Bus current Injections (MVA at v=1 p.u.)</span>
+<span class="sd">    :param Y0: Bus admittance Injections (MVA at v=1 p.u.)</span>
+<span class="sd">    :param Sbus_target: Power array of the case to be solved</span>
+<span class="sd">    :param V: Voltage array of the base solved case</span>
+<span class="sd">    :param distributed_slack: Distribute the slack?</span>
+<span class="sd">    :param bus_installed_power: array of installed power per bus</span>
+<span class="sd">    :param vd: Array of slack bus indices</span>
+<span class="sd">    :param pv: Array of pv bus indices</span>
+<span class="sd">    :param pq: Array of pq bus indices</span>
+<span class="sd">    :param pqv: Array of p bus indices</span>
+<span class="sd">    :param p: Array of p bus indices</span>
+<span class="sd">    :param step: Adaptation step</span>
+<span class="sd">    :param approximation_order: order of the approximation {Natural, Arc, Pseudo arc}</span>
+<span class="sd">    :param adapt_step: use adaptive step size?</span>
+<span class="sd">    :param step_min: minimum step size</span>
+<span class="sd">    :param step_max: maximum step size</span>
+<span class="sd">    :param error_tol: Error tolerance</span>
+<span class="sd">    :param tol: Solutions tolerance</span>
+<span class="sd">    :param max_it: Maximum iterations</span>
+<span class="sd">    :param stop_at:  Value of Lambda to stop at. It can be a number or {&#39;NOSE&#39;, &#39;FULL&#39;}</span>
+<span class="sd">    :param control_q: Type of reactive power control</span>
+<span class="sd">    :param qmax_bus: Array of maximum reactive power per node</span>
+<span class="sd">    :param qmin_bus: Array of minimum reactive power per node</span>
+<span class="sd">    :param original_bus_types: array of bus types</span>
+<span class="sd">    :param base_overload_number: number of overloads in the base situation (used when stop_at=CpfStopAt.ExtraOverloads)</span>
+<span class="sd">    :param verbose: Display additional intermediate information?</span>
+<span class="sd">    :param call_back_fx: Function to call on every iteration passing the lambda parameter</span>
+<span class="sd">    :return: CpfNumericResults instance</span>
+
+
+<span class="sd">    Ported from MATPOWER</span>
+<span class="sd">        Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)</span>
+<span class="sd">        by Ray Zimmerman, PSERC Cornell,</span>
+<span class="sd">        Shrirang Abhyankar, Argonne National Laboratory, and Alexander Flueck, IIT</span>
+
+<span class="sd">        $Id: runcpf.m 2644 2015-03-11 19:34:22Z ray $</span>
+
+<span class="sd">        MATPOWER is covered by the 3-clause BSD License (see LICENSE file for details).</span>
+<span class="sd">        See http://www.pserc.cornell.edu/matpower/ for more info.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">########################################</span>
+    <span class="c1"># INITIALIZATION</span>
+    <span class="c1">########################################</span>
+
+    <span class="c1"># scheduled transfer</span>
+    <span class="n">Sxfr</span> <span class="o">=</span> <span class="n">Sbus_target</span> <span class="o">-</span> <span class="n">Sbus_base</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sbus_base</span><span class="p">)</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lam_prev</span> <span class="o">=</span> <span class="n">lam</span>  <span class="c1"># lam at previous step</span>
+    <span class="n">V_prev</span> <span class="o">=</span> <span class="n">V</span>  <span class="c1"># V at previous step</span>
+    <span class="n">continuation</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">cont_steps</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># pvpq = np.r_[pv, pq]</span>
+
+    <span class="n">idx_dtheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pv</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">,</span> <span class="n">p</span><span class="p">]</span>
+    <span class="n">idx_dVm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pq</span><span class="p">,</span> <span class="n">p</span><span class="p">]</span>
+    <span class="n">idx_dP</span> <span class="o">=</span> <span class="n">idx_dtheta</span>
+    <span class="n">idx_dQ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">]</span>
+
+    <span class="n">bus_types</span> <span class="o">=</span> <span class="n">original_bus_types</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">z</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nb</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="c1"># compute total bus installed power</span>
+    <span class="n">total_installed_power</span> <span class="o">=</span> <span class="n">bus_installed_power</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># result arrays</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">CpfNumericResults</span><span class="p">()</span>
+
+    <span class="c1"># Simulation</span>
+    <span class="k">while</span> <span class="n">continuation</span><span class="p">:</span>
+        <span class="n">cont_steps</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># prediction for next step -------------------------------------------------------------------------------------</span>
+        <span class="n">V0</span><span class="p">,</span> <span class="n">lam0</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">predictor</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span>
+                                <span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+                                <span class="n">Sxfr</span><span class="o">=</span><span class="n">Sxfr</span><span class="p">,</span>
+                                <span class="n">idx_dtheta</span><span class="o">=</span><span class="n">idx_dtheta</span><span class="p">,</span>
+                                <span class="n">idx_dVm</span><span class="o">=</span><span class="n">idx_dVm</span><span class="p">,</span>
+                                <span class="n">idx_dP</span><span class="o">=</span><span class="n">idx_dP</span><span class="p">,</span>
+                                <span class="n">idx_dQ</span><span class="o">=</span><span class="n">idx_dQ</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                                <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                                <span class="n">Vprv</span><span class="o">=</span><span class="n">V_prev</span><span class="p">,</span>
+                                <span class="n">lamprv</span><span class="o">=</span><span class="n">lam_prev</span><span class="p">,</span>
+                                <span class="n">parametrization</span><span class="o">=</span><span class="n">approximation_order</span><span class="p">)</span>
+
+        <span class="c1"># save previous voltage, lambda before updating</span>
+        <span class="n">V_prev</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">lam_prev</span> <span class="o">=</span> <span class="n">lam</span>
+
+        <span class="c1"># correction ---------------------------------------------------------------------------------------------------</span>
+        <span class="n">V</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">normF</span><span class="p">,</span> <span class="n">Scalc</span> <span class="o">=</span> <span class="n">corrector</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+                                                     <span class="n">S0</span><span class="o">=</span><span class="n">Sbus_base</span><span class="p">,</span>
+                                                     <span class="n">I0</span><span class="o">=</span><span class="n">I0</span><span class="p">,</span>
+                                                     <span class="n">Y0</span><span class="o">=</span><span class="n">Y0</span><span class="p">,</span>
+                                                     <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
+                                                     <span class="n">idx_dtheta</span><span class="o">=</span><span class="n">idx_dtheta</span><span class="p">,</span>
+                                                     <span class="n">idx_dVm</span><span class="o">=</span><span class="n">idx_dVm</span><span class="p">,</span>
+                                                     <span class="n">idx_dP</span><span class="o">=</span><span class="n">idx_dP</span><span class="p">,</span>
+                                                     <span class="n">idx_dQ</span><span class="o">=</span><span class="n">idx_dQ</span><span class="p">,</span>
+                                                     <span class="n">lam0</span><span class="o">=</span><span class="n">lam0</span><span class="p">,</span>
+                                                     <span class="n">Sxfr</span><span class="o">=</span><span class="n">Sxfr</span><span class="p">,</span>
+                                                     <span class="n">Vprv</span><span class="o">=</span><span class="n">V_prev</span><span class="p">,</span>
+                                                     <span class="n">lamprv</span><span class="o">=</span><span class="n">lam_prev</span><span class="p">,</span>
+                                                     <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                                                     <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                                                     <span class="n">parametrization</span><span class="o">=</span><span class="n">approximation_order</span><span class="p">,</span>
+                                                     <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span>
+                                                     <span class="n">max_it</span><span class="o">=</span><span class="n">max_it</span><span class="p">,</span>
+                                                     <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">distributed_slack</span><span class="p">:</span>
+            <span class="c1"># Distribute the slack power</span>
+            <span class="n">slack_power</span> <span class="o">=</span> <span class="n">Scalc</span><span class="p">[</span><span class="n">vd</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">total_installed_power</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">slack_power</span> <span class="o">*</span> <span class="n">bus_installed_power</span> <span class="o">/</span> <span class="n">total_installed_power</span>
+
+                <span class="c1"># rerun with the slack distributed and replace the results</span>
+                <span class="c1"># also, initialize with the last voltage</span>
+                <span class="n">V</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">normF</span><span class="p">,</span> <span class="n">Scalc</span> <span class="o">=</span> <span class="n">corrector</span><span class="p">(</span><span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+                                                             <span class="n">S0</span><span class="o">=</span><span class="n">Sbus_base</span> <span class="o">+</span> <span class="n">delta</span><span class="p">,</span>
+                                                             <span class="n">V0</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                                             <span class="n">idx_dtheta</span><span class="o">=</span><span class="n">idx_dtheta</span><span class="p">,</span>
+                                                             <span class="n">idx_dVm</span><span class="o">=</span><span class="n">idx_dVm</span><span class="p">,</span>
+                                                             <span class="n">idx_dP</span><span class="o">=</span><span class="n">idx_dP</span><span class="p">,</span>
+                                                             <span class="n">idx_dQ</span><span class="o">=</span><span class="n">idx_dQ</span><span class="p">,</span>
+                                                             <span class="n">lam0</span><span class="o">=</span><span class="n">lam0</span><span class="p">,</span>
+                                                             <span class="n">Sxfr</span><span class="o">=</span><span class="n">Sxfr</span><span class="p">,</span>
+                                                             <span class="n">Vprv</span><span class="o">=</span><span class="n">V_prev</span><span class="p">,</span>
+                                                             <span class="n">lamprv</span><span class="o">=</span><span class="n">lam_prev</span><span class="p">,</span>
+                                                             <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                                                             <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                                                             <span class="n">parametrization</span><span class="o">=</span><span class="n">approximation_order</span><span class="p">,</span>
+                                                             <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span>
+                                                             <span class="n">max_it</span><span class="o">=</span><span class="n">max_it</span><span class="p">,</span>
+                                                             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+
+            <span class="c1"># branch values --------------------------------------------------------------------------------------------</span>
+            <span class="c1"># Branches current, loading, etc</span>
+            <span class="n">Vf</span> <span class="o">=</span> <span class="n">Cf</span> <span class="o">*</span> <span class="n">V</span>
+            <span class="n">Vt</span> <span class="o">=</span> <span class="n">Ct</span> <span class="o">*</span> <span class="n">V</span>
+            <span class="n">If</span> <span class="o">=</span> <span class="n">Yf</span> <span class="o">*</span> <span class="n">V</span>  <span class="c1"># in p.u.</span>
+            <span class="n">It</span> <span class="o">=</span> <span class="n">Yt</span> <span class="o">*</span> <span class="n">V</span>  <span class="c1"># in p.u.</span>
+            <span class="n">Sf</span> <span class="o">=</span> <span class="n">Vf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">If</span><span class="p">)</span> <span class="o">*</span> <span class="n">Sbase</span>  <span class="c1"># in MVA</span>
+            <span class="n">St</span> <span class="o">=</span> <span class="n">Vt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">It</span><span class="p">)</span> <span class="o">*</span> <span class="n">Sbase</span>  <span class="c1"># in MVA</span>
+
+            <span class="c1"># Branch losses in MVA</span>
+            <span class="n">losses</span> <span class="o">=</span> <span class="n">Sf</span> <span class="o">+</span> <span class="n">St</span>
+
+            <span class="c1"># Branch loading in p.u.</span>
+            <span class="n">loading</span> <span class="o">=</span> <span class="n">Sf</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="p">(</span><span class="n">branch_rates</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>
+
+            <span class="c1"># store series values --------------------------------------------------------------------------------------</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">Scalc</span><span class="p">,</span> <span class="n">Sf</span><span class="p">,</span> <span class="n">St</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">loading</span><span class="p">,</span> <span class="n">normF</span><span class="p">,</span> <span class="n">success</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Step: &#39;</span><span class="p">,</span> <span class="n">cont_steps</span><span class="p">,</span> <span class="s1">&#39; Lambda prev: &#39;</span><span class="p">,</span> <span class="n">lam_prev</span><span class="p">,</span> <span class="s1">&#39; Lambda: &#39;</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+            <span class="c1"># Check controls</span>
+            <span class="k">if</span> <span class="n">control_q</span><span class="p">:</span>
+
+                <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">V</span><span class="p">,</span>
+                 <span class="n">Qnew</span><span class="p">,</span>
+                 <span class="n">types_new</span><span class="p">,</span>
+                 <span class="n">any_q_control_issue</span><span class="p">)</span> <span class="o">=</span> <span class="n">control_q_direct</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                                         <span class="n">Vm</span><span class="o">=</span><span class="n">Vm</span><span class="p">,</span>
+                                                         <span class="n">Vset</span><span class="o">=</span><span class="n">Vm</span><span class="p">,</span>
+                                                         <span class="n">Q</span><span class="o">=</span><span class="n">Scalc</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                                                         <span class="n">Qmax</span><span class="o">=</span><span class="n">qmax_bus</span><span class="p">,</span>
+                                                         <span class="n">Qmin</span><span class="o">=</span><span class="n">qmin_bus</span><span class="p">,</span>
+                                                         <span class="n">types</span><span class="o">=</span><span class="n">bus_types</span><span class="p">,</span>
+                                                         <span class="n">original_types</span><span class="o">=</span><span class="n">original_bus_types</span><span class="p">,</span>
+                                                         <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># did not check Q limits</span>
+                <span class="n">any_q_control_issue</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">types_new</span> <span class="o">=</span> <span class="n">bus_types</span>
+                <span class="n">Qnew</span> <span class="o">=</span> <span class="n">Scalc</span><span class="o">.</span><span class="n">imag</span>
+
+            <span class="c1"># Check the actions of the Q-control</span>
+            <span class="k">if</span> <span class="n">any_q_control_issue</span><span class="p">:</span>
+                <span class="n">bus_types</span> <span class="o">=</span> <span class="n">types_new</span>
+                <span class="n">Sbus</span> <span class="o">=</span> <span class="n">Scalc</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Qnew</span>
+
+                <span class="n">Sxfr</span> <span class="o">=</span> <span class="n">Sbus_target</span> <span class="o">-</span> <span class="n">Sbus</span>
+
+                <span class="n">vd</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">pqv</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pqpv</span> <span class="o">=</span> <span class="n">compile_types</span><span class="p">(</span><span class="n">Pbus</span><span class="o">=</span><span class="n">Sbus</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">types_new</span><span class="p">,</span> <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Q controls Ok&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">stop_at</span> <span class="o">==</span> <span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Full</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+                    <span class="c1"># traced the full continuation curve</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Traced full continuation curve in &#39;</span><span class="p">,</span> <span class="n">cont_steps</span><span class="p">,</span> <span class="s1">&#39; continuation steps</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">continuation</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&lt;</span> <span class="n">lam_prev</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lam</span> <span class="o">-</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="c1"># next step will overshoot</span>
+
+                    <span class="c1"># modify step-size</span>
+                    <span class="n">step</span> <span class="o">=</span> <span class="n">lam</span>
+
+                    <span class="c1"># change to natural parametrization</span>
+                    <span class="n">approximation_order</span> <span class="o">=</span> <span class="n">CpfParametrization</span><span class="o">.</span><span class="n">Natural</span>
+
+                    <span class="c1"># disable step-adaptivity</span>
+                    <span class="n">adapt_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">elif</span> <span class="n">stop_at</span> <span class="o">==</span> <span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Nose</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">lam</span> <span class="o">&lt;</span> <span class="n">lam_prev</span><span class="p">:</span>
+                    <span class="c1"># reached the nose point</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Reached steady state loading limit in &#39;</span><span class="p">,</span> <span class="n">cont_steps</span><span class="p">,</span> <span class="s1">&#39; continuation steps</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">continuation</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="n">stop_at</span> <span class="o">==</span> <span class="n">CpfStopAt</span><span class="o">.</span><span class="n">ExtraOverloads</span><span class="p">:</span>
+                <span class="c1"># look for overloads and determine if there are more overloads than in the base situation</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">loading</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">base_overload_number</span><span class="p">:</span>
+                    <span class="n">continuation</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Stop point </span><span class="si">{</span><span class="n">stop_at</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1"> not recognised.&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">adapt_step</span> <span class="ow">and</span> <span class="n">continuation</span><span class="p">:</span>
+
+                <span class="c1"># Adapt step size</span>
+                <span class="n">fx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]),</span> <span class="n">lam</span><span class="p">]</span>
+                      <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V0</span><span class="p">[</span><span class="n">idx_dtheta</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V0</span><span class="p">[</span><span class="n">idx_dVm</span><span class="p">]),</span> <span class="n">lam0</span><span class="p">])</span>
+                <span class="n">cpf_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">cpf_error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cpf_error</span> <span class="o">=</span> <span class="mf">1e-20</span>
+
+                <span class="k">if</span> <span class="n">cpf_error</span> <span class="o">&lt;</span> <span class="n">error_tol</span><span class="p">:</span>
+                    <span class="c1"># Increase step size</span>
+                    <span class="n">step</span> <span class="o">=</span> <span class="n">step</span> <span class="o">*</span> <span class="n">error_tol</span> <span class="o">/</span> <span class="n">cpf_error</span>
+                    <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="n">step_max</span><span class="p">:</span>
+                        <span class="n">step</span> <span class="o">=</span> <span class="n">step_max</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Decrease step size</span>
+                    <span class="n">step</span> <span class="o">=</span> <span class="n">step</span> <span class="o">*</span> <span class="n">error_tol</span> <span class="o">/</span> <span class="n">cpf_error</span>
+                    <span class="k">if</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="n">step_min</span><span class="p">:</span>
+                        <span class="n">step</span> <span class="o">=</span> <span class="n">step_min</span>
+
+            <span class="c1"># call callback function</span>
+            <span class="k">if</span> <span class="n">call_back_fx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">call_back_fx</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">continuation</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;step &#39;</span><span class="p">,</span> <span class="n">cont_steps</span><span class="p">,</span> <span class="s1">&#39; : lambda = &#39;</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="s1">&#39;, corrector did not converge in &#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39; iterations</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

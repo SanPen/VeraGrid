@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.gauss_power_flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.gauss_power_flow</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.PowerFlow.NumericalMethods.gauss_power_flow</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericPowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">power_flow_post_process_nonlinear</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">control_q_inside_method</span><span class="p">,</span>
+                                                                                     <span class="n">compute_slack_distribution</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">CscMat</span>
+
+<span class="n">SCRIPT_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="gausspf">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.gauss_power_flow.gausspf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gausspf</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+            <span class="n">Ybus</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Yf</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Yt</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Yshunt_bus</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+            <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">I0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Y0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+            <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pqv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+            <span class="n">bus_installed_power</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">max_it</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">control_q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">distribute_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NumericPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gauss-Seidel Power flow</span>
+<span class="sd">    :param nc: NumericalCircuit</span>
+<span class="sd">    :param Ybus: Admittance matrix</span>
+<span class="sd">    :param Yf: Admittance from matrix</span>
+<span class="sd">    :param Yt: Admittance to matrix</span>
+<span class="sd">    :param Yshunt_bus: Vector of admittance due to devices</span>
+<span class="sd">    :param S0: Power Injections array</span>
+<span class="sd">    :param I0: Current Injections array</span>
+<span class="sd">    :param Y0: Admittance Injections array</span>
+<span class="sd">    :param V0: Voltage seed solution array</span>
+<span class="sd">    :param pv: array of pv-node indices</span>
+<span class="sd">    :param pq: array of pq-node indices</span>
+<span class="sd">    :param p: array of p-node indices</span>
+<span class="sd">    :param pqv: array of pqv-node indices</span>
+<span class="sd">    :param vd: array of vd-node indices</span>
+<span class="sd">    :param bus_installed_power: array of bus installed power</span>
+<span class="sd">    :param Qmin: Minimum Q limits per bus</span>
+<span class="sd">    :param Qmax: Maximum Q limits per bus</span>
+<span class="sd">    :param tol: Tolerance</span>
+<span class="sd">    :param max_it: Maximum number of iterations</span>
+<span class="sd">    :param control_q: Control Q limits?</span>
+<span class="sd">    :param distribute_slack: Distribute Slack?</span>
+<span class="sd">    :param verbose: Verbose?</span>
+<span class="sd">    :param logger: Logger to store the debug information</span>
+<span class="sd">    :return: NumericPowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># initialize</span>
+    <span class="n">iter_</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+    <span class="n">Ydiag</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span>
+
+    <span class="c1"># set up indexing for updating V</span>
+    <span class="n">npv</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span>
+    <span class="n">pvpq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pv</span><span class="p">,</span> <span class="n">pq</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvpq</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                       <span class="n">Scalc</span><span class="o">=</span><span class="n">S0</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                       <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">Sf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">St</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">If</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">It</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">loading</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">losses</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                       <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                       <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                       <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                       <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                       <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                       <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                       <span class="n">norm_f</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                       <span class="n">converged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                       <span class="n">elapsed</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># evaluate F(x0)</span>
+    <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">Vm</span><span class="p">)</span>
+    <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">Sbus</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+    <span class="n">normF</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+
+    <span class="c1"># check tolerance</span>
+    <span class="n">converged</span> <span class="o">=</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="n">tol</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s1">&#39;GS Iteration </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iter_</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">normF</span><span class="p">)</span>
+
+    <span class="c1"># do Gauss-Seidel iterations</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span> <span class="ow">and</span> <span class="n">iter_</span> <span class="o">&lt;</span> <span class="n">max_it</span><span class="p">:</span>
+
+        <span class="c1"># update the voltage at PQ buses</span>
+        <span class="n">V</span><span class="p">[</span><span class="n">pq</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Sbus</span><span class="p">[</span><span class="n">pq</span><span class="p">]</span> <span class="o">/</span> <span class="n">V</span><span class="p">[</span><span class="n">pq</span><span class="p">])</span> <span class="o">-</span> <span class="n">Ybus</span><span class="p">[</span><span class="n">pq</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">V</span><span class="p">)</span> <span class="o">/</span> <span class="n">Ydiag</span><span class="p">[</span><span class="n">pq</span><span class="p">]</span>
+
+        <span class="c1"># update the voltage at PV buses</span>
+        <span class="k">if</span> <span class="n">npv</span><span class="p">:</span>
+            <span class="c1"># update reactive power at the pv nodes</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Ybus</span><span class="p">[</span><span class="n">pv</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">V</span><span class="p">))</span><span class="o">.</span><span class="n">imag</span>
+            <span class="n">Sbus</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sbus</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Q</span>
+
+            <span class="c1"># update the pv voltage</span>
+            <span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Sbus</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">/</span> <span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">])</span> <span class="o">-</span> <span class="n">Ybus</span><span class="p">[</span><span class="n">pv</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">V</span><span class="p">)</span> <span class="o">/</span> <span class="n">Ydiag</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span>
+            <span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">=</span> <span class="n">Vm</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">])</span>
+
+        <span class="c1"># evaluate F(x)</span>
+        <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">Vm</span><span class="p">)</span>
+        <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">Sbus</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+        <span class="n">normF</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="c1"># check for convergence</span>
+        <span class="n">converged</span> <span class="o">=</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="n">tol</span>
+
+        <span class="c1"># control of Q limits --------------------------------------------------------------------------------------</span>
+        <span class="c1"># review reactive power limits</span>
+        <span class="c1"># it is only worth checking Q limits with a low error</span>
+        <span class="c1"># since with higher errors, the Q values may be far from realistic</span>
+        <span class="c1"># finally, the Q control only makes sense if there are pv nodes</span>
+        <span class="k">if</span> <span class="n">control_q</span> <span class="ow">and</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="mf">1e-2</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># check and adjust the reactive power</span>
+            <span class="c1"># this function passes pv buses to pq when the limits are violated,</span>
+            <span class="c1"># but not pq to pv because that is unstable</span>
+            <span class="n">changed</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">control_q_inside_method</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">S0</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># adjust internal variables to the new pq|pv values</span>
+                <span class="n">F</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">Sbus</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+                <span class="n">normF</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+                <span class="n">converged</span> <span class="o">=</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="n">tol</span>
+
+        <span class="k">if</span> <span class="n">distribute_slack</span> <span class="ow">and</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">:</span>
+            <span class="n">ok</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">compute_slack_distribution</span><span class="p">(</span><span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc</span><span class="p">,</span>
+                                                   <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                                   <span class="n">bus_installed_power</span><span class="o">=</span><span class="n">bus_installed_power</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+                <span class="n">S0</span> <span class="o">+=</span> <span class="n">delta</span>
+                <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">Vm</span><span class="p">)</span>
+                <span class="n">F</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">Sbus</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+                <span class="n">normF</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+                <span class="n">converged</span> <span class="o">=</span> <span class="n">normF</span> <span class="o">&lt;</span> <span class="n">tol</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s1">&#39;GS Iteration </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iter_</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">200</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s1">&#39;Vm:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s1">&#39;Va:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">normF</span><span class="p">)</span>
+
+        <span class="c1"># update iteration counter</span>
+        <span class="n">iter_</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+    <span class="c1"># compute the flows</span>
+    <span class="n">Sf</span><span class="p">,</span> <span class="n">St</span><span class="p">,</span> <span class="n">If</span><span class="p">,</span> <span class="n">It</span><span class="p">,</span> <span class="n">Vbranch</span><span class="p">,</span> <span class="n">loading</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">Sbus</span> <span class="o">=</span> <span class="n">power_flow_post_process_nonlinear</span><span class="p">(</span>
+        <span class="n">Sbus</span><span class="o">=</span><span class="n">Scalc</span><span class="p">,</span>
+        <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+        <span class="n">F</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+        <span class="n">T</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">pv</span><span class="o">=</span><span class="n">pv</span><span class="p">,</span>
+        <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+        <span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+        <span class="n">Yf</span><span class="o">=</span><span class="n">Yf</span><span class="p">,</span>
+        <span class="n">Yt</span><span class="o">=</span><span class="n">Yt</span><span class="p">,</span>
+        <span class="n">Yshunt_bus</span><span class="o">=</span><span class="n">Yshunt_bus</span><span class="p">,</span>
+        <span class="n">branch_rates</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span><span class="p">,</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                   <span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                   <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf</span><span class="o">=</span><span class="n">Sf</span><span class="p">,</span>
+                                   <span class="n">St</span><span class="o">=</span><span class="n">St</span><span class="p">,</span>
+                                   <span class="n">If</span><span class="o">=</span><span class="n">If</span><span class="p">,</span>
+                                   <span class="n">It</span><span class="o">=</span><span class="n">It</span><span class="p">,</span>
+                                   <span class="n">loading</span><span class="o">=</span><span class="n">loading</span><span class="p">,</span>
+                                   <span class="n">losses</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+                                   <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">norm_f</span><span class="o">=</span><span class="n">normF</span><span class="p">,</span>
+                                   <span class="n">converged</span><span class="o">=</span><span class="n">converged</span><span class="p">,</span>
+                                   <span class="n">iterations</span><span class="o">=</span><span class="n">iter_</span><span class="p">,</span>
+                                   <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

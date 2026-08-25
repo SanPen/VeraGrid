@@ -1,0 +1,1128 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Topology.VoltageLevels.vl_creation_common_functions &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Topology.VoltageLevels.vl_creation_common_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Topology.VoltageLevels.vl_creation_common_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SwitchGraphicType</span><span class="p">,</span> <span class="n">BusGraphicType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRANCH_TYPES</span><span class="p">,</span> <span class="n">INJECTION_DEVICE_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.VoltageLevels.single_bar</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_single_bar</span><span class="p">,</span>
+    <span class="n">create_single_bar_with_disconnectors</span><span class="p">,</span>
+    <span class="n">create_single_bar_with_splitter</span><span class="p">,</span>
+    <span class="n">create_single_bar_with_splitter_with_disconnectors</span><span class="p">,</span>
+    <span class="n">create_single_bar_with_bypass</span><span class="p">,</span>
+    <span class="n">create_single_bar_with_bypass_with_disconnectors</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.VoltageLevels.double_bar</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_double_bar</span><span class="p">,</span>
+    <span class="n">create_double_bar_with_disconnectors</span><span class="p">,</span>
+    <span class="n">create_double_bar_with_transference_bar</span><span class="p">,</span>
+    <span class="n">create_double_bar_with_transference_bar_with_disconnectors</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.VoltageLevels.breaker_and_a_half</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_breaker_and_a_half</span><span class="p">,</span>
+    <span class="n">create_breaker_and_a_half_with_disconnectors</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.VoltageLevels.ring</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_ring</span><span class="p">,</span>
+    <span class="n">create_ring_with_disconnectors</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">VoltageLevelTypes</span>
+
+
+<div class="viewcode-block" id="transform_bus_to_connectivity_grid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.vl_creation_common_functions.transform_bus_to_connectivity_grid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_bus_to_connectivity_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">busbar</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform a BusBar into multiple Connectivity buses connected by branches.</span>
+<span class="sd">    This is to be able to compute the power that passes through a busbar</span>
+<span class="sd">    for specific busbar power studies</span>
+
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param busbar: the Bus object (BusGraphicType.BusBar) to transform</span>
+<span class="sd">    :return: list of new Connectivity buses, list of branches between them</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Collect all connections (busbar side of each device)</span>
+    <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_devices</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">busbar</span><span class="p">)</span>
+
+    <span class="c1"># Create a new Connectivity bus for each connection</span>
+    <span class="n">new_buses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">x_offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">associated_branches</span><span class="p">):</span>
+        <span class="n">new_bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">busbar</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_conn_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">substation</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+            <span class="n">Vnom</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+            <span class="n">voltage_level</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">voltage_level</span><span class="p">,</span>
+            <span class="n">xpos</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span>  <span class="c1"># offset a bit to spread them visually</span>
+            <span class="n">ypos</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span>
+        <span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">new_bus</span><span class="p">)</span>
+        <span class="n">new_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_bus</span><span class="p">)</span>
+
+        <span class="c1"># Redirect the element to connect to this new bus instead of the busbar</span>
+        <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">busbar</span><span class="p">:</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">new_bus</span>
+
+        <span class="k">elif</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">busbar</span><span class="p">:</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">new_bus</span>
+
+        <span class="n">x_offset</span> <span class="o">+=</span> <span class="mi">100</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">associated_injections</span><span class="p">):</span>
+        <span class="n">new_bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">busbar</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_conn_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">substation</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+            <span class="n">Vnom</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+            <span class="n">voltage_level</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">voltage_level</span><span class="p">,</span>
+            <span class="n">xpos</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x_offset</span><span class="p">,</span>  <span class="c1"># offset a bit to spread them visually</span>
+            <span class="n">ypos</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">busbar</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span>
+        <span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">new_bus</span><span class="p">)</span>
+        <span class="n">new_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_bus</span><span class="p">)</span>
+
+        <span class="c1"># Redirect the element to connect to this new bus instead of the busbar</span>
+        <span class="n">elem</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">new_bus</span>
+
+        <span class="n">x_offset</span> <span class="o">+=</span> <span class="mi">100</span>
+
+    <span class="c1"># Electrically tie all new buses with line branches</span>
+    <span class="n">new_branches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_buses</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ln</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">busbar</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_backbone_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">bus_from</span><span class="o">=</span><span class="n">new_buses</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">bus_to</span><span class="o">=</span><span class="n">new_buses</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">ln</span><span class="p">)</span>
+        <span class="n">new_branches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ln</span><span class="p">)</span>
+
+    <span class="c1"># Remove the original busbar</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">delete_bus</span><span class="p">(</span><span class="n">busbar</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_buses</span><span class="p">,</span> <span class="n">new_branches</span></div>
+
+
+
+<div class="viewcode-block" id="transform_bus_into_voltage_level">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.vl_creation_common_functions.transform_bus_into_voltage_level">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_bus_into_voltage_level</span><span class="p">(</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+        <span class="n">vl_type</span><span class="o">=</span><span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBar</span><span class="p">,</span>
+        <span class="n">add_disconnectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">bar_by_segments</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">skip_injections_reconnection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">enable_transfer_bus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">reducible_branches</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">bay_assignments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">y0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">BRANCH_TYPES</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">INJECTION_DEVICE_TYPES</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">BRANCH_TYPES</span> <span class="o">|</span> <span class="n">INJECTION_DEVICE_TYPES</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]]</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform a bus into a voltage level</span>
+<span class="sd">    :param grid: MultiCircuit to add devices to</span>
+<span class="sd">    :param bus: Bus device to transform</span>
+<span class="sd">    :param vl_type: VoltageLevelTypes</span>
+<span class="sd">    :param add_disconnectors: add voltage level disconnectors?</span>
+<span class="sd">    :param bar_by_segments: Have the bar with connectivity and impedance instead of a single bus-bar?</span>
+<span class="sd">    :param skip_injections_reconnection: if true the injections are not included in the reconnections list</span>
+<span class="sd">    :param enable_transfer_bus: if true, adds a transfer bus (JBPT) connected to all position buses if it makes sense</span>
+<span class="sd">    :param reducible_branches: if true, every switch created in this conversion is marked reducible</span>
+<span class="sd">    :param bay_assignments: list of (device_name, bay_number, assigned_bus) tuples for custom bay order</span>
+<span class="sd">    :param x0: base x coordinate</span>
+<span class="sd">    :param y0: base y coordinate</span>
+<span class="sd">    :return:</span>
+<span class="sd">    - List of all voltage level buses,</span>
+<span class="sd">    - List of bay buses,</span>
+<span class="sd">    - List of bus connected branches,</span>
+<span class="sd">    - List of bus connected</span>
+<span class="sd">    - List of re-connections (element, old bus, new bus)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_devices</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">)</span>
+
+    <span class="c1"># Calculate required bays, default is one position per device</span>
+    <span class="n">n_positions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">associated_branches</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">associated_injections</span><span class="p">)</span>
+    <span class="n">n_bays</span> <span class="o">=</span> <span class="n">n_positions</span>
+
+    <span class="c1"># If bay assignments are provided, we might need more bays to accommodate the highest bay number</span>
+    <span class="k">if</span> <span class="n">bay_assignments</span><span class="p">:</span>
+        <span class="n">max_bay_num</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">bay_assignments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bay_num</span> <span class="o">&gt;</span> <span class="n">max_bay_num</span><span class="p">:</span>
+                <span class="n">max_bay_num</span> <span class="o">=</span> <span class="n">bay_num</span>
+
+        <span class="c1"># For breaker and a half, each bay has 2 positions</span>
+        <span class="c1"># If we have Bay N, we need at least 2*N positions worth of sizing logic in the loop </span>
+        <span class="k">if</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">BreakerAndAHalf</span><span class="p">:</span>
+            <span class="c1"># Bay 1 -&gt; i=0. Bay 2 -&gt; i=2. Bay N -&gt; i=(N-1)*2.</span>
+            <span class="c1"># We need n_bays &gt; (max_bay_num-1)*2</span>
+            <span class="n">calculated_n_bays</span> <span class="o">=</span> <span class="n">max_bay_num</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">calculated_n_bays</span> <span class="o">&gt;</span> <span class="n">n_bays</span><span class="p">:</span>
+                <span class="n">n_bays</span> <span class="o">=</span> <span class="n">calculated_n_bays</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># For other schemes, usually 1 position = 1 bay</span>
+            <span class="k">if</span> <span class="n">max_bay_num</span> <span class="o">&gt;</span> <span class="n">n_bays</span><span class="p">:</span>
+                <span class="n">n_bays</span> <span class="o">=</span> <span class="n">max_bay_num</span>
+
+    <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBar</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">bar_by_segments</span><span class="o">=</span><span class="n">bar_by_segments</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">bar_by_segments</span><span class="o">=</span><span class="n">bar_by_segments</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Invisible since not requested by REE</span>
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBarWithBypass</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span>
+             <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">create_single_bar_with_bypass_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_bypass</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Invisible since not requested by REE</span>
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBarWithSplitter</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span>
+             <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">create_single_bar_with_splitter_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_splitter</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBar</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_double_bar_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_double_bar</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Invisible since not requested by REE</span>
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBarWithBypass</span><span class="p">:</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">return</span> <span class="n">all_buses</span><span class="p">,</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span><span class="p">,</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># Invisible since not requested by REE (transference bar passed as a parameter in the GUI)</span>
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBarWithTransference</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span>
+             <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">create_double_bar_with_transference_bar_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_double_bar_with_transference_bar</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Invisible since not requested by REE</span>
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBarDuplex</span><span class="p">:</span>
+        <span class="c1"># TODO: Implement</span>
+        <span class="k">return</span> <span class="n">all_buses</span><span class="p">,</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span><span class="p">,</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">Ring</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_ring_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_ring</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">BreakerAndAHalf</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">add_disconnectors</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_breaker_and_a_half_with_disconnectors</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_breaker_and_a_half</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                <span class="n">n_bays</span><span class="o">=</span><span class="n">n_bays</span><span class="p">,</span>
+                <span class="n">v_nom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                <span class="n">offset_x</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                <span class="n">offset_y</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span>
+                <span class="n">vl0</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span>
+            <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vl_type</span><span class="si">}</span><span class="s2"> not implemented :/&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">all_buses</span><span class="p">,</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span><span class="p">,</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># Add Transfer Bus (JBPT) if enabled and if the configuration is single or double bar </span>
+    <span class="c1"># Transfer buses for breaker and a half and ring do not make sense</span>
+    <span class="k">if</span> <span class="n">enable_transfer_bus</span><span class="p">:</span>
+        <span class="c1"># Find the voltage level that was just created</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">all_buses</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">voltage_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">vl</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">voltage_level</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Create the transfer bus</span>
+        <span class="n">transfer_bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_JBPT&quot;</span><span class="p">,</span>
+            <span class="n">substation</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+            <span class="n">Vnom</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+            <span class="n">voltage_level</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+            <span class="n">xpos</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">offset_total_x</span><span class="p">,</span>
+            <span class="n">ypos</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">offset_total_y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">offset_total_x</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="n">graphic_type</span><span class="o">=</span><span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span>
+        <span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">transfer_bus</span><span class="p">)</span>
+        <span class="n">all_buses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transfer_bus</span><span class="p">)</span>
+
+        <span class="c1"># Connect each position bus to the transfer bus with a disconnector</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">conn_bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">conn_buses</span><span class="p">):</span>
+            <span class="n">dis_to_transfer</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dis_JBPT_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">bus_from</span><span class="o">=</span><span class="n">conn_bus</span><span class="p">,</span>
+                <span class="n">bus_to</span><span class="o">=</span><span class="n">transfer_bus</span><span class="p">,</span>
+                <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">Disconnector</span>
+            <span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">dis_to_transfer</span><span class="p">)</span>
+
+        <span class="c1"># Find main bars (buses with BusBar graphic type that are not the transfer bus)</span>
+        <span class="n">main_bars</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">all_buses</span> <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">graphic_type</span> <span class="o">==</span> <span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">!=</span> <span class="n">transfer_bus</span><span class="p">]</span>
+
+        <span class="c1"># Connect transfer bus to each main bar via a breaker</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">main_bar</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">main_bars</span><span class="p">):</span>
+            <span class="n">cb_to_main</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CB_JBPT_to_Bar</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">bus_from</span><span class="o">=</span><span class="n">transfer_bus</span><span class="p">,</span>
+                <span class="n">bus_to</span><span class="o">=</span><span class="n">main_bar</span><span class="p">,</span>
+                <span class="n">graphic_type</span><span class="o">=</span><span class="n">SwitchGraphicType</span><span class="o">.</span><span class="n">CircuitBreaker</span>
+            <span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">cb_to_main</span><span class="p">)</span>
+
+    <span class="c1"># Configure every switch created in this voltage level (both ends among the new buses).</span>
+    <span class="c1"># A tiny but non-zero reactance avoids numerical issues when a switch is retained</span>
+    <span class="n">vl_bus_idtags</span> <span class="o">=</span> <span class="p">{</span><span class="n">b</span><span class="o">.</span><span class="n">idtag</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">all_buses</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">sw</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_switches</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">bus_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">sw</span><span class="o">.</span><span class="n">bus_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">sw</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">idtag</span> <span class="ow">in</span> <span class="n">vl_bus_idtags</span>
+                <span class="ow">and</span> <span class="n">sw</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">idtag</span> <span class="ow">in</span> <span class="n">vl_bus_idtags</span><span class="p">):</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">reducible</span> <span class="o">=</span> <span class="n">reducible_branches</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">retained</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">reducible_branches</span>
+            <span class="n">sw</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="mf">1e-5</span>
+
+    <span class="c1"># Now we reconnect the branches and injections to the new position-buses</span>
+
+    <span class="c1"># element, old bus, new bus</span>
+    <span class="n">reconnection_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># If bay_assignments provided, use them to determine reconnection order</span>
+    <span class="k">if</span> <span class="n">bay_assignments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bay_assignments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Create mapping from device name to (row_index, bay_num, assigned_bus)</span>
+        <span class="c1"># row_index is the position in the table (the order specified by the user)</span>
+        <span class="n">device_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">row_index</span><span class="p">,</span> <span class="p">(</span><span class="n">device_name</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bay_assignments</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">device_name</span> <span class="o">!=</span> <span class="s2">&quot;(Spare)&quot;</span><span class="p">:</span>
+                <span class="n">device_mapping</span><span class="p">[</span><span class="n">device_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_index</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span><span class="p">)</span>
+
+        <span class="c1"># Build ordered list based on the table order (row_index)</span>
+        <span class="n">all_elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">associated_branches</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">associated_injections</span><span class="p">)</span>
+
+        <span class="c1"># Create a list of (element, row_index, bay_num, assigned_bus)</span>
+        <span class="n">ordered_elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">device_mapping</span><span class="p">:</span>
+                <span class="n">row_index</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span> <span class="o">=</span> <span class="n">device_mapping</span><span class="p">[</span><span class="n">elem</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">ordered_elements</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fallback: assign to the end</span>
+                <span class="n">ordered_elements</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="s2">&quot;JBP1&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Sort by row_index, that is, the desired order from table</span>
+        <span class="n">ordered_elements</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Convert to (elem, bay_num, assigned_bus) format for compatibility</span>
+        <span class="n">sorted_elements</span> <span class="o">=</span> <span class="p">[(</span><span class="n">elem</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span> <span class="ow">in</span> <span class="n">ordered_elements</span><span class="p">]</span>
+
+        <span class="c1"># Reconnect in sorted order</span>
+        <span class="k">if</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">BreakerAndAHalf</span><span class="p">:</span>
+            <span class="c1"># Special handling for breaker and a half to respect JBP1/JBP2 assignment</span>
+            <span class="k">for</span> <span class="n">elem</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span> <span class="ow">in</span> <span class="n">sorted_elements</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">bay_num</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">bay_num</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># just for safety</span>
+
+                <span class="c1"># Calculate target index</span>
+                <span class="c1"># Bay num is 1-based.</span>
+                <span class="c1"># i in breaker_and_a_half loop corresponds to position index.</span>
+                <span class="c1"># Bay 1 creates conn_buses[0] (for JBP1) and conn_buses[1] (for JBP2)</span>
+                <span class="n">base_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">bay_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">assigned_bus</span> <span class="o">==</span> <span class="s2">&quot;JBP1&quot;</span> <span class="k">else</span> <span class="mi">1</span>
+                <span class="n">final_idx</span> <span class="o">=</span> <span class="n">base_idx</span> <span class="o">+</span> <span class="n">offset</span>
+
+                <span class="k">if</span> <span class="n">final_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">conn_buses</span><span class="p">):</span>
+                    <span class="n">target_bus</span> <span class="o">=</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">final_idx</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">associated_branches</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">bus</span><span class="p">:</span>
+                            <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">target_bus</span>
+                            <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">bus</span><span class="p">,</span> <span class="n">target_bus</span><span class="p">))</span>
+                        <span class="k">elif</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">bus</span><span class="p">:</span>
+                            <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">target_bus</span>
+                            <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">bus</span><span class="p">,</span> <span class="n">target_bus</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>  <span class="c1"># injection</span>
+                        <span class="n">old_bus</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">target_bus</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_injections_reconnection</span><span class="p">:</span>
+                            <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">old_bus</span><span class="p">,</span> <span class="n">target_bus</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Fallback if index out of bounds (should not happen with correct sizing)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Bay </span><span class="si">{</span><span class="n">bay_num</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">assigned_bus</span><span class="si">}</span><span class="s2"> out of bounds for generated buses.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">elem</span><span class="p">,</span> <span class="n">bay_num</span><span class="p">,</span> <span class="n">assigned_bus</span> <span class="ow">in</span> <span class="n">sorted_elements</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">conn_buses</span><span class="p">):</span>
+                    <span class="n">target_bus</span> <span class="o">=</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">associated_branches</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">bus</span><span class="p">:</span>
+                            <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">target_bus</span>
+                            <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">bus</span><span class="p">,</span> <span class="n">target_bus</span><span class="p">))</span>
+                        <span class="k">elif</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">bus</span><span class="p">:</span>
+                            <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">target_bus</span>
+                            <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">bus</span><span class="p">,</span> <span class="n">target_bus</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>  <span class="c1"># injection</span>
+                        <span class="n">old_bus</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">target_bus</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_injections_reconnection</span><span class="p">:</span>
+                            <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">old_bus</span><span class="p">,</span> <span class="n">target_bus</span><span class="p">))</span>
+
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Default behavior is to reconnect in original order</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">associated_branches</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">bus</span><span class="p">:</span>
+                <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">bus</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+            <span class="k">elif</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">bus</span><span class="p">:</span>
+                <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">bus</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">associated_injections</span><span class="p">:</span>
+            <span class="n">old_bus</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_injections_reconnection</span><span class="p">:</span>
+                <span class="n">reconnection_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="n">old_bus</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span><span class="p">,</span> <span class="n">reconnection_list</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_store_voltage_level_data</span><span class="p">(</span>
+        <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">conn_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+        <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+        <span class="n">vl_type</span><span class="p">:</span> <span class="n">VoltageLevelTypes</span><span class="p">,</span>
+        <span class="n">conn_buses_by_voltage</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">bars_by_voltage</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">vl_type_by_voltage</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to store voltage level data (connection buses, bars, and type)</span>
+<span class="sd">    :param voltage: Voltage level voltage (kV)</span>
+<span class="sd">    :param conn_buses: List of connection buses</span>
+<span class="sd">    :param all_buses: List of all buses in the voltage level</span>
+<span class="sd">    :param vl_type: Voltage level type</span>
+<span class="sd">    :param conn_buses_by_voltage: Dictionary to store connection buses by voltage</span>
+<span class="sd">    :param bars_by_voltage: Dictionary to store bars by voltage</span>
+<span class="sd">    :param vl_type_by_voltage: Dictionary to store voltage level type by voltage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Store connection buses for this voltage level</span>
+    <span class="k">if</span> <span class="n">voltage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conn_buses_by_voltage</span><span class="p">:</span>
+        <span class="n">conn_buses_by_voltage</span><span class="p">[</span><span class="n">voltage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conn_buses_by_voltage</span><span class="p">[</span><span class="n">voltage</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">conn_buses</span><span class="p">)</span>
+
+    <span class="c1"># Store bars (buses with BusGraphicType.BusBar) for this voltage level</span>
+    <span class="n">bars</span> <span class="o">=</span> <span class="p">[</span><span class="n">bus</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">all_buses</span> <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">graphic_type</span> <span class="o">==</span> <span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">voltage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bars_by_voltage</span><span class="p">:</span>
+        <span class="n">bars_by_voltage</span><span class="p">[</span><span class="n">voltage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Only add bars that are not already in the list (avoid duplicates)</span>
+    <span class="n">existing_bar_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">b</span><span class="o">.</span><span class="n">idtag</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bars_by_voltage</span><span class="p">[</span><span class="n">voltage</span><span class="p">]}</span>
+    <span class="n">new_bars</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bars</span> <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">idtag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_bar_ids</span><span class="p">]</span>
+    <span class="n">bars_by_voltage</span><span class="p">[</span><span class="n">voltage</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_bars</span><span class="p">)</span>
+
+    <span class="c1"># Store voltage level type</span>
+    <span class="n">vl_type_by_voltage</span><span class="p">[</span><span class="n">voltage</span><span class="p">]</span> <span class="o">=</span> <span class="n">vl_type</span>
+
+
+<div class="viewcode-block" id="create_substation">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.VoltageLevels.html#VeraGridEngine.Topology.VoltageLevels.vl_creation_common_functions.create_substation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_substation</span><span class="p">(</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">se_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">se_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">lon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">vl_templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevelTemplate</span><span class="p">],</span>
+        <span class="n">buses_to_replace</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">y0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a complete substation</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param se_name: Substation name</span>
+<span class="sd">    :param se_code: Substation code</span>
+<span class="sd">    :param lat: Latitude</span>
+<span class="sd">    :param lon: Longitude</span>
+<span class="sd">    :param vl_templates: List of VoltageLevelTemplates to convert</span>
+<span class="sd">    :param buses_to_replace: Optional list of buses to merge</span>
+<span class="sd">    :param x0: x offset</span>
+<span class="sd">    :param y0: y offset</span>
+<span class="sd">    :return: se_object, [vl list]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Collect connections from buses to replace before creating the substation</span>
+    <span class="c1"># Maps bus -&gt; (associated_branches, associated_injections)</span>
+    <span class="n">bus_connections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">BRANCH_TYPES</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">INJECTION_DEVICE_TYPES</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="c1"># Group buses to replace by voltage level for matching with templates</span>
+    <span class="n">buses_by_voltage</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Maps voltage -&gt; list of buses</span>
+
+    <span class="k">if</span> <span class="n">buses_to_replace</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">buses_to_replace</span><span class="p">:</span>
+            <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_devices</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">)</span>
+            <span class="n">bus_connections</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span><span class="p">)</span>
+
+            <span class="c1"># v_nom = bus.Vnom</span>
+            <span class="c1"># if v_nom not in buses_by_voltage:</span>
+            <span class="c1">#     buses_by_voltage[v_nom] = list()</span>
+            <span class="c1"># buses_by_voltage[v_nom].append(bus)</span>
+
+            <span class="n">bus_lst</span> <span class="o">=</span> <span class="n">buses_by_voltage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bus_lst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">buses_by_voltage</span><span class="p">[</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">bus</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bus_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+
+    <span class="c1"># create the SE</span>
+    <span class="n">se_object</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">se_name</span><span class="p">,</span>
+                               <span class="n">code</span><span class="o">=</span><span class="n">se_code</span><span class="p">,</span>
+                               <span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+                               <span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_substation</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">se_object</span><span class="p">)</span>
+    <span class="c1"># substation_graphics = self.add_api_substation(api_object=se_object, lat=lat, lon=lon)</span>
+
+    <span class="n">voltage_levels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1"># Track connection buses by voltage level for reconnecting</span>
+    <span class="n">conn_buses_by_voltage</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Maps voltage -&gt; list of connection buses</span>
+    <span class="c1"># Track bars by voltage level for renaming</span>
+    <span class="n">bars_by_voltage</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Maps voltage -&gt; list of bars (BusGraphicType.BusBar)</span>
+    <span class="c1"># Track voltage level type by voltage for renaming</span>
+    <span class="n">vl_type_by_voltage</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Maps voltage -&gt; VoltageLevelTypes</span>
+
+    <span class="n">offset_x</span> <span class="o">=</span> <span class="n">x0</span>
+    <span class="n">offset_y</span> <span class="o">=</span> <span class="n">y0</span>
+    <span class="k">for</span> <span class="n">vl_template</span> <span class="ow">in</span> <span class="n">vl_templates</span><span class="p">:</span>
+
+        <span class="c1"># True if config is known, hence we have to store voltage level info</span>
+        <span class="n">known_config</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBar</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBarWithBypass</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span>
+                 <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">create_single_bar_with_bypass_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_bypass</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBarWithSplitter</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_splitter_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_single_bar_with_splitter</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBar</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_double_bar_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_double_bar</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBarWithBypass</span><span class="p">:</span>
+            <span class="c1"># TODO: Implement</span>
+            <span class="n">conn_buses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">all_buses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBarWithTransference</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span>
+                 <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">create_double_bar_with_transference_bar_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_double_bar_with_transference_bar</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBarDuplex</span><span class="p">:</span>
+            <span class="c1"># TODO: Implement</span>
+            <span class="n">conn_buses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">all_buses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">Ring</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_ring_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_ring</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">BreakerAndAHalf</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">vl_template</span><span class="o">.</span><span class="n">add_disconnectors</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_breaker_and_a_half_with_disconnectors</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vl</span><span class="p">,</span> <span class="n">conn_buses</span><span class="p">,</span> <span class="n">all_buses</span><span class="p">,</span> <span class="n">offset_total_x</span><span class="p">,</span> <span class="n">offset_total_y</span> <span class="o">=</span> <span class="n">create_breaker_and_a_half</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">se_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-@</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV VL&quot;</span><span class="p">,</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                    <span class="n">n_bays</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">n_bays</span><span class="p">,</span>
+                    <span class="n">v_nom</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                    <span class="n">substation</span><span class="o">=</span><span class="n">se_object</span><span class="p">,</span>
+                    <span class="n">offset_x</span><span class="o">=</span><span class="n">offset_x</span><span class="p">,</span>
+                    <span class="n">offset_y</span><span class="o">=</span><span class="n">offset_y</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">offset_x</span> <span class="o">=</span> <span class="n">offset_total_x</span>
+            <span class="n">offset_y</span> <span class="o">=</span> <span class="n">offset_total_y</span>
+            <span class="n">voltage_levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+            <span class="n">known_config</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span><span class="si">}</span><span class="s2"> not implemented :/&quot;</span><span class="p">)</span>
+            <span class="n">conn_buses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">all_buses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">known_config</span><span class="p">:</span>
+            <span class="n">_store_voltage_level_data</span><span class="p">(</span>
+                <span class="n">voltage</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                <span class="n">conn_buses</span><span class="o">=</span><span class="n">conn_buses</span><span class="p">,</span>
+                <span class="n">all_buses</span><span class="o">=</span><span class="n">all_buses</span><span class="p">,</span>
+                <span class="n">vl_type</span><span class="o">=</span><span class="n">vl_template</span><span class="o">.</span><span class="n">vl_type</span><span class="p">,</span>
+                <span class="n">conn_buses_by_voltage</span><span class="o">=</span><span class="n">conn_buses_by_voltage</span><span class="p">,</span>
+                <span class="n">bars_by_voltage</span><span class="o">=</span><span class="n">bars_by_voltage</span><span class="p">,</span>
+                <span class="n">vl_type_by_voltage</span><span class="o">=</span><span class="n">vl_type_by_voltage</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Nothing to store</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Rename bars (bus bars) based on original bus names, following REE instructions</span>
+    <span class="c1"># Track which voltage levels have been renamed to avoid duplicate renaming</span>
+    <span class="n">renamed_voltage_levels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">buses_to_replace</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">old_bus</span> <span class="ow">in</span> <span class="n">buses_to_replace</span><span class="p">:</span>
+            <span class="n">v_nom</span> <span class="o">=</span> <span class="n">old_bus</span><span class="o">.</span><span class="n">Vnom</span>
+            <span class="c1"># Only rename once per voltage level (use first bus name for that voltage)</span>
+            <span class="k">if</span> <span class="n">v_nom</span> <span class="ow">in</span> <span class="n">bars_by_voltage</span> <span class="ow">and</span> <span class="n">v_nom</span> <span class="ow">in</span> <span class="n">vl_type_by_voltage</span> <span class="ow">and</span> <span class="n">v_nom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">renamed_voltage_levels</span><span class="p">:</span>
+                <span class="n">bars_for_voltage</span> <span class="o">=</span> <span class="n">bars_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span>
+                <span class="n">vl_type</span> <span class="o">=</span> <span class="n">vl_type_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span>
+                <span class="n">original_name</span> <span class="o">=</span> <span class="n">old_bus</span><span class="o">.</span><span class="n">name</span>
+
+                <span class="k">if</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">SingleBar</span><span class="p">:</span>
+                    <span class="c1"># Single bar: rename the bar to {original_name}JBP1</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bars_for_voltage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">bars_for_voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">_JBP1&quot;</span>
+
+                <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">DoubleBar</span><span class="p">:</span>
+                    <span class="c1"># Double bar: rename the 2 bars to {original_name}JBP1 and JBP2</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bars_for_voltage</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">bars_for_voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">_JBP1&quot;</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bars_for_voltage</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">bars_for_voltage</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">_JBP2&quot;</span>
+
+                <span class="k">elif</span> <span class="n">vl_type</span> <span class="o">==</span> <span class="n">VoltageLevelTypes</span><span class="o">.</span><span class="n">BreakerAndAHalf</span><span class="p">:</span>
+                    <span class="c1"># Breaker and a half: rename the 2 bars to {original_name}JBP1 and JBP2</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bars_for_voltage</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">bars_for_voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">_JBP1&quot;</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bars_for_voltage</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">bars_for_voltage</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">_JBP2&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Nothing to rename</span>
+                    <span class="k">pass</span>
+
+                <span class="c1"># Mark this voltage level as renamed</span>
+                <span class="n">renamed_voltage_levels</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v_nom</span><span class="p">)</span>
+
+    <span class="c1"># Reconnect buses to replace to the new substation connection buses</span>
+    <span class="n">buses_to_delete</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># Track connection index per voltage level to distribute connections evenly</span>
+    <span class="n">conn_idx_by_voltage</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">buses_to_replace</span> <span class="ow">and</span> <span class="n">bus_connections</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">old_bus</span> <span class="ow">in</span> <span class="n">buses_to_replace</span><span class="p">:</span>
+            <span class="n">v_nom</span> <span class="o">=</span> <span class="n">old_bus</span><span class="o">.</span><span class="n">Vnom</span>
+            <span class="n">associated_branches</span><span class="p">,</span> <span class="n">associated_injections</span> <span class="o">=</span> <span class="n">bus_connections</span><span class="p">[</span><span class="n">old_bus</span><span class="p">]</span>
+
+            <span class="c1"># Find matching connection buses for this voltage level</span>
+            <span class="k">if</span> <span class="n">v_nom</span> <span class="ow">in</span> <span class="n">conn_buses_by_voltage</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">conn_buses_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Get the first available connection bus for this voltage level</span>
+                <span class="c1"># We will distribute connections across available connection buses</span>
+                <span class="n">conn_buses_for_voltage</span> <span class="o">=</span> <span class="n">conn_buses_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span>
+
+                <span class="c1"># Initialize connection index for this voltage level if not already done</span>
+                <span class="k">if</span> <span class="n">v_nom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conn_idx_by_voltage</span><span class="p">:</span>
+                    <span class="n">conn_idx_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># Reconnect branches</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">associated_branches</span><span class="p">:</span>
+                    <span class="n">conn_idx</span> <span class="o">=</span> <span class="n">conn_idx_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span>
+                    <span class="n">new_bus</span> <span class="o">=</span> <span class="n">conn_buses_for_voltage</span><span class="p">[</span><span class="n">conn_idx</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">old_bus</span><span class="p">:</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">new_bus</span>
+                    <span class="k">elif</span> <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">old_bus</span><span class="p">:</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">new_bus</span>
+                    <span class="c1"># Move to next connection bus, wrapping around if needed</span>
+                    <span class="n">conn_idx_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">conn_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">conn_buses_for_voltage</span><span class="p">)</span>
+
+                <span class="c1"># Reconnect injections</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">associated_injections</span><span class="p">:</span>
+                    <span class="n">conn_idx</span> <span class="o">=</span> <span class="n">conn_idx_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span>
+                    <span class="n">new_bus</span> <span class="o">=</span> <span class="n">conn_buses_for_voltage</span><span class="p">[</span><span class="n">conn_idx</span><span class="p">]</span>
+                    <span class="n">elem</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">new_bus</span>
+                    <span class="c1"># Move to next connection bus, wrapping around if needed</span>
+                    <span class="n">conn_idx_by_voltage</span><span class="p">[</span><span class="n">v_nom</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">conn_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">conn_buses_for_voltage</span><span class="p">)</span>
+
+                <span class="c1"># Mark the old bus for deletion after all reconnections are done</span>
+                <span class="n">buses_to_delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">old_bus</span><span class="p">)</span>
+
+    <span class="c1"># Delete old buses considering we have all reconnections complete</span>
+    <span class="k">for</span> <span class="n">old_bus</span> <span class="ow">in</span> <span class="n">buses_to_delete</span><span class="p">:</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">delete_bus</span><span class="p">(</span><span class="n">old_bus</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">se_object</span><span class="p">,</span> <span class="n">voltage_levels</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1236 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.others.pandapower_parser &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.others.pandapower_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.others.pandapower_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="c1"># from VeraGridEngine.Devices.Branches.tap_changer import TapChanger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ExternalGridMode</span><span class="p">,</span> <span class="n">TapChangerTypes</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pandapower</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_pickle</span><span class="p">,</span> <span class="n">from_sqlite</span><span class="p">,</span> <span class="n">from_json</span><span class="p">,</span> <span class="n">from_excel</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pandapower.auxiliary</span><span class="w"> </span><span class="kn">import</span> <span class="n">pandapowerNet</span>
+
+    <span class="n">PANDAPOWER_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">pandapower</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">PANDAPOWER_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="is_pandapower_pickle">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.is_pandapower_pickle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_pandapower_pickle</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a file is pandapower Pickle</span>
+<span class="sd">    :param file_path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">PANDAPOWER_AVAILABLE</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">net</span> <span class="o">=</span> <span class="n">from_pickle</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">net</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="s2">&quot;ext_grid&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_pandapower_json">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.is_pandapower_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_pandapower_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a file is pandapower JSON</span>
+<span class="sd">    :param file_path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">PANDAPOWER_AVAILABLE</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="s2">&quot;ext_grid&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_pandapower_sqlite">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.is_pandapower_sqlite">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_pandapower_sqlite</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a file is pandapower SQLite</span>
+<span class="sd">    :param file_path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">PANDAPOWER_AVAILABLE</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39;;&quot;</span><span class="p">)</span>
+                <span class="n">tables</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="s2">&quot;ext_grid&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_pandapower_file">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.is_pandapower_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_pandapower_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if this is a pandapower file</span>
+<span class="sd">    :param file_path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.p&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">is_pandapower_pickle</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">is_pandapower_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.sqlite&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">is_pandapower_sqlite</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="Panda2VeraGrid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Panda2VeraGrid</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_or_net</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="s2">&quot;pandapowerNet&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize</span>
+<span class="sd">        :param file_or_net: PandaPower file name or pandapowerNet</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">panda_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ALL_DEV_TYPES</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">PANDAPOWER_AVAILABLE</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.p&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_pickle</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.sqlite&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_sqlite</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_json</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xlsx&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_excel</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Don&#39;t know what to do with this PandaPower file :/&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">,</span> <span class="n">pandapowerNet</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">file_or_net</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The argument is not recognized as a Pandapower net or file :/ </span><span class="si">{</span><span class="n">file_or_net</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;This seems to be a pandapower file&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fBase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">f_hz</span>
+            <span class="n">Sbase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">sn_mva</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">sn_mva</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="mf">100.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">Sbase</span>  <span class="c1"># To handle the terrible practice of pandapower to use Sbase to represent kW</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fBase</span> <span class="o">=</span> <span class="mf">50.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;Pandapower not available :/, try pip install pandapower&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Panda2VeraGrid.register">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.register">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">panda_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">panda_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">api_obj</span><span class="p">:</span> <span class="n">ALL_DEV_TYPES</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a panda object and it&#39;s associated VeraGrid object</span>
+<span class="sd">        :param panda_type: table name</span>
+<span class="sd">        :param panda_code: index key</span>
+<span class="sd">        :param api_obj: VeraGrid object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">panda_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">panda_dict</span><span class="p">[</span><span class="n">panda_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">panda_code</span><span class="p">:</span> <span class="n">api_obj</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">panda_code</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">panda_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">api_obj</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Panda index repeated&quot;</span><span class="p">,</span> <span class="n">device_class</span><span class="o">=</span><span class="n">panda_type</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">panda_code</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.get_api_object_by_registry">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.get_api_object_by_registry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_api_object_by_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">panda_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">panda_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ALL_DEV_TYPES</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a previously registered veragrid object from a pandapower table-key</span>
+<span class="sd">        :param panda_type: table name</span>
+<span class="sd">        :param panda_code: index key</span>
+<span class="sd">        :return: VeraGrid object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">panda_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">panda_code</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_buses">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_buses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_buses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add buses to the VeraGrid grid based on Pandapower data</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :return: PP row name or index to VeraGrid Bus object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">Vnom</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;vn_kv&#39;</span><span class="p">],</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">vmin</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;min_vm_pu&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;min_vm_pu&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">else</span> <span class="mf">0.9</span><span class="p">,</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;max_vm_pu&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;max_vm_pu&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">else</span> <span class="mf">1.1</span><span class="p">,</span>
+                <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;in_service&#39;</span><span class="p">]),</span>
+                <span class="c1"># idtag=row.get(&#39;uuid&#39;, None)  # uuids can be repeated and mess things up</span>
+            <span class="p">)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>  <span class="c1"># Add the row to the VeraGrid grid</span>
+
+            <span class="c1"># add the entry bu name in the buses dict</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">bus_dictionary</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Repeated bus name&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="c1"># add also the entry by idx</span>
+            <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">bus_dictionary</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_external_grids">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_external_grids">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_external_grids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add external grid (slack bus) generators to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">ext_grid</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;in_service&quot;</span><span class="p">]:</span>
+                <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">ExternalGrid</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">Vm</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;vm_pu&#39;</span><span class="p">],</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">VD</span><span class="p">,</span>
+                    <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_external_grid</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">elm</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;ext_grid&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_loads">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_loads">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add loads to the VeraGrid grid based on Pandapower data</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">load</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;in_service&quot;</span><span class="p">]:</span>
+                <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">P</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;p_mw&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                    <span class="n">Q</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;q_mvar&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                    <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_shunts">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_shunts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_shunts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add shunts to the VeraGrid grid based on Pandapower data</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">shunt</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">G</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;p_mw&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                <span class="n">B</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;q_mvar&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;shunt&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_lines">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_lines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add lines (conductors) to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">bus1</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;from_bus&#39;</span><span class="p">]]</span>
+            <span class="n">bus2</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;to_bus&#39;</span><span class="p">]]</span>
+
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span>
+                <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;in_service&#39;</span><span class="p">]),</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">fill_design_properties</span><span class="p">(</span>
+                <span class="n">r_ohm</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;r_ohm_per_km&#39;</span><span class="p">],</span>
+                <span class="n">x_ohm</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;x_ohm_per_km&#39;</span><span class="p">],</span>
+                <span class="n">c_nf</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;c_nf_per_km&#39;</span><span class="p">],</span>
+                <span class="n">length</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;length_km&#39;</span><span class="p">],</span>
+                <span class="n">Imax</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_i_ka&#39;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>  <span class="c1"># max_i_ka might not be there...</span>
+                <span class="n">freq</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span>
+                <span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                <span class="n">apply_to_profile</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Uncomment the following lines if line activation status is needed</span>
+            <span class="c1">#            if (self.lines[self.lines[&#39;id&#39;] == idx][&#39;Enabled&#39;].values[0] == False):</span>
+            <span class="c1">#                line.active = False</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_impedances">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_impedances">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_impedances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add impedances to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mult</span> <span class="o">=</span> <span class="mf">1.6</span>  <span class="c1"># Multiplicative factor for impedance</span>
+
+        <span class="c1"># Add impedance elements to the VeraGrid grid</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">impedance</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">bus1</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;from_bus&#39;</span><span class="p">]]</span>
+            <span class="n">bus2</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;to_bus&#39;</span><span class="p">]]</span>
+
+            <span class="c1"># Calculate base impedance</span>
+            <span class="n">zbase</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;from_bus&#39;</span><span class="p">],</span> <span class="s1">&#39;vn_kv&#39;</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="n">ru</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">rft_pu</span> <span class="o">*</span> <span class="n">row</span><span class="o">.</span><span class="n">sn_mva</span> <span class="o">/</span> <span class="n">zbase</span> <span class="o">*</span> <span class="n">mult</span>
+            <span class="n">xu</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">xft_pu</span> <span class="o">*</span> <span class="n">row</span><span class="o">.</span><span class="n">sn_mva</span> <span class="o">/</span> <span class="n">zbase</span> <span class="o">*</span> <span class="n">mult</span>
+
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">SeriesReactance</span><span class="p">(</span>
+                <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">r</span><span class="o">=</span><span class="n">ru</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">xu</span><span class="p">,</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_series_reactance</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;impedance&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_storage">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_storage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add storages to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">Pmin</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;min_p_mw&#39;</span><span class="p">],</span>
+                <span class="n">Pmax</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;max_p_mw&#39;</span><span class="p">],</span>
+                <span class="n">Qmin</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;min_q_mvar&#39;</span><span class="p">],</span>
+                <span class="n">Qmax</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;max_q_mvar&#39;</span><span class="p">],</span>
+                <span class="n">Sbase</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;sn_mva&#39;</span><span class="p">],</span>
+                <span class="n">Enom</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;max_e_mwh&#39;</span><span class="p">],</span>
+                <span class="n">active</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;in_service&#39;</span><span class="p">],</span>
+                <span class="n">soc</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;soc_percent&#39;</span><span class="p">],</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_battery</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>  <span class="c1"># Add battery to the grid</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;storage&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_generators">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_generators">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_generators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add synchronous generators (row) to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;in_service&quot;</span><span class="p">]:</span>
+                <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">P</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;p_mw&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                    <span class="n">is_controlled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="n">vset</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;vm_pu&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>  <span class="c1"># Add generator to the grid</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;gen&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_static_generators">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_static_generators">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_static_generators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add synchronous generators (row) to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">sgen</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;in_service&quot;</span><span class="p">]:</span>
+                <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">StaticGenerator</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">P</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;p_mw&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                    <span class="n">Q</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;q_mvar&quot;</span><span class="p">],</span>
+                    <span class="n">active</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;in_service&#39;</span><span class="p">],</span>
+                    <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_static_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>  <span class="c1"># Add generator to the grid</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;sgen&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_transformers">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_transformers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add transformers to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">trafo</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">bus1</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;hv_bus&#39;</span><span class="p">]]</span>
+            <span class="n">bus2</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;lv_bus&#39;</span><span class="p">]]</span>
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span>
+                <span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">HV</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;vn_hv_kv&#39;</span><span class="p">],</span>
+                <span class="n">LV</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;vn_lv_kv&#39;</span><span class="p">],</span>
+                <span class="n">nominal_power</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;sn_mva&#39;</span><span class="p">],</span>
+                <span class="n">rate</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;sn_mva&#39;</span><span class="p">],</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+            <span class="c1"># --- Derived values ---</span>
+
+            <span class="n">mf</span><span class="p">,</span> <span class="n">mt</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_virtual_taps</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.9</span> <span class="o">&lt;=</span> <span class="n">mf</span> <span class="o">&lt;=</span> <span class="mf">1.1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Virtual tap &#39;from&#39; out of bounds, possible transformer data error&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">mf</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.9</span> <span class="o">&lt;=</span> <span class="n">mt</span> <span class="o">&lt;=</span> <span class="mf">1.1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Virtual tap &#39;to&#39; out of bounds, possible transformer data error&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">mt</span><span class="p">)</span>
+
+            <span class="c1"># see: https://pandapower.readthedocs.io/en/latest/elements/trafo.html#trafo</span>
+            <span class="n">Pcu</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vkr_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;sn_mva&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># copper losses in kW</span>
+            <span class="n">Pfe</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pfe_kw&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># iron losses in kW</span>
+            <span class="n">I0</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i0_percent&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># no-load current in %</span>
+            <span class="n">Vsc</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vk_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># short-circuit voltage (%)</span>
+
+            <span class="n">elm</span><span class="o">.</span><span class="n">fill_design_properties</span><span class="p">(</span>
+                <span class="n">Pcu</span><span class="o">=</span><span class="n">Pcu</span><span class="p">,</span>
+                <span class="n">Pfe</span><span class="o">=</span><span class="n">Pfe</span><span class="p">,</span>
+                <span class="n">I0</span><span class="o">=</span><span class="n">I0</span><span class="p">,</span>
+                <span class="n">Vsc</span><span class="o">=</span><span class="n">Vsc</span><span class="p">,</span>
+                <span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="p">)</span>
+
+            <span class="n">tc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_tap_changers</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span> <span class="o">=</span> <span class="n">tc</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;trafo&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.extract_tap_changers">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.extract_tap_changers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_tap_changers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">TapChanger</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            # Tap changer mapping (pandapower → GridCal)</span>
+<span class="sd">            #</span>
+<span class="sd">            # Ratio + tap_step_percent only:</span>
+<span class="sd">            #   dV = tap_step_percent / 100</span>
+<span class="sd">            #   asymmetry_angle = 0°</span>
+<span class="sd">            #</span>
+<span class="sd">            # Ratio + tap_step_percent + tap_step_degree (cross regulator):</span>
+<span class="sd">            #   δu = tap_step_percent / 100</span>
+<span class="sd">            #   α = tap_step_degree  (phase shift per tap, deg)</span>
+<span class="sd">            #</span>
+<span class="sd">            #   Conversion (UCTE):</span>
+<span class="sd">            #     tan(α) = (δu · sinΘ) / (1 + δu · cosΘ)</span>
+<span class="sd">            #     ⇒ Θ = α + arcsin(sin(α) / δu)</span>
+<span class="sd">            #</span>
+<span class="sd">            #   If δu = 0 or |sin(α)| &gt; δu:</span>
+<span class="sd">            #     Fallback → treat as Ideal phase shifter:</span>
+<span class="sd">            #       dV = 0</span>
+<span class="sd">            #       asymmetry_angle = α</span>
+<span class="sd">            #</span>
+<span class="sd">            # Symmetrical:</span>
+<span class="sd">            #   dV = tap_step_percent / 100</span>
+<span class="sd">            #   asymmetry_angle = 90°</span>
+<span class="sd">            #</span>
+<span class="sd">            # Ideal:</span>
+<span class="sd">            #   dV = 0</span>
+<span class="sd">            #   asymmetry_angle = tap_step_degree For &quot;Symmetrical&quot; and &quot;Ideal&quot;, mapping stays as before.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tap_changer_type</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tap_changer_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">dV</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span>
+        <span class="k">if</span> <span class="n">tap_changer_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;tap_neutral&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">tap_changer_type</span> <span class="o">==</span> <span class="s2">&quot;Ratio&quot;</span><span class="p">:</span>
+                <span class="c1"># Longitudinal regulator</span>
+                <span class="n">dV</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;tap_step_percent&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.0</span>
+                <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span>
+
+                <span class="c1"># Check if cross regulator (with angle)</span>
+                <span class="k">if</span> <span class="s2">&quot;tap_step_degree&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;tap_step_degree&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;tap_step_degree&quot;</span><span class="p">])</span>  <span class="c1"># pandapower phase shift α [rad]</span>
+                    <span class="k">if</span> <span class="n">dV</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="n">dV</span><span class="p">:</span>
+                        <span class="c1"># Convert α -&gt; Θ (GridCal asymmetry_angle)</span>
+                        <span class="n">theta</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">dV</span><span class="p">)</span>
+                        <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+                        <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># fallback: cannot map with given dV, treat as ideal angle shifter</span>
+                        <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;tap_step_degree&quot;</span><span class="p">]</span>
+                        <span class="n">dV</span> <span class="o">=</span> <span class="mf">0.0</span>
+                        <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span>
+
+            <span class="k">elif</span> <span class="n">tap_changer_type</span> <span class="o">==</span> <span class="s2">&quot;Symmetrical&quot;</span><span class="p">:</span>
+                <span class="n">dV</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;tap_step_percent&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.0</span>
+                <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="mf">90.0</span>
+                <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Symmetrical</span>
+
+            <span class="k">elif</span> <span class="n">tap_changer_type</span> <span class="o">==</span> <span class="s2">&quot;Ideal&quot;</span><span class="p">:</span>
+                <span class="n">dV</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span>
+                <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tap_step_degree&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>  <span class="c1"># default to 90° if missing</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span>
+                <span class="n">dV</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="mf">90.0</span>
+
+            <span class="c1"># Build GridCal TapChanger</span>
+            <span class="k">return</span> <span class="n">dev</span><span class="o">.</span><span class="n">TapChanger</span><span class="p">(</span>
+                <span class="n">total_positions</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;tap_max&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;tap_min&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">neutral_position</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;tap_neutral&#39;</span><span class="p">],</span>
+                <span class="n">normal_position</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;tap_pos&#39;</span><span class="p">],</span>
+                <span class="n">dV</span><span class="o">=</span><span class="n">dV</span><span class="p">,</span>
+                <span class="n">asymmetry_angle</span><span class="o">=</span><span class="n">asymmetry_angle</span><span class="p">,</span>
+                <span class="n">tc_type</span><span class="o">=</span><span class="n">tc_type</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_transformers3W">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_transformers3W">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_transformers3W</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add 3W transformers to the VeraGrid grid</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">bus_hv</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;hv_bus&#39;</span><span class="p">]]</span>
+            <span class="n">bus_mv</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;mv_bus&#39;</span><span class="p">]]</span>
+            <span class="n">bus_lv</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;lv_bus&#39;</span><span class="p">]]</span>
+            <span class="c1"># Nominal voltages</span>
+            <span class="n">V1</span><span class="p">,</span> <span class="n">V2</span><span class="p">,</span> <span class="n">V3</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">vn_hv_kv</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">vn_mv_kv</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">vn_lv_kv</span>
+
+            <span class="c1"># Ratings (if available, else default to 100 MVA)</span>
+            <span class="n">Sn1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="s2">&quot;sn_hv_mva&quot;</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+            <span class="n">Sn2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="s2">&quot;sn_mv_mva&quot;</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+            <span class="n">Sn3</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="s2">&quot;sn_lv_mva&quot;</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+
+            <span class="c1"># Build transformer</span>
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer3W</span><span class="p">(</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">uuid</span><span class="p">),</span>
+                <span class="n">code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                <span class="n">bus1</span><span class="o">=</span><span class="n">bus_hv</span><span class="p">,</span>
+                <span class="n">bus2</span><span class="o">=</span><span class="n">bus_mv</span><span class="p">,</span>
+                <span class="n">bus3</span><span class="o">=</span><span class="n">bus_lv</span><span class="p">,</span>
+                <span class="n">V1</span><span class="o">=</span><span class="n">V1</span><span class="p">,</span> <span class="n">V2</span><span class="o">=</span><span class="n">V2</span><span class="p">,</span> <span class="n">V3</span><span class="o">=</span><span class="n">V3</span><span class="p">,</span>
+                <span class="n">r12</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">r23</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">r31</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># will be recomputed</span>
+                <span class="n">x12</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x23</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x31</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">rate12</span><span class="o">=</span><span class="n">Sn1</span><span class="p">,</span> <span class="n">rate23</span><span class="o">=</span><span class="n">Sn2</span><span class="p">,</span> <span class="n">rate31</span><span class="o">=</span><span class="n">Sn3</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+            <span class="c1"># --- Derived values ---</span>
+            <span class="c1"># Copper losses [kW] and short-circuit voltages [%]</span>
+
+            <span class="n">Pfe</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pfe_kw&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># iron losses in kW</span>
+            <span class="n">I0</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i0_percent&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="c1"># short-circuit voltage (%)</span>
+            <span class="n">Vsc12</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vk_hv_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">Vsc23</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vk_mv_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">Vsc31</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vk_lv_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="c1"># see: https://pandapower.readthedocs.io/en/latest/elements/trafo.html#trafo</span>
+            <span class="n">Pcu12</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vkr_hv_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">Sn1</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># copper losses in kW</span>
+            <span class="n">Pcu23</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vkr_mv_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">Sn2</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># copper losses in kW</span>
+            <span class="n">Pcu31</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vkr_lv_percent&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">Sn3</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># copper losses in kW</span>
+
+            <span class="c1"># Fill design values (VeraGrid computes r,x from % values)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">fill_from_design_values</span><span class="p">(</span>
+                <span class="n">V1</span><span class="o">=</span><span class="n">V1</span><span class="p">,</span> <span class="n">V2</span><span class="o">=</span><span class="n">V2</span><span class="p">,</span> <span class="n">V3</span><span class="o">=</span><span class="n">V3</span><span class="p">,</span>
+                <span class="n">Sn1</span><span class="o">=</span><span class="n">Sn1</span><span class="p">,</span> <span class="n">Sn2</span><span class="o">=</span><span class="n">Sn2</span><span class="p">,</span> <span class="n">Sn3</span><span class="o">=</span><span class="n">Sn3</span><span class="p">,</span>
+                <span class="n">Pcu12</span><span class="o">=</span><span class="n">Pcu12</span><span class="p">,</span> <span class="n">Pcu23</span><span class="o">=</span><span class="n">Pcu23</span><span class="p">,</span> <span class="n">Pcu31</span><span class="o">=</span><span class="n">Pcu31</span><span class="p">,</span>
+                <span class="n">Vsc12</span><span class="o">=</span><span class="n">Vsc12</span><span class="p">,</span> <span class="n">Vsc23</span><span class="o">=</span><span class="n">Vsc23</span><span class="p">,</span> <span class="n">Vsc31</span><span class="o">=</span><span class="n">Vsc31</span><span class="p">,</span>
+                <span class="n">Pfe</span><span class="o">=</span><span class="n">Pfe</span><span class="p">,</span> <span class="n">I0</span><span class="o">=</span><span class="n">I0</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">tc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_tap_changers</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">elm</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">tap_changer</span> <span class="o">=</span> <span class="n">tc</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer3w</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;trafo3w&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_switches">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_switches">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_switches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See: https://pandapower.readthedocs.io/en/latest/elements/switch.html</span>
+<span class="sd">        :param grid: MultiCircuit grid</span>
+<span class="sd">        :param bus_dictionary:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Add switches to the VeraGrid grid</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">switch_row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">switch</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="c1"># Identify the first bus in the switch</span>
+            <span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;bus&#39;</span><span class="p">]]</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;element&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;et&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>  <span class="c1"># Bus-to-bus switch</span>
+
+                <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">():</span>
+                    <span class="c1"># Get the second bus directly</span>
+                    <span class="n">bus_to</span> <span class="o">=</span> <span class="n">bus_dictionary</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                    <span class="c1"># Create the switch as a normal branch in VeraGrid</span>
+                    <span class="n">switch_branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span>
+                        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Switch_</span><span class="si">{</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;et&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;element&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                        <span class="n">active</span><span class="o">=</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;closed&#39;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">switch_branch</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">switch_row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">switch_branch</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;switch&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">switch_branch</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Switch referencing to bus out of bounds&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;et&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>  <span class="c1"># switch between bus and line</span>
+
+                <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_lines_number</span><span class="p">():</span>
+
+                    <span class="c1"># Create the auxiliary bus if it doesn&#39;t exist</span>
+                    <span class="n">bus_to</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> bus&quot;</span><span class="p">,</span>
+                                     <span class="n">Vnom</span><span class="o">=</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus_to</span><span class="p">)</span>
+
+                    <span class="n">branch</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">bus_from</span><span class="p">:</span>
+                        <span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus_to</span>
+                    <span class="k">elif</span> <span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">bus_from</span><span class="p">:</span>
+                        <span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">bus_to</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Disconnected switch&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch of transformer </span><span class="si">{</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># Create the switch as a normal branch in VeraGrid</span>
+                    <span class="n">switch_branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span>
+                        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch of line </span><span class="si">{</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                        <span class="n">active</span><span class="o">=</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;closed&#39;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">switch_branch</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">switch_row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">switch_branch</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;switch&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">switch_branch</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Switch referencing to line out of bounds&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;et&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>  <span class="c1"># switch between bus and transformer</span>
+
+                <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_transformers2w_number</span><span class="p">():</span>
+
+                    <span class="n">branch</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">transformers2w</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                    <span class="c1"># Create the auxiliary bus if it doesn&#39;t exist</span>
+                    <span class="n">bus_to</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> bus&quot;</span><span class="p">,</span>
+                                     <span class="n">Vnom</span><span class="o">=</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus_to</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">==</span> <span class="n">bus_from</span><span class="p">:</span>
+                        <span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus_to</span>
+                    <span class="k">elif</span> <span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">==</span> <span class="n">bus_from</span><span class="p">:</span>
+                        <span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">bus_to</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Disconnected switch&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch of transformer </span><span class="si">{</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># Create the switch as a normal branch in VeraGrid</span>
+                    <span class="n">switch_branch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span>
+                        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch of transformer </span><span class="si">{</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                        <span class="n">active</span><span class="o">=</span><span class="n">switch_row</span><span class="p">[</span><span class="s1">&#39;closed&#39;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">switch_branch</span><span class="o">.</span><span class="n">rdfid</span> <span class="o">=</span> <span class="n">switch_row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">switch_branch</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="s2">&quot;switch&quot;</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">switch_branch</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Switch referencing to transformer out of bounds&quot;</span><span class="p">,</span>
+                                          <span class="n">value</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;TR3 switch not implemented&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;switch </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.parse_measurements">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.parse_measurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param grid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                <span class="n">m_tpe</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;measurement_type&#39;</span><span class="p">]</span>  <span class="c1"># v, va, p, q, i</span>
+
+                <span class="c1"># bus, line, transformer, transformer3w, load, sgen, static_generator, ward, xward, external_grid</span>
+                <span class="n">elm_tpe</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;element_type&#39;</span><span class="p">]</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;element&#39;</span><span class="p">]</span>  <span class="c1"># index</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                <span class="n">std</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;std_dev&#39;</span><span class="p">]</span>
+                <span class="n">side</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;side&#39;</span><span class="p">]</span>
+
+                <span class="n">api_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_api_object_by_registry</span><span class="p">(</span><span class="n">panda_type</span><span class="o">=</span><span class="n">elm_tpe</span><span class="p">,</span> <span class="n">panda_code</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">api_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s1">&#39;bus&#39;</span><span class="p">:</span>
+
+                        <span class="k">if</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_vm_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">VmMeasurement</span><span class="p">(</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
+                                <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s2">&quot;va&quot;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_va_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">VaMeasurement</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                                                      <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_pi_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PiMeasurement</span><span class="p">(</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
+                                <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_qi_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QiMeasurement</span><span class="p">(</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
+                                <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span>
+                            <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                            <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_if_measurement</span><span class="p">(</span>
+                                <span class="n">dev</span><span class="o">.</span><span class="n">IfMeasurement</span><span class="p">(</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                    <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PandaPower </span><span class="si">{</span><span class="n">m_tpe</span><span class="si">}</span><span class="s2"> measurement not implemented&quot;</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">elm_tpe</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;gen&#39;</span><span class="p">,</span> <span class="s1">&#39;sgen&#39;</span><span class="p">,</span> <span class="s1">&#39;shunt&#39;</span><span class="p">]:</span>
+
+                        <span class="k">if</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_vm_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">VmMeasurement</span><span class="p">(</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
+                                <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s2">&quot;va&quot;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_va_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">VaMeasurement</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                                                      <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_pi_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PiMeasurement</span><span class="p">(</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
+                                <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_qi_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QiMeasurement</span><span class="p">(</span>
+                                <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
+                                <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span>
+                            <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                            <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">add_if_measurement</span><span class="p">(</span>
+                                <span class="n">dev</span><span class="o">.</span><span class="n">IfMeasurement</span><span class="p">(</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                    <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                <span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PandaPower </span><span class="si">{</span><span class="n">m_tpe</span><span class="si">}</span><span class="s2"> measurement not implemented&quot;</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">elm_tpe</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="s1">&#39;impedance&#39;</span><span class="p">,</span> <span class="s1">&#39;trafo&#39;</span><span class="p">,</span> <span class="s1">&#39;trafo3w&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;from&#39;</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;hv&quot;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s2">&quot;trafo3w&quot;</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_pf_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PfMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding1</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_pf_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PfMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                            <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;to&#39;</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;lv&quot;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s2">&quot;trafo3w&quot;</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_pt_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PtMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding3</span><span class="p">,</span>  <span class="c1"># winding3 corresponds to bus3 and LV side</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_pt_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PtMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                            <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;mv&quot;</span><span class="p">:</span>  <span class="c1"># for trafo3w MV side</span>
+                                <span class="n">grid</span><span class="o">.</span><span class="n">add_pt_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">PtMeasurement</span><span class="p">(</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                    <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding2</span><span class="p">,</span>  <span class="c1"># bus2 is MV and winding2</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                <span class="p">))</span>
+
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;from&#39;</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;hv&quot;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s2">&quot;trafo3w&quot;</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_qf_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QfMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding1</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_qf_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QfMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+
+                            <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;to&#39;</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;lv&quot;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s2">&quot;trafo3w&quot;</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_qt_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QtMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding3</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_qt_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QtMeasurement</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                        <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                        <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                    <span class="p">))</span>
+                            <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;mv&quot;</span><span class="p">:</span>
+                                <span class="n">grid</span><span class="o">.</span><span class="n">add_qt_measurement</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">QtMeasurement</span><span class="p">(</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">val</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                    <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding2</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                <span class="p">))</span>
+                        <span class="k">elif</span> <span class="n">m_tpe</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s1">&#39;trafo&#39;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;hv&quot;</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;from&#39;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_if_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">IfMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;lv&quot;</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;to&#39;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_it_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">ItMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+                            <span class="k">elif</span> <span class="n">elm_tpe</span> <span class="o">==</span> <span class="s1">&#39;trafo3w&#39;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;hv&quot;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus1</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus1</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_if_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">IfMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding1</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;mv&quot;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus2</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus2</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_it_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">ItMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding2</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;lv&quot;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus3</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus3</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_it_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">ItMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="o">.</span><span class="n">winding3</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;from&#39;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_if_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">IfMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+                                <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;to&quot;</span><span class="p">:</span>
+                                    <span class="n">vnom</span> <span class="o">=</span> <span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="p">,</span> <span class="s1">&#39;Vnom&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+                                    <span class="n">ibase</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="p">(</span><span class="n">vnom</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">ibase</span>  <span class="c1"># Convert kA to pu</span>
+                                    <span class="n">grid</span><span class="o">.</span><span class="n">add_it_measurement</span><span class="p">(</span>
+                                        <span class="n">dev</span><span class="o">.</span><span class="n">ItMeasurement</span><span class="p">(</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                            <span class="n">uncertainty</span><span class="o">=</span><span class="n">std</span><span class="p">,</span>
+                                            <span class="n">api_obj</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+                                        <span class="p">))</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PandaPower </span><span class="si">{</span><span class="n">m_tpe</span><span class="si">}</span><span class="s2"> measurement type not implemented for double &quot;</span>
+                                                    <span class="sa">f</span><span class="s2">&quot;pole elements&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PandaPower </span><span class="si">{</span><span class="n">elm_tpe</span><span class="si">}</span><span class="s2"> measurement type not implemented&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panda2VeraGrid.get_multicircuit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.Panda2VeraGrid.get_multicircuit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_multicircuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">convert_switches</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a VeraGrid Multi-circuit from a PandaPower grid</span>
+<span class="sd">        :return: MultiCircuit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># grid.Sbase = self.panda_net.sn_mva if self.panda_net.sn_mva &gt; 0.0 else 100.0  # always, the pandapower</span>
+            <span class="c1"># For pandaPower Sbase is crazily affecting only load scaling and not the impedances</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># always, the pandapower scaling is handled in the conversions</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="o">.</span><span class="n">f_hz</span>
+
+            <span class="n">bus_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_buses</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_lines</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_impedances</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_loads</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_shunts</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_external_grids</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_storage</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_generators</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_static_generators</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_transformers</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_transformers3W</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">convert_switches</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_switches</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dictionary</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_measurements</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">grid</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

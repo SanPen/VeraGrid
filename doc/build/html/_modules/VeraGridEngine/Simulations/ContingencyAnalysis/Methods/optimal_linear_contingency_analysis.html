@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.ContingencyAnalysis.Methods.optimal_linear_contingency_analysis &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.ContingencyAnalysis.Methods.optimal_linear_contingency_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.ContingencyAnalysis.Methods.optimal_linear_contingency_analysis</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyAnalysisResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.LinearFactors.linear_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearAnalysis</span><span class="p">,</span> <span class="n">LinearMultiContingencies</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyAnalysisOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.Formulations.linear_opf_ts</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_linear_opf_ts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.opf_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimalPowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">CxVec</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyAnalysisDriver</span>
+
+
+<div class="viewcode-block" id="optimal_linear_contingency_analysis">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.optimal_linear_contingency_analysis.optimal_linear_contingency_analysis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimal_linear_contingency_analysis</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                                        <span class="n">options</span><span class="p">:</span> <span class="n">ContingencyAnalysisOptions</span><span class="p">,</span>
+                                        <span class="n">opf_options</span><span class="p">:</span> <span class="n">OptimalPowerFlowOptions</span><span class="p">,</span>
+                                        <span class="n">linear_multiple_contingencies</span><span class="p">:</span> <span class="n">LinearMultiContingencies</span><span class="p">,</span>
+                                        <span class="n">calling_class</span><span class="p">:</span> <span class="n">ContingencyAnalysisDriver</span><span class="p">,</span>
+                                        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">t_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                                        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">ContingencyAnalysisResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run N-1 simulation in series with HELM, non-linear solution</span>
+<span class="sd">    :param grid: MultiCircuit</span>
+<span class="sd">    :param options: ContingencyAnalysisOptions</span>
+<span class="sd">    :param opf_options: OptimalPowerFlowOptions</span>
+<span class="sd">    :param linear_multiple_contingencies: LinearMultiContingencies</span>
+<span class="sd">    :param calling_class: ContingencyAnalysisDriver</span>
+<span class="sd">    :param t: time index, if None the snapshot is used</span>
+<span class="sd">    :param t_prob: probability of te time</span>
+<span class="sd">    :param logger: Logger object</span>
+<span class="sd">    :return: returns the results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">calling_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">calling_class</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Analyzing outage distribution factors in a non-linear fashion...&#39;</span><span class="p">)</span>
+
+    <span class="c1"># set the numerical circuit</span>
+    <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="n">calc_branches</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">area_names</span><span class="p">,</span> <span class="n">bus_area_indices</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">hvdc_F</span><span class="p">,</span> <span class="n">hvdc_T</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branch_areas_info</span><span class="p">()</span>
+
+    <span class="c1"># area_names[bus_area_indices[F[m]]]</span>
+    <span class="c1"># Tengo que pasar el F, el T, el bus_area_indices y el area_names</span>
+
+    <span class="c1"># declare the results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">ContingencyAnalysisResults</span><span class="p">(</span><span class="n">ncon</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">),</span>
+                                         <span class="n">nbr</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span>
+                                         <span class="n">nbus</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">,</span>
+                                         <span class="n">branch_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                                         <span class="n">bus_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+                                         <span class="n">bus_types</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">,</span>
+                                         <span class="n">con_names</span><span class="o">=</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">get_contingency_group_names</span><span class="p">())</span>
+
+    <span class="n">linear_analysis</span> <span class="o">=</span> <span class="n">LinearAnalysis</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                     <span class="n">distributed_slack</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">distribute_slack</span><span class="p">,</span>
+                                     <span class="n">correct_values</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">correct_values</span><span class="p">)</span>
+
+    <span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">lin</span><span class="o">=</span><span class="n">linear_analysis</span><span class="p">,</span>
+                                          <span class="n">ptdf_threshold</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">ptdf_threshold</span><span class="p">,</span>
+                                          <span class="n">lodf_threshold</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">lodf_threshold</span><span class="p">)</span>
+
+    <span class="c1"># get the contingency branch indices</span>
+    <span class="n">mon_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">get_monitor_enabled_indices</span><span class="p">()</span>
+    <span class="n">Pbus</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">get_power_injections</span><span class="p">()</span><span class="o">.</span><span class="n">real</span>
+
+    <span class="n">Sbus</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">get_power_injections</span><span class="p">()</span>
+    <span class="n">flows_n</span> <span class="o">=</span> <span class="n">linear_analysis</span><span class="o">.</span><span class="n">get_flows</span><span class="p">(</span><span class="n">Sbus</span><span class="o">=</span><span class="n">Sbus</span><span class="p">,</span> <span class="n">P_hvdc</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">Pset</span><span class="p">)</span>
+
+    <span class="n">loadings_n</span> <span class="o">=</span> <span class="n">flows_n</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">calling_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">calling_class</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Computing optimal contingency evaluation...&#39;</span><span class="p">)</span>
+
+    <span class="c1"># DC optimal power flow</span>
+    <span class="n">opf_vars</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">run_linear_opf_ts</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                        <span class="n">time_indices</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="p">]),</span>
+                                        <span class="n">dispatch_mode</span><span class="o">=</span><span class="n">opf_options</span><span class="o">.</span><span class="n">dispatch_mode</span><span class="p">,</span>
+                                        <span class="n">solver_type</span><span class="o">=</span><span class="n">opf_options</span><span class="o">.</span><span class="n">mip_solver</span><span class="p">,</span>
+                                        <span class="n">zonal_grouping</span><span class="o">=</span><span class="n">opf_options</span><span class="o">.</span><span class="n">zonal_grouping</span><span class="p">,</span>
+                                        <span class="n">skip_generation_limits</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">consider_contingencies</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">contingency_groups_used</span><span class="o">=</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">,</span>
+                                        <span class="n">ramp_constraints</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">quadratic_costs</span><span class="o">=</span><span class="n">opf_options</span><span class="o">.</span><span class="n">quadratic_costs</span><span class="p">,</span>
+                                        <span class="n">lodf_threshold</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">lodf_threshold</span><span class="p">,</span>
+                                        <span class="n">inter_aggregation_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">energy_0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">fluid_level_0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="n">opf_options</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                        <span class="n">robust</span><span class="o">=</span><span class="n">opf_options</span><span class="o">.</span><span class="n">robust</span><span class="p">)</span>
+
+    <span class="c1"># for each contingency group</span>
+    <span class="k">for</span> <span class="n">ic</span><span class="p">,</span> <span class="n">multi_contingency</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">multi_contingencies</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">multi_contingency</span><span class="o">.</span><span class="n">has_injection_contingencies</span><span class="p">():</span>
+            <span class="n">cnt</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">contingencies</span>
+            <span class="c1"># injections = nc.set_linear_con_or_ra_status(event_list=cnt)</span>
+            <span class="n">injections</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">set_con_or_ra_status</span><span class="p">(</span><span class="n">event_list</span><span class="o">=</span><span class="n">cnt</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">injections</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">c_flow</span> <span class="o">=</span> <span class="n">multi_contingency</span><span class="o">.</span><span class="n">get_contingency_flows</span><span class="p">(</span><span class="n">base_branches_flow</span><span class="o">=</span><span class="n">flows_n</span><span class="p">,</span> <span class="n">injections</span><span class="o">=</span><span class="n">injections</span><span class="p">)</span>
+
+        <span class="c1"># NOTE: this is accounted for to be in the normal rate base in the analyze method</span>
+        <span class="n">c_loading</span> <span class="o">=</span> <span class="n">c_flow</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">ic</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">c_flow</span>  <span class="c1"># already in MW</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">Sbus</span><span class="p">[</span><span class="n">ic</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">Pbus</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">[</span><span class="n">ic</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">c_loading</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+                               <span class="n">t_prob</span><span class="o">=</span><span class="n">t_prob</span><span class="p">,</span>
+                               <span class="n">mon_idx</span><span class="o">=</span><span class="n">mon_idx</span><span class="p">,</span>
+                               <span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                               <span class="n">base_flow</span><span class="o">=</span><span class="n">flows_n</span><span class="p">,</span>
+                               <span class="n">base_loading</span><span class="o">=</span><span class="n">loadings_n</span><span class="p">,</span>
+                               <span class="n">contingency_flows</span><span class="o">=</span><span class="n">c_flow</span><span class="p">,</span>
+                               <span class="n">contingency_loadings</span><span class="o">=</span><span class="n">c_loading</span><span class="p">,</span>
+                               <span class="n">contingency_group_idx</span><span class="o">=</span><span class="n">ic</span><span class="p">,</span>
+                               <span class="n">contingency_group</span><span class="o">=</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">[</span><span class="n">ic</span><span class="p">],</span>
+                               <span class="n">using_srap</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">use_srap</span><span class="p">,</span>
+                               <span class="n">srap_ratings</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">protection_rates</span><span class="p">,</span>
+                               <span class="n">srap_max_power</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">srap_max_power</span><span class="p">,</span>
+                               <span class="n">srap_deadband</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">srap_deadband</span><span class="p">,</span>
+                               <span class="n">contingency_deadband</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">contingency_deadband</span><span class="p">,</span>
+                               <span class="n">multi_contingency</span><span class="o">=</span><span class="n">multi_contingency</span><span class="p">,</span>
+                               <span class="n">PTDF</span><span class="o">=</span><span class="n">linear_analysis</span><span class="o">.</span><span class="n">PTDF</span><span class="p">,</span>
+                               <span class="n">available_power</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">srap_available_power</span><span class="p">,</span>
+                               <span class="n">srap_used_power</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">srap_used_power</span><span class="p">,</span>
+                               <span class="n">F</span><span class="o">=</span><span class="n">F</span><span class="p">,</span>
+                               <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
+                               <span class="n">bus_area_indices</span><span class="o">=</span><span class="n">bus_area_indices</span><span class="p">,</span>
+                               <span class="n">area_names</span><span class="o">=</span><span class="n">area_names</span><span class="p">,</span>
+                               <span class="n">top_n</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">srap_top_n</span><span class="p">)</span>
+
+        <span class="c1"># report progress</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">calling_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">calling_class</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Contingency group: </span><span class="si">{</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">[</span><span class="n">ic</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">calling_class</span><span class="o">.</span><span class="n">report_progress2</span><span class="p">(</span><span class="n">ic</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">multi_contingencies</span><span class="p">))</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">lodf</span> <span class="o">=</span> <span class="n">linear_analysis</span><span class="o">.</span><span class="n">LODF</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

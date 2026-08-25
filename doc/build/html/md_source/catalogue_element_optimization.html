@@ -1,0 +1,719 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏦 Investment optimization &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🏦 Investment optimization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/catalogue_element_optimization.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="investment-optimization">
+<h1>🏦 Investment optimization<a class="headerlink" href="#investment-optimization" title="Link to this heading"></a></h1>
+<p>Planning power grids involves determining an appropriate set of assets that makes sense from both
+technical and economical optics. This challenge can be understood as an optimization problem, where one tries to
+minimize the total cost <span class="math">C = CAPEX+OPEX</span>, while simultaneously minimizing the technical restrictions
+<span class="math">t_r</span>. While apparently simple to comprehend, such a problem in its original form is arduous to solve and a
+satisfying solution may not even be reached.</p>
+<p>At this point, we have to ask ourselves what the underlying issue is. If the puzzle is rigorously formulated, it
+becomes of the type MINLP. Not only it can include continuous variables (such as the rating of a substation), but
+also a wide set of integer variables (the potential investments to make). It is well-known that even solving a
+single-period OPF with only continuous variables becomes a very complicated problem, to the point where the
+original scenario is often convexified to solve it with acceptable precision and time. Now imagine we have to find a
+solution to such a problem, but considering the full 8760 hours in a year and thousands of investment combinations.
+The result would be catastrophic given the astronomically high computational time.</p>
+<p>Hence, it is clear we desire an algorithm that can provide us with a list of optimal investments and not suffer from
+the curse of dimensionality. The methodology we have adopted here consists of:</p>
+<ul class="simple">
+<li><p>Building a machine-learning model that captures the behavior of the grid under diverse scenarios.</p></li>
+<li><p>Optimizing such a model in a matter of a few seconds.</p></li>
+</ul>
+<p><img alt="" src="../_images/settings-ml.png" /></p>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="investmentsevaluationresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">InvestmentsEvaluationResults</span></code> registered properties<a class="headerlink" href="#investmentsevaluationresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The investments evaluation result stores the evaluated decision vectors and objective values used to inspect the search.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_eval</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Maximum number of investment evaluations configured for the run.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Objective function names.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">x_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Decision variable names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_x_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Decision-variable index used on the x-axis of the result plot.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_y_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Objective index used on the y-axis of the result plot.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Evaluated decision-variable matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">f</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Objective-value matrix for the evaluated decision vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_best</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Best objective values found by the evaluation process.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sorting_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Indices that sort the evaluated solutions for reporting.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="c1"># some grid with investments declared</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_grid.veragrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># run a investment evaluation</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">AdequacyInvestmentProblem</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">n_monte_carlo_sim</span><span class="o">=</span><span class="n">n_monte_carlo_sim</span><span class="p">,</span>
+    <span class="n">use_monte_carlo</span><span class="o">=</span><span class="n">use_monte_carlo</span><span class="p">,</span>
+    <span class="n">save_file</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">InvestmentsEvaluationOptions</span><span class="p">(</span><span class="n">max_eval</span><span class="o">=</span><span class="n">max_eval</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">InvestmentsEvaluationDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+    <span class="n">problem</span><span class="o">=</span><span class="n">problem</span>
+<span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Save excel</span>
+<span class="n">df_pareto_points</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">result_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">InvestmentsParetoReportResults</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="n">df_all</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">result_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">InvestmentsReportResults</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="theory-pt-1">
+<h2>Theory Pt.1<a class="headerlink" href="#theory-pt-1" title="Link to this heading"></a></h2>
+<section id="formulation">
+<h3>Formulation<a class="headerlink" href="#formulation" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Basic objective function</strong></p></li>
+</ol>
+<p>The selected objective function considers both technical and economical criteria. In particular, it is defined as:</p>
+<div class="math">
+<p><span class="math">f_o(x) = \sum{C_l(x)_{br}} + \sum C_o(x)_{br} + \sum C_{vm}(x)_b + \sum C_{va}(x)_b + \sum CAPEX(x)_i + \sum OPEX(x)_i</span></p>
+</div><p>where <span class="math">C_l</span> is a penalty function associated with active power losses, <span class="math">C_o</span> accounts for branch
+overloadings, <span class="math">C_{vm}</span> gathers the undervoltage and overvoltage module penalties, and <span class="math">C_{va}</span> represents the
+voltage angle deviation penalties. Power losses and overloadings are calculated for every branch
+of the grid <span class="math">br</span>, the voltage-related costs are computed at every bus <span class="math">b</span> and the CAPEX and OPEX are related
+to each active investment <span class="math">i</span>. Note here that the unknown <span class="math">x</span> is used to represent the investment
+combination under consideration. That is, <span class="math">x</span> has to be seen as a vector that contains an <span class="math">n</span> -length
+set of boolean variables that account for the activated or deactivated investments:</p>
+<div class="math">
+<p><span class="math">x = [x_1, x_2, ..., x_n]</span></p>
+</div><p>or in compact form, equivalently, <span class="math">x \in \mathbb{Z}^n_2</span>.</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Costs calculation</strong></p></li>
+</ol>
+<p>Active power losses are calculated directly from the simulation results, such as power flow results.
+All branches, including lines, transformers, DC lines, etc., are considered. The losses are summed
+to get <span class="math">C_l(x)</span>.</p>
+<p>For branch overloadings, the procedure is similar. The loading of each branch is computed from
+simulation results, and branches with loads above 100% of the rating are penalized.
+The penalty is calculated by multiplying the associated overload cost and the loading:</p>
+<div class="math">
+<p><span class="math">\sum{C_o(x)_{br}} = \sum_{idx \in {branches\_idx}} P_o[idx] \cdot loading[idx] ,</span></p>
+</div><p>where <span class="math">branches\_idx</span> is the set of indices where <span class="math">loading &gt; 1</span> and <span class="math">P_o</span> is the
+corresponding overload penalization of the branch.</p>
+<p>Regarding the undervoltages and overvoltages, the associated penalty is computed as:</p>
+<div class="math">
+<p><span class="math">C_{vm}(x) =  P_{vm} \cdot ( \max(V_m - V^{\text{max}}_m, 0) +  \max(V^{\text{min}}_m - V_m, 0) )</span></p>
+</div><p>where <span class="math">V_m , V^{\text{max}}_m, V^{\text{min}}_m, P_{vm}</span> are vectors containing
+voltage module results, allowed maximum voltage, minimum voltage limit and voltage
+module penalization for each bus.</p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Machine-learning algorithm</strong>
+Once the objective function is defined, each evaluation is sent to the
+machine-learning model previously mentioned. The algorithm being tested is the so-called
+Mixed-Variable ReLU-based Surrogate Modelling (MVRSM).
+For further information, the reader can find the reference <a class="reference external" href="https://dl.acm.org/doi/pdf/10.1145/3449726.3463136">paper</a>
+to understand the insights of the model.</p></li>
+</ol>
+<p>As for the electrical problem, it is not initially relevant what goes on inside the machine-learning algorithm, it
+works as a black-box model. The objective function is evaluated and sent to the model in each iteration and in the end,
+the model outputs the optimal point.</p>
+</section>
+<section id="testing-on-a-grid">
+<h3>Testing on a Grid<a class="headerlink" href="#testing-on-a-grid" title="Link to this heading"></a></h3>
+<section id="grid">
+<h4>Grid<a class="headerlink" href="#grid" title="Link to this heading"></a></h4>
+<p>In order to test the algorithm for different variations of the objective function, a
+130-bus grid has been prepared with 389 Investment Candidates including lines and buses.
+The diagram of the grid is shown in Figure 1.</p>
+<p><img alt="" src="../_images/130bus_grid_diagram.png" />
+Figure 1: Test grid diagram. Grey lines and repeated elements are investment candidates.</p>
+</section>
+<section id="base-case">
+<h4>Base case<a class="headerlink" href="#base-case" title="Link to this heading"></a></h4>
+<p>Initially, the algorithm did not include the economical criteria in the objective function.
+Although it is clear that it is needed to somehow include the CAPEX and OPEX in the minimization,
+the results shown in Figure 2 are useful to later grasp the effect of modifying the minimization function.</p>
+<p><img alt="" src="../_images/Figure_1_wo_capex.png" />
+Figure 2: Paretto plot for investments evaluation without CAPEX inside the objective function.</p>
+<p>It is clear in Figure 2 that the more investments are selected, the lower the technical
+criteria are and, therefore, the lower the objective function. Hence, the algorithm learns
+that more investments equals minimum objective function values. By adding the CAPEX to the
+objective function, it is expected to correct this tendency and instead find an optimal point
+regarding both technical and economic criteria.</p>
+</section>
+</section>
+<section id="initial-tests">
+<h3>Initial tests<a class="headerlink" href="#initial-tests" title="Link to this heading"></a></h3>
+<p>Including the CAPEX in the objective function is a delicate problem.
+As seen in Figure 2, the CAPEX values can be above <span class="math">10^4</span> while the technical criteria are
+below <span class="math">10^{-1}</span>. Therefore, when adding these values to the objective
+function, the CAPEX will inherently have more weight and unbalance the results.
+As an example, the reader can find below the graphs corresponding to multiplying
+the CAPEX by different minimization factors</p>
+<p><img alt="" src="../_images/Figure_1_w_capex_e-6_v2.png" />
+Figure 3: Results obtained when CAPEX is multiplied by <span class="math">10^{-6}</span>.</p>
+<p><img alt="" src="../_images/Figure_1_w_capex_e-5_v2.png" />
+Figure 4: Results obtained when CAPEX is multiplied by <span class="math">10^{-5}</span>.</p>
+<p><img alt="" src="../_images/Figure_1_w_capex_e-4_v2.png" />
+Figure 5: Results obtained when CAPEX is multiplied by <span class="math">10^{-4}</span>.</p>
+<p><img alt="" src="../_images/Figure_1_w_capex_e-3_v2.png" />
+Figure 6: Results obtained when CAPEX is multiplied by <span class="math">10^{-3}</span>.</p>
+<p>The previous figures show that the more disparate the economic and technical
+criterion are, the more likely is the objective function to tend to lesser investments
+solutions. The situation from the Base case is reverted, but another problem arises:
+How should the different criteria values be computed so that all elements in the objective
+function are around the same order of magnitude?</p>
+</section>
+<section id="normalization">
+<h3>Normalization<a class="headerlink" href="#normalization" title="Link to this heading"></a></h3>
+<p>When dealing with multi-criteria optimization, it is common to establish some
+reference values for each criterion in the objective function and normalize the terms
+by dividing the factors by the reference point. In essence, the basic
+objective function presented in Formulation would be modified as:</p>
+<div class="math">
+<p><span class="math">f_o(x) = \frac{\sum{C_l(x)_{br}}}{l_{ref}} + \frac{\sum C_o(x)_{br}}{o_{ref}} + \frac{\sum C_{vm}(x)_b}{vm_{ref}} +
+\frac{\sum C_{va}(x)_b}{va_{ref}} + \frac{\sum CAPEX(x)_i}{CAPEX_{ref}} + \frac{\sum OPEX(x)_i}{OPEX_{ref}}</span></p>
+</div><p>However, given the nature of the problem being solved, it is not possible to determine
+reference values for each criteria beforehand. Hence, some solutions are proposed.
+The reader can find the explanation and results obtained in the following subsections.</p>
+<p>4.1. First iteration normalization</p>
+<p>The first solution studied consists of taking the values of the terms for the first iteration with investments,
+compute scaling factors referent to that iteration as</p>
+<div class="math">
+<p><span class="math">sf_{i} = \frac{min(mean)}{mean_i}</span></p>
+</div><p>being:</p>
+<ul class="simple">
+<li><p><span class="math">sf_{i}</span>: the scale factor for each <span class="math">i</span> criteria; losses scaling factor, overload scaling factor, etc.,</p></li>
+<li><p><span class="math">mean_i</span>: the mean between the maximum and minimum value of each criteria; <span class="math">\frac{max(losses) + min(losses)}{2}</span>,</p></li>
+<li><p><span class="math">mean</span>: an array of all the computed means of the factors; <span class="math">[mean_{losses}, mean_{overload}, mean_{vm}, ... ]</span>.</p></li>
+</ul>
+<p>and multiply each term for its scaling factor throughout the rest of the iterations. Therefore,
+the objective function ends up being:</p>
+<div class="math">
+<p><span class="math">f_o(x) = sf_l \sum{C_l(x)_{br}} + sf_o \sum C_o(x)_{br} + sf_{vm} \sum C_{vm}(x)_b +
+sf_{va} \sum C_{va}(x)_b + sf_{CAPEX} \sum CAPEX(x)_i + sf_{OPEX} \sum OPEX(x)_i</span></p>
+</div><p>The results obtained in this normalization resemble the ones shown in Figure 5,
+given that the CAPEX scaling factor is essentially $<span class="math">10^{-4}</span>$.</p>
+<p><img alt="" src="../_images/Figure_2_normalization.png" />
+Figure 7: Results obtained for the first normalization type.</p>
+<p>4.2. Scale after random evaluations</p>
+<p>For the second solution, the MVRSM is altered so that the normalization of the different criteria is done internally.
+The new algorithm consists first of some random evaluations, in the studied case, 1.5 times the number of possible investments.
+During the random evaluations, the model is not updated nor the <span class="math">x</span> are updated by minimizing the model.
+Afterwards, the maximum <span class="math">y_{max}</span> and minimum <span class="math">y_{min}</span> values throughout the evaluations are saved in
+order to apply the normalization as:</p>
+<div class="math">
+<p><span class="math">y_{norm} = \frac{y - y_{min}}{y_{max} - y_{min}}</span></p>
+</div><p>where <span class="math">y</span> is a vector containing the values of the criteria before normalization and <span class="math">y_{norm}</span> represents
+the values after normalization. Hence, this normalization is applied to all the values found in the random process and
+the model is now updated with the normalized values.</p>
+<p>The second and final part of the algorithm consists of the rest of the evaluations, where each time the criteria are
+found, they are normalized and the model is updated and minimized.</p>
+<p>Therefore, the algorithm ends up being:</p>
+<p><img alt="" src="../_images/simple_algo.png" />
+Figure 8: Updated algorithm “grosso modo”.</p>
+<p>This new configuration has been tested using two different functions:</p>
+<ul class="simple">
+<li><p>Using Rosenbrock’s function <span class="math">f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2</span> where
+<span class="math">x \in [-200, 200]</span> and <span class="math">y \in [-1,3]</span>. this way, <span class="math">x,y</span> are the criteria that need
+to be normalized before entering the objective function <span class="math">f</span></p></li>
+<li><p>Using a Sum function <span class="math">f(x, y) = x + y</span> where <span class="math">x</span> is computed by multiplying a
+binary vector and a costs vector and <span class="math">y = \frac{1}{k+1}</span> where <span class="math">k</span> is the number
+of 1 in the binary vector previously mentioned.</p></li>
+</ul>
+<p>The results obtained show that the algorithm works and tends to the actual minimum point of the functions.</p>
+<p><img alt="" src="../_images/3d_rosenbrock.png" />
+Figure 9: Results obtained for the Rosenbrock function.</p>
+<p><img alt="" src="../_images/3d_sumfunction.png" />
+Figure 10: Results obtained for the Sum function.</p>
+<p>Finally, the algorithm is tested in the presented grid.</p>
+<p><img alt="" src="../_images/Figure_3_normalization.png" />
+Figure 11: Results obtained for the updated algorithm.</p>
+<p>The results show a similar points distribution as Figure 4. This is not a coincidence, given that by applying the
+normalization, both the technical and economic criteria end up being in a similar order of magnitude, which is the same
+case as the one shown in Figure 4.</p>
+<p>It is worth mentioning that because the objective function can now take negative values, the normalization
+used in the colors visualization can no longer be LogNorm() and has been changed to Normalize().</p>
+</section>
+<section id="random-evaluations-process">
+<h3>Random evaluations process<a class="headerlink" href="#random-evaluations-process" title="Link to this heading"></a></h3>
+<p>Given that all previous figures share a similar shape in terms of point distribution, with two separated regions,
+it is questioned that the algorithm is exploring all the possible solutions, especially during the random evaluation iterations.
+One would expect a continuous Pareto front, whereas the obtained results show no solutions at the intermediate points.</p>
+<p>Therefore, it is determined that when creating random <span class="math">x</span> vectors the probability of getting a 0 or a 1 must
+change for each random iteration. Then, the random vectors obtained represent combinations of varying number
+of investments. For the previous testing, the probability was fixed to 0.5 which meant that the vectors had more or
+less the same number of investments each random iteration.</p>
+<p>The results obtained with the scaled algorithm show a clear Pareto front as seen in Figure 12.</p>
+<p><img alt="" src="../_images/single_pareto_iterations.png" />
+Figure 12: Results obtained for the updated random evaluation iterations.</p>
+<p>However, the results show that the obtained Pareto front is only due to the random iterations. The points that represent the minimization process,
+which begins after roughly 600 iterations are clearly centered around two areas which are not that far from the areas obtained in previous figures.
+Therefore, given that the algorithm is not actively exploring the Pareto front, it is thought that there may be a whole set of points more optimal than the ones
+obtained during the random iterations, as shown in red in Figure 13.</p>
+<p><img alt="" src="../_images/single_pareto_iterations_2.png" />
+Figure 13: Hypothetical unexplored Pareto front.</p>
+</section>
+<section id="multi-objective-optimization">
+<h3>Multi-objective optimization<a class="headerlink" href="#multi-objective-optimization" title="Link to this heading"></a></h3>
+<p>Another line of research includes modifying the MVRSM model to support multi-objective minimization. This way, the
+scaling process after the random evaluations is not necessary, instead, the model works directly with the values obtained
+for each cost computation (losses cost, overload cost, CAPEX,…). Hence, the problem becomes a 6-objective minimization problem.</p>
+<p>On the one hand, the MVRSM is adapted so that the surrogate model can predict an outcome for every objective.
+What was previously done for one objective has to be repeated now six times, hence, the computation time is significantly higher
+than for the previous case.</p>
+<p>On the other hand, to minimize the model, random weights are chosen for each objective ( the sum of the weights must be 1),
+then a single value is computed as the sum of each objective multiplied by its weight. In every iteration, these random
+weights must change. This way, it is still possible to use Scipy’s tool “minimize”, since the model still returns one
+single value. The reader can find a more in-depth explanation of the reasoning behind this process in
+this <a class="reference external" href="https://arxiv.org/abs/2006.04655">reference paper</a>.</p>
+<p>The results obtained show a similar distribution as in Figure 14, however, the algorithm does not find the points outside
+the curve and closer to the optimal point (0,0).</p>
+<p><img alt="" src="../_images/Pareto_multi.png" />
+Figure 14: Results obtained for the multi objective optimization.</p>
+</section>
+<section id="testing-on-zdt3">
+<h3>Testing on ZDT3<a class="headerlink" href="#testing-on-zdt3" title="Link to this heading"></a></h3>
+<p>This section covers the testing of both the multi-objective and single-objective with normalization algorithms on a
+typical test function for multi-objective optimization.</p>
+<p><strong>Test function for optimization</strong></p>
+<p>The function to be tested is the Zitzler–Deb–Thiele’s function N3 (ZDT3):</p>
+<div class="math">
+<p><span class="math">\text{Minimize:} \, f_1(x) = x_1 \, ,\; \; f_2(x) = g(x) \cdot h(f_1(x),g(x)) ,
+
+    \text{where:} \, g(x) = 1 + \frac{9}{29} \sum_{i=2}^{30} x_i  \, ,\; \;
+                         h(f_1(x),g(x))= 1 - \frac{\sqrt{f_1(x)}}{\sqrt{g(x)}} - \frac{f_1(x)}{g(x)} sin(10\pi f_1(x)) ,
+
+    \text{with:} \, 1 \leq i \leq 30  \, ,\; \; 0 \leq x_i \leq 1 .</span></p>
+</div><p>This test function shares one particularity with the grid problem at hand:
+the objective <span class="math">f_2(x)</span> is highly dependent on the number of variables
+that take non-zero values, given the presence of a summation <span class="math">\sum_{i=2}^{30} x_i</span>.
+In the electrical case, this relates to the CAPEX objective, which also
+depends on the number of investments evaluated, the more investments are active,
+the higher the total investment will tend to be. The Pareto front expected can be seen in Figure 15.</p>
+<p><img alt="" src="../_images/ZDT3_pareto.jpg" />
+Figure 15: Expected Pareto front for ZDT3.</p>
+<p>On the one hand, the multi-objective algorithm is tested. The results for different
+simulations are shown in Figures 16-18.</p>
+<p><img alt="" src="../_images/zdt3_multi_1.png" />
+Figure 16: Results obtained for ZDT3 with multi-objective adapted algorithm, simulation 1.</p>
+<p><img alt="" src="../_images/zdt3_multi_1.png" />
+Figure 17: Results obtained for ZDT3 with multi-objective adapted algorithm, simulation 2.</p>
+<p><img alt="" src="../_images/zdt3_multi_1.png" />
+Figure 18: Results obtained for ZDT3 with multi-objective adapted algorithm, simulation 3.</p>
+<p>As demonstrated in the previous figures, the multi-objective algorithm fails to
+approximate the Pareto front of ZDT3. Instead, its exploration during the minimization
+process shows an unwanted concentration around the best point identified in the random iteration phase.
+This not only results in a deviation from the desired functionality but also
+underscores a lack of robustness, as the final outcome is excessively influenced by
+the random iterations process. The algorithm, therefore, not only falls short of meeting
+the desired objectives but also reveals susceptibility in its performance.</p>
+<p>On the other hand, the following figures show the results for the single-objective
+algorithm with normalization, Figures 19-21.</p>
+<p><img alt="" src="../_images/zdt3_single_1.png" />
+Figure 19: Results obtained for ZDT3 with single-objective adapted algorithm, simulation 1.</p>
+<p><img alt="" src="../_images/zdt3_single_2.png" />
+Figure 20: Results obtained for ZDT3 with single-objective adapted algorithm, simulation 2.</p>
+<p><img alt="" src="../_images/zdt3_single_3.png" />
+Figure 21: Results obtained for ZDT3 with single-objective adapted algorithm, simulation 3.</p>
+<p>As shown in the preceding figures, the single-objective algorithm approaches the Pareto
+front during the minimization process, albeit requires a substantial number of iterations
+to get sufficiently close. Moreover, similar to the multi-objective algorithm,
+its performance is extremely linked to the best point found during the random iterations process,
+then, the final result is different depending on the simulation.</p>
+<p>Furthermore, the observed behavior in the case of ZDT3 draws parallels to the earlier
+tests performed on the grid. The algorithm does get close to the Pareto front but
+does not extensively explore it during the minimization process, which would be the desired situation.</p>
+</section>
+<section id="conclusions">
+<h3>Conclusions<a class="headerlink" href="#conclusions" title="Link to this heading"></a></h3>
+<p>Based on the results obtained throughout the different tests, some conclusions can be drawn.
+- The single-objective algorithm’s performance is significantly influenced by the order of magnitude of the criteria.
+- While the single-objective algorithm successfully minimizes the function, it falls short of exploring the entire Pareto front, which would be the desired outcome.
+- The current adaptation of the surrogate model to support multi-objective minimization does not minimize the function correctly, at the moment.
+- Neither algorithm performs the desired minimization.</p>
+<p>In light of these observations, future work should include the exploration of established
+multi-objective black-box optimization methods and alternative algorithms
+for multi-objective minimization, such as the application of NSGA-III.</p>
+</section>
+</section>
+<section id="theory-pt-2">
+<h2>Theory Pt.2<a class="headerlink" href="#theory-pt-2" title="Link to this heading"></a></h2>
+<section id="improving-the-nsga-3-investments">
+<h3>Improving the NSGA-3 investments<a class="headerlink" href="#improving-the-nsga-3-investments" title="Link to this heading"></a></h3>
+<p>In continuation to prior advancements in solving the power grid optimisation problem, this report presents the NSGA-III
+machine learning algorithm, which has been researched, developed and implemented into VeraGrid with the aim of improving
+investment evaluation performance.</p>
+<p>This multi-objective optimisation problem is currently defined by two objective functions, (Equations 1 &amp; 2).
+They aim to minimise the total investment cost, C = CAPEX + OPEX, while simultaneously minimising the technical cost,
+which is the sum of monetary penalties applied to technical violations within the grid and power losses.</p>
+<div class="math">
+<p><span class="math">f_1(x) = \sum (CAPEX(x)_i + \sum OPEX(x)_i)</span></p>
+</div><div class="math">
+<p><span class="math">f_2(x) = \sum C_l(x)_{br} + \sum C_o(x)_{br} + \sum C_{vm}(x)_b + \sum C_{va}(x)_b</span></p>
+</div><p>Please see the investment evaluation documentation on VeraGrid’s GitHub for their
+detailed definitions [1].</p>
+<p>Previously, the Mixed-Variable ReLU-based Surrogate Modelling (MVRSM) algorithm
+was developed to solve this non-linear optimisation problem. For multi-objective, it
+was not minimised correctly. For a single-objective function, though optimal solutions
+were found and shown via a Pareto front, it was only obtained due to random iterations, concluding that MVRSM
+did not actively explore the Pareto front. As seen in Figure 1, its optimal solutions also tended to a concentrated
+area. A set of more optimal points passing through this area was hypothesised to be discovered by a genetic
+algorithm.</p>
+<p><img alt="" src="../_images/single_pareto_iterations_2.png" />
+Figure 1: MVRSM results with hypothetical improved Pareto front</p>
+</section>
+<section id="nsga-iii-theory">
+<h3>NSGA-III Theory<a class="headerlink" href="#nsga-iii-theory" title="Link to this heading"></a></h3>
+<p>The Non-Dominated Sorting Genetic Algorithm III is an evolutionary (genetic) algorithm designed to find the Pareto
+curve of optimal solutions for multi-objective or many-objective functions. It was implemented for this optimisation
+problem using Pymoo’s problem and algorithm library [2].</p>
+<p>NSGA-III [3] starts by performing non-dominated sorting for its survival stage. It then assigns solutions to reference
+directions in the objective space. From the splitting front, solutions are selected, filling up the least represented
+reference directions first. If a reference direction does not have any solution assigned to it, NSGA-III selects the
+solution with the smallest perpendicular distance in the normalised objective space to survive. If a second solution
+is added to a reference direction, it is assigned randomly to maintain diversity.</p>
+<p><img alt="" src="../_images/refdirs.png" />
+Figure 2: (a) Non-dominated sorting (b) Points assigned to reference lines</p>
+<p>As NSGA-III converges, each reference direction seeks to find a representative non-
+dominated solution, eventually achieving a balanced distribution of solutions across
+the Pareto front.</p>
+</section>
+<section id="hypertuning">
+<h3>Hypertuning<a class="headerlink" href="#hypertuning" title="Link to this heading"></a></h3>
+<p>The carefully tuned parameters that direct the algorithm are explained below, with
+comparisons shown where necessary, to validate the settings chosen. The algorithm
+was simulated several times on the investment grid in Figure 6, to test which parameters most effectively
+solved the minimisation problem.</p>
+<section id="population-size">
+<h4>Population Size<a class="headerlink" href="#population-size" title="Link to this heading"></a></h4>
+<p>The population size refers to the number of individuals in each generation of the
+algorithm. In this case, it represents the pool of investment configurations sampled
+by NSGA-III. When trying different scale factors, it was discovered that using a population size
+equal to a fraction, such as one-fifth, of the total number of investments
+produced the best Pareto curve. This may be because if the population size is too
+high, it is more likely that suboptimal solutions begin to dominate the population
+over time; genetic drift. This may cause the solutions to converge prematurely to
+suboptimal regions of the Pareto front. The population size should not be too low,
+however, as the algorithm may struggle to adequately explore the solution space.</p>
+<p><img alt="" src="../_images/2.png" />
+Figure 3: (a) Dimension scaled by 2 has shallow curvature</p>
+<p><img alt="" src="../_images/4.png" />
+(b) Dimension scaled by 0.2 provides finds more optimal solutions due to its deeper curve</p>
+</section>
+<section id="reference-directions">
+<h4>Reference Directions<a class="headerlink" href="#reference-directions" title="Link to this heading"></a></h4>
+<p>The reference direction used during the optimisation defines its rows as the reference lines and its
+columns the variables. This partitions the points in the objective
+space and assigns each variable to a line. The reference direction is set equal to
+the population size for this problem, since we would like to obtain a solution for
+all inputs. A smaller value would partition the points with larger spacing, reducing
+the number of points identified and therefore possibly inadvertently discarding some
+optimal solutions, as shown in the sparse vs full plots in Figure 4. The algorithm’s
+construction does not allow for reference lines to go above the population size, so
+the maximum number of partitions is the population’s dimension.</p>
+<p><img alt="" src="../_images/partitioned.png" />
+Figure 4: (a) No. partitions = population size / 10</p>
+<p><img alt="" src="../_images/normal.png" />
+(b) No. partitions = population size</p>
+<p>There are also different types of reference direction sources: The uniform and das-
+dennis methods generate an even distribution of points across the objective space,
+providing a balanced exploration of solutions. However, they are not effective for
+nonlinear problems. The energy generation distributes the reference directions more
+densely in regions of high energy. This prioritises sampling in areas with significant variations
+in objective values, improving the coverage of the Pareto front. This type works well for the problem at hand.
+The reduction type reduces overlap between reference directions, without sacrificing exploration,
+which effectively solves our multi-objective problem, whilst also removing any unnecessary computation</p>
+</section>
+<section id="sampling-technique">
+<h4>Sampling Technique<a class="headerlink" href="#sampling-technique" title="Link to this heading"></a></h4>
+<p>The sampling process defines the initial set of solutions; from which NSGA-III starts
+its optimisation. The choice of sampling technique is significant, as it influences the
+diversity and coverage of the initial population, a poor choice potentially resulting
+in restricted exploration of the solution space.</p>
+<p>There are several types of sampling techniques available in Pymoo, including integer,
+float and binary random sampling and latin hypercube sampling. It is also possible to
+write a personalised sampling method. For this case, since the variables are binary,
+and a systematic sampling method is desired to explore the entire Pareto front, a
+binary uniform sampling method was created. Figure 5 presents the different types
+of sampling, the first three are unable to explore points past an investment cost of
+≈12000 MC, whereas binary uniform explores the entire front past 20000 MC.</p>
+<p><img alt="" src="../_images/lhs.png" />
+Figure 5: (a) latin hypercube sampling</p>
+<p><img alt="" src="../_images/integer.png" />
+(b) integer random</p>
+<p><img alt="" src="../_images/binary.png" />
+© binary random</p>
+<p><img alt="" src="../_images/uniform.png" />
+(d) binary uniform</p>
+</section>
+<section id="selection">
+<h4>Selection<a class="headerlink" href="#selection" title="Link to this heading"></a></h4>
+<p>A genetic algorithm requires a mating selection so that parents are selected for each
+generation to produce new offspring using different recombinations and mutation
+operators. Different strategies for selecting parents are available, such as random,
+neighborhood, and tournament (to introduce some selection pressure).
+This is set to random since we would like to shuffle and thoroughly explore all
+possible combinations, in the hope of finding all optimal solutions.</p>
+</section>
+<section id="crossover">
+<h4>Crossover<a class="headerlink" href="#crossover" title="Link to this heading"></a></h4>
+<p>The crossover operator combines genetic information from parent individuals to create offspring during evolution.
+The best probability found was a high value, close to 1, which ensured that offspring were frequently generated
+through recombination of parent solutions, promoting genetic diversity. This encourages further exploration
+of the solution space.</p>
+</section>
+<section id="mutation">
+<h4>Mutation<a class="headerlink" href="#mutation" title="Link to this heading"></a></h4>
+<p>Performing mutation after crossover introduces random changes to individual solutions through each generation.
+A higher probability of mutation increases the diversity in the population, potentially leading to the discovery
+of more optimal solutions. However, very high mutation may result in the loss of good solutions if they
+are changed or lost during evolution. It was therefore set to 0.5 to ensure a balance
+between exploration and exploitation.</p>
+</section>
+<section id="crowding-distance">
+<h4>Crowding Distance<a class="headerlink" href="#crowding-distance" title="Link to this heading"></a></h4>
+<p>The eta value, which defines the crowding distance, influences the degree of curvature in the Pareto front.
+It was set to a high value between 10 and 30 which produced the most curvature due to a greater dispersion of
+solutions along the Pareto front.</p>
+</section>
+</section>
+<section id="results">
+<h3>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h3>
+<p>The two algorithms were tested on the 130-bus grid (Figure 6) prepared with 389
+Investment Candidates including lines and buses in order to visually compare their
+performances.</p>
+<p><img alt="" src="../_images/130bus_grid_diagram.png" />
+Figure 6: 130-bus grid for evaluating investments</p>
+<p>After testing for an equal amount of time, the plots in Figure 7 proves the NSGA-
+III outperforms MVRSM and fully explores the Pareto frontier, passing through the
+concentrated MVRSM area as predicted.</p>
+<p><img alt="" src="../_images/10mins.png" />
+Figure 7: Pareto front comparison after 10 minutes of simulation</p>
+<p>In addition to this, NSGA-III is approximately 25 times faster, computationally, which
+is a promising result for future evaluation on larger grids. Though it still takes a
+significant amount of time to generate a very smooth and complete curve, a plot
+more optimal than MVRSM’s can still be produced with few iterations.</p>
+<p>Optimum Parameter Configuration:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter name</p></th>
+<th class="head"><p>Setting</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Population size</p></td>
+<td><p>No. investment groups / 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>No. partitions</p></td>
+<td><p>Population size</p></td>
+</tr>
+<tr class="row-even"><td><p>Sampling</p></td>
+<td><p>Binary uniform</p></td>
+</tr>
+<tr class="row-odd"><td><p>Crossover</p></td>
+<td><p>Probability 0.8</p></td>
+</tr>
+<tr class="row-even"><td><p>Mutation</p></td>
+<td><p>Probability 0.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Eta</p></td>
+<td><p>30</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="future-development">
+<h3>Future Development<a class="headerlink" href="#future-development" title="Link to this heading"></a></h3>
+<p>Improvement at this stage would involve creating a surrogate model in order to
+decrease the time taken to evaluate the investments. Though faster than MVRSM,
+NSGA-III still takes some time to run, which we would ideally like to reduce.</p>
+<p>As seen by the scatter plot, many points that are distant to the optimal frontier are stored.
+By eliminating these, the memory and time taken could be lowered.</p>
+<p>To ensure robustness of this algorithm, it should be tested on multiple grids, including simpler and smaller,
+and more complex and larger systems.</p>
+<p>References</p>
+<hr class="docutils" />
+<p>[1] <a class="reference external" href="https://github.com/SanPen/VeraGrid/blob/204_investments_evaluation/doc/rst_source/theory/investments_evaluation.rst">https://github.com/SanPen/VeraGrid/blob/204_investments_evaluation/doc/rst_source/theory/investments_evaluation.rst</a></p>
+<p>[2] <a class="reference external" href="https://pymoo.org/algorithms/moo/nsga3.html">https://pymoo.org/algorithms/moo/nsga3.html</a></p>
+<p>[3] K. Deb and H. Jain, ”An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point-Based
+Nondominated Sorting Approach, Part I: Solving Problems With Box Constraints,” in IEEE Transactions on
+Evolutionary Computation, vol. 18, no. 4, pp. 577-601, Aug. 2014, doi: 10.1109/TEVC.2013.2281535.
+<a class="reference external" href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=6600851">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=6600851</a></p>
+<p>[4] K. Deb, A. Pratap, S. Agarwal and T. Meyarivan, ”A fast and elitist multiobjective genetic algorithm:
+NSGA-II,” in IEEE Transactions on Evolutionary Computation, vol. 6, no. 2, pp. 182-197, April 2002,
+doi: 10.1109/4235.996017. <a class="reference external" href="https://ieeexplore.ieee.org/document/996017">https://ieeexplore.ieee.org/document/996017</a></p>
+<p>This chapter was authored by Cristina Fray on 6th May 2024.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

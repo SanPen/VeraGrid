@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.switch_emt_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.switch_emt_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.switch_emt_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.template_definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDefinition</span><span class="p">,</span> <span class="n">TemplateProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">sampled_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">CmpOp</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Var</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_active_phases</span><span class="p">(</span><span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the enabled phase labels in strict A-B-C order.</span>
+
+<span class="sd">    :param phA: True when phase A is active.</span>
+<span class="sd">    :param phB: True when phase B is active.</span>
+<span class="sd">    :param phC: True when phase C is active.</span>
+<span class="sd">    :return: Ordered list with the active phase labels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">phA</span><span class="p">:</span>
+        <span class="n">active_phases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">phB</span><span class="p">:</span>
+        <span class="n">active_phases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">phC</span><span class="p">:</span>
+        <span class="n">active_phases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_phases</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one phase must be enabled for an EMT switch template&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">active_phases</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_from_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_A</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_C</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported phase label &#39;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_to_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_A</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_C</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported phase label &#39;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_from_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_A</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_C</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported phase label &#39;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_to_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_A</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_C</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported phase label &#39;</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SwitchEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.switch_emt_template.SwitchEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SwitchEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phA&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Enable phase A.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phB&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Enable phase B.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phC&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Enable phase C.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;signal_controlled&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;If True, expose one control input and procedural logic.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;seed_from_pf_active&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;If True, seed the closed/open mode from Switch.active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;initial_closed&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Default closed state when PF seeding is disabled.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;use_device_conductance&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;If True, use the switch static R/X to derive the closed conductance.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;manual_closed_conductance&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Manual closed conductance fallback.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">1.0e4</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;open_conductance&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Open-state leakage conductance.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_time_constant&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;First-order current time constant.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">1.0e-4</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;command_threshold&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Control threshold for the external command.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Symbolic model name.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;switch_emt_template&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SwitchEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.switch_emt_template.SwitchEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phA&quot;</span><span class="p">)</span>
+        <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phB&quot;</span><span class="p">)</span>
+        <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phC&quot;</span><span class="p">)</span>
+        <span class="n">signal_controlled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;signal_controlled&quot;</span><span class="p">)</span>
+        <span class="n">seed_from_pf_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;seed_from_pf_active&quot;</span><span class="p">)</span>
+        <span class="n">initial_closed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;initial_closed&quot;</span><span class="p">)</span>
+        <span class="n">use_device_conductance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;use_device_conductance&quot;</span><span class="p">)</span>
+        <span class="n">manual_closed_conductance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;manual_closed_conductance&quot;</span><span class="p">)</span>
+        <span class="n">open_conductance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;open_conductance&quot;</span><span class="p">)</span>
+        <span class="n">switch_time_constant</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;switch_time_constant&quot;</span><span class="p">)</span>
+        <span class="n">command_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;command_threshold&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">get_switch_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">signal_controlled</span><span class="p">,</span> <span class="n">seed_from_pf_active</span><span class="p">,</span>
+            <span class="n">initial_closed</span><span class="p">,</span> <span class="n">use_device_conductance</span><span class="p">,</span> <span class="n">manual_closed_conductance</span><span class="p">,</span>
+            <span class="n">open_conductance</span><span class="p">,</span> <span class="n">switch_time_constant</span><span class="p">,</span> <span class="n">command_threshold</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_switch_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.switch_emt_template.get_switch_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_switch_emt_template</span><span class="p">(</span>
+    <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">signal_controlled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">seed_from_pf_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">initial_closed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_device_conductance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">manual_closed_conductance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">open_conductance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-8</span><span class="p">,</span>
+    <span class="n">switch_time_constant</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-4</span><span class="p">,</span>
+    <span class="n">command_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;switch_emt_template&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one phase-selective EMT switch branch template.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param phA: Enable phase A.</span>
+<span class="sd">    :param phB: Enable phase B.</span>
+<span class="sd">    :param phC: Enable phase C.</span>
+<span class="sd">    :param signal_controlled: If True, expose one control input and procedural logic.</span>
+<span class="sd">    :param seed_from_pf_active: If True, seed the closed/open mode from `Switch.active`.</span>
+<span class="sd">    :param initial_closed: Default closed state when PF seeding is disabled.</span>
+<span class="sd">    :param use_device_conductance: If True, use the switch static `R/X` to derive the closed conductance.</span>
+<span class="sd">    :param manual_closed_conductance: Manual closed conductance fallback.</span>
+<span class="sd">    :param open_conductance: Open-state leakage conductance.</span>
+<span class="sd">    :param switch_time_constant: First-order current time constant.</span>
+<span class="sd">    :param command_threshold: Control threshold for the external command.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: EMT switch template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">active_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_active_phases</span><span class="p">(</span><span class="n">phA</span><span class="o">=</span><span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="o">=</span><span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="o">=</span><span class="n">phC</span><span class="p">)</span>
+    <span class="n">templ</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SwitchDevice</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">closed_mode</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_closed_mode&quot;</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">mode_dict</span><span class="p">[</span><span class="n">closed_mode</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">initial_closed</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_closed_mode&quot;</span><span class="p">)</span>
+
+    <span class="n">g_device</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_closed_g_api&quot;</span><span class="p">)</span>
+    <span class="n">g_manual</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_closed_g_manual&quot;</span><span class="p">)</span>
+    <span class="n">g_open</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_open_g&quot;</span><span class="p">)</span>
+    <span class="n">tau_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_tau&quot;</span><span class="p">)</span>
+    <span class="n">seed_from_pf_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_seed_from_pf&quot;</span><span class="p">)</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">g_device</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_closed_g_api&quot;</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_device</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">g_manual</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">manual_closed_conductance</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_closed_g_manual&quot;</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">g_open</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">open_conductance</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_open_g&quot;</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">tau_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">switch_time_constant</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_tau&quot;</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">seed_from_pf_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">seed_from_pf_active</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_seed_from_pf&quot;</span><span class="p">)</span>
+
+    <span class="n">g_closed_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">seed_from_pf_var</span> <span class="o">*</span> <span class="n">g_device</span> <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">seed_from_pf_var</span><span class="p">)</span> <span class="o">*</span> <span class="n">g_manual</span>
+    <span class="n">g_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">closed_mode</span> <span class="o">*</span> <span class="n">g_closed_eff</span> <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">closed_mode</span><span class="p">)</span> <span class="o">*</span> <span class="n">g_open</span>
+
+    <span class="n">in_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">diff_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">state_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">out_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">external_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_N</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_N</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_N</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_N</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Sf_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Sf_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Sf_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">St_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">St_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">St_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_N_f</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_A_f</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_B_f</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_C_f</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_N_t</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_A_t</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_B_t</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_C_t</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">signal_controlled</span><span class="p">:</span>
+        <span class="n">command_input</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_cmd&quot;</span><span class="p">)</span>
+        <span class="n">threshold_var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;switch_cmd_threshold&quot;</span><span class="p">)</span>
+        <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">threshold_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">command_threshold</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;switch_cmd_threshold&quot;</span><span class="p">)</span>
+        <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">procedural_logic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">sampled_value</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="n">closed_mode</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">Comparison</span><span class="p">(</span><span class="n">lhs</span><span class="o">=</span><span class="n">command_input</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">CmpOp</span><span class="o">.</span><span class="n">GE</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="n">threshold_var</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_input</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="n">active_phases</span><span class="p">:</span>
+        <span class="n">v_from</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vf_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_from_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">v_to</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vt_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_to_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">i_state</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;i_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">di_state</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_state</span><span class="p">)</span>
+        <span class="n">i_from</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;if_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_from_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+        <span class="n">i_to</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;it_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">_get_to_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">))</span>
+
+        <span class="n">in_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">([</span><span class="n">v_from</span><span class="p">,</span> <span class="n">v_to</span><span class="p">]))</span>
+        <span class="n">state_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_state</span><span class="p">)</span>
+        <span class="n">diff_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">di_state</span><span class="p">)</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">([</span><span class="n">i_from</span><span class="p">,</span> <span class="n">i_to</span><span class="p">]))</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">g_eff</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_from</span> <span class="o">-</span> <span class="n">v_to</span><span class="p">)</span> <span class="o">-</span> <span class="n">i_state</span><span class="p">)</span> <span class="o">/</span> <span class="n">tau_var</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_from</span> <span class="o">-</span> <span class="n">i_state</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_to</span> <span class="o">+</span> <span class="n">i_state</span><span class="p">)</span>
+        <span class="n">out_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">([</span><span class="n">i_from</span><span class="p">,</span> <span class="n">i_to</span><span class="p">]))</span>
+        <span class="n">external_mapping</span><span class="p">[</span><span class="n">_get_from_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v_from</span>
+        <span class="n">external_mapping</span><span class="p">[</span><span class="n">_get_to_voltage_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v_to</span>
+        <span class="n">external_mapping</span><span class="p">[</span><span class="n">_get_from_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i_from</span>
+        <span class="n">external_mapping</span><span class="p">[</span><span class="n">_get_to_current_reference</span><span class="p">(</span><span class="n">phase_label</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i_to</span>
+
+    <span class="n">init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">diff_init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">state_var</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="n">state_eq</span><span class="p">:</span> <span class="n">Expr</span>
+
+    <span class="k">for</span> <span class="n">state_var</span> <span class="ow">in</span> <span class="n">state_vars</span><span class="p">:</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">state_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">di_var</span><span class="p">,</span> <span class="n">state_eq</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">diff_vars</span><span class="p">,</span> <span class="n">state_eqs</span><span class="p">):</span>
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">di_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_eq</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">in_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="n">state_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">diff_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="n">state_eqs</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">algebraic_eqs</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">out_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">external_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="n">init_eqs</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

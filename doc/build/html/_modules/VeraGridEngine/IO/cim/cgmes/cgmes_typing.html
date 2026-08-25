@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.cgmes_typing &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.cgmes_typing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cgmes.cgmes_typing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cgmes24</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cgmes30</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.ncp.ncp_assets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ncp</span>
+
+
+<span class="n">CGMES_ASSETS</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">CGMES_2_4_15_ASSETS</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">CGMES3_ASSETS</span> <span class="o">|</span> <span class="n">ncp</span><span class="o">.</span><span class="n">NCP_ASSETS</span>
+
+<span class="n">CGMES_ACDC_CONVERTER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ACDCConverter</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ACDCConverter</span>
+<span class="n">CGMES_ACDC_CONVERTER_DC_TERMINAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ACDCConverterDCTerminal</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ACDCConverterDCTerminal</span>
+<span class="n">CGMES_CS_CONVERTER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">CsConverter</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">CsConverter</span>
+<span class="n">CGMES_DC_BASE_TERMINAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCBaseTerminal</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCBaseTerminal</span>
+<span class="n">CGMES_DC_BREAKER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCBreaker</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCBreaker</span>
+<span class="n">CGMES_DC_BUSBAR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCBusbar</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCBusbar</span>
+<span class="n">CGMES_DC_CHOPPER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCChopper</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCChopper</span>
+<span class="n">CGMES_DC_CONDUCTING_EQUIPMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCConductingEquipment</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCConductingEquipment</span>
+<span class="n">CGMES_DC_CONVERTER_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCConverterUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCConverterUnit</span>
+<span class="n">CGMES_DC_DISCONNECTOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCDisconnector</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCDisconnector</span>
+<span class="n">CGMES_DC_EQUIPMENT_CONTAINER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCEquipmentContainer</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCEquipmentContainer</span>
+<span class="n">CGMES_DC_GROUND</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCGround</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCGround</span>
+<span class="n">CGMES_DC_LINE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCLine</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCLine</span>
+<span class="n">CGMES_DC_LINE_SEGMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCLineSegment</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCLineSegment</span>
+<span class="n">CGMES_DC_NODE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCNode</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCNode</span>
+<span class="n">CGMES_DC_SERIES_DEVICE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCSeriesDevice</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCSeriesDevice</span>
+<span class="n">CGMES_DC_SHUNT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCShunt</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCShunt</span>
+<span class="n">CGMES_DC_SWITCH</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCSwitch</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCSwitch</span>
+<span class="n">CGMES_DC_TERMINAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCTerminal</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCTerminal</span>
+<span class="n">CGMES_FULL_MODEL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">FullModel</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">FullModel</span>
+<span class="n">CGMES_PER_LENGTH_DC_LINE_PARAMETER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PerLengthDCLineParameter</span>  <span class="c1"># | cgmes30.PerLengthDCLineParameter</span>
+<span class="n">CGMES_VS_CAPABILITY_CURVE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">VsCapabilityCurve</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">VsCapabilityCurve</span>
+<span class="n">CGMES_VS_CONVERTER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">VsConverter</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">VsConverter</span>
+<span class="n">CGMES_BUS_NAME_MARKER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">BusNameMarker</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">BusNameMarker</span>
+<span class="n">CGMES_ANALOG_CONTROL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">AnalogControl</span>  <span class="c1"># | cgmes30.AnalogControl</span>
+<span class="n">CGMES_CONTROL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Control</span>  <span class="c1"># | cgmes30.Control</span>
+<span class="n">CGMES_LIMIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Limit</span>  <span class="c1"># | cgmes30.Limit</span>
+<span class="n">CGMES_LIMIT_SET</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LimitSet</span>  <span class="c1"># | cgmes30.LimitSet</span>
+<span class="n">CGMES_MEASUREMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Measurement</span>  <span class="c1"># | cgmes30.Measurement</span>
+<span class="n">CGMES_MEASUREMENT_VALUE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">MeasurementValue</span>  <span class="c1"># | cgmes30.MeasurementValue</span>
+<span class="n">CGMES_QUALITY61850</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Quality61850</span>  <span class="c1"># | cgmes30.Quality61850</span>
+<span class="n">CGMES_ENERGY_SCHEDULING_TYPE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EnergySchedulingType</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EnergySchedulingType</span>
+<span class="n">CGMES_ENERGY_SOURCE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EnergySource</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EnergySource</span>
+<span class="n">CGMES_FOSSIL_FUEL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">FossilFuel</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">FossilFuel</span>
+<span class="n">CGMES_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">GeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">GeneratingUnit</span>
+<span class="n">CGMES_HYDRO_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">HydroGeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">HydroGeneratingUnit</span>
+<span class="n">CGMES_HYDRO_POWER_PLANT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">HydroPowerPlant</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">HydroPowerPlant</span>
+<span class="n">CGMES_HYDROPUMP</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">HydroPump</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">HydroPump</span>
+<span class="n">CGMES_NUCLEAR_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NuclearGeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NuclearGeneratingUnit</span>
+<span class="n">CGMES_SOLAR_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SolarGeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SolarGeneratingUnit</span>
+<span class="n">CGMES_THERMAL_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ThermalGeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ThermalGeneratingUnit</span>
+<span class="n">CGMES_WIND_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">WindGeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">WindGeneratingUnit</span>
+<span class="n">CGMES_ACDC_TERMINAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ACDCTerminal</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ACDCTerminal</span>
+<span class="n">CGMES_BASE_VOLTAGE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">BaseVoltage</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">BaseVoltage</span>
+<span class="n">CGMES_BASIC_INTERVAL_SCHEDULE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">BasicIntervalSchedule</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">BasicIntervalSchedule</span>
+<span class="n">CGMES_BAY</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Bay</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Bay</span>
+<span class="n">CGMES_CONDUCTING_EQUIPMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ConductingEquipment</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConductingEquipment</span>
+<span class="n">CGMES_CONNECTIVITY_NODE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ConnectivityNode</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConnectivityNode</span>
+<span class="n">CGMES_CONNECTIVITY_NODE_CONTAINER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ConnectivityNodeContainer</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConnectivityNodeContainer</span>
+<span class="n">CGMES_CURVE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Curve</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Curve</span>
+<span class="n">CGMES_CURVE_DATA</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">CurveData</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">CurveData</span>
+<span class="n">CGMES_EQUIPMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Equipment</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Equipment</span>
+<span class="n">CGMES_EQUIPMENT_CONTAINER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EquipmentContainer</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EquipmentContainer</span>
+<span class="n">CGMES_GEOGRAPHICAL_REGION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">GeographicalRegion</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">GeographicalRegion</span>
+<span class="n">CGMES_IDENTIFIED_OBJECT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">IdentifiedObject</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">IdentifiedObject</span>
+<span class="n">CGMES_POWER_SYSTEM_RESOURCE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PowerSystemResource</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PowerSystemResource</span>
+<span class="n">CGMES_REGULAR_INTERVAL_SCHEDULE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RegularIntervalSchedule</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RegularIntervalSchedule</span>
+<span class="n">CGMES_REPORTING_GROUP</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ReportingGroup</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ReportingGroup</span>
+<span class="n">CGMES_SUB_GEOGRAPHICAL_REGION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SubGeographicalRegion</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SubGeographicalRegion</span>
+<span class="n">CGMES_SUBSTATION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Substation</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Substation</span>
+<span class="n">CGMES_TERMINAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Terminal</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Terminal</span>
+<span class="n">CGMES_VOLTAGE_LEVEL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">VoltageLevel</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">VoltageLevel</span>
+<span class="n">CGMES_ACTIVE_POWER_LIMIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ActivePowerLimit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ActivePowerLimit</span>
+<span class="n">CGMES_APPARENT_POWER_LIMIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ApparentPowerLimit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ApparentPowerLimit</span>
+<span class="n">CGMES_CURRENT_LIMIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">CurrentLimit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">CurrentLimit</span>
+<span class="n">CGMES_OPERATIONAL_LIMIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">OperationalLimit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">OperationalLimit</span>
+<span class="n">CGMES_OPERATIONAL_LIMIT_SET</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">OperationalLimitSet</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">OperationalLimitSet</span>
+<span class="n">CGMES_OPERATIONAL_LIMIT_TYPE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">OperationalLimitType</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">OperationalLimitType</span>
+<span class="n">CGMES_VOLTAGE_LIMIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">VoltageLimit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">VoltageLimit</span>
+<span class="n">CGMES_AC_LINE_SEGMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ACLineSegment</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ACLineSegment</span>
+<span class="n">CGMES_ASYNCHRONOUS_MACHINE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">AsynchronousMachine</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">AsynchronousMachine</span>
+<span class="n">CGMES_BREAKER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Breaker</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Breaker</span>
+<span class="n">CGMES_BUSBAR_SECTION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">BusbarSection</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">BusbarSection</span>
+<span class="n">CGMES_CONDUCTOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Conductor</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Conductor</span>
+<span class="n">CGMES_CONNECTOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Connector</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Connector</span>
+<span class="n">CGMES_DISCONNECTOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Disconnector</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Disconnector</span>
+<span class="n">CGMES_EARTH_FAULT_COMPENSATOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EarthFaultCompensator</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EarthFaultCompensator</span>
+<span class="n">CGMES_ENERGY_CONSUMER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EnergyConsumer</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EnergyConsumer</span>
+<span class="n">CGMES_EXTERNAL_NETWORK_INJECTION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ExternalNetworkInjection</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ExternalNetworkInjection</span>
+<span class="n">CGMES_GROUND</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Ground</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Ground</span>
+<span class="n">CGMES_GROUND_DISCONNECTOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">GroundDisconnector</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">GroundDisconnector</span>
+<span class="n">CGMES_GROUNDING_IMPEDANCE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">GroundingImpedance</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">GroundingImpedance</span>
+<span class="n">CGMES_JUNCTION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Junction</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Junction</span>
+<span class="n">CGMES_LINE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Line</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Line</span>
+<span class="n">CGMES_LINEAR_SHUNT_COMPENSATOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LinearShuntCompensator</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LinearShuntCompensator</span>
+<span class="n">CGMES_LOAD_BREAK_SWITCH</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LoadBreakSwitch</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LoadBreakSwitch</span>
+<span class="n">CGMES_MUTUAL_COUPLING</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">MutualCoupling</span>  <span class="c1"># | cgmes30.MutualCoupling</span>
+<span class="n">CGMES_NON_LINEAR_SHUNT_COMPENSATOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NonlinearShuntCompensator</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NonlinearShuntCompensator</span>
+<span class="n">CGMES_NON_LINEAR_SHUNT_COMPENSATOR_POINT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NonlinearShuntCompensatorPoint</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NonlinearShuntCompensatorPoint</span>
+<span class="n">CGMES_PETERSEN_COIL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PetersenCoil</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PetersenCoil</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChanger</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChanger</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_ASYMMETRICAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerAsymmetrical</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerAsymmetrical</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_LINEAR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerLinear</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerLinear</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_NONLINEAR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerNonLinear</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerNonLinear</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_SYMMETRICAL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerSymmetrical</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerSymmetrical</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_TABLE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerTable</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerTable</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_TABLE_POINT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerTablePoint</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerTablePoint</span>
+<span class="n">CGMES_PHASE_TAP_CHANGER_TABULAR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PhaseTapChangerTabular</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PhaseTapChangerTabular</span>
+<span class="n">CGMES_POWER_TRANSFORMER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PowerTransformer</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PowerTransformer</span>
+<span class="n">CGMES_POWER_TRANSFORMER_END</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PowerTransformerEnd</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PowerTransformerEnd</span>
+<span class="n">CGMES_PROTECTED_SWITCH</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ProtectedSwitch</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ProtectedSwitch</span>
+<span class="n">CGMES_RATIO_TAP_CHANGER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RatioTapChanger</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RatioTapChanger</span>
+<span class="n">CGMES_RATIO_TAP_CHANGER_TABLE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RatioTapChangerTable</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RatioTapChangerTable</span>
+<span class="n">CGMES_RATIO_TAP_CHANGER_TABLE_POINT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RatioTapChangerTablePoint</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RatioTapChangerTablePoint</span>
+<span class="n">CGMES_REACTIVE_CAPABILITY_CURVE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ReactiveCapabilityCurve</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ReactiveCapabilityCurve</span>
+<span class="n">CGMES_REGULATING_COND_EQ</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RegulatingCondEq</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RegulatingCondEq</span>
+<span class="n">CGMES_REGULATING_CONTROL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RegulatingControl</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RegulatingControl</span>
+<span class="n">CGMES_ROTATING_MACHINE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RotatingMachine</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RotatingMachine</span>
+<span class="n">CGMES_SERIES_COMPENSATOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SeriesCompensator</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SeriesCompensator</span>
+<span class="n">CGMES_SHUNT_COMPENSATOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ShuntCompensator</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ShuntCompensator</span>
+<span class="n">CGMES_STATIC_VAR_COMPENSATOR</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">StaticVarCompensator</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">StaticVarCompensator</span>
+<span class="n">CGMES_SWITCH</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Switch</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Switch</span>
+<span class="n">CGMES_SYNCHRONOUS_MACHINE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SynchronousMachine</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SynchronousMachine</span>
+<span class="n">CGMES_TAP_CHANGER</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TapChanger</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TapChanger</span>
+<span class="n">CGMES_TAP_CHANGER_CONTROL</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TapChangerControl</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TapChangerControl</span>
+<span class="n">CGMES_TAP_CHANGER_TABLE_POINT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TapChangerTablePoint</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TapChangerTablePoint</span>
+<span class="n">CGMES_TRANSFORMER_END</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TransformerEnd</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TransformerEnd</span>
+<span class="n">CGMES_CONFORM_LOAD</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ConformLoad</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConformLoad</span>
+<span class="n">CGMES_CONFORM_LOAD_GROUP</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ConformLoadGroup</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConformLoadGroup</span>
+<span class="n">CGMES_ENERGY_AREA</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EnergyArea</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EnergyArea</span>
+<span class="n">CGMES_LOAD_AREA</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LoadArea</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LoadArea</span>
+<span class="n">CGMES_LOAD_GROUP</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LoadGroup</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LoadGroup</span>
+<span class="n">CGMES_LOAD_RESPONSE_CHARACTERISTIC</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LoadResponseCharacteristic</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LoadResponseCharacteristic</span>
+<span class="n">CGMES_NON_CONFORM_LOAD</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NonConformLoad</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NonConformLoad</span>
+<span class="n">CGMES_NON_CONFORM_LOAD_GROUP</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NonConformLoadGroup</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NonConformLoadGroup</span>
+<span class="n">CGMES_SEASON_DAY_TYPE_SCHEDULE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SeasonDayTypeSchedule</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SeasonDayTypeSchedule</span>
+<span class="n">CGMES_SUB_LOAD_AREA</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SubLoadArea</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SubLoadArea</span>
+<span class="n">CGMES_EQUIVALENT_BRANCH</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EquivalentBranch</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EquivalentBranch</span>
+<span class="n">CGMES_EQUIVALENT_EQUIPMENT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EquivalentEquipment</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EquivalentEquipment</span>
+<span class="n">CGMES_EQUIVALENT_INJECTION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EquivalentInjection</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EquivalentInjection</span>
+<span class="n">CGMES_EQUIVALENT_NETWORK</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EquivalentNetwork</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EquivalentNetwork</span>
+<span class="n">CGMES_EQUIVALENT_SHUNT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">EquivalentShunt</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">EquivalentShunt</span>
+<span class="n">CGMES_CONTROL_AREA</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ControlArea</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ControlArea</span>
+<span class="n">CGMES_CONTROL_AREA_GENERATING_UNIT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ControlAreaGeneratingUnit</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ControlAreaGeneratingUnit</span>
+<span class="n">CGMES_TIE_FLOW</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TieFlow</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TieFlow</span>
+<span class="n">CGMES_DC_TOPOLOGICAL_ISLAND</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCTopologicalIsland</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCTopologicalIsland</span>
+<span class="n">CGMES_SV_STATUS</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvStatus</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvStatus</span>
+<span class="n">CGMES_SV_INJECTION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvInjection</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvInjection</span>
+<span class="n">CGMES_SV_POWER_FLOW</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvPowerFlow</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvPowerFlow</span>
+<span class="n">CGMES_SV_SHUNT_COMPENSATOR_SECTIONS</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvShuntCompensatorSections</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvShuntCompensatorSections</span>
+<span class="n">CGMES_SV_TAP_STEP</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvTapStep</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvTapStep</span>
+<span class="n">CGMES_SV_VOLTAGE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvVoltage</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvVoltage</span>
+<span class="n">CGMES_DC_TOPOLOGICAL_NODE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCTopologicalNode</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCTopologicalNode</span>
+<span class="n">CGMES_TOPOLOGICAL_NODE</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TopologicalNode</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TopologicalNode</span>
+<span class="n">CGMES_TOPOLOGICAL_ISLAND</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TopologicalIsland</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TopologicalIsland</span>
+<span class="n">CGMES_COORDINATE_SYSTEM</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">CoordinateSystem</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">CoordinateSystem</span>
+<span class="n">CGMES_LOCATION</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Location</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Location</span>
+<span class="n">CGMES_POSITION_POINT</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PositionPoint</span> <span class="o">|</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PositionPoint</span>
+
+<div class="viewcode-block" id="is_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_typing.is_term">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_term</span><span class="p">(</span><span class="n">term</span><span class="p">:</span> <span class="n">CGMES_TERMINAL</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="p">(</span><span class="n">cgmes24</span><span class="o">.</span><span class="n">Terminal</span><span class="p">,</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Terminal</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

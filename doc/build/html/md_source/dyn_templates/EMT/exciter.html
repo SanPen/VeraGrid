@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exciter &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Exponential load" href="exponential_load_abc.html" />
+    <link rel="prev" title="Double cage induction motor" href="double_cage_induction_motor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../dynamic_model_library_index.html">📚 Dynamic model library</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#authoring-models">Authoring models</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../dynamic_model_library_index.html#device-templates">Device templates</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../RMS/index.html">RMS device templates</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">EMT device templates</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#reusable-blocks-and-logic">Reusable blocks and logic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+          <li class="breadcrumb-item"><a href="index.html">EMT device templates</a></li>
+      <li class="breadcrumb-item active">Exciter</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/md_source/dyn_templates/EMT/exciter.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="exciter">
+<h1>Exciter<a class="headerlink" href="#exciter" title="Link to this heading"></a></h1>
+<!-- veragrid-block-introduction:start -->
+<p><strong>Exciter</strong> belongs to an electromechanical machine or prime-mover model. It links electrical torque and flux with rotor speed, angle, mechanical power, or actuator dynamics, making it central to frequency, voltage, and rotor-angle stability studies.</p>
+<section id="typical-use">
+<h2>Typical use<a class="headerlink" href="#typical-use" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use it when electrical transients must interact with rotating mass or machine controls.</p></li>
+<li><p>Initialize torque, power, flux, and speed consistently with the solved power flow.</p></li>
+</ul>
+<!-- veragrid-block-introduction:end -->
+<p>This model represents the EMT excitation control block used with the complete generator model.</p>
+<section id="purpose">
+<h3>Purpose<a class="headerlink" href="#purpose" title="Link to this heading"></a></h3>
+<p>It is the EMT excitation controller built by <code class="docutils literal notranslate"><span class="pre">get_exciter_emt()</span></code>.</p>
+</section>
+<section id="behavior">
+<h3>Behavior<a class="headerlink" href="#behavior" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Receives machine exciter-feedback quantity, three-phase terminal voltages, and stabilizer signal.</p></li>
+<li><p>Builds a voltage-magnitude measurement from the three phase voltages.</p></li>
+<li><p>Filters the measurement and forms a regulated voltage error.</p></li>
+<li><p>Applies lead-lag AVR action, limit logic, and field-stage dynamics.</p></li>
+<li><p>Produces the field-voltage signal sent to the machine block.</p></li>
+</ul>
+</section>
+<section id="characteristics">
+<h3>Characteristics<a class="headerlink" href="#characteristics" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>EMT excitation control block.</p></li>
+<li><p>Includes voltage filtering, AVR dynamics, limiter logic, and nonlinear field feedback.</p></li>
+</ul>
+</section>
+</section>
+<section id="block-structure">
+<h2>Block structure<a class="headerlink" href="#block-structure" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>abc voltage measurement
+  -&gt; voltage magnitude Vm
+  -&gt; voltage filter
+  -&gt; reference / PSS error
+  -&gt; lead-lag AVR
+  -&gt; limiter and field feedback
+  -&gt; field stage
+  -&gt; Vf
+</pre></div>
+</div>
+</section>
+<section id="characteristic-equations">
+<h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
+<div class="math">
+<p><span class="math">V_m = \sqrt{\frac{v_A^2 + v_B^2 + v_C^2}{3}}</span></p>
+</div><div class="math">
+<p><span class="math">e_{exc} = U_{s,ref} + V_{pss} - y_1 - y_2</span></p>
+</div><div class="math">
+<p><span class="math">y_{LL} = y_3 + \frac{t_C}{t_B}(e_{exc} - y_3)</span></p>
+</div><div class="math">
+<p><span class="math">\frac{dy_1}{dt} = \frac{V_m - y_1}{t_R}</span></p>
+</div><div class="math">
+<p><span class="math">\frac{dy_2}{dt} = \frac{K_f V_f - y_2}{t_F}</span></p>
+</div><div class="math">
+<p><span class="math">\frac{dy_3}{dt} = \frac{e_{exc} - y_3}{t_B}</span></p>
+</div><div class="math">
+<p><span class="math">\frac{dy_4}{dt} = \frac{K_a y_{LL} - y_4}{t_A}</span></p>
+</div><div class="math">
+<p><span class="math">\frac{dV_f}{dt} = \frac{V_{field,ref} - V_{field,fb}}{t_E}</span></p>
+</div></section>
+<section id="interface-table">
+<h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IRPu</span></code></p></td>
+<td><p>Exciter-feedback quantity received from the machine block</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v_A</span></code></p></td>
+<td><p>Phase-A terminal voltage used by the exciter voltage-magnitude measurement</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v_B</span></code></p></td>
+<td><p>Phase-B terminal voltage used by the exciter voltage-magnitude measurement</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v_C</span></code></p></td>
+<td><p>Phase-C terminal voltage used by the exciter voltage-magnitude measurement</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">V_pss</span></code></p></td>
+<td><p>Stabilizer signal received from the stabilizer block</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vf</span></code></p></td>
+<td><p>Field-voltage signal sent to the machine block</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vm</span></code></p></td>
+<td><p>Measured voltage magnitude used by the AVR</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Efe</span></code></p></td>
+<td><p>Internal exciter-field variable after limiter action</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UsRefPu</span></code></p></td>
+<td><p>Voltage reference used by the AVR loop</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y_exciter1</span></code></p></td>
+<td><p>Voltage-measurement filter state</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y_exciter2</span></code></p></td>
+<td><p>Rate-feedback state/output variable</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y_exciter3</span></code></p></td>
+<td><p>Lead-lag internal state</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y_exciter4</span></code></p></td>
+<td><p>AVR internal state</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VeMaxPu</span></code></p></td>
+<td><p>Dynamic ceiling variable used by one limiter stage</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Variable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">u_aux</span></code></p></td>
+<td><p>Auxiliary nonlinear field-feedback variable</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Ka</span></code></p></td>
+<td><p>AVR gain</p></td>
+<td><p>pu/pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Kf</span></code></p></td>
+<td><p>Rate-feedback gain</p></td>
+<td><p>pu/pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tA</span></code></p></td>
+<td><p>AVR stage time constant</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tB</span></code></p></td>
+<td><p>Lead-lag lag time constant</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tC</span></code></p></td>
+<td><p>Lead-lag lead time constant</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tE</span></code></p></td>
+<td><p>Field-stage time constant</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tF</span></code></p></td>
+<td><p>Rate-feedback time constant</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tR</span></code></p></td>
+<td><p>Voltage measurement filter time constant</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Kd</span></code></p></td>
+<td><p>Demagnetizing/field-feedback factor</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Ke</span></code></p></td>
+<td><p>Field-feedback coefficient</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Kfd</span></code></p></td>
+<td><p>Field conversion factor</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AEz</span></code></p></td>
+<td><p>Saturation-law shaping coefficient</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BEz</span></code></p></td>
+<td><p>Saturation-law exponential coefficient</p></td>
+<td><p>1/pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AEx</span></code></p></td>
+<td><p>Exponential field-feedback coefficient</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BEx</span></code></p></td>
+<td><p>Exponential field-feedback exponent coefficient</p></td>
+<td><p>1/pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Se_threshold</span></code></p></td>
+<td><p>Threshold at which the nonlinear field saturation becomes active</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VaMaxPu</span></code></p></td>
+<td><p>Upper AVR output limit</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VaMinPu</span></code></p></td>
+<td><p>Lower AVR output limit</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VfeMaxPu</span></code></p></td>
+<td><p>Upper field-output related limit</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EfeMaxPu</span></code></p></td>
+<td><p>Upper internal exciter-field limit</p></td>
+<td><p>pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EfeMinPu</span></code></p></td>
+<td><p>Lower internal exciter-field limit</p></td>
+<td><p>pu</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-to-use-it">
+<h2>How to use it<a class="headerlink" href="#how-to-use-it" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Treat this as the field-voltage control block of the EMT <code class="docutils literal notranslate"><span class="pre">Complete</span> <span class="pre">generator</span></code> package.</p></li>
+<li><p>It is not a standalone source or sink for the network.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="double_cage_induction_motor.html" class="btn btn-neutral float-left" title="Double cage induction motor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="exponential_load_abc.html" class="btn btn-neutral float-right" title="Exponential load" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

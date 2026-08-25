@@ -1,0 +1,1267 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Substation package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Simulations package" href="VeraGridEngine.Simulations.html" />
+    <link rel="prev" title="VeraGridEngine.Devices.Profiles package" href="VeraGridEngine.Devices.Profiles.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Substation package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Devices.Substation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-devices-substation-package">
+<h1>VeraGridEngine.Devices.Substation package<a class="headerlink" href="#veragridengine-devices-substation-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Devices.Substation.bus">
+<span id="veragridengine-devices-substation-bus-module"></span><h2>VeraGridEngine.Devices.Substation.bus module<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation.bus" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Substation.bus.</span></span><span class="sig-name descname"><span class="pre">Bus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Bus'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-6.28</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.28</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xpos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ypos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_slack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_internal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_grounded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltage_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vm0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Va0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphic_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BusGraphicType" title="VeraGridEngine.enumerations.BusGraphicType"><span class="pre">BusGraphicType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">BusBar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_bar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Substation.busbar.BusBar" title="VeraGridEngine.Devices.Substation.busbar.BusBar"><span class="pre">BusBar</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice" title="VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicBusDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'x',</span> <span class="pre">'y',</span> <span class="pre">'h',</span> <span class="pre">'w')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Va0':</span> <span class="pre">'Va0_prof',</span> <span class="pre">'Vm0':</span> <span class="pre">'Vm0_prof',</span> <span class="pre">'Vmax':</span> <span class="pre">'Vmax_prof',</span> <span class="pre">'Vmin':</span> <span class="pre">'Vmin_prof',</span> <span class="pre">'active':</span> <span class="pre">'active_prof',</span> <span class="pre">'is_slack':</span> <span class="pre">'is_slack_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:rms_model,</span> <span class="pre">prop:emt_model,</span> <span class="pre">prop:active,</span> <span class="pre">prop:is_slack,</span> <span class="pre">prop:is_dc,</span> <span class="pre">prop:is_grounded,</span> <span class="pre">prop:graphic_type,</span> <span class="pre">prop:Vnom,</span> <span class="pre">prop:Vm0,</span> <span class="pre">prop:Va0,</span> <span class="pre">prop:Vmin,</span> <span class="pre">prop:Vmax,</span> <span class="pre">prop:Vm_cost,</span> <span class="pre">prop:angle_min,</span> <span class="pre">prop:angle_max,</span> <span class="pre">prop:angle_cost,</span> <span class="pre">prop:x,</span> <span class="pre">prop:y,</span> <span class="pre">prop:h,</span> <span class="pre">prop:w,</span> <span class="pre">prop:country,</span> <span class="pre">prop:area,</span> <span class="pre">prop:zone,</span> <span class="pre">prop:substation,</span> <span class="pre">prop:voltage_level,</span> <span class="pre">prop:bus_bar,</span> <span class="pre">prop:longitude,</span> <span class="pre">prop:latitude,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:rms_model,</span> <span class="pre">prop:emt_model,</span> <span class="pre">prop:active,</span> <span class="pre">prop:is_slack,</span> <span class="pre">prop:is_dc,</span> <span class="pre">prop:is_grounded,</span> <span class="pre">prop:graphic_type,</span> <span class="pre">prop:Vnom,</span> <span class="pre">prop:Vm0,</span> <span class="pre">prop:Va0,</span> <span class="pre">prop:Vmin,</span> <span class="pre">prop:Vmax,</span> <span class="pre">prop:Vm_cost,</span> <span class="pre">prop:angle_min,</span> <span class="pre">prop:angle_max,</span> <span class="pre">prop:angle_cost,</span> <span class="pre">prop:x,</span> <span class="pre">prop:y,</span> <span class="pre">prop:h,</span> <span class="pre">prop:w,</span> <span class="pre">prop:country,</span> <span class="pre">prop:area,</span> <span class="pre">prop:zone,</span> <span class="pre">prop:substation,</span> <span class="pre">prop:voltage_level,</span> <span class="pre">prop:bus_bar,</span> <span class="pre">prop:longitude,</span> <span class="pre">prop:latitude,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Va0':</span> <span class="pre">prop:Va0,</span> <span class="pre">'Vm0':</span> <span class="pre">prop:Vm0,</span> <span class="pre">'Vm_cost':</span> <span class="pre">prop:Vm_cost,</span> <span class="pre">'Vmax':</span> <span class="pre">prop:Vmax,</span> <span class="pre">'Vmin':</span> <span class="pre">prop:Vmin,</span> <span class="pre">'Vnom':</span> <span class="pre">prop:Vnom,</span> <span class="pre">'action':</span> <span class="pre">prop:action,</span> <span class="pre">'active':</span> <span class="pre">prop:active,</span> <span class="pre">'angle_cost':</span> <span class="pre">prop:angle_cost,</span> <span class="pre">'angle_max':</span> <span class="pre">prop:angle_max,</span> <span class="pre">'angle_min':</span> <span class="pre">prop:angle_min,</span> <span class="pre">'area':</span> <span class="pre">prop:area,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'bus_bar':</span> <span class="pre">prop:bus_bar,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'color':</span> <span class="pre">prop:color,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'country':</span> <span class="pre">prop:country,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'emt_model':</span> <span class="pre">prop:emt_model,</span> <span class="pre">'graphic_type':</span> <span class="pre">prop:graphic_type,</span> <span class="pre">'h':</span> <span class="pre">prop:h,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'is_dc':</span> <span class="pre">prop:is_dc,</span> <span class="pre">'is_grounded':</span> <span class="pre">prop:is_grounded,</span> <span class="pre">'is_slack':</span> <span class="pre">prop:is_slack,</span> <span class="pre">'latitude':</span> <span class="pre">prop:latitude,</span> <span class="pre">'longitude':</span> <span class="pre">prop:longitude,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'rms_model':</span> <span class="pre">prop:rms_model,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'substation':</span> <span class="pre">prop:substation,</span> <span class="pre">'voltage_level':</span> <span class="pre">prop:voltage_level,</span> <span class="pre">'w':</span> <span class="pre">prop:w,</span> <span class="pre">'x':</span> <span class="pre">prop:x,</span> <span class="pre">'y':</span> <span class="pre">prop:y,</span> <span class="pre">'zone':</span> <span class="pre">prop:zone}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:active,</span> <span class="pre">prop:is_slack,</span> <span class="pre">prop:is_dc,</span> <span class="pre">prop:is_grounded,</span> <span class="pre">prop:graphic_type,</span> <span class="pre">prop:Vnom,</span> <span class="pre">prop:Vm0,</span> <span class="pre">prop:Va0,</span> <span class="pre">prop:Vmin,</span> <span class="pre">prop:Vmax,</span> <span class="pre">prop:Vm_cost,</span> <span class="pre">prop:angle_min,</span> <span class="pre">prop:angle_max,</span> <span class="pre">prop:angle_cost,</span> <span class="pre">prop:x,</span> <span class="pre">prop:y,</span> <span class="pre">prop:h,</span> <span class="pre">prop:w,</span> <span class="pre">prop:country,</span> <span class="pre">prop:area,</span> <span class="pre">prop:zone,</span> <span class="pre">prop:substation,</span> <span class="pre">prop:voltage_level,</span> <span class="pre">prop:bus_bar,</span> <span class="pre">prop:longitude,</span> <span class="pre">prop:latitude,</span> <span class="pre">prop:color)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Qmax_sum">
+<span class="sig-name descname"><span class="pre">Qmax_sum</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Qmax_sum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Qmin_sum">
+<span class="sig-name descname"><span class="pre">Qmin_sum</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Qmin_sum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Va0">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Va0</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Va0" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Va0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Va0_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Va0_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Va0_prof" title="Link to this definition"></a></dt>
+<dd><p>Va0 profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vm0">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vm0</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vm0" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Vm0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vm0_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vm0_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vm0_prof" title="Link to this definition"></a></dt>
+<dd><p>Vm0 profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vm_cost">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vm_cost</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vm_cost" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Vm_cost</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vmax">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vmax" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Vmax</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vmax_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vmax_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vmax_prof" title="Link to this definition"></a></dt>
+<dd><p>Pmin profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vmin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vmin" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Vmin</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vmin_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vmin_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vmin_prof" title="Link to this definition"></a></dt>
+<dd><p>Pmin profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.Vnom">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vnom</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.Vnom" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Vnom</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.active">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">active</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.active" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">active</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.active_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">active_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool" title="VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool"><span class="pre">ProfileBool</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.active_prof" title="Link to this definition"></a></dt>
+<dd><p>Cost profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.angle_cost">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">angle_cost</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.angle_cost" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">angle_cost</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.angle_max">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">angle_max</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.angle_max" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">angle_max</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.angle_min">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">angle_min</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.angle_min" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">angle_min</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.area">
+<span class="sig-name descname"><span class="pre">area</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.area" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.bus_bar">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">bus_bar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Substation.busbar.BusBar" title="VeraGridEngine.Devices.Substation.busbar.BusBar"><span class="pre">BusBar</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.bus_bar" title="Link to this definition"></a></dt>
+<dd><p>Get the BusBar</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.bus_type">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">bus_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BusMode" title="VeraGridEngine.enumerations.BusMode"><span class="pre">BusMode</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.bus_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.country">
+<span class="sig-name descname"><span class="pre">country</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.country" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.determine_snapshot_bus_type">
+<span class="sig-name descname"><span class="pre">determine_snapshot_bus_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BusMode" title="VeraGridEngine.enumerations.BusMode"><span class="pre">BusMode</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.determine_snapshot_bus_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.determine_snapshot_bus_type" title="Link to this definition"></a></dt>
+<dd><p>Infer the bus type from the devices attached to it
+&#64;return: BusMode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_Va0_at">
+<span class="sig-name descname"><span class="pre">get_Va0_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_Va0_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_Va0_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_Vm0_at">
+<span class="sig-name descname"><span class="pre">get_Vm0_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_Vm0_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_Vm0_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_Vmax_at">
+<span class="sig-name descname"><span class="pre">get_Vmax_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_Vmax_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_Vmax_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_Vmin_at">
+<span class="sig-name descname"><span class="pre">get_Vmin_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_Vmin_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_Vmin_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_active_at">
+<span class="sig-name descname"><span class="pre">get_active_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_active_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_active_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_area">
+<span class="sig-name descname"><span class="pre">get_area</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_area"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_area" title="Link to this definition"></a></dt>
+<dd><p>Get the area associated to this bus.</p>
+<p>The bus-level reference has priority because it is the most specific
+assignment for this object. If it is not available, the method falls
+back to the substation hierarchy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Area object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_community">
+<span class="sig-name descname"><span class="pre">get_community</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.community.Community" title="VeraGridEngine.Devices.Aggregation.community.Community"><span class="pre">Community</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_community"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_community" title="Link to this definition"></a></dt>
+<dd><p>Get the community associated to this bus.</p>
+<p>The value is obtained through the substation hierarchy because the bus
+does not store a direct community reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Community object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_coordinates">
+<span class="sig-name descname"><span class="pre">get_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_coordinates" title="Link to this definition"></a></dt>
+<dd><p>Get tuple of the bus coordinates (longitude, latitude)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_country">
+<span class="sig-name descname"><span class="pre">get_country</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_country" title="Link to this definition"></a></dt>
+<dd><p>Get the country associated to this bus.</p>
+<p>The bus-level reference has priority because it is the most specific
+assignment for this object. If it is not available, the method falls
+back to the substation hierarchy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Country object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_is_slack_at">
+<span class="sig-name descname"><span class="pre">get_is_slack_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_is_slack_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_is_slack_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_municipality">
+<span class="sig-name descname"><span class="pre">get_municipality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_municipality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_municipality" title="Link to this definition"></a></dt>
+<dd><p>Get the municipality associated to this bus.</p>
+<p>The value is obtained through the substation hierarchy because the bus
+does not store a direct municipality reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Municipality object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_region">
+<span class="sig-name descname"><span class="pre">get_region</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_region" title="Link to this definition"></a></dt>
+<dd><p>Get the region associated to this bus.</p>
+<p>The value is obtained through the substation hierarchy because the bus
+does not store a direct region reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Region object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_substation">
+<span class="sig-name descname"><span class="pre">get_substation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_substation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_substation" title="Link to this definition"></a></dt>
+<dd><p>Get the substation associated to this bus.</p>
+<p>The bus-level reference has priority because it is the direct
+association stored by the bus. If it is not available, the method
+falls back to the voltage-level hierarchy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Substation object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_voltage_guess_at">
+<span class="sig-name descname"><span class="pre">get_voltage_guess_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_stored_guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">complex</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_voltage_guess_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_voltage_guess_at" title="Link to this definition"></a></dt>
+<dd><p>Determine the voltage initial guess
+:param t_idx: time step
+:param use_stored_guess: use the stored guess or get one from the devices
+:return: voltage guess</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_voltage_level">
+<span class="sig-name descname"><span class="pre">get_voltage_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_voltage_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_voltage_level" title="Link to this definition"></a></dt>
+<dd><p>Get the voltage level associated to this bus.</p>
+<p>The bus stores the voltage-level reference directly, so there is no
+alternative hierarchy to inspect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>VoltageLevel object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.get_zone">
+<span class="sig-name descname"><span class="pre">get_zone</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.get_zone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.get_zone" title="Link to this definition"></a></dt>
+<dd><p>Get the zone associated to this bus.</p>
+<p>The bus-level reference has priority because it is the most specific
+assignment for this object. If it is not available, the method falls
+back to the substation hierarchy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Zone object or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.graphic_type">
+<span class="sig-name descname"><span class="pre">graphic_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BusGraphicType" title="VeraGridEngine.enumerations.BusGraphicType"><span class="pre">BusGraphicType</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.graphic_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.h">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">h</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.h" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">h</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.internal">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">internal</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.internal" title="Link to this definition"></a></dt>
+<dd><p>Is the bus internal?</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.is_dc">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_dc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.is_dc" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">is_dc</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.is_grounded">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_grounded</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.is_grounded" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">is_grounded</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.is_slack">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_slack</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.is_slack" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">is_slack</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.is_slack_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_slack_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool" title="VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool"><span class="pre">ProfileBool</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.is_slack_prof" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">is_slack</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.latitude">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">latitude</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.latitude" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">latitude</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.longitude">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">longitude</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.longitude" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">longitude</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.plot_profiles">
+<span class="sig-name descname"><span class="pre">plot_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_voltage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series_driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.plot_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.plot_profiles" title="Link to this definition"></a></dt>
+<dd><p>plot the profiles of this bus
+:param time_profile: Master profile of time steps (stored in the MultiCircuit)
+:param time_series_driver: time series driver
+:param ax_load: Load axis, if not provided one will be created
+:param ax_voltage: Voltage axis, if not provided one will be created
+:param my_index: index of this object in the time series results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.set_is_slack_at">
+<span class="sig-name descname"><span class="pre">set_is_slack_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.set_is_slack_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.set_is_slack_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.substation">
+<span class="sig-name descname"><span class="pre">substation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.substation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.try_to_find_coordinates">
+<span class="sig-name descname"><span class="pre">try_to_find_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/bus.html#Bus.try_to_find_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.try_to_find_coordinates" title="Link to this definition"></a></dt>
+<dd><p>Try to find the bus coordinates</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.voltage_level">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">voltage_level</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.voltage_level" title="Link to this definition"></a></dt>
+<dd><p>voltage_level getter
+:return: Union[VoltageLevel, None]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.w">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">w</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.w" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">w</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.x">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">x</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.x" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.y">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">y</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.y" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.bus.Bus.zone">
+<span class="sig-name descname"><span class="pre">zone</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.bus.Bus.zone" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Substation.busbar">
+<span id="veragridengine-devices-substation-busbar-module"></span><h2>VeraGridEngine.Devices.Substation.busbar module<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation.busbar" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Substation.busbar.</span></span><span class="sig-name descname"><span class="pre">BusBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BusBar'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltage_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/busbar.html#BusBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice" title="VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicalDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:voltage_level)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:voltage_level)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'voltage_level':</span> <span class="pre">prop:voltage_level}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:voltage_level,)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.busbar.BusBar.voltage_level">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">voltage_level</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.busbar.BusBar.voltage_level" title="Link to this definition"></a></dt>
+<dd><p>Connectivity node getter
+:return: ConnectivityNode</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Substation.control_pc">
+<span id="veragridengine-devices-substation-control-pc-module"></span><h2>VeraGridEngine.Devices.Substation.control_pc module<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation.control_pc" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.control_pc.ControlPc">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Substation.control_pc.</span></span><span class="sig-name descname"><span class="pre">ControlPc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Control</span> <span class="pre">PC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/control_pc.html#ControlPc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.control_pc.ControlPc" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_parent.DynamicDevice" title="VeraGridEngine.Devices.Parents.dynamic_parent.DynamicDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicDevice</span></code></a></p>
+<p>This class serves as a place where to put global controls</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:rms_model,</span> <span class="pre">prop:emt_model,</span> <span class="pre">prop:rms_template,</span> <span class="pre">prop:emt_template,</span> <span class="pre">prop:rms_fmu_template,</span> <span class="pre">prop:emt_fmu_template,</span> <span class="pre">prop:rms_fmu_import_config,</span> <span class="pre">prop:emt_fmu_import_config,</span> <span class="pre">prop:rms_fmu_me_import_config,</span> <span class="pre">prop:emt_fmu_me_import_config)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:rms_model,</span> <span class="pre">prop:emt_model,</span> <span class="pre">prop:rms_template,</span> <span class="pre">prop:emt_template,</span> <span class="pre">prop:rms_fmu_template,</span> <span class="pre">prop:emt_fmu_template,</span> <span class="pre">prop:rms_fmu_import_config,</span> <span class="pre">prop:emt_fmu_import_config,</span> <span class="pre">prop:rms_fmu_me_import_config,</span> <span class="pre">prop:emt_fmu_me_import_config)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'emt_fmu_import_config':</span> <span class="pre">prop:emt_fmu_import_config,</span> <span class="pre">'emt_fmu_me_import_config':</span> <span class="pre">prop:emt_fmu_me_import_config,</span> <span class="pre">'emt_fmu_template':</span> <span class="pre">prop:emt_fmu_template,</span> <span class="pre">'emt_model':</span> <span class="pre">prop:emt_model,</span> <span class="pre">'emt_template':</span> <span class="pre">prop:emt_template,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'rms_fmu_import_config':</span> <span class="pre">prop:rms_fmu_import_config,</span> <span class="pre">'rms_fmu_me_import_config':</span> <span class="pre">prop:rms_fmu_me_import_config,</span> <span class="pre">'rms_fmu_template':</span> <span class="pre">prop:rms_fmu_template,</span> <span class="pre">'rms_model':</span> <span class="pre">prop:rms_model,</span> <span class="pre">'rms_template':</span> <span class="pre">prop:rms_template,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.control_pc.ControlPc.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Substation.substation">
+<span id="veragridengine-devices-substation-substation-module"></span><h2>VeraGridEngine.Devices.Substation.substation module<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation.substation" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Substation.substation.</span></span><span class="sig-name descname"><span class="pre">Substation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Substation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">community</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.community.Community" title="VeraGridEngine.Devices.Aggregation.community.Community"><span class="pre">Community</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">municipality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terrain_roughness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#3d7d95'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice" title="VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicalDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'irradiation':</span> <span class="pre">'irradiation_prof',</span> <span class="pre">'temperature':</span> <span class="pre">'temperature_prof',</span> <span class="pre">'wind_speed':</span> <span class="pre">'wind_speed_prof'}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:longitude,</span> <span class="pre">prop:latitude,</span> <span class="pre">prop:color,</span> <span class="pre">prop:area,</span> <span class="pre">prop:zone,</span> <span class="pre">prop:country,</span> <span class="pre">prop:community,</span> <span class="pre">prop:region,</span> <span class="pre">prop:municipality,</span> <span class="pre">prop:address,</span> <span class="pre">prop:irradiation,</span> <span class="pre">prop:temperature,</span> <span class="pre">prop:wind_speed,</span> <span class="pre">prop:terrain_roughness)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:longitude,</span> <span class="pre">prop:latitude,</span> <span class="pre">prop:color,</span> <span class="pre">prop:area,</span> <span class="pre">prop:zone,</span> <span class="pre">prop:country,</span> <span class="pre">prop:community,</span> <span class="pre">prop:region,</span> <span class="pre">prop:municipality,</span> <span class="pre">prop:address,</span> <span class="pre">prop:irradiation,</span> <span class="pre">prop:temperature,</span> <span class="pre">prop:wind_speed,</span> <span class="pre">prop:terrain_roughness)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'address':</span> <span class="pre">prop:address,</span> <span class="pre">'area':</span> <span class="pre">prop:area,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'color':</span> <span class="pre">prop:color,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'community':</span> <span class="pre">prop:community,</span> <span class="pre">'country':</span> <span class="pre">prop:country,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'irradiation':</span> <span class="pre">prop:irradiation,</span> <span class="pre">'latitude':</span> <span class="pre">prop:latitude,</span> <span class="pre">'longitude':</span> <span class="pre">prop:longitude,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'municipality':</span> <span class="pre">prop:municipality,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'region':</span> <span class="pre">prop:region,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'temperature':</span> <span class="pre">prop:temperature,</span> <span class="pre">'terrain_roughness':</span> <span class="pre">prop:terrain_roughness,</span> <span class="pre">'wind_speed':</span> <span class="pre">prop:wind_speed,</span> <span class="pre">'zone':</span> <span class="pre">prop:zone}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:longitude,</span> <span class="pre">prop:latitude,</span> <span class="pre">prop:color,</span> <span class="pre">prop:area,</span> <span class="pre">prop:zone,</span> <span class="pre">prop:country,</span> <span class="pre">prop:community,</span> <span class="pre">prop:region,</span> <span class="pre">prop:municipality,</span> <span class="pre">prop:address,</span> <span class="pre">prop:irradiation,</span> <span class="pre">prop:temperature,</span> <span class="pre">prop:wind_speed,</span> <span class="pre">prop:terrain_roughness)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.address">
+<span class="sig-name descname"><span class="pre">address</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.address" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.area">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">area</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.area" title="Link to this definition"></a></dt>
+<dd><p>area getter
+:return: Union[Area, None]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.commissioned_date">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">commissioned_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.commissioned_date" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.community">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">community</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.community.Community" title="VeraGridEngine.Devices.Aggregation.community.Community"><span class="pre">Community</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.community" title="Link to this definition"></a></dt>
+<dd><p>community getter
+:return: Union[Community, None]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.country">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">country</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.country" title="Link to this definition"></a></dt>
+<dd><p>country getter
+:return: Union[Country, None]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.decommissioned_date">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">decommissioned_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.decommissioned_date" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.get_commissioned_date_as_date">
+<span class="sig-name descname"><span class="pre">get_commissioned_date_as_date</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.get_commissioned_date_as_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.get_commissioned_date_as_date" title="Link to this definition"></a></dt>
+<dd><p>Get the commissioned date as datetime
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.get_decommissioned_date_as_date">
+<span class="sig-name descname"><span class="pre">get_decommissioned_date_as_date</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.get_decommissioned_date_as_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.get_decommissioned_date_as_date" title="Link to this definition"></a></dt>
+<dd><p>Get the commissioned date as datetime
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.get_irradiation_at">
+<span class="sig-name descname"><span class="pre">get_irradiation_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.get_irradiation_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.get_irradiation_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.get_temperature_at">
+<span class="sig-name descname"><span class="pre">get_temperature_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.get_temperature_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.get_temperature_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.get_wind_speed_at">
+<span class="sig-name descname"><span class="pre">get_wind_speed_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.get_wind_speed_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.get_wind_speed_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.irradiation">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">irradiation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.irradiation" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">irradiation</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.irradiation_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">irradiation_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.irradiation_prof" title="Link to this definition"></a></dt>
+<dd><p>Irradiation profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.latitude">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">latitude</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.latitude" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">latitude</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.longitude">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">longitude</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.longitude" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">longitude</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.modelling_authority">
+<span class="sig-name descname"><span class="pre">modelling_authority</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority" title="VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority"><span class="pre">ModellingAuthority</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.modelling_authority" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.municipality">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">municipality</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.municipality" title="Link to this definition"></a></dt>
+<dd><p>municipality getter
+:return: Union[Municipality, None]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.region">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">region</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.region" title="Link to this definition"></a></dt>
+<dd><p>region getter
+:return: Union[Region, None]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.set_commissioned_year">
+<span class="sig-name descname"><span class="pre">set_commissioned_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.set_commissioned_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.set_commissioned_year" title="Link to this definition"></a></dt>
+<dd><p>Helper function to set the commissioning date of the asset
+:param year: Year
+:param month: month number
+:param day: day number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.set_decommissioned_year">
+<span class="sig-name descname"><span class="pre">set_decommissioned_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/substation.html#Substation.set_decommissioned_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.set_decommissioned_year" title="Link to this definition"></a></dt>
+<dd><p>Helper function to set the decommissioning date of the asset
+:param year: Year
+:param month: month number
+:param day: day number</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.temperature">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">temperature</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.temperature" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">temperature</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.temperature_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">temperature_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.temperature_prof" title="Link to this definition"></a></dt>
+<dd><p>Temperature profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.terrain_roughness">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">terrain_roughness</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.terrain_roughness" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">terrain_roughness</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.wind_speed">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wind_speed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.wind_speed" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">wind_speed</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.wind_speed_prof">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wind_speed_prof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.wind_speed_prof" title="Link to this definition"></a></dt>
+<dd><p>wind_speed_prof profile
+:return: Profile</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.substation.Substation.zone">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">zone</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.substation.Substation.zone" title="Link to this definition"></a></dt>
+<dd><p>zone getter
+:return: Union[Zone, None]</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Substation.voltage_level">
+<span id="veragridengine-devices-substation-voltage-level-module"></span><h2>VeraGridEngine.Devices.Substation.voltage_level module<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation.voltage_level" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Substation.voltage_level.</span></span><span class="sig-name descname"><span class="pre">VoltageLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VoltageLevel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vnom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BuildStatus" title="VeraGridEngine.enumerations.BuildStatus"><span class="pre">BuildStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Commissioned</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/voltage_level.html#VoltageLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice" title="VeraGridEngine.Devices.Parents.physical_device.PhysicalDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicalDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:Vnom,</span> <span class="pre">prop:substation)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">prop:build_status,</span> <span class="pre">prop:owners,</span> <span class="pre">prop:Vnom,</span> <span class="pre">prop:substation)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Vnom':</span> <span class="pre">prop:Vnom,</span> <span class="pre">'action':</span> <span class="pre">prop:action,</span> <span class="pre">'build_status':</span> <span class="pre">prop:build_status,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'commissioned_date':</span> <span class="pre">prop:commissioned_date,</span> <span class="pre">'decommissioned_date':</span> <span class="pre">prop:decommissioned_date,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'modelling_authority':</span> <span class="pre">prop:modelling_authority,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'owners':</span> <span class="pre">prop:owners,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'substation':</span> <span class="pre">prop:substation}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:Vnom,</span> <span class="pre">prop:substation)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.Vnom">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Vnom</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.Vnom" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Vnom</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.substation">
+<span class="sig-name descname"><span class="pre">substation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel.substation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Substation.voltage_level_template">
+<span id="veragridengine-devices-substation-voltage-level-template-module"></span><h2>VeraGridEngine.Devices.Substation.voltage_level_template module<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation.voltage_level_template" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Substation.voltage_level_template.</span></span><span class="sig-name descname"><span class="pre">VoltageLevelTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Generic</span> <span class="pre">Area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bays</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Substation/voltage_level_template.html#VoltageLevelTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.EditableDevice" title="VeraGridEngine.Devices.Parents.editable_device.EditableDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">EditableDevice</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:vl_type,</span> <span class="pre">prop:voltage,</span> <span class="pre">prop:n_bays,</span> <span class="pre">prop:add_disconnectors)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:vl_type,</span> <span class="pre">prop:voltage,</span> <span class="pre">prop:n_bays,</span> <span class="pre">prop:add_disconnectors)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'add_disconnectors':</span> <span class="pre">prop:add_disconnectors,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'n_bays':</span> <span class="pre">prop:n_bays,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'vl_type':</span> <span class="pre">prop:vl_type,</span> <span class="pre">'voltage':</span> <span class="pre">prop:voltage}</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:vl_type,</span> <span class="pre">prop:voltage,</span> <span class="pre">prop:n_bays,</span> <span class="pre">prop:add_disconnectors)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ActionType" title="VeraGridEngine.enumerations.ActionType"><span class="pre">ActionType</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.action" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.add_disconnectors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_disconnectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.add_disconnectors" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">add_disconnectors</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.comment">
+<span class="sig-name descname"><span class="pre">comment</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.comment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.device_type">
+<span class="sig-name descname"><span class="pre">device_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.device_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.diff_changes">
+<span class="sig-name descname"><span class="pre">diff_changes</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.diff_changes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.n_bays">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_bays</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.n_bays" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">n_bays</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.selected_to_merge">
+<span class="sig-name descname"><span class="pre">selected_to_merge</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.selected_to_merge" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.voltage">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">voltage</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Substation.voltage_level_template.VoltageLevelTemplate.voltage" title="Link to this definition"></a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">voltage</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Devices.Substation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Devices.Substation" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Devices.Profiles.html" class="btn btn-neutral float-left" title="VeraGridEngine.Devices.Profiles package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Simulations.html" class="btn btn-neutral float-right" title="VeraGridEngine.Simulations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

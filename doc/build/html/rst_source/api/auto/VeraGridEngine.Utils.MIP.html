@@ -1,0 +1,996 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.MIP package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Utils.MIP.SimpleMip package" href="VeraGridEngine.Utils.MIP.SimpleMip.html" />
+    <link rel="prev" title="VeraGridEngine.Utils.GeographicalMethods package" href="VeraGridEngine.Utils.GeographicalMethods.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.MIP package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Utils.MIP.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-utils-mip-package">
+<h1>VeraGridEngine.Utils.MIP package<a class="headerlink" href="#veragridengine-utils-mip-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html">VeraGridEngine.Utils.MIP.SimpleMip package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#module-VeraGridEngine.Utils.MIP.SimpleMip.highs">VeraGridEngine.Utils.MIP.SimpleMip.highs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.highs.solve_with_highs"><code class="docutils literal notranslate"><span class="pre">solve_with_highs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#module-VeraGridEngine.Utils.MIP.SimpleMip.lpmodel">VeraGridEngine.Utils.MIP.SimpleMip.lpmodel module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel"><code class="docutils literal notranslate"><span class="pre">LpModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.INFINITY"><code class="docutils literal notranslate"><span class="pre">LpModel.INFINITY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.OPTIMAL"><code class="docutils literal notranslate"><span class="pre">LpModel.OPTIMAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_cst"><code class="docutils literal notranslate"><span class="pre">LpModel.add_cst()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_int"><code class="docutils literal notranslate"><span class="pre">LpModel.add_int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_var"><code class="docutils literal notranslate"><span class="pre">LpModel.add_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.add_vars"><code class="docutils literal notranslate"><span class="pre">LpModel.add_vars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.constraints"><code class="docutils literal notranslate"><span class="pre">LpModel.constraints</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.copy"><code class="docutils literal notranslate"><span class="pre">LpModel.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.fobj_value"><code class="docutils literal notranslate"><span class="pre">LpModel.fobj_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_array_value"><code class="docutils literal notranslate"><span class="pre">LpModel.get_array_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_coefficients_data"><code class="docutils literal notranslate"><span class="pre">LpModel.get_coefficients_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_dual_value"><code class="docutils literal notranslate"><span class="pre">LpModel.get_dual_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_obj_coefficient"><code class="docutils literal notranslate"><span class="pre">LpModel.get_obj_coefficient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_objective_value"><code class="docutils literal notranslate"><span class="pre">LpModel.get_objective_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_value"><code class="docutils literal notranslate"><span class="pre">LpModel.get_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.get_var_data"><code class="docutils literal notranslate"><span class="pre">LpModel.get_var_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.is_minimize"><code class="docutils literal notranslate"><span class="pre">LpModel.is_minimize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.is_mip"><code class="docutils literal notranslate"><span class="pre">LpModel.is_mip()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.is_optimal"><code class="docutils literal notranslate"><span class="pre">LpModel.is_optimal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.logger"><code class="docutils literal notranslate"><span class="pre">LpModel.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.maximize"><code class="docutils literal notranslate"><span class="pre">LpModel.maximize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.minimize"><code class="docutils literal notranslate"><span class="pre">LpModel.minimize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.objective"><code class="docutils literal notranslate"><span class="pre">LpModel.objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.originally_infeasible"><code class="docutils literal notranslate"><span class="pre">LpModel.originally_infeasible</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.print_solution"><code class="docutils literal notranslate"><span class="pre">LpModel.print_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.relaxed_slacks"><code class="docutils literal notranslate"><span class="pre">LpModel.relaxed_slacks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.save_model"><code class="docutils literal notranslate"><span class="pre">LpModel.save_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.save_model_to_lp"><code class="docutils literal notranslate"><span class="pre">LpModel.save_model_to_lp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.save_model_to_mps"><code class="docutils literal notranslate"><span class="pre">LpModel.save_model_to_mps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.set_solution"><code class="docutils literal notranslate"><span class="pre">LpModel.set_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.solution_available"><code class="docutils literal notranslate"><span class="pre">LpModel.solution_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.solve"><code class="docutils literal notranslate"><span class="pre">LpModel.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.solver_type"><code class="docutils literal notranslate"><span class="pre">LpModel.solver_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.status2string"><code class="docutils literal notranslate"><span class="pre">LpModel.status2string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.sum"><code class="docutils literal notranslate"><span class="pre">LpModel.sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.LpModel.variables"><code class="docutils literal notranslate"><span class="pre">LpModel.variables</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.get_available_mip_solvers"><code class="docutils literal notranslate"><span class="pre">get_available_mip_solvers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpmodel.set_var_bounds"><code class="docutils literal notranslate"><span class="pre">set_var_bounds()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#module-VeraGridEngine.Utils.MIP.SimpleMip.lpobjects">VeraGridEngine.Utils.MIP.SimpleMip.lpobjects module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst"><code class="docutils literal notranslate"><span class="pre">LpCst</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.add_term"><code class="docutils literal notranslate"><span class="pre">LpCst.add_term()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.add_var"><code class="docutils literal notranslate"><span class="pre">LpCst.add_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.coefficient"><code class="docutils literal notranslate"><span class="pre">LpCst.coefficient</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.copy"><code class="docutils literal notranslate"><span class="pre">LpCst.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.get_bounds"><code class="docutils literal notranslate"><span class="pre">LpCst.get_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.get_index"><code class="docutils literal notranslate"><span class="pre">LpCst.get_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.get_rhs"><code class="docutils literal notranslate"><span class="pre">LpCst.get_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.linear_expression"><code class="docutils literal notranslate"><span class="pre">LpCst.linear_expression</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.name"><code class="docutils literal notranslate"><span class="pre">LpCst.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.sense"><code class="docutils literal notranslate"><span class="pre">LpCst.sense</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.set_index"><code class="docutils literal notranslate"><span class="pre">LpCst.set_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.terms"><code class="docutils literal notranslate"><span class="pre">LpCst.terms</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpExp"><code class="docutils literal notranslate"><span class="pre">LpExp</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpExp.copy"><code class="docutils literal notranslate"><span class="pre">LpExp.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpExp.offset"><code class="docutils literal notranslate"><span class="pre">LpExp.offset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpExp.terms"><code class="docutils literal notranslate"><span class="pre">LpExp.terms</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar"><code class="docutils literal notranslate"><span class="pre">LpVar</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.copy"><code class="docutils literal notranslate"><span class="pre">LpVar.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.get_index"><code class="docutils literal notranslate"><span class="pre">LpVar.get_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.is_integer"><code class="docutils literal notranslate"><span class="pre">LpVar.is_integer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.lower_bound"><code class="docutils literal notranslate"><span class="pre">LpVar.lower_bound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.name"><code class="docutils literal notranslate"><span class="pre">LpVar.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.set_index"><code class="docutils literal notranslate"><span class="pre">LpVar.set_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.upper_bound"><code class="docutils literal notranslate"><span class="pre">LpVar.upper_bound</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.SimpleMip.html#module-VeraGridEngine.Utils.MIP.SimpleMip">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Utils.MIP.gslv_interface">
+<span id="veragridengine-utils-mip-gslv-interface-module"></span><h2>VeraGridEngine.Utils.MIP.gslv_interface module<a class="headerlink" href="#module-VeraGridEngine.Utils.MIP.gslv_interface" title="Link to this heading"></a></h2>
+<p>This module abstracts the synthax of PuLP out
+so that in the future it can be exchanged with some
+other solver interface easily</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.gslv_interface.</span></span><span class="sig-name descname"><span class="pre">LpModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPSolvers" title="VeraGridEngine.enumerations.MIPSolvers"><span class="pre">MIPSolvers</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel" title="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLpModel</span></code></a></p>
+<p>LPModel implementation for PuLP</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.INFINITY">
+<span class="sig-name descname"><span class="pre">INFINITY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e+20</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.INFINITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.OPTIMAL">
+<span class="sig-name descname"><span class="pre">OPTIMAL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.OPTIMAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_bin">
+<span class="sig-name descname"><span class="pre">add_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpVar</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.add_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_bin" title="Link to this definition"></a></dt>
+<dd><p>Make integer LP var
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_cst">
+<span class="sig-name descname"><span class="pre">add_cst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpCst</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpCst</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.add_cst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_cst" title="Link to this definition"></a></dt>
+<dd><p>Add constraint to the model
+:param cst: constraint object (or general expression)
+:param name: name of the constraint (optional)
+:return: Constraint object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_int">
+<span class="sig-name descname"><span class="pre">add_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpVar</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.add_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_int" title="Link to this definition"></a></dt>
+<dd><p>Make integer LP var
+:param lb: lower bound
+:param ub: upper bound
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_var">
+<span class="sig-name descname"><span class="pre">add_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpVar</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.add_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.add_var" title="Link to this definition"></a></dt>
+<dd><p>Make floating point LP var
+:param lb: lower bound
+:param ub: upper bound
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.fobj_value">
+<span class="sig-name descname"><span class="pre">fobj_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.fobj_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.fobj_value" title="Link to this definition"></a></dt>
+<dd><p>Get the objective function value
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.get_dual_value">
+<span class="sig-name descname"><span class="pre">get_dual_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpCst</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.get_dual_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.get_dual_value" title="Link to this definition"></a></dt>
+<dd><p>Get the dual value of a variable stored in a numpy array of objects
+:param x: constraint
+:return: result or zero</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpVar</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpExp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpCst</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.get_value" title="Link to this definition"></a></dt>
+<dd><p>Get the value of a variable stored in a numpy array of objects
+:param x: solver object (it may be a LP var or a number)
+:return: result or zero</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.is_mip">
+<span class="sig-name descname"><span class="pre">is_mip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.is_mip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.is_mip" title="Link to this definition"></a></dt>
+<dd><p>Is this model a MIP?
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpExp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.minimize" title="Link to this definition"></a></dt>
+<dd><p>Set the objective function with minimization sense
+:param obj_function: expression to minimize</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.result">
+<span class="sig-name descname"><span class="pre">result</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">LpResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.result" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ntc_opf_problem.lp'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.save_model" title="Link to this definition"></a></dt>
+<dd><p>Save problem in LP format
+:param file_name: name of the file (.lp or .mps supported)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.set_var_bounds">
+<span class="sig-name descname"><span class="pre">set_var_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpVar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.set_var_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.set_var_bounds" title="Link to this definition"></a></dt>
+<dd><p>Modify the bounds of a variable
+:param var: LpVar instance to modify
+:param lb: lower bound value
+:param ub: upper bound value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_logs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the model
+:param robust: In this interface, this is useless
+:param show_logs: In this interface, this is useless
+:param progress_text: progress function pointer
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.status2string">
+<span class="sig-name descname"><span class="pre">status2string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.status2string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.status2string" title="Link to this definition"></a></dt>
+<dd><p>Convert solver status to readable string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.LpModel.sum">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpExp</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#LpModel.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.LpModel.sum" title="Link to this definition"></a></dt>
+<dd><p>Add sum of the constraints to the model
+:param cst: constraint object (or general expression)
+:return: Constraint object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.gslv_interface.get_available_mip_solvers">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.gslv_interface.</span></span><span class="sig-name descname"><span class="pre">get_available_mip_solvers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/gslv_interface.html#get_available_mip_solvers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.gslv_interface.get_available_mip_solvers" title="Link to this definition"></a></dt>
+<dd><p>Get a list of candidate solvers
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.MIP.mip_interface_template">
+<span id="veragridengine-utils-mip-mip-interface-template-module"></span><h2>VeraGridEngine.Utils.MIP.mip_interface_template module<a class="headerlink" href="#module-VeraGridEngine.Utils.MIP.mip_interface_template" title="Link to this heading"></a></h2>
+<p>This module abstracts the synthax of PuLP out
+so that in the future it can be exchanged with some
+other solver interface easily</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.mip_interface_template.</span></span><span class="sig-name descname"><span class="pre">AbstractLpModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPSolvers" title="VeraGridEngine.enumerations.MIPSolvers"><span class="pre">MIPSolvers</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for LP/MIP models.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.INFINITY">
+<span class="sig-name descname"><span class="pre">INFINITY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e+20</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.INFINITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.OPTIMAL">
+<span class="sig-name descname"><span class="pre">OPTIMAL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.OPTIMAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_bin">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.add_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_bin" title="Link to this definition"></a></dt>
+<dd><p>add binary variable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_cst">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_cst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.add_cst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_cst" title="Link to this definition"></a></dt>
+<dd><p>Add a constraint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_int">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.add_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_int" title="Link to this definition"></a></dt>
+<dd><p>Add an integer variable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_var">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.add_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.add_var" title="Link to this definition"></a></dt>
+<dd><p>Add a continuous variable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.fobj_value">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fobj_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.fobj_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.fobj_value" title="Link to this definition"></a></dt>
+<dd><p>Get the objective value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.get_dual_value">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_dual_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.get_dual_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.get_dual_value" title="Link to this definition"></a></dt>
+<dd><p>Return the dual value of a constraint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.get_value">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.get_value" title="Link to this definition"></a></dt>
+<dd><p>Return the numerical value of a variable/expression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.is_mip">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_mip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.is_mip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.is_mip" title="Link to this definition"></a></dt>
+<dd><p>Return True if model has integer variables.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.logger" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.minimize">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.minimize" title="Link to this definition"></a></dt>
+<dd><p>Define minimization objective.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.model_as_string">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">model_as_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.model_as_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.model_as_string" title="Link to this definition"></a></dt>
+<dd><p>Return model string representation (LP)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.originally_infeasible">
+<span class="sig-name descname"><span class="pre">originally_infeasible</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.originally_infeasible" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.relaxed_slacks">
+<span class="sig-name descname"><span class="pre">relaxed_slacks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.relaxed_slacks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.save_model">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.save_model" title="Link to this definition"></a></dt>
+<dd><p>Export the model to LP/MPS for debugging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.set_var_bounds">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">set_var_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.set_var_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.set_var_bounds" title="Link to this definition"></a></dt>
+<dd><p>Modify variable bounds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.solve">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_logs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the optimization problem.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.solver_type">
+<span class="sig-name descname"><span class="pre">solver_type</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.solver_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.status2string">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">status2string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.status2string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.status2string" title="Link to this definition"></a></dt>
+<dd><p>Convert solver status to readable string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.sum">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exprs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/mip_interface_template.html#AbstractLpModel.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel.sum" title="Link to this definition"></a></dt>
+<dd><p>Sum of expressions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.MIP.ortools_interface">
+<span id="veragridengine-utils-mip-ortools-interface-module"></span><h2>VeraGridEngine.Utils.MIP.ortools_interface module<a class="headerlink" href="#module-VeraGridEngine.Utils.MIP.ortools_interface" title="Link to this heading"></a></h2>
+<p>This module abstracts the synthax of ORTOOLS out
+so that in the future it can be exchanged with some
+other solver interface easily</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.ortools_interface.</span></span><span class="sig-name descname"><span class="pre">OrToolsLpModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPSolvers" title="VeraGridEngine.enumerations.MIPSolvers"><span class="pre">MIPSolvers</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel" title="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLpModel</span></code></a></p>
+<p>LPModel implementation for ORTOOLS</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFINITY">
+<span class="sig-name descname"><span class="pre">INFINITY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e+20</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFINITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.OPTIMAL">
+<span class="sig-name descname"><span class="pre">OPTIMAL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SolveStatus.OPTIMAL:</span> <span class="pre">0&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.OPTIMAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_bin">
+<span class="sig-name descname"><span class="pre">add_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Variable</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.add_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_bin" title="Link to this definition"></a></dt>
+<dd><p>Make integer LP var
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_cst">
+<span class="sig-name descname"><span class="pre">add_cst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BoundedLinearExpression</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LinearExpr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LinearConstraint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.add_cst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_cst" title="Link to this definition"></a></dt>
+<dd><p>Add constraint to the model
+:param cst: constraint object (or general expression)
+:param name: name of the constraint (optional)
+:return: Constraint object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_int">
+<span class="sig-name descname"><span class="pre">add_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Variable</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.add_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_int" title="Link to this definition"></a></dt>
+<dd><p>Make integer LP var
+:param lb: lower bound
+:param ub: upper bound
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_var">
+<span class="sig-name descname"><span class="pre">add_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Variable</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.add_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_var" title="Link to this definition"></a></dt>
+<dd><p>Make floating point LP var
+:param lb: lower bound
+:param ub: upper bound
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.fobj_value">
+<span class="sig-name descname"><span class="pre">fobj_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.fobj_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.fobj_value" title="Link to this definition"></a></dt>
+<dd><p>Get the objective function value
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.get_dual_value">
+<span class="sig-name descname"><span class="pre">get_dual_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LinearConstraint</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.get_dual_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.get_dual_value" title="Link to this definition"></a></dt>
+<dd><p>Get the dual value of a variable stored in a numpy array of objects
+:param x: constraint
+:return: result or zero</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Variable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LinearExpr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LinearConstraint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BoundedLinearExpression</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.get_value" title="Link to this definition"></a></dt>
+<dd><p>Get the value of a variable stored in a numpy array of objects
+:param x: solver object (it may be a LP var or a number)
+:return: result or zero</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.is_mip">
+<span class="sig-name descname"><span class="pre">is_mip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.is_mip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.is_mip" title="Link to this definition"></a></dt>
+<dd><p>Is this Model a MIP?
+:return: Bool</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LinearExpr</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.minimize" title="Link to this definition"></a></dt>
+<dd><p>Set the objective function with minimization sense
+:param obj_function: expression to minimize</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.model_as_string">
+<span class="sig-name descname"><span class="pre">model_as_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.model_as_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.model_as_string" title="Link to this definition"></a></dt>
+<dd><p>Model as string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.pass_through_file">
+<span class="sig-name descname"><span class="pre">pass_through_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pass_thought_file.lp'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Model</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.pass_through_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.pass_through_file" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fname</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ntc_opf_problem.lp'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.save_model" title="Link to this definition"></a></dt>
+<dd><p>Save problem in LP format
+:param file_name: name of the file (.lp or .mps supported)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.set_var_bounds">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">set_var_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.set_var_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.set_var_bounds" title="Link to this definition"></a></dt>
+<dd><p>Modify the bounds of a variable
+:param var: LpVar instance to modify
+:param lb: lower bound value
+:param ub: upper bound value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_logs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the model
+:param robust: Relax the problem if infeasible
+:param show_logs
+:param progress_text:
+:return: integer value matching OPTIMAL or not</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.solver">
+<span class="sig-name descname"><span class="pre">solver</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.solver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.status2string">
+<span class="sig-name descname"><span class="pre">status2string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SolveStatus</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.status2string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.status2string" title="Link to this definition"></a></dt>
+<dd><p>Convert ortools status to string
+:param stat:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.sum">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LinearExpr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LinearExpr</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#OrToolsLpModel.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.sum" title="Link to this definition"></a></dt>
+<dd><p>Add sum of the constraints to the model
+:param cst: constraint object (or general expression)
+:return: Constraint object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.get_ortools_available_mip_solvers">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.ortools_interface.</span></span><span class="sig-name descname"><span class="pre">get_ortools_available_mip_solvers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#get_ortools_available_mip_solvers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.get_ortools_available_mip_solvers" title="Link to this definition"></a></dt>
+<dd><p>Get a list of candidate solvers
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.get_solver_params_string">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.ortools_interface.</span></span><span class="sig-name descname"><span class="pre">get_solver_params_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primal_feasibility_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual_feasibility_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimality_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/ortools_interface.html#get_solver_params_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.get_solver_params_string" title="Link to this definition"></a></dt>
+<dd><p>Returns a string of solver-specific parameters suitable for
+model_builder.Solver.SetSolverSpecificParametersAsString(…).
+:param solver: one of “SCIP”, “CBC”, “CPLEX”, “GUROBI”, “XPRESS”, “HIGHS”, “GLOP”, “PDLP”
+:param relative_gap: relative optimality gap tolerance
+:param abs_gap: absolute optimality gap tolerance
+:param primal_feasibility_tolerance:
+:param dual_feasibility_tolerance:
+:param optimality_tolerance:
+:param time_limit: time limit in seconds (if supported)
+:param verbose: whether to enable verbose solver output
+:return: parameter string</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.MIP.pulp_interface">
+<span id="veragridengine-utils-mip-pulp-interface-module"></span><h2>VeraGridEngine.Utils.MIP.pulp_interface module<a class="headerlink" href="#module-VeraGridEngine.Utils.MIP.pulp_interface" title="Link to this heading"></a></h2>
+<p>This module abstracts the synthax of PuLP out
+so that in the future it can be exchanged with some
+other solver interface easily</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">PulpLpModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPSolvers" title="VeraGridEngine.enumerations.MIPSolvers"><span class="pre">MIPSolvers</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel" title="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLpModel</span></code></a></p>
+<p>LPModel implementation for PuLP</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFINITY">
+<span class="sig-name descname"><span class="pre">INFINITY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e+20</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFINITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.OPTIMAL">
+<span class="sig-name descname"><span class="pre">OPTIMAL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.OPTIMAL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_bin">
+<span class="sig-name descname"><span class="pre">add_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpVariable</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.add_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_bin" title="Link to this definition"></a></dt>
+<dd><p>Make integer LP var
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_cst">
+<span class="sig-name descname"><span class="pre">add_cst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpConstraint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpConstraint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.add_cst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_cst" title="Link to this definition"></a></dt>
+<dd><p>Add constraint to the model
+:param cst: constraint object (or general expression)
+:param name: name of the constraint (optional)
+:return: Constraint object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_int">
+<span class="sig-name descname"><span class="pre">add_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpVariable</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.add_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_int" title="Link to this definition"></a></dt>
+<dd><p>Make integer LP var
+:param lb: lower bound
+:param ub: upper bound
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_var">
+<span class="sig-name descname"><span class="pre">add_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpVariable</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.add_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_var" title="Link to this definition"></a></dt>
+<dd><p>Make floating point LP var
+:param lb: lower bound
+:param ub: upper bound
+:param name: name (optional)
+:return: LpVar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.fobj_value">
+<span class="sig-name descname"><span class="pre">fobj_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.fobj_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.fobj_value" title="Link to this definition"></a></dt>
+<dd><p>Get the objective function value
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.get_dual_value">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_dual_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpConstraint</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.get_dual_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.get_dual_value" title="Link to this definition"></a></dt>
+<dd><p>Get the dual value of a variable stored in a numpy array of objects
+:param x: constraint
+:return: result or zero</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.get_solver">
+<span class="sig-name descname"><span class="pre">get_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_logs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.get_solver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.get_solver" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>show_logs</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.get_value">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpVariable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpAffineExpression</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpConstraint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.get_value" title="Link to this definition"></a></dt>
+<dd><p>Get the value of a variable stored in a numpy array of objects
+:param x: solver object (it may be a LP var or a number)
+:return: result or zero</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.is_mip">
+<span class="sig-name descname"><span class="pre">is_mip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.is_mip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.is_mip" title="Link to this definition"></a></dt>
+<dd><p>Is this odel a MIP?
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpAffineExpression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.minimize" title="Link to this definition"></a></dt>
+<dd><p>Set the objective function with minimization sense
+:param obj_function: expression to minimize</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.model_as_string">
+<span class="sig-name descname"><span class="pre">model_as_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.model_as_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.model_as_string" title="Link to this definition"></a></dt>
+<dd><p>Return the LP representation
+:return: string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ntc_opf_problem.lp'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.save_model" title="Link to this definition"></a></dt>
+<dd><p>Save problem in LP format
+:param file_name: name of the file (.lp or .mps supported)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.set_var_bounds">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">set_var_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpVariable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.set_var_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.set_var_bounds" title="Link to this definition"></a></dt>
+<dd><p>Modify the bounds of a variable
+:param var: LpVar instance to modify
+:param lb: lower bound value
+:param ub: upper bound value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_logs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the model
+:param robust: In this interface, this is useless
+:param show_logs: In this interface, this is useless
+:param progress_text: progress function pointer
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.status2string">
+<span class="sig-name descname"><span class="pre">status2string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.status2string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.status2string" title="Link to this definition"></a></dt>
+<dd><p>Convert the PuLP status to a string
+:param stat:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.sum">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cst</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpAffineExpression</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#PulpLpModel.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.sum" title="Link to this definition"></a></dt>
+<dd><p>Add sum of the constraints to the model
+:param cst: constraint object (or general expression)
+:return: Constraint object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_lp_var_value">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_lp_var_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpVariable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_lp_var_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_lp_var_value" title="Link to this definition"></a></dt>
+<dd><p>Get the value of a variable stored in a numpy array of objects
+:param x: soe object (it may be a LP var or a number)
+:return: result or previous numeric value</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_pulp_available_mip_solvers">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_pulp_available_mip_solvers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_pulp_available_mip_solvers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_pulp_available_mip_solvers" title="Link to this definition"></a></dt>
+<dd><p>Get a list of candidate solvers
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.MIP.selected_interface">
+<span id="veragridengine-utils-mip-selected-interface-module"></span><h2>VeraGridEngine.Utils.MIP.selected_interface module<a class="headerlink" href="#module-VeraGridEngine.Utils.MIP.selected_interface" title="Link to this heading"></a></h2>
+<p>Uncomment the appropriate interface imports to use: Pulp or OrTools</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.get_available_mip_frameworks">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">get_available_mip_frameworks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPFramework" title="VeraGridEngine.enumerations.MIPFramework"><span class="pre">MIPFramework</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#get_available_mip_frameworks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.get_available_mip_frameworks" title="Link to this definition"></a></dt>
+<dd><p>Get list of available frameworks
+:return: List[MIPFramework]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.get_available_mip_solvers">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">get_available_mip_solvers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPFramework" title="VeraGridEngine.enumerations.MIPFramework"><span class="pre">MIPFramework</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#get_available_mip_solvers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.get_available_mip_solvers" title="Link to this definition"></a></dt>
+<dd><p>Get the solvers available in the selected interface
+:param tpe:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.get_model_instance">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">get_model_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPFramework" title="VeraGridEngine.enumerations.MIPFramework"><span class="pre">MIPFramework</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.MIPSolvers" title="VeraGridEngine.enumerations.MIPSolvers"><span class="pre">MIPSolvers</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel" title="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel"><span class="pre">PulpLpModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel" title="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel"><span class="pre">OrToolsLpModel</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#get_model_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.get_model_instance" title="Link to this definition"></a></dt>
+<dd><p>Get an instance of the solver framework and the selected solver
+:param tpe: MIPInterface framework
+:param solver_type: MIPSolvers
+:return: OrToolsLpModel or PulpLpModel</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.join">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.join" title="Link to this definition"></a></dt>
+<dd><p>Generate naming string
+:param init: initial string
+:param vals: concatenation of indices
+:param sep: separator
+:return: naming string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.lpDot">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">lpDot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csc_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">object_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">object_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#lpDot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.lpDot" title="Link to this definition"></a></dt>
+<dd><p>CSC matrix-vector or CSC matrix-matrix dot product (A x b)
+:param mat: CSC sparse matrix (A)
+:param arr: dense vector or matrix of object type (b)
+:return: vector or matrix result of the product</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.lpDot1D_changes">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">lpDot1D_changes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csc_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">object_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">object_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#lpDot1D_changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.lpDot1D_changes" title="Link to this definition"></a></dt>
+<dd><p>CSC matrix-vector or CSC matrix-matrix dot product (A x b)</p>
+<p>Every product term builds an LP expression object, which is by far the most expensive
+operation when formulating a large problem. <code class="docutils literal notranslate"><span class="pre">row_filter</span></code> allows speeding up the 
+calculation, especially noticeable for large grids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> – CSC sparse matrix (A)</p></li>
+<li><p><strong>arr</strong> – dense vector or matrix of object type (b)</p></li>
+<li><p><strong>row_filter</strong> – per row flag, True for the rows the caller needs. None builds every row.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector or matrix result of the product, and the list of rows that were written</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Utils.MIP">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Utils.MIP" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Utils.GeographicalMethods.html" class="btn btn-neutral float-left" title="VeraGridEngine.Utils.GeographicalMethods package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Utils.MIP.SimpleMip.html" class="btn btn-neutral float-right" title="VeraGridEngine.Utils.MIP.SimpleMip package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

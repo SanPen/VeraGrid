@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Compilers.Gslv.Simulations package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.DataStructures package" href="VeraGridEngine.DataStructures.html" />
+    <link rel="prev" title="VeraGridEngine.Compilers.Gslv.Devices package" href="VeraGridEngine.Compilers.Gslv.Devices.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Compilers.Gslv.html">VeraGridEngine.Compilers.Gslv package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Compilers.Gslv.Simulations package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Compilers.Gslv.Simulations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-compilers-gslv-simulations-package">
+<h1>VeraGridEngine.Compilers.Gslv.Simulations package<a class="headerlink" href="#veragridengine-compilers-gslv-simulations-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations.contingencies">
+<span id="veragridengine-compilers-gslv-simulations-contingencies-module"></span><h2>VeraGridEngine.Compilers.Gslv.Simulations.contingencies module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations.contingencies" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.contingencies.gslv_contingencies_snapshot">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.contingencies.</span></span><span class="sig-name descname"><span class="pre">gslv_contingencies_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">con_opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.ContingencyAnalysis.html#VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options.ContingencyAnalysisOptions" title="VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options.ContingencyAnalysisOptions"><span class="pre">ContingencyAnalysisOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults" title="VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults"><span class="pre">OptimalPowerFlowResults</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pg.ContingencyResultsSnapshot</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/contingencies.html#gslv_contingencies_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.contingencies.gslv_contingencies_snapshot" title="Link to this definition"></a></dt>
+<dd><p>GSLV power flow
+:param circuit: MultiCircuit instance
+:param con_opt: ContingencyAnalysisOptions
+:param opf_results: OptimalPowerFlowResults (optional)
+:return: GSLV Power flow results object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.contingencies.gslv_contingencies_ts">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.contingencies.</span></span><span class="sig-name descname"><span class="pre">gslv_contingencies_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">con_opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.ContingencyAnalysis.html#VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options.ContingencyAnalysisOptions" title="VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options.ContingencyAnalysisOptions"><span class="pre">ContingencyAnalysisOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pg.ContingencyAnalysisResults</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/contingencies.html#gslv_contingencies_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.contingencies.gslv_contingencies_ts" title="Link to this definition"></a></dt>
+<dd><p>GSLV power flow
+:param circuit: MultiCircuit instance
+:param con_opt: ContingencyAnalysisOptions
+:param time_series: Compile with VeraGrid time series?
+:param time_indices: Array of time indices
+:return: GSLV Power flow results object</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations.investments">
+<span id="veragridengine-compilers-gslv-simulations-investments-module"></span><h2>VeraGridEngine.Compilers.Gslv.Simulations.investments module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations.investments" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.investments.get_gslv_investments_evaluation_options">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.investments.</span></span><span class="sig-name descname"><span class="pre">get_gslv_investments_evaluation_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.html#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions" title="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions"><span class="pre">InvestmentsEvaluationOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gslv_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultiCircuit</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">InvestmentsEvaluationOptions</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/investments.html#get_gslv_investments_evaluation_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.investments.get_gslv_investments_evaluation_options" title="Link to this definition"></a></dt>
+<dd><p>Translate VeraGrid investment-evaluation options to GSLV options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>opt</strong> – VeraGrid investments-evaluation options.</p></li>
+<li><p><strong>circuit</strong> – VeraGrid circuit.</p></li>
+<li><p><strong>gslv_circuit</strong> – Converted GSLV circuit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>GSLV investments-evaluation options.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.investments.gslv_investments_evaluation">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.investments.</span></span><span class="sig-name descname"><span class="pre">gslv_investments_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.html#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions" title="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions"><span class="pre">InvestmentsEvaluationOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;VeraGridEngine.basic_structures.Logger</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.html#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults" title="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults"><span class="pre">InvestmentsEvaluationResults</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/investments.html#gslv_investments_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.investments.gslv_investments_evaluation" title="Link to this definition"></a></dt>
+<dd><p>Run GSLV investments evaluation and translate its results back to VeraGrid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – VeraGrid circuit.</p></li>
+<li><p><strong>options</strong> – VeraGrid investments-evaluation options.</p></li>
+<li><p><strong>logger</strong> – VeraGrid logger instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>VeraGrid investments-evaluation results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.investments.translate_gslv_investments_evaluation_results">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.investments.</span></span><span class="sig-name descname"><span class="pre">translate_gslv_investments_evaluation_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InvestmentsEvaluationResults</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.html#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults" title="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults"><span class="pre">InvestmentsEvaluationResults</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/investments.html#translate_gslv_investments_evaluation_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.investments.translate_gslv_investments_evaluation_results" title="Link to this definition"></a></dt>
+<dd><p>Translate GSLV investment-evaluation results to VeraGrid results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>res</strong> – GSLV investments-evaluation results.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>VeraGrid investments-evaluation results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations.linear">
+<span id="veragridengine-compilers-gslv-simulations-linear-module"></span><h2>VeraGridEngine.Compilers.Gslv.Simulations.linear module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations.linear" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.linear.gslv_linear_matrices">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.linear.</span></span><span class="sig-name descname"><span class="pre">gslv_linear_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">distributed_slack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correctValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_branch_controls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LinearAnalysis</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/linear.html#gslv_linear_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.linear.gslv_linear_matrices" title="Link to this definition"></a></dt>
+<dd><p>Newton linear analysis
+:param circuit: MultiCircuit instance
+:param distributed_slack: distribute the PTDF slack
+:param correctValues: Correct nonsense values (outsie -1, 1) interval
+:param override_branch_controls: Override branch controls
+:return: Newton LinearAnalysisMatrices object</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations.opf">
+<span id="veragridengine-compilers-gslv-simulations-opf-module"></span><h2>VeraGridEngine.Compilers.Gslv.Simulations.opf module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations.opf" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.opf.get_gslv_opf_options">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.opf.</span></span><span class="sig-name descname"><span class="pre">get_gslv_opf_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_options.OptimalPowerFlowOptions" title="VeraGridEngine.Simulations.OPF.opf_options.OptimalPowerFlowOptions"><span class="pre">OptimalPowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gslv_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pg.MultiCircuit</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pg.OptimalPowerFlowOptions</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/opf.html#get_gslv_opf_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.opf.get_gslv_opf_options" title="Link to this definition"></a></dt>
+<dd><p>Translate VeraGrid power flow options to GSLV power flow options
+:param opt:
+:param circuit:
+:param gslv_circuit:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.opf.gslv_opf">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.opf.</span></span><span class="sig-name descname"><span class="pre">gslv_opf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_options.OptimalPowerFlowOptions" title="VeraGridEngine.Simulations.OPF.opf_options.OptimalPowerFlowOptions"><span class="pre">OptimalPowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union[IntVec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;VeraGridEngine.basic_structures.Logger</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pg.OptimalPowerFlowResults</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/opf.html#gslv_opf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.opf.gslv_opf" title="Link to this definition"></a></dt>
+<dd><p>GSLV power flow
+:param logger:
+:param circuit: MultiCircuit instance
+:param opf_options: Power Flow Options
+:param time_series: Compile with VeraGrid time series?
+:param time_indices: Array of time indices
+:return: GSLV Power flow results object</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations.power_flow">
+<span id="veragridengine-compilers-gslv-simulations-power-flow-module"></span><h2>VeraGridEngine.Compilers.Gslv.Simulations.power_flow module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations.power_flow" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.power_flow.get_gslv_pf_options">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.power_flow.</span></span><span class="sig-name descname"><span class="pre">get_gslv_pf_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PowerFlowOptions</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/power_flow.html#get_gslv_pf_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.get_gslv_pf_options" title="Link to this definition"></a></dt>
+<dd><p>Translate VeraGrid power flow options to GSLV power flow options
+:param opt:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.power_flow.gslv_pf">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.power_flow.</span></span><span class="sig-name descname"><span class="pre">gslv_pf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pf_opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults" title="VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults"><span class="pre">OptimalPowerFlowResults</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pg.PowerFlowResults</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/power_flow.html#gslv_pf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.gslv_pf" title="Link to this definition"></a></dt>
+<dd><p>GSLV power flow
+:param logger: Optional execution logger.
+:param circuit: MultiCircuit instance
+:param pf_opt: Power Flow Options
+:param time_series: Compile with VeraGrid time series?
+:param time_indices: Array of time indices
+:param opf_results: Instance of
+:return: GSLV Power flow results object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.power_flow.translate_gslv_pf_results">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.power_flow.</span></span><span class="sig-name descname"><span class="pre">translate_gslv_pf_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PowerFlowResults</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_results.PowerFlowResults" title="VeraGridEngine.Simulations.PowerFlow.power_flow_results.PowerFlowResults"><span class="pre">PowerFlowResults</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/power_flow.html#translate_gslv_pf_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.translate_gslv_pf_results" title="Link to this definition"></a></dt>
+<dd><p>Translate the GSLV Power Analytics results back to VeraGrid
+:param grid: MultiCircuit instance
+:param res: GSLV’s PowerFlowResults instance
+:return: PowerFlowResults instance</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.power_flow.translate_gslv_pf_time_series_results">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.power_flow.</span></span><span class="sig-name descname"><span class="pre">translate_gslv_pf_time_series_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PowerFlowResults</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustering_results</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results.PowerFlowTimeSeriesResults" title="VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results.PowerFlowTimeSeriesResults"><span class="pre">PowerFlowTimeSeriesResults</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/power_flow.html#translate_gslv_pf_time_series_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.translate_gslv_pf_time_series_results" title="Link to this definition"></a></dt>
+<dd><p>Translate GSLV time-series power-flow results to VeraGrid results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> – MultiCircuit instance.</p></li>
+<li><p><strong>res</strong> – GSLV power-flow results.</p></li>
+<li><p><strong>options</strong> – Power-flow options used for the run.</p></li>
+<li><p><strong>time_indices</strong> – Requested global time indices, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for all.</p></li>
+<li><p><strong>clustering_results</strong> – Optional clustering metadata.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>PowerFlowTimeSeriesResults instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph">
+<span id="veragridengine-compilers-gslv-simulations-power-flow-3ph-module"></span><h2>VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.gslv_pf_3ph">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.</span></span><span class="sig-name descname"><span class="pre">gslv_pf_3ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pf_opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NumericPowerFlowResults</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/power_flow_3ph.html#gslv_pf_3ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.gslv_pf_3ph" title="Link to this definition"></a></dt>
+<dd><p>Run one native GSLV three-phase power flow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – VeraGrid circuit.</p></li>
+<li><p><strong>pf_opt</strong> – VeraGrid power-flow options.</p></li>
+<li><p><strong>t_idx</strong> – Optional VeraGrid time index to export as one sliced snapshot.</p></li>
+<li><p><strong>logger</strong> – Optional execution logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>GSLV numeric three-phase results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.translate_gslv_pf_3ph_results">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.</span></span><span class="sig-name descname"><span class="pre">translate_gslv_pf_3ph_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NumericPowerFlowResults</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow3ph.html#VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph.PowerFlowResults3Ph" title="VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph.PowerFlowResults3Ph"><span class="pre">PowerFlowResults3Ph</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/Simulations/power_flow_3ph.html#translate_gslv_pf_3ph_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.translate_gslv_pf_3ph_results" title="Link to this definition"></a></dt>
+<dd><p>Translate one GSLV native three-phase result into VeraGrid’s three-phase container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> – Original VeraGrid circuit.</p></li>
+<li><p><strong>res</strong> – GSLV three-phase numeric result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>VeraGrid three-phase power-flow results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.Simulations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.Simulations" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Compilers.Gslv.Devices.html" class="btn btn-neutral float-left" title="VeraGridEngine.Compilers.Gslv.Devices package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.DataStructures.html" class="btn btn-neutral float-right" title="VeraGridEngine.DataStructures package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

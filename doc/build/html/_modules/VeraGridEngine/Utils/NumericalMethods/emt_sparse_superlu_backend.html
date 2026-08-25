@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">SuperLU</span><span class="p">,</span> <span class="n">splu</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SparseLinearFactorizationHandle</span><span class="p">,</span>
+    <span class="n">SparseLinearSolverBackend</span><span class="p">,</span>
+    <span class="n">SparseLinearSolverBackendProvider</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseSolver</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_permute_csc_data_by_columns</span><span class="p">(</span>
+        <span class="n">source_data</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+        <span class="n">source_indptr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">column_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">target_indptr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">target_data</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reorder CSC numeric values according to a persistent column permutation.</span>
+
+<span class="sd">    :param source_data: Numeric values in the original column order.</span>
+<span class="sd">    :type source_data: Vec</span>
+<span class="sd">    :param source_indptr: Original CSC column pointer.</span>
+<span class="sd">    :type source_indptr: np.ndarray</span>
+<span class="sd">    :param column_perm: Persistent destination-to-source column permutation.</span>
+<span class="sd">    :type column_perm: np.ndarray</span>
+<span class="sd">    :param target_indptr: Target CSC column pointer.</span>
+<span class="sd">    :type target_indptr: np.ndarray</span>
+<span class="sd">    :param target_data: Destination numeric buffer.</span>
+<span class="sd">    :type target_data: Vec</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dst_col</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">dst_col</span> <span class="o">&lt;</span> <span class="n">column_perm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">src_col</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">column_perm</span><span class="p">[</span><span class="n">dst_col</span><span class="p">])</span>
+        <span class="n">src_ptr_0</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source_indptr</span><span class="p">[</span><span class="n">src_col</span><span class="p">])</span>
+        <span class="n">src_ptr_1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source_indptr</span><span class="p">[</span><span class="n">src_col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">dst_ptr_0</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_indptr</span><span class="p">[</span><span class="n">dst_col</span><span class="p">])</span>
+        <span class="n">local_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">src_ptr_0</span> <span class="o">+</span> <span class="n">local_index</span> <span class="o">&lt;</span> <span class="n">src_ptr_1</span><span class="p">:</span>
+            <span class="n">target_data</span><span class="p">[</span><span class="n">dst_ptr_0</span> <span class="o">+</span> <span class="n">local_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_data</span><span class="p">[</span><span class="n">src_ptr_0</span> <span class="o">+</span> <span class="n">local_index</span><span class="p">]</span>
+            <span class="n">local_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">dst_col</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_scatter_permuted_solution_to_original_order</span><span class="p">(</span>
+        <span class="n">permuted_solution</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+        <span class="n">inverse_column_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">out_solution</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scatter a solution computed on a column-permuted system back to original order.</span>
+
+<span class="sd">    :param permuted_solution: Solution in permuted order.</span>
+<span class="sd">    :type permuted_solution: Vec</span>
+<span class="sd">    :param inverse_column_perm: Mapping from original index to permuted index.</span>
+<span class="sd">    :type inverse_column_perm: np.ndarray</span>
+<span class="sd">    :param out_solution: Destination vector in original order.</span>
+<span class="sd">    :type out_solution: Vec</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">var_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">var_index</span> <span class="o">&lt;</span> <span class="n">out_solution</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">out_solution</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">permuted_solution</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">inverse_column_perm</span><span class="p">[</span><span class="n">var_index</span><span class="p">])]</span>
+        <span class="n">var_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="SuperLUFactorizationHandle">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUFactorizationHandle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuperLUFactorizationHandle</span><span class="p">(</span><span class="n">SparseLinearFactorizationHandle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Factorization handle backed by SciPy SuperLU.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_lu_obj&quot;</span><span class="p">,</span> <span class="s2">&quot;_active_matrix&quot;</span><span class="p">,</span> <span class="s2">&quot;_ordered_bundle_active&quot;</span><span class="p">,</span> <span class="s2">&quot;_has_persistent_ordering&quot;</span><span class="p">,</span> <span class="s2">&quot;_inverse_column_perm&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">lu_obj</span><span class="p">:</span> <span class="n">SuperLU</span><span class="p">,</span>
+            <span class="n">active_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span><span class="p">,</span>
+            <span class="n">ordered_bundle_active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">has_persistent_ordering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">inverse_column_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the SuperLU factorization handle.</span>
+
+<span class="sd">        :param lu_obj: SuperLU factorization object.</span>
+<span class="sd">        :type lu_obj: SuperLU</span>
+<span class="sd">        :param active_matrix: Active sparse matrix.</span>
+<span class="sd">        :type active_matrix: csc_matrix</span>
+<span class="sd">        :param ordered_bundle_active: Whether the ordered bundle is active.</span>
+<span class="sd">        :type ordered_bundle_active: bool</span>
+<span class="sd">        :param has_persistent_ordering: Whether a persistent ordering exists.</span>
+<span class="sd">        :type has_persistent_ordering: bool</span>
+<span class="sd">        :param inverse_column_perm: Mapping from original to permuted order.</span>
+<span class="sd">        :type inverse_column_perm: np.ndarray</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lu_obj</span><span class="p">:</span> <span class="n">SuperLU</span> <span class="o">=</span> <span class="n">lu_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="n">active_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_bundle_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">ordered_bundle_active</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">has_persistent_ordering</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_column_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">inverse_column_perm</span>
+
+<div class="viewcode-block" id="SuperLUFactorizationHandle.solve_into">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUFactorizationHandle.solve_into">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_into</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">out_solution</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the sparse system into a caller-owned output buffer.</span>
+
+<span class="sd">        :param rhs: Right-hand side vector.</span>
+<span class="sd">        :type rhs: Vec</span>
+<span class="sd">        :param out_solution: Caller-owned output buffer.</span>
+<span class="sd">        :type out_solution: Vec</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">raw_solution</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lu_obj</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rhs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_bundle_active</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span><span class="p">:</span>
+            <span class="n">_scatter_permuted_solution_to_original_order</span><span class="p">(</span><span class="n">raw_solution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_column_perm</span><span class="p">,</span> <span class="n">out_solution</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_solution</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">raw_solution</span></div>
+
+
+<div class="viewcode-block" id="SuperLUFactorizationHandle.get_active_matrix">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUFactorizationHandle.get_active_matrix">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_active_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csc_matrix</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sparse matrix associated with the current factorization.</span>
+
+<span class="sd">        :return: Active sparse matrix.</span>
+<span class="sd">        :rtype: csc_matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_matrix</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SuperLUSparseBackend">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuperLUSparseBackend</span><span class="p">(</span><span class="n">SparseLinearSolverBackend</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EMT sparse backend backed by SciPy SuperLU.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;_base_matrix&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_base_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_base_indptr_i32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_ordered_matrix&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_ordered_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_ordered_indptr_i32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_column_perm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_inverse_column_perm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_has_persistent_ordering&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_stats&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">base_data</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the SuperLU EMT sparse backend.</span>
+
+<span class="sd">        :param base_matrix: Reusable EMT Jacobian CSC shell.</span>
+<span class="sd">        :type base_matrix: csc_matrix</span>
+<span class="sd">        :param base_data: Reusable EMT Jacobian numeric buffer.</span>
+<span class="sd">        :type base_data: Vec</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">base_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">identity_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_cols</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="n">base_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">base_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_indptr_i32</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">base_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_data</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_indptr_i32</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">identity_perm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_column_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">identity_perm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">numeric_factorizations</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">ordering_builds</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">ordering_reuses</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">fallback_solves</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SuperLUSparseBackend.get_name">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend.get_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the backend name.</span>
+
+<span class="sd">        :return: Backend name.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;internal_superlu&quot;</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackend.get_solver_type">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend.get_solver_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_solver_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SparseSolver</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sparse solver type.</span>
+
+<span class="sd">        :return: Sparse solver type.</span>
+<span class="sd">        :rtype: SparseSolver</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SparseSolver</span><span class="o">.</span><span class="n">SuperLU</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackend.is_available">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend.is_available">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the backend is available.</span>
+
+<span class="sd">        :return: ``True``.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackend.supports_symbolic_analysis_reuse">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend.supports_symbolic_analysis_reuse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supports_symbolic_analysis_reuse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether this backend supports persistent symbolic reuse.</span>
+
+<span class="sd">        :return: ``True``.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_try_build_persistent_ordering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lu_obj</span><span class="p">:</span> <span class="n">SuperLU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one persistent column ordering discovered by SuperLU.</span>
+
+<span class="sd">        :param lu_obj: SuperLU factorization object.</span>
+<span class="sd">        :type lu_obj: SuperLU</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">raw_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lu_obj</span><span class="o">.</span><span class="n">perm_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">n_cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">raw_perm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">n_cols</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">sorted_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">raw_perm</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">sorted_perm</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_cols</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">raw_perm</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_cols</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)):</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_column_perm</span> <span class="o">=</span> <span class="n">raw_perm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">inverse_perm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_cols</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                <span class="n">perm_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">while</span> <span class="n">perm_index</span> <span class="o">&lt;</span> <span class="n">n_cols</span><span class="p">:</span>
+                    <span class="n">inverse_perm</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_perm</span><span class="p">[</span><span class="n">perm_index</span><span class="p">])]</span> <span class="o">=</span> <span class="n">perm_index</span>
+                    <span class="n">perm_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">ordered_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_matrix</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_perm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_matrix</span> <span class="o">=</span> <span class="n">ordered_matrix</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_data</span> <span class="o">=</span> <span class="n">ordered_matrix</span><span class="o">.</span><span class="n">data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_indptr_i32</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ordered_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_column_perm</span> <span class="o">=</span> <span class="n">inverse_perm</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">[</span><span class="s2">&quot;ordering_builds&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+
+<div class="viewcode-block" id="SuperLUSparseBackend.factorize">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend.factorize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">factorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix</span><span class="p">:</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">analysis_handle</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SparseLinearFactorizationHandle</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Factorize the current EMT Jacobian.</span>
+
+<span class="sd">        :param matrix: Sparse matrix in EMT solver order.</span>
+<span class="sd">        :type matrix: csc_matrix</span>
+<span class="sd">        :param analysis_handle: Optional symbolic-analysis handle.</span>
+<span class="sd">        :type analysis_handle: object | None</span>
+<span class="sd">        :return: SuperLU factorization handle.</span>
+<span class="sd">        :rtype: SparseLinearFactorizationHandle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_unused_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="n">matrix</span>
+        <span class="n">_unused_analysis_handle</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">analysis_handle</span>
+        <span class="n">lu_obj</span><span class="p">:</span> <span class="n">SuperLU</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_indptr_i32</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_permute_csc_data_by_columns</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_base_data</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_base_indptr_i32</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_column_perm</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_indptr_i32</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_data</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">lu_obj</span> <span class="o">=</span> <span class="n">splu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ordered_matrix</span><span class="p">,</span> <span class="n">permc_spec</span><span class="o">=</span><span class="s2">&quot;NATURAL&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">[</span><span class="s2">&quot;ordering_reuses&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+            <span class="n">active_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_matrix</span>
+            <span class="n">ordered_bundle_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lu_obj</span> <span class="o">=</span> <span class="n">splu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_matrix</span><span class="p">,</span> <span class="n">permc_spec</span><span class="o">=</span><span class="s2">&quot;COLAMD&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_try_build_persistent_ordering</span><span class="p">(</span><span class="n">lu_obj</span><span class="p">)</span>
+            <span class="n">active_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_matrix</span>
+            <span class="n">ordered_bundle_active</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">[</span><span class="s2">&quot;numeric_factorizations&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="n">SuperLUFactorizationHandle</span><span class="p">(</span>
+            <span class="n">lu_obj</span><span class="o">=</span><span class="n">lu_obj</span><span class="p">,</span>
+            <span class="n">active_matrix</span><span class="o">=</span><span class="n">active_matrix</span><span class="p">,</span>
+            <span class="n">ordered_bundle_active</span><span class="o">=</span><span class="n">ordered_bundle_active</span><span class="p">,</span>
+            <span class="n">has_persistent_ordering</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_has_persistent_ordering</span><span class="p">,</span>
+            <span class="n">inverse_column_perm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_inverse_column_perm</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackend.get_backend_stats">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackend.get_backend_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_backend_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return backend-specific statistics.</span>
+
+<span class="sd">        :return: Backend-specific statistics.</span>
+<span class="sd">        :rtype: Dict[str, float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SuperLUSparseBackendProvider">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackendProvider">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuperLUSparseBackendProvider</span><span class="p">(</span><span class="n">SparseLinearSolverBackendProvider</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provider for the internal SuperLU EMT sparse backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="SuperLUSparseBackendProvider.get_name">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackendProvider.get_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the provider name.</span>
+
+<span class="sd">        :return: Provider name.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;internal_superlu&quot;</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackendProvider.get_solver_type">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackendProvider.get_solver_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_solver_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SparseSolver</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the sparse solver type.</span>
+
+<span class="sd">        :return: Sparse solver type.</span>
+<span class="sd">        :rtype: SparseSolver</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SparseSolver</span><span class="o">.</span><span class="n">SuperLU</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackendProvider.is_available">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackendProvider.is_available">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the provider is available.</span>
+
+<span class="sd">        :return: ``True``.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SuperLUSparseBackendProvider.create_backend">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.NumericalMethods.html#VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend.SuperLUSparseBackendProvider.create_backend">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">base_data</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SparseLinearSolverBackend</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the internal SuperLU sparse backend.</span>
+
+<span class="sd">        :param base_matrix: Reusable EMT Jacobian CSC shell.</span>
+<span class="sd">        :type base_matrix: csc_matrix</span>
+<span class="sd">        :param base_data: Reusable EMT Jacobian numeric buffer.</span>
+<span class="sd">        :type base_data: Vec</span>
+<span class="sd">        :return: Sparse solver backend.</span>
+<span class="sd">        :rtype: SparseLinearSolverBackend</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SuperLUSparseBackend</span><span class="p">(</span><span class="n">base_matrix</span><span class="o">=</span><span class="n">base_matrix</span><span class="p">,</span> <span class="n">base_data</span><span class="o">=</span><span class="n">base_data</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

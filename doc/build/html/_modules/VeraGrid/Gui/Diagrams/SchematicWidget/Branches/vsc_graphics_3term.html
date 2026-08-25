@@ -1,0 +1,1138 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QRectF</span><span class="p">,</span> <span class="n">QPointF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QPainter</span><span class="p">,</span> <span class="n">QPen</span><span class="p">,</span> <span class="n">QBrush</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QCursor</span><span class="p">,</span> <span class="n">QTransform</span><span class="p">,</span> <span class="n">QFont</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QGraphicsItem</span><span class="p">,</span> <span class="n">QGraphicsRectItem</span><span class="p">,</span> <span class="n">QGraphicsSceneMouseEvent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_dynamic_editor</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor</span><span class="w"> </span><span class="kn">import</span> <span class="n">VscDeviceEditorDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_menu_entry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">BarTerminalItem</span><span class="p">,</span> <span class="n">RoundTerminalItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.generic_graphics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericDiagramWidget</span><span class="p">,</span> <span class="n">ACTIVE</span><span class="p">,</span> <span class="n">DEACTIVATED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.vsc</span><span class="w"> </span><span class="kn">import</span> <span class="n">VSC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ConverterControlType</span><span class="p">,</span>
+                                         <span class="n">SchematicAutoRouteStyle</span><span class="p">,</span>
+                                         <span class="n">SchematicRouteKind</span><span class="p">,</span>
+                                         <span class="n">DynamicSimulationMode</span><span class="p">,</span>
+                                         <span class="n">TerminalType</span><span class="p">)</span>  <span class="c1"># Assuming VSC controls might be relevant later</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">SchematicWidget</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template</span><span class="w"> </span><span class="kn">import</span> \
+        <span class="n">LineGraphicTemplateItem</span>  <span class="c1"># For type hints if needed later</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoundTerminalItem</span><span class="p">,</span> <span class="n">BarTerminalItem</span>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VscGraphicItem3Term</span><span class="p">(</span><span class="n">GenericDiagramWidget</span><span class="p">,</span> <span class="n">QGraphicsRectItem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Graphics item for the 3-Terminal VSC converter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">editor</span><span class="p">:</span> <span class="n">SchematicWidget</span><span class="p">,</span>
+                 <span class="n">api_object</span><span class="p">:</span> <span class="n">VSC</span><span class="p">,</span>
+                 <span class="n">pos</span><span class="p">:</span> <span class="n">QPoint</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">draw_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the 3-Terminal VSC Graphic Item.</span>
+
+<span class="sd">        :param editor: SchematicWidget instance</span>
+<span class="sd">        :param api_object: VSC API object</span>
+<span class="sd">        :param pos: Initial position</span>
+<span class="sd">        :param parent: Parent item</span>
+<span class="sd">        :param draw_labels: Whether to draw labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">GenericDiagramWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">api_object</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="n">editor</span><span class="p">,</span>
+                                      <span class="n">draw_labels</span><span class="o">=</span><span class="n">draw_labels</span><span class="p">)</span>
+        <span class="n">QGraphicsRectItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="c1"># Make it a square</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mi">68</span>  <span class="c1"># Width of the VSC symbol (match 2-terminal size)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span>  <span class="c1"># Height of the VSC symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setRect</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span> <span class="o">=</span> <span class="n">draw_labels</span>
+
+        <span class="c1"># Color and style based on active state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span> <span class="o">=</span> <span class="mf">2.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">ACTIVE</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">ACTIVE</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">DEACTIVATED</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">DEACTIVATED</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Setup pen, brush, flags and cursor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QBrush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_body_fill_color</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFlag</span><span class="p">(</span><span class="n">QGraphicsItem</span><span class="o">.</span><span class="n">GraphicsItemFlag</span><span class="o">.</span><span class="n">ItemIsMovable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFlag</span><span class="p">(</span><span class="n">QGraphicsItem</span><span class="o">.</span><span class="n">GraphicsItemFlag</span><span class="o">.</span><span class="n">ItemIsSelectable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCursor</span><span class="p">(</span><span class="n">QCursor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CursorShape</span><span class="o">.</span><span class="n">PointingHandCursor</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTransformOriginPoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rotation_origin_local_point</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># --- Create Terminals ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span> <span class="o">=</span> <span class="mf">11.0</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="c1"># Terminal positions (top-left of the round marker)</span>
+        <span class="n">t_ac_pos</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mf">6.0</span> <span class="o">-</span> <span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+        <span class="n">t_dc_p_pos</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span><span class="o">-</span><span class="mf">6.0</span> <span class="o">-</span> <span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="mf">0.34</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+        <span class="n">t_dc_n_pos</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span><span class="o">-</span><span class="mf">6.0</span> <span class="o">-</span> <span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="mf">0.66</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># self.terminals: List[RoundTerminalItem] = list()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="p">:</span> <span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="p">:</span> <span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="p">:</span> <span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span><span class="p">:</span> <span class="n">LineGraphicTemplateItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span><span class="p">:</span> <span class="n">LineGraphicTemplateItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span><span class="p">:</span> <span class="n">LineGraphicTemplateItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># AC Terminal (Index 0)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span> <span class="o">=</span> <span class="n">RoundTerminalItem</span><span class="p">(</span><span class="s2">&quot;ac&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">,</span> <span class="n">terminal_type</span><span class="o">=</span><span class="n">TerminalType</span><span class="o">.</span><span class="n">AC</span><span class="p">,</span>
+                                             <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">t_ac_pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">setRotation</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Points right</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">))</span>
+
+        <span class="c1"># DC+ Terminal (Index 1)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span> <span class="o">=</span> <span class="n">RoundTerminalItem</span><span class="p">(</span><span class="s2">&quot;dc_p&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">,</span> <span class="n">terminal_type</span><span class="o">=</span><span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_P</span><span class="p">,</span>
+                                               <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">t_dc_p_pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">setRotation</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Points left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">))</span>
+
+        <span class="c1"># DC- Terminal (Index 2)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span> <span class="o">=</span> <span class="n">RoundTerminalItem</span><span class="p">(</span><span class="s2">&quot;dc_n&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">,</span> <span class="n">terminal_type</span><span class="o">=</span><span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_N</span><span class="p">,</span>
+                                               <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">t_dc_n_pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">setRotation</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Points left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_style_terminals</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_terminal_tooltips</span><span class="p">()</span>
+
+        <span class="c1"># self.setRotation(180)</span>
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_rotation_origin_local_point">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_rotation_origin_local_point">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rotation_origin_local_point</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QPointF</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the local rotation origin used for this three-terminal VSC.</span>
+
+<span class="sd">        The symbol and its three round terminals must rotate as one rigid body</span>
+<span class="sd">        around the geometric center of the square.</span>
+
+<span class="sd">        :return: Local rotation origin.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.apply_rotation_state">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.apply_rotation_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_rotation_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refresh_connections</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the persisted rotation angle to the live graphics item.</span>
+
+<span class="sd">        :param refresh_connections: Refresh connected routes afterwards.</span>
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTransformOriginPoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rotation_origin_local_point</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setRotation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">refresh_connections</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_conn</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_rotation_angle">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_rotation_angle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_rotation_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle_degrees</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">persist</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set one persisted rotation angle for this VSC symbol.</span>
+
+<span class="sd">        :param angle_degrees: Rotation angle in degrees.</span>
+<span class="sd">        :param persist: Update the backing diagram element.</span>
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalized_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle_degrees</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">normalized_angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_rotation_state</span><span class="p">(</span><span class="n">refresh_connections</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">persist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">update_diagram_element</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span>
+                                               <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span>
+                                               <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span>
+                                               <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span>
+                                               <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span>
+                                               <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+                                               <span class="n">draw_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span><span class="p">,</span>
+                                               <span class="n">graphic_object</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.rotate_90">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.rotate_90">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotate_90</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rotate the VSC by ninety degrees and persist the change.</span>
+
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation_angle</span><span class="p">(</span><span class="n">angle_degrees</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">+</span> <span class="mf">90.0</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_body_fill_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QColor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Body fill with strong contrast in dark/light themes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">lightness</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">127</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">QColor</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">220</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">QColor</span><span class="p">(</span><span class="mi">245</span><span class="p">,</span> <span class="mi">245</span><span class="p">,</span> <span class="mi">245</span><span class="p">,</span> <span class="mi">220</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_style_terminals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Keep terminal points readable and consistent with current color/style.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">terminal_fill</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">terminal_fill</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mi">220</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">terminal</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="p">):</span>
+            <span class="n">terminal</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QBrush</span><span class="p">(</span><span class="n">terminal_fill</span><span class="p">))</span>
+            <span class="n">terminal</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api_object</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VSC</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_object</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicWidget</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editor</span>
+
+<div class="viewcode-block" id="VscGraphicItem3Term.open_device_editor">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.open_device_editor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_device_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the VSC editor for this three-terminal converter.</span>
+
+<span class="sd">        :return: ``True`` when the editor was opened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dlg</span> <span class="o">=</span> <span class="n">VscDeviceEditorDialog</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dlg</span><span class="o">.</span><span class="n">exec</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.paint">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.paint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">:</span> <span class="n">QPainter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Paint the VSC symbol.&quot;&quot;&quot;</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QPainter</span><span class="o">.</span><span class="n">RenderHint</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Draw the main rectangle (square)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">))</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QBrush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_body_fill_color</span><span class="p">()))</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
+
+        <span class="c1"># Draw a diagonal line from top-right to bottom-left</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">inset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">QPointF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">inset</span><span class="p">,</span> <span class="n">inset</span><span class="p">),</span> <span class="n">QPointF</span><span class="p">(</span><span class="n">inset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">-</span> <span class="n">inset</span><span class="p">))</span>
+
+        <span class="c1"># Draw AC/DC symbols inside the box near terminals</span>
+        <span class="n">txt_font</span> <span class="o">=</span> <span class="n">QFont</span><span class="p">(</span><span class="n">painter</span><span class="o">.</span><span class="n">font</span><span class="p">())</span>
+        <span class="n">txt_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">txt_font</span><span class="o">.</span><span class="n">setPointSizeF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="mf">0.34</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">txt_font</span><span class="p">)</span>
+
+        <span class="c1"># Align each symbol center to the corresponding terminal centerline, shifted up slightly.</span>
+        <span class="n">up_shift</span> <span class="o">=</span> <span class="mf">2.0</span>
+        <span class="n">ac_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">up_shift</span>
+        <span class="n">dc_p_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">up_shift</span>
+        <span class="n">dc_n_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_size</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">up_shift</span>
+
+        <span class="n">text_rect_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="mf">0.34</span>
+        <span class="n">ac_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="mf">0.82</span>
+        <span class="n">dc_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="mf">0.13</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span>
+            <span class="n">QRectF</span><span class="p">(</span><span class="n">ac_x</span> <span class="o">-</span> <span class="n">text_rect_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ac_y</span> <span class="o">-</span> <span class="n">text_rect_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">text_rect_size</span><span class="p">,</span>
+                   <span class="n">text_rect_size</span><span class="p">),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="s2">&quot;~&quot;</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">QRectF</span><span class="p">(</span><span class="n">dc_x</span> <span class="o">-</span> <span class="n">text_rect_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dc_p_y</span> <span class="o">-</span> <span class="n">text_rect_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">text_rect_size</span><span class="p">,</span>
+                                <span class="n">text_rect_size</span><span class="p">),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">QRectF</span><span class="p">(</span><span class="n">dc_x</span> <span class="o">-</span> <span class="n">text_rect_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dc_n_y</span> <span class="o">-</span> <span class="n">text_rect_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">text_rect_size</span><span class="p">,</span>
+                                <span class="n">text_rect_size</span><span class="p">),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_terminal_tooltips">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_terminal_tooltips">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_terminal_tooltips</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set tooltips for the terminals.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;AC Terminal (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;Unconnected&#39;</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DC+ Terminal (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;Unconnected&#39;</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DC- Terminal (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_dc_n</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_dc_n</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;Unconnected&#39;</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.update_conn">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.update_conn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_conn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the connection lines attached to this item.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span><span class="o">.</span><span class="n">update_ports</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span><span class="o">.</span><span class="n">update_ports</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span><span class="o">.</span><span class="n">update_ports</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_associated_widgets">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_associated_widgets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_associated_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LineGraphicTemplateItem</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the graphical line items connected to this VSC.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_connection_layout_key">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_connection_layout_key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connection_layout_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve one persisted terminal-connection key for a connector line.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :return: Connection key or ``None`` when the line is unrelated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">terminal_item</span><span class="p">:</span> <span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">conn_line</span><span class="o">.</span><span class="n">get_terminal_from_parent</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">terminal_item</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conn_line</span><span class="o">.</span><span class="n">get_terminal_from</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">conn_line</span><span class="o">.</span><span class="n">get_terminal_to_parent</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">terminal_item</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conn_line</span><span class="o">.</span><span class="n">get_terminal_to</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">terminal_item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">terminal_item</span><span class="o">.</span><span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">AC</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;ac&quot;</span>
+        <span class="k">elif</span> <span class="n">terminal_item</span><span class="o">.</span><span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_P</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;dc_p&quot;</span>
+        <span class="k">elif</span> <span class="n">terminal_item</span><span class="o">.</span><span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_N</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;dc_n&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return one mutable persisted metadata record for a terminal connector.</span>
+
+<span class="sd">        :param connection_key: Connection key.</span>
+<span class="sd">        :return: Connector metadata dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">query_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">update_graphic_location</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span>
+                                                                   <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span>
+                                                                   <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span>
+                                                                   <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span>
+                                                                   <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span>
+                                                                   <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+                                                                   <span class="n">draw_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">draw_labels</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">terminal_connections</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vsc_terminal_connections&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">terminal_connections</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">terminal_connections</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span><span class="p">[</span><span class="s2">&quot;vsc_terminal_connections&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">terminal_connections</span>
+
+        <span class="n">connection_metadata</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">terminal_connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">connection_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">connection_metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">connection_metadata</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">connection_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">terminal_connections</span><span class="p">[</span><span class="n">connection_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">connection_metadata</span>
+            <span class="k">return</span> <span class="n">connection_metadata</span>
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_connection_route_points">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_connection_route_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connection_route_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return persisted route points for one VSC terminal connector.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :return: Route points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">route_points</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">connection_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">route_points</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">route_points</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.should_preserve_connection_route_shape">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.should_preserve_connection_route_shape">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">should_preserve_connection_route_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether one VSC terminal connector should preserve saved elbows.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :return: Preservation flag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">route_kind_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">connection_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">connection_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locked&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">locked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">route_kind_text</span> <span class="o">==</span> <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">MANUAL_POLYLINE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">route_kind_text</span> <span class="o">==</span> <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">MANUAL_ORTHOGONAL</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_connection_auto_route_style">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_connection_auto_route_style">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connection_auto_route_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicAutoRouteStyle</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the automatic route style for one VSC terminal connector.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :return: Route-style enum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">RETICULAR</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">route_style_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">connection_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;route_style&quot;</span><span class="p">,</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">RETICULAR</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">route_style_text</span> <span class="o">==</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">STRAIGHT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">STRAIGHT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">RETICULAR</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_connection_auto_route_style">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_connection_auto_route_style">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_connection_auto_route_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                        <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">,</span>
+                                        <span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Persist one automatic route style for a VSC terminal connector.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :param route_style: Requested route style.</span>
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;route_style&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">route_style</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">AUTO_POLYLINE</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;locked&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_connection_route_points">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_connection_route_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_connection_route_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                    <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">,</span>
+                                    <span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+                                    <span class="n">kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span><span class="p">,</span>
+                                    <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Persist one manual or automatic route for a VSC terminal connector.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :param points: Route points.</span>
+<span class="sd">        :param kind: Route kind.</span>
+<span class="sd">        :param locked: Lock flag.</span>
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kind</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;locked&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">locked</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;route_style&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">connection_metadata</span><span class="p">:</span>
+            <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;route_style&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">RETICULAR</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_connection_attachment">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_connection_attachment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connection_attachment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                  <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">,</span>
+                                  <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return persisted endpoint-anchor metadata for one connector endpoint.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :param endpoint: Endpoint key.</span>
+<span class="sd">        :return: Attachment metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">attachments</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">connection_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attachments&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attachments</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attachments</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;attachments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachments</span>
+
+        <span class="n">attachment</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">attachments</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attachment</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_connection_attachment">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_connection_attachment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_connection_attachment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                  <span class="n">conn_line</span><span class="p">:</span> <span class="s2">&quot;LineGraphicTemplateItem&quot;</span><span class="p">,</span>
+                                  <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                  <span class="n">attachment</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Persist endpoint-anchor metadata for one connector endpoint.</span>
+
+<span class="sd">        :param conn_line: Connector line item.</span>
+<span class="sd">        :param endpoint: Endpoint key.</span>
+<span class="sd">        :param attachment: Attachment metadata.</span>
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connection_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection_layout_key</span><span class="p">(</span><span class="n">conn_line</span><span class="o">=</span><span class="n">conn_line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">connection_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connection_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_or_create_connection_layout_metadata</span><span class="p">(</span><span class="n">connection_key</span><span class="o">=</span><span class="n">connection_key</span><span class="p">)</span>
+        <span class="n">attachments</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">connection_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attachments&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attachments</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attachments</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">connection_metadata</span><span class="p">[</span><span class="s2">&quot;attachments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachments</span>
+
+        <span class="n">attachments</span><span class="p">[</span><span class="n">endpoint</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.get_extra_graphics">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.get_extra_graphics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_extra_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return terminals associated with this widget.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.recolour_mode">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.recolour_mode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recolour_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the colour according to the system theme and active state.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">ACTIVE</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">ACTIVE</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">DEACTIVATED</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">DEACTIVATED</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span>
+
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QBrush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_body_fill_color</span><span class="p">()))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_style_terminals</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span><span class="o">.</span><span class="n">recolour_mode</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span><span class="o">.</span><span class="n">recolour_mode</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span><span class="o">.</span><span class="n">recolour_mode</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>  <span class="c1"># Request repaint</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_enable">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_enable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the enable value, graphically and in the API.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recolour_mode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.mouseMoveEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.mouseMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s1">&#39;QGraphicsSceneMouseEvent&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle mouse move event.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">update_diagram_element</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span>
+                                           <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span>
+                                           <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span>
+                                           <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span>
+                                           <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span>
+                                           <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">(),</span>
+                                           <span class="n">graphic_object</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_conn</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.mousePressEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.mousePressEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QGraphicsSceneMouseEvent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle mouse press: select item and show in editor.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>  <span class="c1"># Handle selection</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_editor_model</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.mouseDoubleClickEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.mouseDoubleClickEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseDoubleClickEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the VSC editor on double click.</span>
+
+<span class="sd">        :param event: Qt mouse event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_device_editor</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.delete">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the VSC and its connections.&quot;&quot;&quot;</span>
+        <span class="c1"># Remove connections first</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span><span class="p">)</span>
+
+        <span class="c1"># Remove the item itself</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">diagram_scene</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.set_connection">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.set_connection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terminal_type</span><span class="p">:</span> <span class="n">TerminalType</span><span class="p">,</span> <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span><span class="p">,</span> <span class="n">conn_line</span><span class="p">:</span> <span class="n">LineGraphicTemplateItem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a connection to a specific terminal.&quot;&quot;&quot;</span>
+
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Check type compatibility and update API / store line</span>
+        <span class="k">if</span> <span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">OTHER</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Invalid terminal type </span><span class="si">{</span><span class="n">terminal_type</span><span class="si">}</span><span class="s2"> for VSC </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">AC</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_error_toast</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Connecting AC terminal of VSC &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; to DC bus &#39;</span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_error_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AC terminal of VSC </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is already connected.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">bus</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span> <span class="o">=</span> <span class="n">conn_line</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_terminal_tooltips</span><span class="p">()</span>
+                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_P</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_error_toast</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Connecting DC+ terminal of VSC &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; to AC bus &#39;</span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_error_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DC+ terminal of VSC </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is already connected.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span> <span class="o">=</span> <span class="n">conn_line</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_terminal_tooltips</span><span class="p">()</span>
+                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_N</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_error_toast</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Connecting DC- terminal of VSC &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; to AC bus &#39;</span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_error_toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DC- terminal of VSC </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is already connected.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_dc_n</span> <span class="o">=</span> <span class="n">bus</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span> <span class="o">=</span> <span class="n">conn_line</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_terminal_tooltips</span><span class="p">()</span>
+                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">success</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.redraw">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.redraw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">redraw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Redraw method - only recalculate position if VSC doesn&#39;t have saved coordinates</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Only recalculate position if the VSC is at the default position (close to 0, 0)</span>
+        <span class="c1"># This preserves saved positions when loading from file</span>
+        <span class="n">current_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
+        <span class="c1"># Use small tolerance to handle floating-point precision issues</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">current_pos</span><span class="o">.</span><span class="n">x</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">current_pos</span><span class="o">.</span><span class="n">y</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="c1"># Only do automatic positioning if we&#39;re near the origin</span>
+            <span class="n">h1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>
+            <span class="n">h2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">w2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">h2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span> <span class="o">-</span> <span class="n">w2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">w2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span> <span class="o">+</span> <span class="n">h2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span>
+
+            <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal_ac</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_p</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal_dc_n</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">QPointF</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+            <span class="c1"># Keep auto-placement separate from user-editable rotation so redraw</span>
+            <span class="c1"># never wipes a saved orientation restored from the diagram.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setPos</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation_angle</span><span class="p">(</span><span class="n">angle_degrees</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="n">persist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># If we&#39;re not near the origin, preserve the current position (likely loaded from file)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_conn</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.remove_connection">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.remove_connection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn_line</span><span class="p">:</span> <span class="n">LineGraphicTemplateItem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a connection from a specific terminal.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">conn_line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">conn_line</span>
+            <span class="c1"># Remove the line from the scene</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">scene</span><span class="p">():</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="c1"># Optionally clear the bus/cn reference in the api_object</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_ac</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_p</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_line_dc_n</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_dc_n</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_terminal_tooltips</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.contextMenuEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.contextMenuEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contextMenuEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show context menu.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">()</span>
+
+            <span class="c1"># Enable/Disable</span>
+            <span class="n">pe</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Enable/Disable&#39;</span><span class="p">)</span>
+            <span class="n">pe_icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                <span class="n">pe_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/uncheck_all.png&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pe_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/check_all.png&quot;</span><span class="p">))</span>
+            <span class="n">pe</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">pe_icon</span><span class="p">)</span>
+            <span class="n">pe</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle_enable_from_menu</span><span class="p">)</span>
+
+            <span class="c1"># Draw Labels (if applicable)</span>
+            <span class="c1"># add_menu_entry(menu=menu,</span>
+            <span class="c1">#                text=&quot;Draw labels&quot;,</span>
+            <span class="c1">#                function_ptr=self.enable_disable_label_drawing, # Needs implementation if label drawing is kept</span>
+            <span class="c1">#                checkeable=True,</span>
+            <span class="c1">#                checked_value=self.draw_labels)</span>
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Editor&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">open_device_editor</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/edit.png&quot;</span><span class="p">)</span>
+
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;RMS Editor&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_dynamic_rms</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/dyn_edit.png&quot;</span><span class="p">)</span>
+
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;EMT Editor&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_dynamic_emt</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/dyn_emt_edit.png&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Delete</span>
+            <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+            <span class="n">ra2</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Delete&#39;</span><span class="p">)</span>
+            <span class="n">del_icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+            <span class="n">del_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/delete3.png&quot;</span><span class="p">))</span>
+            <span class="n">ra2</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">del_icon</span><span class="p">)</span>
+            <span class="n">ra2</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">)</span>
+
+            <span class="c1"># --- Add back original control/profile actions ---</span>
+            <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Control V AC from DC+&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">control_v_from</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/edit.png&quot;</span><span class="p">)</span>
+
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Control V AC from AC&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">control_v_to</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/edit.png&quot;</span><span class="p">)</span>
+
+            <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Rotate 90&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rotate_90</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/rotate.svg&quot;</span><span class="p">)</span>
+
+            <span class="n">ra6</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Plot profiles&#39;</span><span class="p">)</span>
+            <span class="n">plot_icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+            <span class="n">plot_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/plot.png&quot;</span><span class="p">))</span>
+            <span class="n">ra6</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">plot_icon</span><span class="p">)</span>
+            <span class="n">ra6</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_profiles</span><span class="p">)</span>
+
+            <span class="n">ra4</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Assign rate to profile&#39;</span><span class="p">)</span>
+            <span class="n">ra4_icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+            <span class="n">ra4_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/assign_to_profile.png&quot;</span><span class="p">))</span>
+            <span class="n">ra4</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">ra4_icon</span><span class="p">)</span>
+            <span class="n">ra4</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assign_rate_to_profile</span><span class="p">)</span>
+
+            <span class="n">ra5</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Assign active state to profile&#39;</span><span class="p">)</span>
+            <span class="n">ra5_icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+            <span class="n">ra5_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/Icons/icons/assign_to_profile.png&quot;</span><span class="p">))</span>
+            <span class="n">ra5</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">ra5_icon</span><span class="p">)</span>
+            <span class="n">ra5</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assign_status_to_profile</span><span class="p">)</span>
+
+            <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">screenPos</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.toggle_enable_from_menu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.toggle_enable_from_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggle_enable_from_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggle enable state from context-menu action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_enable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_enable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.control_v_from">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.control_v_from">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">control_v_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set control mode to regulate DC voltage based on DC+ side (Interpretation).</span>
+<span class="sd">        Sets control1 to Vm_dcp.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">control1_dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">control1_val</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Default to 1.0 pu</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VSC </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> control set: Control1=Vm_dcp (Bus: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_editor_model</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span>  <span class="c1"># Refresh editor view</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Cannot set control_v_from, DC+ bus not connected.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.control_v_to">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.control_v_to">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">control_v_to</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set control mode to regulate AC voltage based on AC side itself.</span>
+<span class="sd">        Sets control1 to Vm_ac (controlling AC bus).</span>
+<span class="sd">        Leaves control2 as is, or sets it to something default like Pac if necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">control1</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_ac</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">control1_dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">control1_val</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Default to 1.0 pu</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VSC </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> control set: Control1=Vm_ac (Bus: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_editor_model</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span>  <span class="c1"># Refresh editor view</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Cannot set control_v_to, AC bus not connected.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.assign_rate_to_profile">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.assign_rate_to_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_rate_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign the snapshot rate to the profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_editor</span><span class="o">.</span><span class="n">set_rate_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.assign_status_to_profile">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.assign_status_to_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_status_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign the snapshot rate to the profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_editor</span><span class="o">.</span><span class="n">set_active_status_to_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.plot_profiles">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.plot_profiles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the time series profiles</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.assign_bus_to_vsc">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.assign_bus_to_vsc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_bus_to_vsc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terminal_vsc</span><span class="p">:</span> <span class="n">RoundTerminalItem</span><span class="p">,</span> <span class="n">bus_vsc</span><span class="p">:</span>  <span class="n">RoundTerminalItem</span> <span class="o">|</span> <span class="n">BarTerminalItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign the connected bus to a three-terminal VSC</span>
+<span class="sd">        :return: if the connection was successful</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">terminal_vsc</span><span class="o">.</span><span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">AC</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bus_vsc</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">bus_vsc</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">api_object</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">elif</span> <span class="n">terminal_vsc</span><span class="o">.</span><span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_P</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bus_vsc</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus_vsc</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">api_object</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">elif</span> <span class="n">terminal_vsc</span><span class="o">.</span><span class="n">terminal_type</span> <span class="o">==</span> <span class="n">TerminalType</span><span class="o">.</span><span class="n">DC_N</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bus_vsc</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">bus_dc_n</span> <span class="o">=</span> <span class="n">bus_vsc</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">api_object</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error in the VSC connection!&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.edit_dynamic_rms">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.edit_dynamic_rms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">edit_dynamic_rms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the unified dynamic editor workspace for this generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">open_dynamic_editor</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span>
+                            <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                            <span class="n">preferred_mode</span><span class="o">=</span><span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">RMS</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VscGraphicItem3Term.edit_dynamic_emt">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.VscGraphicItem3Term.edit_dynamic_emt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">edit_dynamic_emt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the unified dynamic editor workspace for this generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">open_dynamic_editor</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span>
+                            <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                            <span class="n">preferred_mode</span><span class="o">=</span><span class="n">DynamicSimulationMode</span><span class="o">.</span><span class="n">EMT</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

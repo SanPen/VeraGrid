@@ -1,0 +1,958 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📏 Linear analysis &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🏁 Optimal power flow" href="optimal_power_flow.html" />
+    <link rel="prev" title="🔥 Power flow" href="power_flow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📏 Linear analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#interpretation-notes">Interpretation Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#network-matrices">Network Matrices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#single-reference-ptdf">Single-Reference PTDF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributed-slack-ptdf">Distributed-Slack PTDF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ptdf-production-summary">PTDF Production Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nodal-balance-check">Nodal-Balance Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lodf-production">LODF Production</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#avoiding-double-correction">Avoiding Double Correction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#srap-automatic-power-reduction-system">SRAP: Automatic Power Reduction System</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#snapshot-linear-analysis">Snapshot Linear Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-series-linear-analysis">Time-Series Linear Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmark">Benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-algebra-frameworks-benchmark">Linear Algebra Frameworks Benchmark</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ieee-39-1-year-time-series">IEEE 39 1-year time series</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pegase-1-week-time-series">2869 Pegase 1-week time series</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#linear-vs-non-linear-comparison">Linear vs Non-Linear Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linearanalysisresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">LinearAnalysisResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linearanalysistimeseriesresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">LinearAnalysisTimeSeriesResults</span></code> registered properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📏 Linear analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/linear_analysis.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-analysis">
+<h1>📏 Linear analysis<a class="headerlink" href="#linear-analysis" title="Link to this heading"></a></h1>
+<p>Linear analysis in VeraGrid provides a fast approximation of the power flow and
+power transfer impacts using sensitivity factors instead of solving the full
+non-linear power flow every time. It is especially useful for screening studies,
+contingency analysis, time-series approximations, and transfer sensitivity calculations.</p>
+<p>The most important outputs are:</p>
+<ul class="simple">
+<li><p><strong>PTDF</strong>: Power Transfer Distribution Factors for branches HvdcLine and VSC.</p></li>
+<li><p><strong>LODF</strong>: Line Outage Distribution Factors for branches HvdcLine and VSC.</p></li>
+<li><p><strong>Pf</strong>: Lossless Power flows through the branches.</p></li>
+<li><p><strong>Pbus</strong>: Modified injections to match the PTDF formation.
+(i.e. with distributed slack, the SLACK and PV nodes get modified)</p></li>
+</ul>
+<p>These factors describe how injections or outages propagate through branch flows.</p>
+<p>It is not intended to replace the non-linear power flow in all situations.
+Its main value is speed and interpretability.</p>
+<section id="interpretation-notes">
+<h2>Interpretation Notes<a class="headerlink" href="#interpretation-notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Large PTDF absolute values indicate strong sensitivity of a branch to injections at a bus.</p></li>
+<li><p>Large LODF absolute values indicate strong flow redistribution after the outage of another branch.</p></li>
+<li><p>Linear branch loadings are very useful for screening, but not all overloads found linearly will match the exact
+non-linear AC solution.</p></li>
+<li><p>Time-series linear analysis is often good for ranking and trend analysis, even when exact MW values differ somewhat
+from Newton-Raphson.</p></li>
+</ul>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<p><img alt="" src="../_images/settings-pf.png" /></p>
+<p>The linear analysis options are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">distribute_slack</span></code>:
+whether the active-power mismatch is distributed across PV and slack buses instead of concentrated at one reference</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_values</span></code>:
+whether the analysis should apply internal corrections for out-of-range values</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ptdf_threshold</span></code>:
+PTDF sparsification threshold</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lodf_threshold</span></code>:
+LODF sparsification threshold</p></li>
+</ul>
+<p>For most workflows, <code class="docutils literal notranslate"><span class="pre">distribute_slack</span></code> and <code class="docutils literal notranslate"><span class="pre">correct_values</span></code> are the most relevant settings.</p>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>Linear analysis uses a lossless active-power approximation to produce two main sensitivity matrices:</p>
+<ul class="simple">
+<li><p><strong>PTDF</strong>, the Power Transfer Distribution Factor matrix, which maps bus active-power injections to branch active-power flows.</p></li>
+<li><p><strong>LODF</strong>, the Line Outage Distribution Factor matrix, which maps the pre-contingency flow of an outaged branch to the flow changes on the remaining branches.</p></li>
+</ul>
+<p>The formulas below are applied independently to each connected island. A slack correction must never transfer active-power mismatch between electrically disconnected islands.</p>
+<section id="network-matrices">
+<h3>Network Matrices<a class="headerlink" href="#network-matrices" title="Link to this heading"></a></h3>
+<p>For one island, let:</p>
+<ul class="simple">
+<li><p><span class="math">n</span> be the number of buses in the island.</p></li>
+<li><p><span class="math">m</span> be the number of passive branches with impedance in the island.</p></li>
+<li><p><span class="math">P \in \mathbb{R}^{n}</span> be the bus active-power injection vector.</p></li>
+<li><p><span class="math">P_f \in \mathbb{R}^{m}</span> be the branch active-power flow vector, oriented from the branch <code class="docutils literal notranslate"><span class="pre">from</span></code> bus to the branch <code class="docutils literal notranslate"><span class="pre">to</span></code> bus.</p></li>
+<li><p><span class="math">\theta \in \mathbb{R}^{n}</span> be the bus voltage-angle vector.</p></li>
+</ul>
+<p>Define the branch-bus incidence matrix <span class="math">A \in \mathbb{R}^{m \times n}</span> as:</p>
+<div class="math">
+<p><span class="math">A_{k i} =
+\begin{cases}
+1, &amp; i = F_k \\
+-1, &amp; i = T_k \\
+0, &amp; \text{otherwise}
+\end{cases}</span></p>
+</div><p>where <span class="math">F_k</span> and <span class="math">T_k</span> are the <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> buses of branch <span class="math">k</span>.</p>
+<p>With this orientation, the linear branch flow model is:</p>
+<div class="math">
+<p><span class="math">P_f = B_f \theta</span></p>
+</div><p>and the nodal active-power balance is:</p>
+<div class="math">
+<p><span class="math">P = A^{\mathsf{T}} P_f = B_{\mathrm{bus}} \theta</span></p>
+</div><p>where:</p>
+<div class="math">
+<p><span class="math">B_f = \operatorname{diag}(b) A</span></p>
+</div><p>and:</p>
+<div class="math">
+<p><span class="math">B_{\mathrm{bus}} = A^{\mathsf{T}} \operatorname{diag}(b) A</span></p>
+</div><p>Here <span class="math">b_k</span> is the active-power sensitivity of branch <span class="math">k</span> with respect to its angle difference. In the simplest DC model,
+<span class="math">b_k = 1 / x_k</span>. In the actual numerical implementation, transformer tap effects and other branch parameters are
+included in the produced <span class="math">B_f</span> and <span class="math">B_{\mathrm{bus}}</span> matrices.</p>
+</section>
+<section id="single-reference-ptdf">
+<h3>Single-Reference PTDF<a class="headerlink" href="#single-reference-ptdf" title="Link to this heading"></a></h3>
+<p>Because <span class="math">B_{\mathrm{bus}}</span> is singular for a connected lossless island, one bus angle is used as the reference. Let <span class="math">s</span> be
+the selected reference bus and let <span class="math">\mathcal{N}</span> be the set of non-reference buses.</p>
+<p>The reduced nodal equation is:</p>
+<div class="math">
+<p><span class="math">P_{\mathcal{N}} = B_{\mathrm{bus}, \mathcal{N}\mathcal{N}} \theta_{\mathcal{N}}</span></p>
+</div><p>so:</p>
+<div class="math">
+<p><span class="math">\theta_{\mathcal{N}} = B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1} P_{\mathcal{N}}</span></p>
+</div><p>The single-reference PTDF matrix <span class="math">H^{(0)} \in \mathbb{R}^{m \times n}</span> is then built as:</p>
+<div class="math">
+<p><span class="math">H^{(0)}_{:, \mathcal{N}} = B_{f, :, \mathcal{N}} B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1}</span></p>
+</div><p>and:</p>
+<div class="math">
+<p><span class="math">H^{(0)}_{:, s} = 0</span></p>
+</div><p>Thus, for a raw injection vector <span class="math">P</span>:</p>
+<div class="math">
+<p><span class="math">P_f = H^{(0)} P</span></p>
+</div><p>In single-slack mode, this flow is balanced by assigning the island active-power mismatch to the reference slack bus.
+For nodal-balance checks, define:</p>
+<div class="math">
+<p><span class="math">\Delta P = \mathbf{1}^{\mathsf{T}} P</span></p>
+</div><p>and:</p>
+<div class="math">
+<p><span class="math">w_i^{\mathrm{slack}} =
+\begin{cases}
+1, &amp; i = s \\
+0, &amp; i \ne s
+\end{cases}</span></p>
+</div><p>The effective injection vector is:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = P - w^{\mathrm{slack}} \Delta P</span></p>
+</div><p>or, component-wise:</p>
+<div class="math">
+<p><span class="math">P_i^{\mathrm{eff}} = P_i \quad \text{for } i \ne s</span></p>
+</div><div class="math">
+<p><span class="math">P_s^{\mathrm{eff}} = P_s - \sum_{i=1}^{n} P_i = - \sum_{i \ne s} P_i</span></p>
+</div><p>Therefore, when <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code>, the PTDF production matrix is not modified:</p>
+<div class="math">
+<p><span class="math">D_{\mathrm{PTDF}} = I</span></p>
+</div><div class="math">
+<p><span class="math">H = H^{(0)}</span></p>
+</div><p>but the Kirchhoff balance check must compare branch-flow divergence against <span class="math">P^{\mathrm{eff}}</span>, not necessarily against
+the raw injection vector <span class="math">P</span>.</p>
+</section>
+<section id="distributed-slack-ptdf">
+<h3>Distributed-Slack PTDF<a class="headerlink" href="#distributed-slack-ptdf" title="Link to this heading"></a></h3>
+<p>When <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>, the PTDF is modified so that the balancing injection is distributed only over buses that
+can regulate active power in the linear model.</p>
+<p>The numerical bus type convention is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Bus type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>PQ</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
+<td><p>PV</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
+<td><p>Slack</p></td>
+</tr>
+</tbody>
+</table>
+<p>The latest distributed-slack convention uses PV and Slack buses only. Define the participating set:</p>
+<div class="math">
+<p><span class="math">\mathcal{G} = \left\{ i \;\middle|\; \operatorname{bus\_type}_i = 2 \;\lor\; \operatorname{bus\_type}_i = 3 \right\}</span></p>
+</div><p>The participation vector <span class="math">w \in \mathbb{R}^{n}</span> is:</p>
+<div class="math">
+<p><span class="math">w_i =
+\begin{cases}
+\dfrac{1}{|\mathcal{G}|}, &amp; i \in \mathcal{G} \\
+0, &amp; i \notin \mathcal{G}
+\end{cases}</span></p>
+</div><p>so that:</p>
+<div class="math">
+<p><span class="math">\mathbf{1}^{\mathsf{T}} w = 1</span></p>
+</div><p>The distributed-slack transaction matrix is:</p>
+<div class="math">
+<p><span class="math">D = I - w \mathbf{1}^{\mathsf{T}}</span></p>
+</div><p>or, entry-wise:</p>
+<div class="math">
+<p><span class="math">D_{ij} = \delta_{ij} - w_i</span></p>
+</div><p>where <span class="math">\delta_{ij}</span> is the Kronecker delta. Only the rows of PV and Slack buses are modified, because only those buses
+have nonzero participation weights.</p>
+<p>The effective injection vector is:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
+</div><p>therefore:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = P - w \left( \mathbf{1}^{\mathsf{T}} P \right)</span></p>
+</div><p>and:</p>
+<div class="math">
+<p><span class="math">\sum_{i=1}^{n} P_i^{\mathrm{eff}} = 0</span></p>
+</div><p>The distributed-slack PTDF is produced by right-multiplying the single-reference PTDF by <span class="math">D</span>:</p>
+<div class="math">
+<p><span class="math">H = H^{(0)} D</span></p>
+</div><p>The branch flows are then computed from the raw injection vector as:</p>
+<div class="math">
+<p><span class="math">P_f = H P = H^{(0)} D P = H^{(0)} P^{\mathrm{eff}}</span></p>
+</div><p>Each PTDF column is therefore a balanced transaction. For a unit injection at bus <span class="math">j</span>:</p>
+<div class="math">
+<p><span class="math">D e_j = e_j - w</span></p>
+</div><p>so column <span class="math">j</span> of the distributed-slack PTDF represents an injection at bus <span class="math">j</span> balanced by withdrawals over the PV and
+Slack buses according to <span class="math">w</span>.</p>
+<p>This replaces the older all-bus convention:</p>
+<div class="math">
+<p><span class="math">D_{ij}^{\mathrm{old}} =
+\begin{cases}
+1, &amp; i = j \\
+-\dfrac{1}{n - 1}, &amp; i \ne j
+\end{cases}</span></p>
+</div><p>The older convention assigned the balancing power to all other buses, including PQ buses, and excluded the injection bus
+itself from the balancing set. The new convention uses a fixed participation vector based on <code class="docutils literal notranslate"><span class="pre">bus_types</span></code>, so PQ buses do
+not absorb active-power mismatch.</p>
+</section>
+<section id="ptdf-production-summary">
+<h3>PTDF Production Summary<a class="headerlink" href="#ptdf-production-summary" title="Link to this heading"></a></h3>
+<p>For each island, the PTDF production can be summarized as:</p>
+<div class="math">
+<p><span class="math">H^{(0)}_{:, \mathcal{N}} = B_{f, :, \mathcal{N}} B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1}</span></p>
+</div><div class="math">
+<p><span class="math">H^{(0)}_{:, s} = 0</span></p>
+</div><p>If <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code>:</p>
+<div class="math">
+<p><span class="math">H = H^{(0)}</span></p>
+</div><p>If <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>:</p>
+<div class="math">
+<p><span class="math">D = I - w \mathbf{1}^{\mathsf{T}}</span></p>
+</div><div class="math">
+<p><span class="math">H = H^{(0)} D</span></p>
+</div><p>The resulting PTDF maps bus injections to branch flows:</p>
+<div class="math">
+<p><span class="math">P_f = H P</span></p>
+</div><p>For distributed slack, this is equivalent to:</p>
+<div class="math">
+<p><span class="math">P_f = H^{(0)} P^{\mathrm{eff}}</span></p>
+</div><p>with:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
+</div></section>
+<section id="nodal-balance-check">
+<h3>Nodal-Balance Check<a class="headerlink" href="#nodal-balance-check" title="Link to this heading"></a></h3>
+<p>With the branch-flow orientation defined by <span class="math">A</span>, branch-flow divergence is:</p>
+<div class="math">
+<p><span class="math">\operatorname{div}(P_f) = A^{\mathsf{T}} P_f</span></p>
+</div><p>The linear Kirchhoff balance check is:</p>
+<div class="math">
+<p><span class="math">A^{\mathsf{T}} P_f - P^{\mathrm{eff}} \approx 0</span></p>
+</div><p>For <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
+</div><p>For <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code> with one reference slack bus <span class="math">s</span>:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = P - w^{\mathrm{slack}} \left( \mathbf{1}^{\mathsf{T}} P \right)</span></p>
+</div><p>This distinction is important: the vector used to compute flows and the vector used to check nodal balance are not always
+the same raw vector. If the original <span class="math">P</span> comes from an AC operating point, it may contain active losses or mismatch that
+must be absorbed by the slack convention in the lossless linear model.</p>
+</section>
+<section id="lodf-production">
+<h3>LODF Production<a class="headerlink" href="#lodf-production" title="Link to this heading"></a></h3>
+<p>The LODF matrix is produced from branch-to-branch PTDFs.</p>
+<p>For branch <span class="math">k</span>, define the endpoint transaction vector:</p>
+<div class="math">
+<p><span class="math">a_k = e_{F_k} - e_{T_k}</span></p>
+</div><p>where <span class="math">e_{F_k}</span> and <span class="math">e_{T_k}</span> are unit vectors at the <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> buses of branch <span class="math">k</span>. Collecting all endpoint
+transaction vectors gives:</p>
+<div class="math">
+<p><span class="math">A^{\mathsf{T}} = \begin{bmatrix} a_1 &amp; a_2 &amp; \cdots &amp; a_m \end{bmatrix}</span></p>
+</div><p>The branch-to-branch PTDF matrix is:</p>
+<div class="math">
+<p><span class="math">K = H A^{\mathsf{T}}</span></p>
+</div><p>so:</p>
+<div class="math">
+<p><span class="math">K_{\ell k} = H_{\ell, :} \left( e_{F_k} - e_{T_k} \right)</span></p>
+</div><p><span class="math">K_{\ell k}</span> is the sensitivity of branch <span class="math">\ell</span> to a unit transaction from the <code class="docutils literal notranslate"><span class="pre">from</span></code> bus of branch <span class="math">k</span> to the <code class="docutils literal notranslate"><span class="pre">to</span></code> bus
+of branch <span class="math">k</span>.</p>
+<p>For the outage of branch <span class="math">k</span>, the LODF denominator is:</p>
+<div class="math">
+<p><span class="math">d_k = 1 - K_{kk}</span></p>
+</div><p>For non-islanding outages, the LODF entries are:</p>
+<div class="math">
+<p><span class="math">\operatorname{LODF}_{\ell k} = \frac{K_{\ell k}}{1 - K_{kk}} \quad \text{for } \ell \ne k</span></p>
+</div><p>and the diagonal is set to:</p>
+<div class="math">
+<p><span class="math">\operatorname{LODF}_{kk} = -1</span></p>
+</div><p>The post-contingency flow approximation for outage <span class="math">k</span> is then:</p>
+<div class="math">
+<p><span class="math">P_{f, \ell}^{\mathrm{post}(k)} = P_{f, \ell}^{\mathrm{pre}} + \operatorname{LODF}_{\ell k} P_{f, k}^{\mathrm{pre}}</span></p>
+</div><p>for <span class="math">\ell \ne k</span>, and:</p>
+<div class="math">
+<p><span class="math">P_{f, k}^{\mathrm{post}(k)} = 0</span></p>
+</div><p>If:</p>
+<div class="math">
+<p><span class="math">1 - K_{kk} \approx 0</span></p>
+</div><p>then the outaged branch is island-forming or numerically close to island-forming. In that case, the standard LODF value is
+not finite, because removing the branch changes network connectivity. Production code should mark or correct those values
+according to the selected correction policy.</p>
+<p>The branch endpoint transaction <span class="math">a_k</span> is balanced because:</p>
+<div class="math">
+<p><span class="math">\mathbf{1}^{\mathsf{T}} a_k = 0</span></p>
+</div><p>Therefore, for the corrected distributed-slack matrix:</p>
+<div class="math">
+<p><span class="math">D a_k = a_k</span></p>
+</div><p>This means the LODF calculation is independent of the distributed-slack participation vector, provided the PTDF uses the
+consistent formulation:</p>
+<div class="math">
+<p><span class="math">H = H^{(0)} D</span></p>
+</div><p>The slack convention matters for mapping arbitrary bus injections <span class="math">P</span> to flows, but endpoint-to-endpoint branch outage
+transactions are already balanced.</p>
+</section>
+<section id="avoiding-double-correction">
+<h3>Avoiding Double Correction<a class="headerlink" href="#avoiding-double-correction" title="Link to this heading"></a></h3>
+<p>There are two valid usage patterns.</p>
+<p>If the PTDF already includes the slack-distribution matrix:</p>
+<div class="math">
+<p><span class="math">H = H^{(0)} D</span></p>
+</div><p>then compute flows from the raw injection vector:</p>
+<div class="math">
+<p><span class="math">P_f = H P</span></p>
+</div><p>and check nodal balance with:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
+</div><p>Alternatively, if using the single-reference PTDF externally:</p>
+<div class="math">
+<p><span class="math">H = H^{(0)}</span></p>
+</div><p>then first correct the injection vector:</p>
+<div class="math">
+<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
+</div><p>and then compute:</p>
+<div class="math">
+<p><span class="math">P_f = H^{(0)} P^{\mathrm{eff}}</span></p>
+</div><p>Do not apply the slack matrix to both the PTDF and the input vector, because that applies the same slack correction twice.</p>
+</section>
+<section id="srap-automatic-power-reduction-system">
+<h3>SRAP: Automatic Power Reduction System<a class="headerlink" href="#srap-automatic-power-reduction-system" title="Link to this heading"></a></h3>
+<p>The Automatic Power Reduction System, or <strong>SRAP</strong>, is a linear sensitivity-based mechanism used in contingency analysis
+to determine whether an overload can be dismissed by corrective generation re-dispatch.</p>
+<p><img alt="" src="../_images/settings-con.png" /></p>
+<p><img alt="" src="../_images/SRAP.png" /></p>
+<p>The idea is simple:</p>
+<ul class="simple">
+<li><p>a contingency produces an overload on a monitored branch</p></li>
+<li><p>a set of generators has known sensitivities with respect to that overload</p></li>
+<li><p>available upward or downward redispatch is combined with those sensitivities</p></li>
+<li><p>if the overload can be removed within the allowed corrective margin, the contingency can be dismissed</p></li>
+</ul>
+<p>Example:</p>
+<p>Imagine that a line overloads by 5 MW after a contingency. Three plants are identified as significant for relieving
+that overload:</p>
+<ul class="simple">
+<li><p>plant 1: generating 80 MW, with PTDF sensitivity <code class="docutils literal notranslate"><span class="pre">0.11</span></code></p></li>
+<li><p>plant 2: generating 30 MW, with PTDF sensitivity <code class="docutils literal notranslate"><span class="pre">0.09</span></code></p></li>
+<li><p>plant 3: generating 50 MW, with PTDF sensitivity <code class="docutils literal notranslate"><span class="pre">0.07</span></code></p></li>
+</ul>
+<p>Assume the SRAP limit is 90 MW of redispatch.</p>
+<p>We build arrays ordered by sensitivity:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sensitivity</span> <span class="pre">=</span> <span class="pre">[0.11,</span> <span class="pre">0.09,</span> <span class="pre">0.07]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p_available</span> <span class="pre">=</span> <span class="pre">[80,</span> <span class="pre">30,</span> <span class="pre">30]</span></code></p></li>
+</ul>
+<p>Then we compute the contribution <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">sensitivity</span> <span class="pre">*</span> <span class="pre">p_available</span></code>.</p>
+<p>If the resulting corrective capability is larger than the overload, the contingency can be considered solvable by SRAP
+and may be dismissed from the critical set.</p>
+<p>A contingency study with SRAP activated can be run as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">con_options</span> <span class="o">=</span> <span class="n">ContingencyAnalysisOptions</span><span class="p">()</span>
+<span class="n">con_options</span><span class="o">.</span><span class="n">use_srap</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">con_options</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">ContingencyEngine</span><span class="o">.</span><span class="n">Linear</span>
+
+<span class="n">con_drv</span> <span class="o">=</span> <span class="n">ContingencyAnalysisDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">con_options</span><span class="p">,</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span>
+<span class="p">)</span>
+
+<span class="n">con_drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<section id="snapshot-linear-analysis">
+<h3>Snapshot Linear Analysis<a class="headerlink" href="#snapshot-linear-analysis" title="Link to this heading"></a></h3>
+<p>This is the standard single-state linear study.</p>
+<p>Using the simplified API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE 5 Bus.xlsx&#39;</span><span class="p">)</span>
+
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">linear_power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bus results:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Branch results:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PTDF:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">PTDF</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LODF:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">LODF</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Using the driver directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE 5 Bus.xlsx&#39;</span><span class="p">)</span>
+
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">options_</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">LinearAnalysisOptions</span><span class="p">(</span><span class="n">distribute_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">correct_values</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">LinearAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options_</span><span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bus results:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Branch results:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PTDF:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">PTDF</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LODF:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">LODF</span><span class="p">)</span><span class="o">.</span><span class="n">to_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Bus results:
+        Vm   Va       P    Q
+Bus 0  1.0  0.0  2.1000  0.0
+Bus 1  1.0  0.0 -3.0000  0.0
+Bus 2  1.0  0.0  0.2349  0.0
+Bus 3  1.0  0.0 -0.9999  0.0
+Bus 4  1.0  0.0  4.6651  0.0
+
+Branch results:
+                  Pf   loading
+Branch 0-1  2.497192  0.624298
+Branch 0-3  1.867892  0.832394
+Branch 0-4 -2.265084 -0.828791
+Branch 1-2 -0.502808 -0.391900
+Branch 2-3 -0.267908 -0.774300
+Branch 3-4 -2.400016 -1.000006
+
+PTDF:
+               Bus 0     Bus 1     Bus 2  Bus 3     Bus 4
+Branch 0-1  0.193917 -0.475895 -0.348989    0.0  0.159538
+Branch 0-3  0.437588  0.258343  0.189451    0.0  0.360010
+Branch 0-4  0.368495  0.217552  0.159538    0.0 -0.519548
+Branch 1-2  0.193917  0.524105 -0.348989    0.0  0.159538
+Branch 2-3  0.193917  0.524105  0.651011    0.0  0.159538
+Branch 3-4 -0.368495 -0.217552 -0.159538    0.0 -0.480452
+
+LODF:
+            Branch 0-1  Branch 0-3  Branch 0-4  Branch 1-2  Branch 2-3  Branch 3-4
+Branch 0-1   -1.000000    0.344795    0.307071   -1.000000   -1.000000   -0.307071
+Branch 0-3    0.542857   -1.000000    0.692929    0.542857    0.542857   -0.692929
+Branch 0-4    0.457143    0.655205   -1.000000    0.457143    0.457143    1.000000
+Branch 1-2   -1.000000    0.344795    0.307071   -1.000000   -1.000000   -0.307071
+Branch 2-3   -1.000000    0.344795    0.307071   -1.000000   -1.000000   -0.307071
+Branch 3-4   -0.457143   -0.655205    1.000000   -0.457143   -0.457143   -1.000000
+</pre></div>
+</div>
+</section>
+<section id="time-series-linear-analysis">
+<h3>Time-Series Linear Analysis<a class="headerlink" href="#time-series-linear-analysis" title="Link to this heading"></a></h3>
+<p>The time-series driver uses the same linear sensitivity idea to approximate branch flows over many time steps.</p>
+<p>This is useful when:</p>
+<ul class="simple">
+<li><p>the grid topology does not change significantly</p></li>
+<li><p>you want a fast approximation of flow evolution over time</p></li>
+<li><p>you want to compare linear and non-linear flow tracking</p></li>
+</ul>
+<p>The time-series driver is <code class="docutils literal notranslate"><span class="pre">LinearAnalysisTimeSeriesDriver</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;IEEE39_1W.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">drv</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">LinearAnalysisTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">drv</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="benchmark">
+<h2>Benchmark<a class="headerlink" href="#benchmark" title="Link to this heading"></a></h2>
+<section id="linear-algebra-frameworks-benchmark">
+<h3>Linear Algebra Frameworks Benchmark<a class="headerlink" href="#linear-algebra-frameworks-benchmark" title="Link to this heading"></a></h3>
+<section id="ieee-39-1-year-time-series">
+<h4>IEEE 39 1-year time series<a class="headerlink" href="#ieee-39-1-year-time-series" title="Link to this heading"></a></h4>
+<p>The experiment measures the time taken by the time-series simulation using different linear algebra solvers.</p>
+<p>The power flow tolerance is set to <code class="docutils literal notranslate"><span class="pre">1e-4</span></code>.</p>
+<p>The time in seconds taken using each solver is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>KLU</p></th>
+<th class="head"><p>LAPACK</p></th>
+<th class="head"><p>ILU</p></th>
+<th class="head"><p>SuperLU</p></th>
+<th class="head"><p>Pardiso</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Test 1</p></td>
+<td><p>82.03</p></td>
+<td><p>82.10</p></td>
+<td><p>81.79</p></td>
+<td><p>82.88</p></td>
+<td><p>93.23</p></td>
+</tr>
+<tr class="row-odd"><td><p>Test 2</p></td>
+<td><p>80.22</p></td>
+<td><p>80.84</p></td>
+<td><p>81.71</p></td>
+<td><p>81.37</p></td>
+<td><p>95.29</p></td>
+</tr>
+<tr class="row-even"><td><p>Test 3</p></td>
+<td><p>79.53</p></td>
+<td><p>82.32</p></td>
+<td><p>82.75</p></td>
+<td><p>80.98</p></td>
+<td><p>92.62</p></td>
+</tr>
+<tr class="row-odd"><td><p>Test 4</p></td>
+<td><p>80.06</p></td>
+<td><p>82.66</p></td>
+<td><p>82.14</p></td>
+<td><p>80.17</p></td>
+<td><p>97.60</p></td>
+</tr>
+<tr class="row-even"><td><p>Test 5</p></td>
+<td><p>80.07</p></td>
+<td><p>80.51</p></td>
+<td><p>81.94</p></td>
+<td><p>80.03</p></td>
+<td><p>93.39</p></td>
+</tr>
+<tr class="row-odd"><td><p>Average</p></td>
+<td><p>80.38</p></td>
+<td><p>81.68</p></td>
+<td><p>82.07</p></td>
+<td><p>81.09</p></td>
+<td><p>94.42</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pegase-1-week-time-series">
+<h4>2869 Pegase 1-week time series<a class="headerlink" href="#pegase-1-week-time-series" title="Link to this heading"></a></h4>
+<p>The experiment measures the time taken by the time-series simulation using different linear algebra solvers.</p>
+<p>The power flow tolerance is set to <code class="docutils literal notranslate"><span class="pre">1e-4</span></code>.</p>
+<p>The time in seconds taken using each solver is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>KLU</p></th>
+<th class="head"><p>LAPACK</p></th>
+<th class="head"><p>ILU</p></th>
+<th class="head"><p>SuperLU</p></th>
+<th class="head"><p>Pardiso</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Test 1</p></td>
+<td><p>2.46</p></td>
+<td><p>2.50</p></td>
+<td><p>2.52</p></td>
+<td><p>2.48</p></td>
+<td><p>2.54</p></td>
+</tr>
+<tr class="row-odd"><td><p>Test 2</p></td>
+<td><p>2.35</p></td>
+<td><p>2.31</p></td>
+<td><p>2.36</p></td>
+<td><p>2.32</p></td>
+<td><p>2.59</p></td>
+</tr>
+<tr class="row-even"><td><p>Test 3</p></td>
+<td><p>2.40</p></td>
+<td><p>2.42</p></td>
+<td><p>2.46</p></td>
+<td><p>2.46</p></td>
+<td><p>2.46</p></td>
+</tr>
+<tr class="row-odd"><td><p>Test 4</p></td>
+<td><p>2.33</p></td>
+<td><p>2.31</p></td>
+<td><p>2.34</p></td>
+<td><p>2.33</p></td>
+<td><p>2.42</p></td>
+</tr>
+<tr class="row-even"><td><p>Test 5</p></td>
+<td><p>2.31</p></td>
+<td><p>2.32</p></td>
+<td><p>2.45</p></td>
+<td><p>2.33</p></td>
+<td><p>2.51</p></td>
+</tr>
+<tr class="row-odd"><td><p>Average</p></td>
+<td><p>2.37</p></td>
+<td><p>2.37</p></td>
+<td><p>2.43</p></td>
+<td><p>2.39</p></td>
+<td><p>2.51</p></td>
+</tr>
+</tbody>
+</table>
+<p>From these tests, the solvers are roughly equivalent for this type of simulation, except Pardiso, which performs
+worse than the others in these specific benchmarks.</p>
+</section>
+</section>
+<section id="linear-vs-non-linear-comparison">
+<h3>Linear vs Non-Linear Comparison<a class="headerlink" href="#linear-vs-non-linear-comparison" title="Link to this heading"></a></h3>
+<p>One of the most common uses of the linear model is to compare it against a Newton-Raphson time-series power flow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;fivethirtyeight&#39;</span><span class="p">)</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE39_1W.veragrid&#39;</span><span class="p">)</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">ptdf_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">LinearAnalysisTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">)</span>
+<span class="n">ptdf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">pf_options_</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">)</span>
+<span class="n">ts_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_options_</span><span class="p">)</span>
+<span class="n">ts_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Newton-Raphson based flow&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;MW&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;PTDF based flow&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ptdf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;MW&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Difference&#39;</span><span class="p">)</span>
+<span class="n">diff</span> <span class="o">=</span> <span class="n">ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">ptdf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="o">.</span><span class="n">real</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;MW&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">set_tight_layout</span><span class="p">(</span><span class="n">tight</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="PTDF flows comparison.png" src="../_images/PTDF_flows_comparison.png" /></p>
+<p>This comparison is important because it shows where the linear model is accurate enough for screening and where the
+full non-linear power flow is still necessary.</p>
+</section>
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="linearanalysisresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">LinearAnalysisResults</span></code> registered properties<a class="headerlink" href="#linearanalysisresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The snapshot linear analysis result stores sensitivity matrices and the base linearized operating point.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PTDF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Power transfer distribution factor matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LODF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Line outage distribution factor matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HvdcDF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC power-transfer sensitivity matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HvdcODF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC outage distribution factor matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VscDF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>VSC power-transfer sensitivity matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">VscODF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>VSC outage distribution factor matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The result model also exposes tabular views through <code class="docutils literal notranslate"><span class="pre">mdl()</span></code> for:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.PTDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.LODF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.HvdcPTDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.HvdcODF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.VscPTDF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.VscODF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchActivePowerFrom</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchLoading</span></code></p></li>
+<li><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ResultTypes.BranchActivePower</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="linearanalysistimeseriesresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">LinearAnalysisTimeSeriesResults</span></code> registered properties<a class="headerlink" href="#linearanalysistimeseriesresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The time-series linear analysis result stores linearized voltages, injections, flows, losses, and loading over time.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power result matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="power_flow.html" class="btn btn-neutral float-left" title="🔥 Power flow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="optimal_power_flow.html" class="btn btn-neutral float-right" title="🏁 Optimal power flow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

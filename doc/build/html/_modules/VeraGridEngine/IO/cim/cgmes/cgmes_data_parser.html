@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.cgmes_data_parser &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.cgmes_data_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cgmes.cgmes_data_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># Prefer lxml when it is available because CGMES import is dominated by large</span>
+    <span class="c1"># RDF/XML streams, and lxml&#39;s iterparse implementation is usually faster.</span>
+    <span class="c1"># The rest of the parser stays backend-agnostic and falls back to the</span>
+    <span class="c1"># standard library XML implementation if lxml is not installed.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ET</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.base_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CGMESVersions</span>
+
+
+<div class="viewcode-block" id="find_id">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.find_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_id</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to find the ID of an element</span>
+<span class="sd">    :param child: XML element</span>
+<span class="sd">    :return: RDFID</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj_id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;about&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;resource&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">obj_id</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj_id</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">obj_id</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">obj_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_class_name">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.find_class_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_class_name</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to find the CIM class name</span>
+<span class="sd">    :param child: XML element</span>
+<span class="sd">    :return: class name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;}&#39;</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span>
+
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">class_name</span><span class="p">:</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">class_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">class_name</span></div>
+
+
+
+<div class="viewcode-block" id="fix_child_result_datatype">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.fix_child_result_datatype">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_child_result_datatype</span><span class="p">(</span><span class="n">child_result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">child_result</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+            <span class="n">child_result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+            <span class="n">child_result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">child_result</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert XML leaf text to the expected scalar type.</span>
+
+<span class="sd">    :param value: XML leaf text value</span>
+<span class="sd">    :return: Converted scalar value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_unique_value</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">]],</span>
+                         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Append a value in a stable manner, preserving scalar form when unique.</span>
+
+<span class="sd">    :param container: Property dictionary to modify in place</span>
+<span class="sd">    :param key: Property name</span>
+<span class="sd">    :param value: Property value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_value</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">container</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_value</span><span class="p">:</span>
+                <span class="n">current_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">current_value</span> <span class="o">!=</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">container</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_value</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="parse_xml_stream_to_dict">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.parse_xml_stream_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_xml_stream_to_dict</span><span class="p">(</span><span class="n">xml_stream</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse XML stream to CGMES dictionary format using streaming events.</span>
+
+<span class="sd">    :param xml_stream: Binary file-like XML stream</span>
+<span class="sd">    :return: Dictionary representing parsed CGMES objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">event</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">xml_stream</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="n">find_class_name</span><span class="p">(</span><span class="n">element</span><span class="p">),</span>
+                <span class="s2">&quot;obj_id&quot;</span><span class="p">:</span> <span class="n">find_id</span><span class="p">(</span><span class="n">element</span><span class="p">),</span>
+                <span class="s2">&quot;props&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+                <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">class_name</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;class_name&quot;</span><span class="p">]</span>
+            <span class="n">obj_id</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;obj_id&quot;</span><span class="p">]</span>
+            <span class="n">props</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;props&quot;</span><span class="p">]</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># root rdf:RDF element</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">class_objects</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">class_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">class_objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_objects</span>
+                <span class="n">class_objects</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parent_frame</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">parent_props</span> <span class="o">=</span> <span class="n">parent_frame</span><span class="p">[</span><span class="s2">&quot;props&quot;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">props</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># Keep compatibility with legacy recursive parser for nested object values.</span>
+                    <span class="n">nested_value</span> <span class="o">=</span> <span class="p">{</span><span class="n">obj_id</span><span class="p">:</span> <span class="n">fix_child_result_datatype</span><span class="p">(</span><span class="n">props</span><span class="p">)}</span>
+                    <span class="n">_append_unique_value</span><span class="p">(</span><span class="n">parent_props</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">nested_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">text_value</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span>
+                    <span class="k">if</span> <span class="n">text_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">_append_unique_value</span><span class="p">(</span><span class="n">parent_props</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">stripped</span> <span class="o">=</span> <span class="n">text_value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">stripped</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                            <span class="n">_append_unique_value</span><span class="p">(</span><span class="n">parent_props</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">_append_unique_value</span><span class="p">(</span><span class="n">parent_props</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">_convert_leaf_value</span><span class="p">(</span><span class="n">stripped</span><span class="p">))</span>
+
+            <span class="n">element</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="merge">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.merge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+          <span class="n">B</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+          <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span>
+          <span class="n">log_overwriting_values</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify A using B</span>
+
+<span class="sd">    :param A: CIM data dictionary to be modified in-place</span>
+<span class="sd">    :param B: CIM data dictionary used to modify A</span>
+<span class="sd">    :param logger: DataLogger to fill in logs</span>
+<span class="sd">    :param log_overwriting_values: Emit one warning for every overwritten value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">add_warning</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span>
+
+    <span class="k">for</span> <span class="n">class_name_b</span><span class="p">,</span> <span class="n">class_obj_dict_b</span> <span class="ow">in</span> <span class="n">B</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">class_obj_dict_a</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_name_b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">class_obj_dict_a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">A</span><span class="p">[</span><span class="n">class_name_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_obj_dict_b</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rdfid</span><span class="p">,</span> <span class="n">obj_b</span> <span class="ow">in</span> <span class="n">class_obj_dict_b</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">obj_a</span> <span class="o">=</span> <span class="n">class_obj_dict_a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rdfid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">obj_a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">class_obj_dict_a</span><span class="p">[</span><span class="n">rdfid</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj_b</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">value_b</span> <span class="ow">in</span> <span class="n">obj_b</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">value_a</span> <span class="o">=</span> <span class="n">obj_a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">value_a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">obj_a</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_b</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">value_b</span> <span class="o">!=</span> <span class="n">value_a</span><span class="p">:</span>
+                                <span class="n">obj_a</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_b</span>
+                                <span class="k">if</span> <span class="n">log_overwriting_values</span><span class="p">:</span>
+                                    <span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Overwriting value&quot;</span><span class="p">,</span>
+                                                <span class="n">device</span><span class="o">=</span><span class="n">rdfid</span><span class="p">,</span>
+                                                <span class="n">device_class</span><span class="o">=</span><span class="n">class_name_b</span><span class="p">,</span>
+                                                <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                                                <span class="n">value</span><span class="o">=</span><span class="n">value_b</span><span class="p">,</span>
+                                                <span class="n">expected_value</span><span class="o">=</span><span class="n">value_a</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sort_cgmes_files">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.sort_cgmes_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_cgmes_files</span><span class="p">(</span><span class="n">links</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sorts the CIM files in the preferred reading order</span>
+<span class="sd">    :param links: list of filename, model id, dependent on model id</span>
+<span class="sd">    :return: sorted list of file names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_name_model_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">dependent_id</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+        <span class="n">file_name_model_dict</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+
+    <span class="n">deps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">dependent_id</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dependent_id</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">deps</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="n">found</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">deps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">dependent_id</span><span class="p">:</span>
+                        <span class="n">deps</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+                        <span class="n">items</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                    <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+                    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">items</span></div>
+
+
+
+<div class="viewcode-block" id="process_cgmes_file_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.process_cgmes_file_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_cgmes_file_data</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">file_cgmes_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+                            <span class="n">cgmes2_4_15_uri</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                            <span class="n">cgmes3_0_0_uri</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                            <span class="n">parsed_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]],</span>
+                            <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+                            <span class="n">boundary_set</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span>
+                            <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span>
+                            <span class="n">log_overwriting_values</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                            <span class="n">allow_profileless_import</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CGMESVersions</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process one parsed CGMES file dictionary and route objects to normal/boundary stores.</span>
+
+<span class="sd">    :param file_name: Source file name</span>
+<span class="sd">    :param file_cgmes_data: Parsed CGMES dictionary</span>
+<span class="sd">    :param cgmes2_4_15_uri: Known CGMES v2.4.15 profile URIs</span>
+<span class="sd">    :param cgmes3_0_0_uri: Known CGMES v3.0.0 profile URIs</span>
+<span class="sd">    :param parsed_data: Optional per-file parsed dictionary output</span>
+<span class="sd">    :param data: Normal model dictionary store</span>
+<span class="sd">    :param boundary_set: Boundary model dictionary store</span>
+<span class="sd">    :param logger: Logger instance</span>
+<span class="sd">    :param log_overwriting_values: Emit one warning for every overwritten value</span>
+<span class="sd">    :param allow_profileless_import: Import files without FullModel/DifferenceModel as extension profiles</span>
+<span class="sd">    :return: Detected CGMES version for this file, or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">detected_version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CGMESVersions</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">full_models_dict</span> <span class="o">=</span> <span class="n">file_cgmes_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FullModel&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">difference_full_models_dict</span> <span class="o">=</span> <span class="n">file_cgmes_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DifferenceModel&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">full_models_dict</span><span class="p">:</span>
+        <span class="n">model_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">file_cgmes_data</span><span class="p">[</span><span class="s1">&#39;FullModel&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># there must be exacly one FullModel</span>
+            <span class="n">model_info</span> <span class="o">=</span> <span class="n">file_cgmes_data</span><span class="p">[</span><span class="s1">&#39;FullModel&#39;</span><span class="p">][</span><span class="n">model_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">parsed_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parsed_data</span><span class="p">[</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_cgmes_data</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">profile</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">cgmes2_4_15_uri</span><span class="p">:</span>
+                        <span class="n">detected_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span>
+                    <span class="k">elif</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">cgmes3_0_0_uri</span><span class="p">:</span>
+                        <span class="n">detected_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span>
+
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;Boundary&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span> <span class="k">for</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">profile</span><span class="p">):</span>
+                    <span class="n">merge</span><span class="p">(</span><span class="n">boundary_set</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">cgmes2_4_15_uri</span><span class="p">:</span>
+                    <span class="n">detected_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span>
+                <span class="k">elif</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">cgmes3_0_0_uri</span><span class="p">:</span>
+                    <span class="n">detected_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span>
+
+                <span class="k">if</span> <span class="s1">&#39;Boundary&#39;</span> <span class="ow">in</span> <span class="n">profile</span><span class="p">:</span>
+                    <span class="n">merge</span><span class="p">(</span><span class="n">boundary_set</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;File does not contain exactly one FullModel&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;FullModel&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;This is not a proper CGMES file&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">difference_full_models_dict</span><span class="p">:</span>
+        <span class="n">model_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">file_cgmes_data</span><span class="p">[</span><span class="s1">&#39;DifferenceModel&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># there must be exacly one Ontology</span>
+            <span class="n">model_info</span> <span class="o">=</span> <span class="n">file_cgmes_data</span><span class="p">[</span><span class="s1">&#39;DifferenceModel&#39;</span><span class="p">][</span><span class="n">model_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">parsed_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parsed_data</span><span class="p">[</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_cgmes_data</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;priorVersion&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">profile_values</span> <span class="o">=</span> <span class="n">profile</span>
+            <span class="k">elif</span> <span class="n">profile</span><span class="p">:</span>
+                <span class="n">profile_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">profile</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">profile_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">profile_values</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">cgmes2_4_15_uri</span><span class="p">:</span>
+                    <span class="n">detected_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span>
+                <span class="k">elif</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">cgmes3_0_0_uri</span><span class="p">:</span>
+                    <span class="n">detected_version</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;Boundary&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span> <span class="k">for</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">profile_values</span><span class="p">):</span>
+                <span class="n">merge</span><span class="p">(</span><span class="n">boundary_set</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;File does not contain exactly one DifferenceModel&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;DifferenceModel&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;DifferenceModel&quot;</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;This is not a proper CGMES file&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">allow_profileless_import</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_cgmes_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_cgmes_data</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_overwriting_values</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;File does not contain any FullModel or DifferenceModel; imported as extension profile&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                               <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                               <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;FullModel&#39;</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                               <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;File does not contain any FullModel or DifferenceModel&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;FullModel&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;This is not a proper CGMES file&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">detected_version</span></div>
+
+
+
+<div class="viewcode-block" id="CgmesDataParser">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.CgmesDataParser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CgmesDataParser</span><span class="p">(</span><span class="n">BaseCircuit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to read any cgmes-like set of files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">keep_parsed_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">log_overwriting_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">allow_profileless_import</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">logger</span><span class="o">=</span><span class="n">DataLogger</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CIM circuit constructor</span>
+<span class="sd">        :param text_func: text callback function (optional)</span>
+<span class="sd">        :param progress_func: progress callback function (optional)</span>
+<span class="sd">        :param keep_parsed_data: Keep per-file parsed dictionaries in memory</span>
+<span class="sd">        :param log_overwriting_values: Emit one warning for every overwritten value during merge</span>
+<span class="sd">        :param allow_profileless_import: Import files without FullModel/DifferenceModel as extension profiles</span>
+<span class="sd">        :param logger: DataLogger</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseCircuit</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="o">=</span> <span class="n">text_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="o">=</span> <span class="n">progress_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_parsed_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">keep_parsed_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_overwriting_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">log_overwriting_values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_profileless_import</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">allow_profileless_import</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="c1"># Optional per-file parsed snapshots. This is useful for debugging,</span>
+        <span class="c1"># but it duplicates the parsed model in memory, so it is disabled by default.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># merged CGMES data (dictionary representation of the xml data)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># boundary set data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_set</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># store the CGMES version from the data files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">CGMESVersions</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CgmesDataParser.emit_text">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.CgmesDataParser.emit_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Emit text via the callback</span>
+<span class="sd">        :param val: text value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CgmesDataParser.emit_progress">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.CgmesDataParser.emit_progress">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Emit floating point values via the callback</span>
+<span class="sd">        :param val: numeric value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_func</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CgmesDataParser.load_files">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_data_parser.CgmesDataParser.load_files">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load CIM file</span>
+<span class="sd">        :param files: list of CIM files (.xml or .zip)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_set</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">cgmes2_4_15_uri</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;http://entsoe.eu/CIM/EquipmentCore/3/1&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;http://entsoe.eu/CIM/EquipmentOperation/3/1&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;http://entsoe.eu/CIM/EquipmentShortCircuit/3/1&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;http://entsoe.eu/CIM/Topology/4/1&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;http://entsoe.eu/CIM/SteadyStateHypothesis/1/1&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;http://entsoe.eu/CIM/StateVariables/4/1&quot;</span><span class="p">]</span>
+        <span class="n">cgmes3_0_0_uri</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;http://iec.ch/TC57/ns/CIM/Topology-EU/3.0&quot;</span><span class="p">]</span>
+        <span class="n">parse_jobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.xml&quot;</span><span class="p">:</span>
+                <span class="n">parse_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">path</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">zip_ptr</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
+                            <span class="n">_</span><span class="p">,</span> <span class="n">member_ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">member</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">member_ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.xml&quot;</span><span class="p">:</span>
+                                <span class="n">parse_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">path</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">member</span><span class="p">)))</span>
+                <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;BadZipFile&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BadZipFile </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parse_jobs</span><span class="p">)</span>
+        <span class="n">parsed_data_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_parsed_data</span><span class="p">:</span>
+            <span class="n">parsed_data_store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parsed_data_store</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">member_name</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parse_jobs</span><span class="p">):</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit_text</span><span class="p">(</span><span class="s1">&#39;Parsing xml structure of &#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">member_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_ptr</span><span class="p">:</span>
+                    <span class="n">file_cgmes_data</span> <span class="o">=</span> <span class="n">parse_xml_stream_to_dict</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ptr</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">zip_ptr</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">member_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_ptr</span><span class="p">:</span>
+                        <span class="n">file_cgmes_data</span> <span class="o">=</span> <span class="n">parse_xml_stream_to_dict</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">)</span>
+
+            <span class="n">detected_version</span> <span class="o">=</span> <span class="n">process_cgmes_file_data</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                                       <span class="n">file_cgmes_data</span><span class="o">=</span><span class="n">file_cgmes_data</span><span class="p">,</span>
+                                                       <span class="n">cgmes2_4_15_uri</span><span class="o">=</span><span class="n">cgmes2_4_15_uri</span><span class="p">,</span>
+                                                       <span class="n">cgmes3_0_0_uri</span><span class="o">=</span><span class="n">cgmes3_0_0_uri</span><span class="p">,</span>
+                                                       <span class="n">parsed_data</span><span class="o">=</span><span class="n">parsed_data_store</span><span class="p">,</span>
+                                                       <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                                                       <span class="n">boundary_set</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_set</span><span class="p">,</span>
+                                                       <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                                                       <span class="n">log_overwriting_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_overwriting_values</span><span class="p">,</span>
+                                                       <span class="n">allow_profileless_import</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_profileless_import</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">detected_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">=</span> <span class="n">detected_version</span>
+            <span class="k">if</span> <span class="n">n_items</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">emit_progress</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_items</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">emit_text</span><span class="p">(</span><span class="s1">&#39;Parsing done!&#39;</span><span class="p">)</span></div>
+</div>
+
+
+    <span class="c1"># def set_cgmes_version(self, profile):</span>
+    <span class="c1">#     if profile == &quot;&quot;:</span>
+    <span class="c1">#         pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

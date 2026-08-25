@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.iidm.devices package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.iidm.devices package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.iidm.devices.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-iidm-devices-package">
+<h1>VeraGridEngine.IO.iidm.devices package<a class="headerlink" href="#veragridengine-io-iidm-devices-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_area">
+<span id="veragridengine-io-iidm-devices-iidm-area-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_area module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_area" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_area.IidmArea">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_area.</span></span><span class="sig-name descname"><span class="pre">IidmArea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interchange_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_area.html#IidmArea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_area.IidmArea" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_area.IidmArea.to_veragrid">
+<span class="sig-name descname"><span class="pre">to_veragrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_area.html#IidmArea.to_veragrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_area.IidmArea.to_veragrid" title="Link to this definition"></a></dt>
+<dd><p>Convert</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_bus">
+<span id="veragridengine-io-iidm-devices-iidm-bus-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_bus module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_bus" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_bus.IidmBus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_bus.</span></span><span class="sig-name descname"><span class="pre">IidmBus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_bus.html#IidmBus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_bus.IidmBus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_bus.IidmBus.to_veragrid">
+<span class="sig-name descname"><span class="pre">to_veragrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_bus.html#IidmBus.to_veragrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_bus.IidmBus.to_veragrid" title="Link to this definition"></a></dt>
+<dd><p>Convert</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_busbar_section">
+<span id="veragridengine-io-iidm-devices-iidm-busbar-section-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_busbar_section module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_busbar_section" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_busbar_section.IidmBusbarSection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_busbar_section.</span></span><span class="sig-name descname"><span class="pre">IidmBusbarSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_busbar_section.html#IidmBusbarSection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_busbar_section.IidmBusbarSection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_circuit">
+<span id="veragridengine-io-iidm-devices-iidm-circuit-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_circuit module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_circuit" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_circuit.IidmCircuit">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_circuit.</span></span><span class="sig-name descname"><span class="pre">IidmCircuit</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_circuit.html#IidmCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_circuit.IidmCircuit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_dangling_line">
+<span id="veragridengine-io-iidm-devices-iidm-dangling-line-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_dangling_line module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_dangling_line" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_dangling_line.IidmDanglingLine">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_dangling_line.</span></span><span class="sig-name descname"><span class="pre">IidmDanglingLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_dangling_line.html#IidmDanglingLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_dangling_line.IidmDanglingLine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement">
+<span id="veragridengine-io-iidm-devices-iidm-discrete-measurement-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement.IidmDiscreteMeasurement">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement.</span></span><span class="sig-name descname"><span class="pre">IidmDiscreteMeasurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equipmentId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_discrete_measurement.html#IidmDiscreteMeasurement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement.IidmDiscreteMeasurement" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_generator">
+<span id="veragridengine-io-iidm-devices-iidm-generator-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_generator module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_generator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_generator.IidmGenerator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_generator.</span></span><span class="sig-name descname"><span class="pre">IidmGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetQ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetV</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_generator.html#IidmGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_generator.IidmGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_generator.IidmGeneratorShortCircuit">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_generator.</span></span><span class="sig-name descname"><span class="pre">IidmGeneratorShortCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generatorId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageFactor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_generator.html#IidmGeneratorShortCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_generator.IidmGeneratorShortCircuit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit">
+<span id="veragridengine-io-iidm-devices-iidm-identifiable-short-circuit-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit.IidmIdentifiableShortCircuit">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit.</span></span><span class="sig-name descname"><span class="pre">IidmIdentifiableShortCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageSource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_identifiable_short_circuit.html#IidmIdentifiableShortCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit.IidmIdentifiableShortCircuit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_line">
+<span id="veragridengine-io-iidm-devices-iidm-line-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_line module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_line" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_line.IidmLine">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_line.</span></span><span class="sig-name descname"><span class="pre">IidmLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageLevelId1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageLevelId2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_line.html#IidmLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_line.IidmLine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_load">
+<span id="veragridengine-io-iidm-devices-iidm-load-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_load module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_load" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_load.IidmLoad">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_load.</span></span><span class="sig-name descname"><span class="pre">IidmLoad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_load.html#IidmLoad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_load.IidmLoad" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology">
+<span id="veragridengine-io-iidm-devices-iidm-node-breaker-topology-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology.IidmNodeBreakerTopology">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology.</span></span><span class="sig-name descname"><span class="pre">IidmNodeBreakerTopology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_node_breaker_topology.html#IidmNodeBreakerTopology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology.IidmNodeBreakerTopology" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.iidm_object">
+<span id="veragridengine-io-iidm-devices-iidm-object-module"></span><h2>VeraGridEngine.IO.iidm.devices.iidm_object module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.iidm_object" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.iidm_object.</span></span><span class="sig-name descname"><span class="pre">IidmObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_object.html#IidmObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>RteObject</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_prop_value">
+<span class="sig-name descname"><span class="pre">get_prop_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.base_property.BaseProperty" title="VeraGridEngine.IO.base.base_property.BaseProperty"><span class="pre">BaseProperty</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_object.html#IidmObject.get_prop_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_prop_value" title="Link to this definition"></a></dt>
+<dd><p>Get property value
+:param prop:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_properties">
+<span class="sig-name descname"><span class="pre">get_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.base_property.BaseProperty" title="VeraGridEngine.IO.base.base_property.BaseProperty"><span class="pre">BaseProperty</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_object.html#IidmObject.get_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_properties" title="Link to this definition"></a></dt>
+<dd><p>Get list of properties
+:return: List[BaseProperty]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_rdfid">
+<span class="sig-name descname"><span class="pre">get_rdfid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_object.html#IidmObject.get_rdfid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_rdfid" title="Link to this definition"></a></dt>
+<dd><p>Convert the idtag to RDFID
+:return: UUID converted to RDFID</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.register_property">
+<span class="sig-name descname"><span class="pre">register_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">property_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TypeVar</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit" title="VeraGridEngine.IO.base.units.Unit"><span class="pre">Unit</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;VeraGridEngine.IO.base.units.Unit</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denominator_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.base.html#VeraGridEngine.IO.base.units.Unit" title="VeraGridEngine.IO.base.units.Unit"><span class="pre">Unit</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;VeraGridEngine.IO.base.units.Unit</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_chars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1e+20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/iidm_object.html#IidmObject.register_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.register_property" title="Link to this definition"></a></dt>
+<dd><p>Register property of this object
+:param property_name:
+:param class_type:
+:param unit:
+:param denominator_unit:
+:param description:
+:param max_chars:
+:param min_value:
+:param max_value:
+:param format_rule: some formatting rule</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.observability_area">
+<span id="veragridengine-io-iidm-devices-observability-area-module"></span><h2>VeraGridEngine.IO.iidm.devices.observability_area module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.observability_area" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.observability_area.ObservabilityArea">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.observability_area.</span></span><span class="sig-name descname"><span class="pre">ObservabilityArea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/observability_area.html#ObservabilityArea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.observability_area.ObservabilityArea" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.operating_status">
+<span id="veragridengine-io-iidm-devices-operating-status-module"></span><h2>VeraGridEngine.IO.iidm.devices.operating_status module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.operating_status" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.operating_status.OperatingStatus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.operating_status.</span></span><span class="sig-name descname"><span class="pre">OperatingStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inService</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/operating_status.html#OperatingStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.operating_status.OperatingStatus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.rtesubstation">
+<span id="veragridengine-io-iidm-devices-rtesubstation-module"></span><h2>VeraGridEngine.IO.iidm.devices.rtesubstation module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.rtesubstation" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.rtesubstation.IidmSubstation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.rtesubstation.</span></span><span class="sig-name descname"><span class="pre">IidmSubstation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tso</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geographicalTags</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/rtesubstation.html#IidmSubstation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.rtesubstation.IidmSubstation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.shunt">
+<span id="veragridengine-io-iidm-devices-shunt-module"></span><h2>VeraGridEngine.IO.iidm.devices.shunt module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.shunt" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.shunt.Shunt">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.shunt.</span></span><span class="sig-name descname"><span class="pre">Shunt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/shunt.html#Shunt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.shunt.Shunt" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.standby_automation">
+<span id="veragridengine-io-iidm-devices-standby-automation-module"></span><h2>VeraGridEngine.IO.iidm.devices.standby_automation module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.standby_automation" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.standby_automation.StandbyAutomaton">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.standby_automation.</span></span><span class="sig-name descname"><span class="pre">StandbyAutomaton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/standby_automation.html#StandbyAutomaton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.standby_automation.StandbyAutomaton" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.startup">
+<span id="veragridengine-io-iidm-devices-startup-module"></span><h2>VeraGridEngine.IO.iidm.devices.startup module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.startup" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.startup.Startup">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.startup.</span></span><span class="sig-name descname"><span class="pre">Startup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generatorId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startupTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/startup.html#Startup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.startup.Startup" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.static_var_compensator">
+<span id="veragridengine-io-iidm-devices-static-var-compensator-module"></span><h2>VeraGridEngine.IO.iidm.devices.static_var_compensator module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.static_var_compensator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.static_var_compensator.StaticVarCompensator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.static_var_compensator.</span></span><span class="sig-name descname"><span class="pre">StaticVarCompensator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bMin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bMax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageSetPoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/static_var_compensator.html#StaticVarCompensator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.static_var_compensator.StaticVarCompensator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.switch">
+<span id="veragridengine-io-iidm-devices-switch-module"></span><h2>VeraGridEngine.IO.iidm.devices.switch module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.switch" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.switch.Switch">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.switch.</span></span><span class="sig-name descname"><span class="pre">Switch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retained</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/switch.html#Switch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.switch.Switch" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.two_winding_transformer">
+<span id="veragridengine-io-iidm-devices-two-winding-transformer-module"></span><h2>VeraGridEngine.IO.iidm.devices.two_winding_transformer module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.two_winding_transformer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.two_winding_transformer.PhaseTapChanger">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.two_winding_transformer.</span></span><span class="sig-name descname"><span class="pre">PhaseTapChanger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regulationMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tapPosition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regulationValue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regulating</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/two_winding_transformer.html#PhaseTapChanger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.two_winding_transformer.PhaseTapChanger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.two_winding_transformer.RatioTapChanger">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.two_winding_transformer.</span></span><span class="sig-name descname"><span class="pre">RatioTapChanger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lowTapPosition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tapPosition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regulationMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regulationValue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loadTapChangingCapabilities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regulating</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetDeadband</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/two_winding_transformer.html#RatioTapChanger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.two_winding_transformer.RatioTapChanger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.two_winding_transformer.RatioTapChangerStep">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.two_winding_transformer.</span></span><span class="sig-name descname"><span class="pre">RatioTapChangerStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/two_winding_transformer.html#RatioTapChangerStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.two_winding_transformer.RatioTapChangerStep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.two_winding_transformer.TwoWindingsTransformer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.two_winding_transformer.</span></span><span class="sig-name descname"><span class="pre">TwoWindingsTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageLevelId1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voltageLevelId2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratedU1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratedU2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/two_winding_transformer.html#TwoWindingsTransformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.two_winding_transformer.TwoWindingsTransformer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices.voltage_level">
+<span id="veragridengine-io-iidm-devices-voltage-level-module"></span><h2>VeraGridEngine.IO.iidm.devices.voltage_level module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices.voltage_level" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.voltage_level.IidmVoltageLevel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.devices.voltage_level.</span></span><span class="sig-name descname"><span class="pre">IidmVoltageLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nominalV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topologyKind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/voltage_level.html#IidmVoltageLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.voltage_level.IidmVoltageLevel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject" title="VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IidmObject</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.devices.voltage_level.IidmVoltageLevel.to_veragrid">
+<span class="sig-name descname"><span class="pre">to_veragrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/devices/voltage_level.html#IidmVoltageLevel.to_veragrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.devices.voltage_level.IidmVoltageLevel.to_veragrid" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.devices">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.devices" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

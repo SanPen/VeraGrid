@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitBundle</span>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiModeRuntimeData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Discrete-time runtime coefficients of one scalar JMARTI modal channel.</span>
+
+<span class="sd">    The EMT runtime will later consume these coefficients directly instead of</span>
+<span class="sd">    re-discretizing every pole on the fly. This keeps the time-stepping loop as</span>
+<span class="sd">    lean as possible.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_mode_index&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_tau_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_delay_step_count&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_residual_delay_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_poles_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_residues&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_constant_term&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_proportional_term&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_poles_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_residues&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_constant_term&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_proportional_term&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_alpha&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_beta&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_alpha&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_beta&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">tau_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">delay_step_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">residual_delay_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">yc_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">yc_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">yc_constant_term</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                 <span class="n">yc_proportional_term</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                 <span class="n">hres_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">hres_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">hres_constant_term</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                 <span class="n">hres_proportional_term</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                 <span class="n">yc_alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">yc_beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">hres_alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">hres_beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one discretized modal runtime record.</span>
+
+<span class="sd">        :param mode_index: Modal channel index.</span>
+<span class="sd">        :param tau_s: Estimated pure delay in seconds.</span>
+<span class="sd">        :param delay_step_count: Integer delay in EMT steps.</span>
+<span class="sd">        :param residual_delay_s: Remaining sub-step delay in seconds.</span>
+<span class="sd">        :param yc_poles_s: Continuous-time poles of ``Yc``.</span>
+<span class="sd">        :param yc_residues: Residues of ``Yc``.</span>
+<span class="sd">        :param yc_constant_term: Constant term of ``Yc``.</span>
+<span class="sd">        :param yc_proportional_term: Proportional term of ``Yc``.</span>
+<span class="sd">        :param hres_poles_s: Continuous-time poles of ``Hres``.</span>
+<span class="sd">        :param hres_residues: Residues of ``Hres``.</span>
+<span class="sd">        :param hres_constant_term: Constant term of ``Hres``.</span>
+<span class="sd">        :param hres_proportional_term: Proportional term of ``Hres``.</span>
+<span class="sd">        :param yc_alpha: Exact discrete state-transition multipliers of ``Yc``.</span>
+<span class="sd">        :param yc_beta: Exact discrete input gains of ``Yc``.</span>
+<span class="sd">        :param hres_alpha: Exact discrete state-transition multipliers of ``Hres``.</span>
+<span class="sd">        :param hres_beta: Exact discrete input gains of ``Hres``.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mode_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tau_s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delay_step_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delay_step_count</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_residual_delay_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">residual_delay_s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yc_poles_s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yc_residues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_constant_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">yc_constant_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_proportional_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">yc_proportional_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hres_poles_s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hres_residues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_constant_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">hres_constant_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_proportional_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">hres_proportional_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yc_alpha</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yc_beta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hres_alpha</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hres_beta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_mode_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_mode_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal channel index.</span>
+
+<span class="sd">        :return: Modal channel index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_tau_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_tau_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tau_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the pure delay in seconds.</span>
+
+<span class="sd">        :return: Pure delay in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_delay_step_count">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_delay_step_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_delay_step_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the integer delay in EMT steps.</span>
+
+<span class="sd">        :return: Integer delay in EMT steps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_step_count</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_residual_delay_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_residual_delay_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_residual_delay_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the unresolved sub-step delay in seconds.</span>
+
+<span class="sd">        :return: Residual delay in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual_delay_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_yc_poles_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_yc_poles_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_poles_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the continuous-time poles of ``Yc``.</span>
+
+<span class="sd">        :return: Complex pole vector of ``Yc``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_poles_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_yc_residues">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_yc_residues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_residues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the residues of ``Yc``.</span>
+
+<span class="sd">        :return: Complex residue vector of ``Yc``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_residues</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_yc_constant_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_yc_constant_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_constant_term</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the constant term of ``Yc``.</span>
+
+<span class="sd">        :return: Complex constant term of ``Yc``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_constant_term</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_yc_proportional_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_yc_proportional_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_proportional_term</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the proportional term of ``Yc``.</span>
+
+<span class="sd">        :return: Complex proportional term of ``Yc``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_proportional_term</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_hres_poles_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_hres_poles_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_poles_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the continuous-time poles of ``Hres``.</span>
+
+<span class="sd">        :return: Complex pole vector of ``Hres``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_poles_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_hres_residues">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_hres_residues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_residues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the residues of ``Hres``.</span>
+
+<span class="sd">        :return: Complex residue vector of ``Hres``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_residues</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_hres_constant_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_hres_constant_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_constant_term</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the constant term of ``Hres``.</span>
+
+<span class="sd">        :return: Complex constant term of ``Hres``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_constant_term</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_hres_proportional_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_hres_proportional_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_proportional_term</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the proportional term of ``Hres``.</span>
+
+<span class="sd">        :return: Complex proportional term of ``Hres``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_proportional_term</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_yc_alpha">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_yc_alpha">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the exact discrete state-transition multipliers of ``Yc``.</span>
+
+<span class="sd">        :return: Complex transition multipliers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_alpha</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_yc_beta">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_yc_beta">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the exact discrete input gains of ``Yc``.</span>
+
+<span class="sd">        :return: Complex input gains.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_beta</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_hres_alpha">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_hres_alpha">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the exact discrete state-transition multipliers of ``Hres``.</span>
+
+<span class="sd">        :return: Complex transition multipliers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_alpha</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeRuntimeData.get_hres_beta">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiModeRuntimeData.get_hres_beta">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the exact discrete input gains of ``Hres``.</span>
+
+<span class="sd">        :return: Complex input gains.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_beta</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="JMartiRuntimeData">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiRuntimeData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runtime-ready discrete JMARTI data built from one offline fit bundle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_time_step_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_line_length_m&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_phase_labels&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_modal_transform&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_modal_transform_inv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_reference_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_mode_data&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">time_step_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">line_length_m</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">phase_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                 <span class="n">modal_transform</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">modal_transform_inv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">reference_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">mode_data</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModeRuntimeData</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one runtime-ready JMARTI dataset.</span>
+
+<span class="sd">        :param time_step_s: EMT time step in seconds.</span>
+<span class="sd">        :param line_length_m: Line length in meters.</span>
+<span class="sd">        :param phase_labels: Ordered phase labels.</span>
+<span class="sd">        :param modal_transform: Frozen modal transform.</span>
+<span class="sd">        :param modal_transform_inv: Inverse frozen modal transform.</span>
+<span class="sd">        :param reference_frequency_hz: Frequency used to freeze the modal basis.</span>
+<span class="sd">        :param mode_data: Discrete modal runtime data.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_step_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">time_step_s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_length_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line_length_m</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">modal_transform</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform_inv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">modal_transform_inv</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">reference_frequency_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_data</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModeRuntimeData</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode_data</span>
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_time_step_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_time_step_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_time_step_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the EMT time step in seconds.</span>
+
+<span class="sd">        :return: EMT time step in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_step_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_mode_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_mode_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModeRuntimeData</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the discrete modal runtime records.</span>
+
+<span class="sd">        :return: Modal runtime tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_data</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_modal_transform">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_modal_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_modal_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the frozen modal transform.</span>
+
+<span class="sd">        :return: Complex modal transform.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_modal_transform_inv">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_modal_transform_inv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_modal_transform_inv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the inverse frozen modal transform.</span>
+
+<span class="sd">        :return: Inverse modal transform.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform_inv</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_line_length_m">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_line_length_m">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_line_length_m</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the line length in meters.</span>
+
+<span class="sd">        :return: Line length in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_length_m</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_phase_labels">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_phase_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_phase_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the ordered phase labels.</span>
+
+<span class="sd">        :return: Ordered phase-label tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_reference_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_reference_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reference_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal-reference frequency.</span>
+
+<span class="sd">        :return: Reference frequency in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiRuntimeData.get_mode_count">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.JMartiRuntimeData.get_mode_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of modes.</span>
+
+<span class="sd">        :return: Number of modes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_data</span><span class="p">))</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_exact_discrete_coefficients</span><span class="p">(</span><span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                       <span class="n">residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                       <span class="n">time_step_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one first-order pole-residue family into exact discrete coefficients.</span>
+
+<span class="sd">    :param poles_s: Continuous-time poles.</span>
+<span class="sd">    :param residues: Continuous-time residues used as input gains.</span>
+<span class="sd">    :param time_step_s: EMT time step in seconds.</span>
+<span class="sd">    :return: Tuple ``(alpha, beta)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">poles_s</span> <span class="o">*</span> <span class="n">time_step_s</span><span class="p">)</span>
+    <span class="n">beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">non_zero_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">poles_s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0e-20</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">non_zero_mask</span><span class="p">):</span>
+        <span class="n">beta</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">poles_s</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">non_zero_mask</span><span class="p">):</span>
+        <span class="n">beta</span><span class="p">[</span><span class="o">~</span><span class="n">non_zero_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="o">~</span><span class="n">non_zero_mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">time_step_s</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_delay_step_decomposition</span><span class="p">(</span><span class="n">tau_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">time_step_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split one pure delay into an integer number of EMT steps and a residual part.</span>
+
+<span class="sd">    :param tau_s: Pure delay in seconds.</span>
+<span class="sd">    :param time_step_s: EMT time step in seconds.</span>
+<span class="sd">    :return: Tuple ``(delay_step_count, residual_delay_s)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">delay_step_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">tau_s</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">time_step_s</span><span class="p">)))</span>
+    <span class="n">residual_delay_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tau_s</span> <span class="o">-</span> <span class="n">delay_step_count</span> <span class="o">*</span> <span class="n">time_step_s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delay_step_count</span><span class="p">,</span> <span class="n">residual_delay_s</span>
+
+
+<div class="viewcode-block" id="build_jmarti_runtime_data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data.build_jmarti_runtime_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_runtime_data</span><span class="p">(</span><span class="n">fit_bundle</span><span class="p">:</span> <span class="n">JMartiFitBundle</span><span class="p">,</span>
+                              <span class="n">time_step_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiRuntimeData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build runtime-ready discrete JMARTI coefficients from one offline fit bundle.</span>
+
+<span class="sd">    :param fit_bundle: Offline JMARTI fit bundle.</span>
+<span class="sd">    :param time_step_s: EMT time step in seconds.</span>
+<span class="sd">    :return: Runtime-ready JMARTI dataset.</span>
+<span class="sd">    :raises ValueError: If the time step is not strictly positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sanitized_time_step_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">time_step_s</span><span class="p">)</span>
+    <span class="n">mode_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_mode_count</span><span class="p">()</span>
+    <span class="n">mode_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JMartiModeRuntimeData</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">mode_delay</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">yc_fit</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">hres_fit</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">delay_step_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">residual_delay_s</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">yc_alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">yc_beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">hres_alpha</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">hres_beta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+    <span class="k">if</span> <span class="n">sanitized_time_step_s</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI runtime conversion requires a strictly positive EMT time step&quot;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">mode_index</span> <span class="o">&lt;</span> <span class="n">mode_count</span><span class="p">:</span>
+        <span class="n">mode_delay</span> <span class="o">=</span> <span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_mode_delays</span><span class="p">()[</span><span class="n">mode_index</span><span class="p">]</span>
+        <span class="n">yc_fit</span> <span class="o">=</span> <span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_yc_fits</span><span class="p">()[</span><span class="n">mode_index</span><span class="p">]</span>
+        <span class="n">hres_fit</span> <span class="o">=</span> <span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_hres_fits</span><span class="p">()[</span><span class="n">mode_index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_proportional_term</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="mf">1.0e-14</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The first JMARTI EMT runtime does not support a proportional term in Yc&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_proportional_term</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="mf">1.0e-14</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The first JMARTI EMT runtime does not support a proportional term in Hres&quot;</span><span class="p">)</span>
+
+        <span class="n">delay_step_count</span><span class="p">,</span> <span class="n">residual_delay_s</span> <span class="o">=</span> <span class="n">_build_delay_step_decomposition</span><span class="p">(</span>
+            <span class="n">tau_s</span><span class="o">=</span><span class="n">mode_delay</span><span class="o">.</span><span class="n">get_tau_s</span><span class="p">(),</span>
+            <span class="n">time_step_s</span><span class="o">=</span><span class="n">sanitized_time_step_s</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">yc_alpha</span><span class="p">,</span> <span class="n">yc_beta</span> <span class="o">=</span> <span class="n">_build_exact_discrete_coefficients</span><span class="p">(</span>
+            <span class="n">poles_s</span><span class="o">=</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_poles_s</span><span class="p">(),</span>
+            <span class="n">residues</span><span class="o">=</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_residues</span><span class="p">(),</span>
+            <span class="n">time_step_s</span><span class="o">=</span><span class="n">sanitized_time_step_s</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">hres_alpha</span><span class="p">,</span> <span class="n">hres_beta</span> <span class="o">=</span> <span class="n">_build_exact_discrete_coefficients</span><span class="p">(</span>
+            <span class="n">poles_s</span><span class="o">=</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_poles_s</span><span class="p">(),</span>
+            <span class="n">residues</span><span class="o">=</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_residues</span><span class="p">(),</span>
+            <span class="n">time_step_s</span><span class="o">=</span><span class="n">sanitized_time_step_s</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">mode_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">JMartiModeRuntimeData</span><span class="p">(</span>
+                <span class="n">mode_index</span><span class="o">=</span><span class="n">mode_index</span><span class="p">,</span>
+                <span class="n">tau_s</span><span class="o">=</span><span class="n">mode_delay</span><span class="o">.</span><span class="n">get_tau_s</span><span class="p">(),</span>
+                <span class="n">delay_step_count</span><span class="o">=</span><span class="n">delay_step_count</span><span class="p">,</span>
+                <span class="n">residual_delay_s</span><span class="o">=</span><span class="n">residual_delay_s</span><span class="p">,</span>
+                <span class="n">yc_poles_s</span><span class="o">=</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_poles_s</span><span class="p">(),</span>
+                <span class="n">yc_residues</span><span class="o">=</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_residues</span><span class="p">(),</span>
+                <span class="n">yc_constant_term</span><span class="o">=</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_constant_term</span><span class="p">(),</span>
+                <span class="n">yc_proportional_term</span><span class="o">=</span><span class="n">yc_fit</span><span class="o">.</span><span class="n">get_proportional_term</span><span class="p">(),</span>
+                <span class="n">hres_poles_s</span><span class="o">=</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_poles_s</span><span class="p">(),</span>
+                <span class="n">hres_residues</span><span class="o">=</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_residues</span><span class="p">(),</span>
+                <span class="n">hres_constant_term</span><span class="o">=</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_constant_term</span><span class="p">(),</span>
+                <span class="n">hres_proportional_term</span><span class="o">=</span><span class="n">hres_fit</span><span class="o">.</span><span class="n">get_proportional_term</span><span class="p">(),</span>
+                <span class="n">yc_alpha</span><span class="o">=</span><span class="n">yc_alpha</span><span class="p">,</span>
+                <span class="n">yc_beta</span><span class="o">=</span><span class="n">yc_beta</span><span class="p">,</span>
+                <span class="n">hres_alpha</span><span class="o">=</span><span class="n">hres_alpha</span><span class="p">,</span>
+                <span class="n">hres_beta</span><span class="o">=</span><span class="n">hres_beta</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">mode_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">JMartiRuntimeData</span><span class="p">(</span>
+        <span class="n">time_step_s</span><span class="o">=</span><span class="n">sanitized_time_step_s</span><span class="p">,</span>
+        <span class="n">line_length_m</span><span class="o">=</span><span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_line_length_m</span><span class="p">(),</span>
+        <span class="n">phase_labels</span><span class="o">=</span><span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_phase_labels</span><span class="p">(),</span>
+        <span class="n">modal_transform</span><span class="o">=</span><span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_modal_transform</span><span class="p">(),</span>
+        <span class="n">modal_transform_inv</span><span class="o">=</span><span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_modal_transform_inv</span><span class="p">(),</span>
+        <span class="n">reference_frequency_hz</span><span class="o">=</span><span class="n">fit_bundle</span><span class="o">.</span><span class="n">get_reference_frequency_hz</span><span class="p">(),</span>
+        <span class="n">mode_data</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">mode_data</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

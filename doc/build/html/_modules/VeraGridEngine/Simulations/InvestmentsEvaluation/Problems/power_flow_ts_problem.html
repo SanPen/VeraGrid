@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackBoxProblemTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.scores</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_overload_score</span><span class="p">,</span> <span class="n">get_voltage_phase_score</span><span class="p">,</span> <span class="n">get_voltage_module_score</span><span class="p">,</span>
+                                         <span class="n">TechnoEconomicScores</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_ts_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowTimeSeriesDriver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.opf_ts_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimalPowerFlowTimeSeriesResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Clustering.clustering_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusteringResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.investment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Investment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">EngineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">StrVec</span>
+
+
+<div class="viewcode-block" id="power_flow_ts_function">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.power_flow_ts_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">power_flow_ts_function</span><span class="p">(</span><span class="n">inv_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Investment</span><span class="p">],</span>
+                           <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                           <span class="n">pf_options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span>
+                           <span class="n">time_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                           <span class="n">opf_time_series_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">OptimalPowerFlowTimeSeriesResults</span><span class="p">],</span>
+                           <span class="n">clustering_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClusteringResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                           <span class="n">engine</span><span class="p">:</span> <span class="n">EngineType</span><span class="p">,</span>
+                           <span class="n">branches_cost</span><span class="p">,</span>
+                           <span class="n">vm_cost</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                           <span class="n">vm_max</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                           <span class="n">vm_min</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                           <span class="n">va_cost</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                           <span class="n">va_max</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                           <span class="n">va_min</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TechnoEconomicScores</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the power flow of the grid given an investments group</span>
+<span class="sd">    :param inv_list: list of Investments</span>
+<span class="sd">    :param grid: MultiCircuit grid</span>
+<span class="sd">    :param pf_options: Power flow options</span>
+<span class="sd">    :param time_indices: Time indices of the investments</span>
+<span class="sd">    :param opf_time_series_results: Optimal power flow results</span>
+<span class="sd">    :param clustering_results: Clustering results</span>
+<span class="sd">    :param engine: Engine type</span>
+<span class="sd">    :param branches_cost: Array with all overloading cost for the branches</span>
+<span class="sd">    :param vm_cost: Array with all the bus voltage module violation costs</span>
+<span class="sd">    :param vm_max: Array with the Vm min values</span>
+<span class="sd">    :param vm_min: Array with the Vm max values</span>
+<span class="sd">    :param va_cost: Array with all the bus voltage angles violation costs</span>
+<span class="sd">    :param va_max: Array with the Va max values</span>
+<span class="sd">    :param va_min: Array with the Va min values</span>
+<span class="sd">    :return: InvestmentScores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">PowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                       <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">,</span>
+                                       <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+                                       <span class="n">opf_time_series_results</span><span class="o">=</span><span class="n">opf_time_series_results</span><span class="p">,</span>
+                                       <span class="n">clustering_results</span><span class="o">=</span><span class="n">clustering_results</span><span class="p">,</span>
+                                       <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">TechnoEconomicScores</span><span class="p">()</span>
+
+    <span class="c1"># compute scores</span>
+    <span class="n">scores</span><span class="o">.</span><span class="n">losses_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">scores</span><span class="o">.</span><span class="n">overload_score</span> <span class="o">=</span> <span class="n">get_overload_score</span><span class="p">(</span><span class="n">loading</span><span class="o">=</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">,</span>
+                                               <span class="n">branches_cost</span><span class="o">=</span><span class="n">branches_cost</span><span class="p">)</span>
+    <span class="c1"># scores.overload_score = 0</span>
+    <span class="n">scores</span><span class="o">.</span><span class="n">voltage_module_score</span> <span class="o">=</span> <span class="n">get_voltage_module_score</span><span class="p">(</span><span class="n">voltage</span><span class="o">=</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                                                           <span class="n">vm_cost</span><span class="o">=</span><span class="n">vm_cost</span><span class="p">,</span>
+                                                           <span class="n">vm_max</span><span class="o">=</span><span class="n">vm_max</span><span class="p">,</span>
+                                                           <span class="n">vm_min</span><span class="o">=</span><span class="n">vm_min</span><span class="p">)</span>
+
+    <span class="n">scores</span><span class="o">.</span><span class="n">voltage_angle_score</span> <span class="o">=</span> <span class="n">get_voltage_phase_score</span><span class="p">(</span><span class="n">voltage</span><span class="o">=</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                                                         <span class="n">va_cost</span><span class="o">=</span><span class="n">va_cost</span><span class="p">,</span>
+                                                         <span class="n">va_max</span><span class="o">=</span><span class="n">va_max</span><span class="p">,</span>
+                                                         <span class="n">va_min</span><span class="o">=</span><span class="n">va_min</span><span class="p">)</span>
+
+    <span class="n">scores</span><span class="o">.</span><span class="n">capex_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">inv</span><span class="o">.</span><span class="n">CAPEX</span> <span class="k">for</span> <span class="n">inv</span> <span class="ow">in</span> <span class="n">inv_list</span><span class="p">])</span>
+    <span class="n">scores</span><span class="o">.</span><span class="n">opex_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">scores</span></div>
+
+
+
+<div class="viewcode-block" id="TimeSeriesPowerFlowInvestmentProblem">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimeSeriesPowerFlowInvestmentProblem</span><span class="p">(</span><span class="n">BlackBoxProblemTemplate</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">pf_options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                 <span class="n">clustering_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClusteringResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">opf_time_series_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">OptimalPowerFlowTimeSeriesResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">engine</span><span class="p">:</span> <span class="n">EngineType</span> <span class="o">=</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param grid: MultiCircuit</span>
+<span class="sd">        :param pf_options: PowerFlowOptions</span>
+<span class="sd">        :param time_indices: Time indices of the investments</span>
+<span class="sd">        :param clustering_results: Clustering results</span>
+<span class="sd">        :param opf_time_series_results: Optimal power flow results</span>
+<span class="sd">        :param engine: Engine to run the simulations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                         <span class="n">x_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">investments_groups</span><span class="p">),</span>
+                         <span class="n">plot_x_idx</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                         <span class="n">plot_y_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># options object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pf_options</span> <span class="o">=</span> <span class="n">pf_options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span> <span class="o">=</span> <span class="n">time_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opf_time_series_results</span> <span class="o">=</span> <span class="n">opf_time_series_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clustering_results</span> <span class="o">=</span> <span class="n">clustering_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span>
+
+        <span class="c1"># gather a dictionary of all the elements, this serves for the investments generation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_all_elements_dict</span><span class="p">,</span> <span class="n">dict_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_all_elements_dict</span><span class="p">()</span>
+
+        <span class="c1"># compose useful arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vm_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">Vm_cost</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vm_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">Vmax</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vm_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">Vmin</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">va_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">angle_cost</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">va_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">angle_max</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">va_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">angle_min</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">Cost</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span>
+                                       <span class="n">grid</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeriesPowerFlowInvestmentProblem.n_objectives">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.n_objectives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_objectives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of objectives (size of f)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">6</span></div>
+
+
+<div class="viewcode-block" id="TimeSeriesPowerFlowInvestmentProblem.n_vars">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.n_vars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of variables (size of x)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_dim</span></div>
+
+
+<div class="viewcode-block" id="TimeSeriesPowerFlowInvestmentProblem.get_objectives_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.get_objectives_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_objectives_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StrVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of names for the elements of f</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;losses score&quot;</span><span class="p">,</span> <span class="s2">&quot;overload score&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;voltage module_score&quot;</span><span class="p">,</span> <span class="s2">&quot;voltage angle score&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;financial score&quot;</span><span class="p">,</span> <span class="s2">&quot;Technical score&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="TimeSeriesPowerFlowInvestmentProblem.get_vars_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.get_vars_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_vars_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StrVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of names for the elements of x</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">investments_groups</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="TimeSeriesPowerFlowInvestmentProblem.objective_function">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.objective_function">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate x and return f(x)</span>
+<span class="sd">        :param x: array of variable values</span>
+<span class="sd">        :return: array of objectives</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inv_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Investment</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_investments_for_combination</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># enable the investment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">set_investments_status</span><span class="p">(</span><span class="n">investments_list</span><span class="o">=</span><span class="n">inv_list</span><span class="p">,</span>
+                                         <span class="n">status</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">all_elements_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_elements_dict</span><span class="p">)</span>
+
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">power_flow_ts_function</span><span class="p">(</span><span class="n">inv_list</span><span class="o">=</span><span class="n">inv_list</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                                        <span class="n">pf_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pf_options</span><span class="p">,</span>
+                                        <span class="n">time_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span><span class="p">,</span>
+                                        <span class="n">opf_time_series_results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opf_time_series_results</span><span class="p">,</span>
+                                        <span class="n">clustering_results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clustering_results</span><span class="p">,</span>
+                                        <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span>
+                                        <span class="n">branches_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">branches_cost</span><span class="p">,</span>
+                                        <span class="n">vm_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vm_cost</span><span class="p">,</span>
+                                        <span class="n">vm_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vm_max</span><span class="p">,</span>
+                                        <span class="n">vm_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vm_min</span><span class="p">,</span>
+                                        <span class="n">va_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">va_cost</span><span class="p">,</span>
+                                        <span class="n">va_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">va_max</span><span class="p">,</span>
+                                        <span class="n">va_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">va_min</span><span class="p">)</span>
+
+        <span class="c1"># revert to the initial state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">set_investments_status</span><span class="p">(</span><span class="n">investments_list</span><span class="o">=</span><span class="n">inv_list</span><span class="p">,</span>
+                                         <span class="n">status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">all_elements_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_elements_dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">arr</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

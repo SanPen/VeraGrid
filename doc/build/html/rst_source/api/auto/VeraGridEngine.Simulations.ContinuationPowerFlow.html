@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.ContinuationPowerFlow package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Simulations.Derivatives package" href="VeraGridEngine.Simulations.Derivatives.html" />
+    <link rel="prev" title="VeraGridEngine.Simulations.ContingencyAnalysis.Methods package" href="VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.ContinuationPowerFlow package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Simulations.ContinuationPowerFlow.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-simulations-continuationpowerflow-package">
+<h1>VeraGridEngine.Simulations.ContinuationPowerFlow package<a class="headerlink" href="#veragridengine-simulations-continuationpowerflow-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow">
+<span id="veragridengine-simulations-continuationpowerflow-continuation-power-flow-module"></span><h2>VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow module<a class="headerlink" href="#module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.</span></span><span class="sig-name descname"><span class="pre">CpfNumericResults</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#CpfNumericResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.Sbus">
+<span class="sig-name descname"><span class="pre">Sbus</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.Sbus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.Sf">
+<span class="sig-name descname"><span class="pre">Sf</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.Sf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.St">
+<span class="sig-name descname"><span class="pre">St</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.St" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.V">
+<span class="sig-name descname"><span class="pre">V</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.V" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">St</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">losses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loading</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converged</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#CpfNumericResults.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.add" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong></p></li>
+<li><p><strong>sbus</strong></p></li>
+<li><p><strong>Sf</strong></p></li>
+<li><p><strong>St</strong></p></li>
+<li><p><strong>lam</strong></p></li>
+<li><p><strong>losses</strong></p></li>
+<li><p><strong>loading</strong></p></li>
+<li><p><strong>normf</strong></p></li>
+<li><p><strong>converged</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.lmbda">
+<span class="sig-name descname"><span class="pre">lmbda</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.lmbda" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.loading">
+<span class="sig-name descname"><span class="pre">loading</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.loading" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.losses">
+<span class="sig-name descname"><span class="pre">losses</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.losses" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.normF">
+<span class="sig-name descname"><span class="pre">normF</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.normF" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.success">
+<span class="sig-name descname"><span class="pre">success</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults.success" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.continuation_nr">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.</span></span><span class="sig-name descname"><span class="pre">continuation_nr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ybus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Cf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch_rates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sbase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sbus_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sbus_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distributed_slack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_installed_power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pqv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximation_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.CpfParametrization" title="VeraGridEngine.enumerations.CpfParametrization"><span class="pre">CpfParametrization</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapt_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_it</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_at</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CpfStopAt.Nose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qmax_bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qmin_bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_bus_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_overload_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_back_fx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults" title="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults"><span class="pre">CpfNumericResults</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#continuation_nr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.continuation_nr" title="Link to this definition"></a></dt>
+<dd><p>Runs a full AC continuation power flow using a normalized tangent
+predictor and selected approximation_order scheme.
+:param Ybus: Admittance matrix
+:param Cf: Connectivity matrix of the Branches and the “from” nodes
+:param Ct: Connectivity matrix of the Branches and the “to” nodes
+:param Yf: Admittance matrix of the “from” nodes
+:param Yt: Admittance matrix of the “to” nodes
+:param branch_rates: array of branch rates to check the overload condition
+:param Sbase:
+:param Sbus_base: Power array of the base solvable case
+:param I0: Bus current Injections (MVA at v=1 p.u.)
+:param Y0: Bus admittance Injections (MVA at v=1 p.u.)
+:param Sbus_target: Power array of the case to be solved
+:param V: Voltage array of the base solved case
+:param distributed_slack: Distribute the slack?
+:param bus_installed_power: array of installed power per bus
+:param vd: Array of slack bus indices
+:param pv: Array of pv bus indices
+:param pq: Array of pq bus indices
+:param pqv: Array of p bus indices
+:param p: Array of p bus indices
+:param step: Adaptation step
+:param approximation_order: order of the approximation {Natural, Arc, Pseudo arc}
+:param adapt_step: use adaptive step size?
+:param step_min: minimum step size
+:param step_max: maximum step size
+:param error_tol: Error tolerance
+:param tol: Solutions tolerance
+:param max_it: Maximum iterations
+:param stop_at:  Value of Lambda to stop at. It can be a number or {‘NOSE’, ‘FULL’}
+:param control_q: Type of reactive power control
+:param qmax_bus: Array of maximum reactive power per node
+:param qmin_bus: Array of minimum reactive power per node
+:param original_bus_types: array of bus types
+:param base_overload_number: number of overloads in the base situation (used when stop_at=CpfStopAt.ExtraOverloads)
+:param verbose: Display additional intermediate information?
+:param call_back_fx: Function to call on every iteration passing the lambda parameter
+:return: CpfNumericResults instance</p>
+<dl>
+<dt>Ported from MATPOWER</dt><dd><p>Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+by Ray Zimmerman, PSERC Cornell,
+Shrirang Abhyankar, Argonne National Laboratory, and Alexander Flueck, IIT</p>
+<p>$Id: runcpf.m 2644 2015-03-11 19:34:22Z ray $</p>
+<p>MATPOWER is covered by the 3-clause BSD License (see LICENSE file for details).
+See <a class="reference external" href="http://www.pserc.cornell.edu/matpower/">http://www.pserc.cornell.edu/matpower/</a> for more info.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.corrector">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.</span></span><span class="sig-name descname"><span class="pre">corrector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ybus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dtheta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dVm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dP</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dQ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sxfr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vprv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lamprv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_it</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acceleration_parameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#corrector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.corrector" title="Link to this definition"></a></dt>
+<dd><p>Solves the corrector step of a continuation power flow using a full Newton method
+with selected parametrization scheme.</p>
+<p>solves for bus voltages and lambda given the full system admittance
+matrix (for all buses), the complex bus power injection vector (for
+all buses), the initial vector of complex bus voltages, and column
+vectors with the lists of bus indices for the swing bus, PV buses, and
+PQ buses, respectively. The bus voltage vector contains the set point
+for generator (including ref bus) buses, and the reference angle of the
+swing bus, as well as an initial guess for remaining magnitudes and
+angles.</p>
+<blockquote>
+<div><p>Uses default options if this parameter is not given. Returns the
+final complex voltages, a flag which indicates whether it converged or not,
+the number of iterations performed, and the final lambda.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ybus</strong> – Admittance matrix (CSC sparse)</p></li>
+<li><p><strong>S0</strong> – Bus power Injections (MVA)</p></li>
+<li><p><strong>I0</strong> – Bus current Injections (MVA at v=1 p.u.)</p></li>
+<li><p><strong>Y0</strong> – Bus admittance Injections (MVA at v=1 p.u.)</p></li>
+<li><p><strong>V0</strong> – Bus initial voltages</p></li>
+<li><p><strong>idx_dtheta</strong> – vector of indices of PV|PQ|PQV|P buses</p></li>
+<li><p><strong>idx_dVm</strong> – vector of indices of PQ|P buses</p></li>
+<li><p><strong>idx_dP</strong> – vector of indices of PV|PQ|PQV|P buses</p></li>
+<li><p><strong>idx_dQ</strong> – vector of indices of PQ|PQV buses</p></li>
+<li><p><strong>lam0</strong> – initial value of lambda (loading parameter)</p></li>
+<li><p><strong>Sxfr</strong> – [delP+j*delQ] transfer/loading vector for all buses</p></li>
+<li><p><strong>Vprv</strong> – final complex V corrector solution from previous continuation step</p></li>
+<li><p><strong>lamprv</strong> – final lambda corrector solution from previous continuation step</p></li>
+<li><p><strong>z</strong> – normalized predictor for all buses</p></li>
+<li><p><strong>step</strong> – continuation step size</p></li>
+<li><p><strong>parametrization</strong></p></li>
+<li><p><strong>tol</strong> – Tolerance (p.u.)</p></li>
+<li><p><strong>max_it</strong> – max iterations</p></li>
+<li><p><strong>verbose</strong> – print information?</p></li>
+<li><p><strong>mu_0</strong></p></li>
+<li><p><strong>acceleration_parameter</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voltage, converged, iterations, lambda, power error, calculated power</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.cpf_p">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.</span></span><span class="sig-name descname"><span class="pre">cpf_p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.CpfParametrization" title="VeraGridEngine.enumerations.CpfParametrization"><span class="pre">CpfParametrization</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_prev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lamprv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dtheta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dVm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#cpf_p"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.cpf_p" title="Link to this definition"></a></dt>
+<dd><p>Computes the value of the Current Parametrization Function
+:param parametrization: Value of  option (1: Natural, 2:Arc-length, 3: pseudo arc-length)
+:param step: continuation step size
+:param z: normalized tangent prediction vector from previous step
+:param V: complex bus voltage vector at current solution
+:param lam: scalar lambda value at current solution
+:param V_prev: complex bus voltage vector at previous solution
+:param lamprv: scalar lambda value at previous solution
+:param idx_dtheta: vector of indices of PV|PQ|PQV|P buses
+:param idx_dVm: vector of indices of PQ|P buses
+:return: value of the parametrization function at the current point</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.cpf_p_jac">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.</span></span><span class="sig-name descname"><span class="pre">cpf_p_jac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.CpfParametrization" title="VeraGridEngine.enumerations.CpfParametrization"><span class="pre">CpfParametrization</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vprv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lamprv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dtheta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dVm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#cpf_p_jac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.cpf_p_jac" title="Link to this definition"></a></dt>
+<dd><p>Computes partial derivatives of Current Parametrization Function (CPF).
+:param parametrization:
+:param z: normalized tangent prediction vector from previous step
+:param V: complex bus voltage vector at current solution
+:param lam: scalar lambda value at current solution
+:param Vprv: complex bus voltage vector at previous solution
+:param lamprv: scalar lambda value at previous solution
+:param idx_dtheta: vector of indices of PV|PQ|PQV|P buses
+:param idx_dVm: vector of indices of PQ|P buses
+:return:  partial of parametrization function w.r.t. voltages</p>
+<blockquote>
+<div><p>partial of parametrization function w.r.t. lambda</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.predictor">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.</span></span><span class="sig-name descname"><span class="pre">predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ybus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sxfr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dtheta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dVm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dP</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_dQ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vprv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lamprv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.CpfParametrization" title="VeraGridEngine.enumerations.CpfParametrization"><span class="pre">CpfParametrization</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow.html#predictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.predictor" title="Link to this definition"></a></dt>
+<dd><p>Computes a prediction (approximation) to the next solution of the
+continuation power flow using a normalized tangent predictor.
+:param V: complex bus voltage vector at current solution
+:param lam: scalar lambda value at current solution
+:param Ybus: complex bus admittance matrix
+:param Sxfr: complex vector of scheduled transfers (difference between bus Injections in base and target cases)
+:param idx_dtheta: vector of indices of PV|PQ|PQV|P buses
+:param idx_dVm: vector of indices of PQ|P buses
+:param idx_dP: vector of indices of PV|PQ|PQV|P buses
+:param idx_dQ: vector of indices of PQ|PQV buses
+:param step: continuation step length
+:param z: normalized tangent prediction vector from previous step
+:param Vprv: complex bus voltage vector at previous solution
+:param lamprv: scalar lambda value at previous solution
+:param parametrization: Value of cpf parametrization option.
+:return: V0 : predicted complex bus voltage vector</p>
+<blockquote>
+<div><p>LAM0 : predicted lambda continuation parameter
+Z : the normalized tangent prediction vector</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver">
+<span id="veragridengine-simulations-continuationpowerflow-continuation-power-flow-driver-module"></span><h2>VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver module<a class="headerlink" href="#module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.</span></span><span class="sig-name descname"><span class="pre">ContinuationPowerFlowDriver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions" title="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions"><span class="pre">ContinuationPowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input.ContinuationPowerFlowInput" title="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input.ContinuationPowerFlowInput"><span class="pre">ContinuationPowerFlowInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pf_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults" title="VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults"><span class="pre">OptimalPowerFlowResults</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_driver.html#ContinuationPowerFlowDriver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.get_steps">
+<span class="sig-name descname"><span class="pre">get_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_driver.html#ContinuationPowerFlowDriver.get_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.get_steps" title="Link to this definition"></a></dt>
+<dd><p>List of steps</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.inputs">
+<span class="sig-name descname"><span class="pre">inputs</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.inputs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Continuation</span> <span class="pre">Power</span> <span class="pre">Flow'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.opf_results">
+<span class="sig-name descname"><span class="pre">opf_results</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.opf_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.options">
+<span class="sig-name descname"><span class="pre">options</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.options" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.pf_options">
+<span class="sig-name descname"><span class="pre">pf_options</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.pf_options" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.progress_callback">
+<span class="sig-name descname"><span class="pre">progress_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmbda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_driver.html#ContinuationPowerFlowDriver.progress_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.progress_callback" title="Link to this definition"></a></dt>
+<dd><p>Send progress report
+:param lmbda: lambda value
+:return: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_driver.html#ContinuationPowerFlowDriver.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.run" title="Link to this definition"></a></dt>
+<dd><p>run the voltage collapse simulation
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.run_at">
+<span class="sig-name descname"><span class="pre">run_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults" title="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults"><span class="pre">ContinuationPowerFlowResults</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_driver.html#ContinuationPowerFlowDriver.run_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.run_at" title="Link to this definition"></a></dt>
+<dd><p>run the voltage collapse simulation
+&#64;return: ContinuationPowerFlowResults</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.t_idx">
+<span class="sig-name descname"><span class="pre">t_idx</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.t_idx" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Voltage</span> <span class="pre">collapse'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver.ContinuationPowerFlowDriver.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input">
+<span id="veragridengine-simulations-continuationpowerflow-continuation-power-flow-input-module"></span><h2>VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input module<a class="headerlink" href="#module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input.ContinuationPowerFlowInput">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input.</span></span><span class="sig-name descname"><span class="pre">ContinuationPowerFlowInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Sbase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vbase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Starget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_overload_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_input.html#ContinuationPowerFlowInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input.ContinuationPowerFlowInput" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options">
+<span id="veragridengine-simulations-continuationpowerflow-continuation-power-flow-options-module"></span><h2>VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options module<a class="headerlink" href="#module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.</span></span><span class="sig-name descname"><span class="pre">ContinuationPowerFlowOptions</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_options.html#ContinuationPowerFlowOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.options_template.OptionsTemplate" title="VeraGridEngine.Simulations.options_template.OptionsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptionsTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:step,</span> <span class="pre">prop:approximation_order,</span> <span class="pre">prop:adapt_step,</span> <span class="pre">prop:step_min,</span> <span class="pre">prop:step_max,</span> <span class="pre">prop:step_tol,</span> <span class="pre">prop:solution_tol,</span> <span class="pre">prop:max_it,</span> <span class="pre">prop:stop_at,</span> <span class="pre">prop:verbose)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:step,</span> <span class="pre">prop:approximation_order,</span> <span class="pre">prop:adapt_step,</span> <span class="pre">prop:step_min,</span> <span class="pre">prop:step_max,</span> <span class="pre">prop:step_tol,</span> <span class="pre">prop:solution_tol,</span> <span class="pre">prop:max_it,</span> <span class="pre">prop:stop_at,</span> <span class="pre">prop:verbose)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'adapt_step':</span> <span class="pre">prop:adapt_step,</span> <span class="pre">'approximation_order':</span> <span class="pre">prop:approximation_order,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'max_it':</span> <span class="pre">prop:max_it,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'solution_tol':</span> <span class="pre">prop:solution_tol,</span> <span class="pre">'step':</span> <span class="pre">prop:step,</span> <span class="pre">'step_max':</span> <span class="pre">prop:step_max,</span> <span class="pre">'step_min':</span> <span class="pre">prop:step_min,</span> <span class="pre">'step_tol':</span> <span class="pre">prop:step_tol,</span> <span class="pre">'stop_at':</span> <span class="pre">prop:stop_at,</span> <span class="pre">'verbose':</span> <span class="pre">prop:verbose}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:step,</span> <span class="pre">prop:approximation_order,</span> <span class="pre">prop:adapt_step,</span> <span class="pre">prop:step_min,</span> <span class="pre">prop:step_max,</span> <span class="pre">prop:step_tol,</span> <span class="pre">prop:solution_tol,</span> <span class="pre">prop:max_it,</span> <span class="pre">prop:stop_at,</span> <span class="pre">prop:verbose)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ActionType" title="VeraGridEngine.enumerations.ActionType"><span class="pre">ActionType</span></a></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.action" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.comment">
+<span class="sig-name descname"><span class="pre">comment</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.comment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.device_type">
+<span class="sig-name descname"><span class="pre">device_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.device_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.diff_changes">
+<span class="sig-name descname"><span class="pre">diff_changes</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.diff_changes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.selected_to_merge">
+<span class="sig-name descname"><span class="pre">selected_to_merge</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options.ContinuationPowerFlowOptions.selected_to_merge" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results">
+<span id="veragridengine-simulations-continuationpowerflow-continuation-power-flow-results-module"></span><h2>VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results module<a class="headerlink" href="#module-VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.</span></span><span class="sig-name descname"><span class="pre">ContinuationPowerFlowResults</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_results.html#ContinuationPowerFlowResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_template.ResultsTemplate" title="VeraGridEngine.Simulations.results_template.ResultsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.CLASS_DATA_VARIABLES">
+<span class="sig-name descname"><span class="pre">CLASS_DATA_VARIABLES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Sbus':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'Sf':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'St':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'branch_names':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'bus_names':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'bus_types':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'converged':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'error':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'lambdas':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'loading':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'losses':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'voltages':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.CLASS_DATA_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.CLASS_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.CLASS_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.LOCAL_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.LOCAL_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.Sbus">
+<span class="sig-name descname"><span class="pre">Sbus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxMat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.Sbus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.Sf">
+<span class="sig-name descname"><span class="pre">Sf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxMat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.Sf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.St">
+<span class="sig-name descname"><span class="pre">St</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxMat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.St" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.apply_from_island">
+<span class="sig-name descname"><span class="pre">apply_from_island</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults" title="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow.CpfNumericResults"><span class="pre">CpfNumericResults</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_original_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch_original_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_results.html#ContinuationPowerFlowResults.apply_from_island"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.apply_from_island" title="Link to this definition"></a></dt>
+<dd><p>Apply the results of an island to this ContinuationPowerFlowResults instance
+:param results: CpfNumericResults instance of the island
+:param bus_original_idx: indices of the buses in the complete grid
+:param branch_original_idx: indices of the Branches in the complete grid</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.branch_names">
+<span class="sig-name descname"><span class="pre">branch_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.branch_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.bus_names">
+<span class="sig-name descname"><span class="pre">bus_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.bus_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.bus_types">
+<span class="sig-name descname"><span class="pre">bus_types</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IntVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.bus_types" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.converged">
+<span class="sig-name descname"><span class="pre">converged</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BoolVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.converged" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.lambdas">
+<span class="sig-name descname"><span class="pre">lambdas</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.lambdas" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.loading">
+<span class="sig-name descname"><span class="pre">loading</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.loading" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.losses">
+<span class="sig-name descname"><span class="pre">losses</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxMat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.losses" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.mdl">
+<span class="sig-name descname"><span class="pre">mdl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable" title="VeraGridEngine.Simulations.results_table.ResultsTable"><span class="pre">ResultsTable</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/ContinuationPowerFlow/continuation_power_flow_results.html#ContinuationPowerFlowResults.mdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.mdl" title="Link to this definition"></a></dt>
+<dd><p>Plot the results
+:param result_type:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.voltages">
+<span class="sig-name descname"><span class="pre">voltages</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxMat</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results.ContinuationPowerFlowResults.voltages" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.ContinuationPowerFlow">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Simulations.ContinuationPowerFlow" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html" class="btn btn-neutral float-left" title="VeraGridEngine.Simulations.ContingencyAnalysis.Methods package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Simulations.Derivatives.html" class="btn btn-neutral float-right" title="VeraGridEngine.Simulations.Derivatives package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

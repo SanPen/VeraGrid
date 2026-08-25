@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📝 RMS simulations &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🔍Small-Signal Stability Analysis" href="small_signal_stability.html" />
+    <link rel="prev" title="🧲 Dynamic simulations" href="dynamic_simulations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">📝 RMS simulations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="small_signal_stability.html">🔍Small-Signal Stability Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#when-to-use-rms-simulation">When to use RMS simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rms-workflow-in-veragrid">RMS workflow in VeraGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rms-settings">RMS settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rms-events">RMS events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gui-example">GUI example</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#example-objective">Example objective</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#static-network-data">Static network data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rms-simulation-settings">RMS simulation settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rms-dynamic-model-assignment">RMS dynamic-model assignment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rms-event-example">RMS event example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rms-results">RMS results</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#practical-notes">Practical notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+      <li class="breadcrumb-item active">📝 RMS simulations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/rms_simulations.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="rms-simulations">
+<h1>📝 RMS simulations<a class="headerlink" href="#rms-simulations" title="Link to this heading"></a></h1>
+<p>Root-mean-square (RMS) simulation is VeraGrid’s phasor-domain dynamic-simulation workflow for electromechanical and controller time scales. It is the right tool when the objective is to study the time evolution of the system after a disturbance without resolving instantaneous electromagnetic waveforms inside each cycle.</p>
+<p>RMS simulation is usually the first dynamic study to run because it captures the global dynamic picture at moderate computational cost.</p>
+<p>The RMS model also provides the operating point and linearization used by VeraGrid’s small-signal stability analysis.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="small_signal_stability.html">🔍Small-Signal Stability Analysis</a></li>
+</ul>
+</div>
+<section id="when-to-use-rms-simulation">
+<h2>When to use RMS simulation<a class="headerlink" href="#when-to-use-rms-simulation" title="Link to this heading"></a></h2>
+<p>Use RMS simulation when the study objective is mainly related to:</p>
+<ul class="simple">
+<li><p>transient stability,</p></li>
+<li><p>rotor-angle stability,</p></li>
+<li><p>frequency evolution after an imbalance,</p></li>
+<li><p>AVR, governor, and PSS response,</p></li>
+<li><p>converter outer-loop response,</p></li>
+<li><p>dynamic performance after set-point changes, faults, or switching events,</p></li>
+<li><p>system-wide studies where computational efficiency matters.</p></li>
+</ul>
+<p>If waveform-level, phase-domain, or switching-level detail is required, move to <a class="reference internal" href="emt_simulations.html"><span class="std std-doc">EMT simulations</span></a>.</p>
+</section>
+<section id="rms-workflow-in-veragrid">
+<h2>RMS workflow in VeraGrid<a class="headerlink" href="#rms-workflow-in-veragrid" title="Link to this heading"></a></h2>
+<p>In VeraGrid, an RMS simulation is built from:</p>
+<ul class="simple">
+<li><p>a static network model,</p></li>
+<li><p>a solved power flow used as operating-point reference,</p></li>
+<li><p>RMS dynamic models assigned to the relevant devices,</p></li>
+<li><p>optional RMS events,</p></li>
+<li><p>one initialization workflow and one integration method.</p></li>
+</ul>
+<p>The practical RMS workflow is:</p>
+<ol class="arabic simple">
+<li><p>Build or import the grid model.</p></li>
+<li><p>Run a power flow.</p></li>
+<li><p>Assign RMS models to the devices that need dynamic behaviour.</p></li>
+<li><p>Configure RMS events if the study includes disturbances or parameter changes.</p></li>
+<li><p>Select RMS options such as total simulation time, time step, tolerance, and integration method.</p></li>
+<li><p>Run the simulation and inspect the time trajectories.</p></li>
+</ol>
+</section>
+<section id="rms-settings">
+<h2>RMS settings<a class="headerlink" href="#rms-settings" title="Link to this heading"></a></h2>
+<p>The RMS workflow is driven through <code class="docutils literal notranslate"><span class="pre">RmsOptions</span></code> and <code class="docutils literal notranslate"><span class="pre">RmsSimulationDriver</span></code>.</p>
+<p>The main settings exposed through <code class="docutils literal notranslate"><span class="pre">RmsOptions</span></code> are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">integration_method</span></code>: numerical integration method. The standard workflow uses <code class="docutils literal notranslate"><span class="pre">DynamicIntegrationMethod.DaeBackEuler</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initialization_method</span></code>: initialization workflow, typically <code class="docutils literal notranslate"><span class="pre">RmsInitializationMethod.Explicit</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">problem_type</span></code>: internal RMS formulation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: interval between numerical integration steps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulation_time</span></code>: final simulation time.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code>: numerical tolerance used by the simulation workflow.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_init_values</span></code>: whether stored initialization values should be reused when available.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_iter</span></code>: maximum number of nonlinear iterations inside the solver.</p></li>
+</ul>
+<p>As a practical rule, RMS time steps are usually in the millisecond range.</p>
+</section>
+<section id="rms-events">
+<h2>RMS events<a class="headerlink" href="#rms-events" title="Link to this heading"></a></h2>
+<p>RMS events are used to alter the model during the simulation. Typical examples are:</p>
+<ul class="simple">
+<li><p>load steps,</p></li>
+<li><p>active- or reactive-power ramps,</p></li>
+<li><p>controller-reference changes,</p></li>
+<li><p>switching actions,</p></li>
+<li><p>study-specific parameter changes.</p></li>
+</ul>
+<p>In VeraGrid, events are organized through:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RmsEventsGroup</span></code>: one simulation scenario,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RmsEvent</span></code>: one runtime parameter change inside that scenario.</p></li>
+</ul>
+<p>This allows multiple dynamic scenarios to be run on top of the same base grid.</p>
+</section>
+<section id="gui-example">
+<h2>GUI example<a class="headerlink" href="#gui-example" title="Link to this heading"></a></h2>
+<p>The following compact example is adapted from <a class="reference internal" href="RMS_practical_session.html"><span class="std std-doc">RMS_practical_session.md</span></a>, omitting the generic platform introduction.</p>
+<section id="example-objective">
+<h3>Example objective<a class="headerlink" href="#example-objective" title="Link to this heading"></a></h3>
+<p>Build a 2-bus RMS model with:</p>
+<ul class="simple">
+<li><p>one slack generator,</p></li>
+<li><p>one load,</p></li>
+<li><p>one line,</p></li>
+<li><p>one RMS event group with a step and a ramp applied to the load.</p></li>
+</ul>
+<p>System sketch:</p>
+<p><img alt="Two-bus RMS example" src="../_images/system_model.png" /></p>
+</section>
+<section id="static-network-data">
+<h3>Static network data<a class="headerlink" href="#static-network-data" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Parameter</p></th>
+<th class="head text-right"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Grid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Sbase</span></code></p></td>
+<td class="text-right"><p>100 MVA</p></td>
+</tr>
+<tr class="row-odd"><td><p>Grid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">freq</span></code></p></td>
+<td class="text-right"><p>50 Hz</p></td>
+</tr>
+<tr class="row-even"><td><p>Bus 0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Is_slack</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Bus 0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vnom</span></code></p></td>
+<td class="text-right"><p>10 kV</p></td>
+</tr>
+<tr class="row-even"><td><p>Bus 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Is_slack</span></code></p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Bus 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vnom</span></code></p></td>
+<td class="text-right"><p>10 kV</p></td>
+</tr>
+<tr class="row-even"><td><p>Line 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">R</span></code></p></td>
+<td class="text-right"><p>0.029585 p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Line 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p></td>
+<td class="text-right"><p>0.071005 p.u.</p></td>
+</tr>
+<tr class="row-even"><td><p>Line 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">B</span></code></p></td>
+<td class="text-right"><p>0.03 p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Line 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rate</span></code></p></td>
+<td class="text-right"><p>900 MVA</p></td>
+</tr>
+<tr class="row-even"><td><p>Load 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
+<td class="text-right"><p>9.999999 MVA</p></td>
+</tr>
+<tr class="row-odd"><td><p>Load 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q</span></code></p></td>
+<td class="text-right"><p>0.999999 MVA</p></td>
+</tr>
+<tr class="row-even"><td><p>Generator 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vset</span></code></p></td>
+<td class="text-right"><p>1.0 p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Generator 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Snom</span></code></p></td>
+<td class="text-right"><p>900 MVA</p></td>
+</tr>
+<tr class="row-even"><td><p>Generator 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">freq</span></code></p></td>
+<td class="text-right"><p>50 Hz</p></td>
+</tr>
+<tr class="row-odd"><td><p>Generator 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">r1</span></code></p></td>
+<td class="text-right"><p>0.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Generator 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">x1</span></code></p></td>
+<td class="text-right"><p>0.86</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="rms-simulation-settings">
+<h3>RMS simulation settings<a class="headerlink" href="#rms-simulation-settings" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head text-right"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Integration</p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">DAE_BackEuler</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Initialization</p></td>
+<td class="text-right"><p>Explicit</p></td>
+</tr>
+<tr class="row-even"><td><p>Tolerance</p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">1e-4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Simulation time</p></td>
+<td class="text-right"><p>1 s</p></td>
+</tr>
+<tr class="row-even"><td><p>Time step</p></td>
+<td class="text-right"><p><code class="docutils literal notranslate"><span class="pre">1e-3</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="rms-dynamic-model-assignment">
+<h3>RMS dynamic-model assignment<a class="headerlink" href="#rms-dynamic-model-assignment" title="Link to this heading"></a></h3>
+<p>For this example:</p>
+<ul class="simple">
+<li><p>the generator uses a complete generator RMS template,</p></li>
+<li><p>the line uses a line RMS template,</p></li>
+<li><p>the load uses a load RMS template.</p></li>
+</ul>
+<p>In the GUI there are two ways to assign these models:</p>
+<ol class="arabic simple">
+<li><p>Assign an <code class="docutils literal notranslate"><span class="pre">rms_template</span></code> from the device properties or from the default catalogue.</p></li>
+<li><p>Open the RMS editor and build the model graphically from blocks.</p></li>
+</ol>
+<p>The second workflow is the most flexible when parameters, equations, or control structure must be edited.</p>
+<p>When opening the RMS editor, the grid connection blocks are already present. The user then adds the dynamic blocks from the library and connects them to those terminals.</p>
+<p><img alt="RMS editor with initial blocks" src="../_images/rms_editor_initial_blocks.png" /></p>
+<p>Example final generator model:</p>
+<p><img alt="Final RMS generator model" src="../_images/rms_generator_model.png" /></p>
+</section>
+<section id="rms-event-example">
+<h3>RMS event example<a class="headerlink" href="#rms-event-example" title="Link to this heading"></a></h3>
+<p>The practical-session event set is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Event</p></th>
+<th class="head"><p>Device</p></th>
+<th class="head text-right"><p>Time interval</p></th>
+<th class="head"><p>Parameter</p></th>
+<th class="head text-right"><p>New value</p></th>
+<th class="head"><p>Transition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Decrease load</p></td>
+<td><p>Load</p></td>
+<td class="text-right"><p>0.1 s</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Pl0</span></code></p></td>
+<td class="text-right"><p>-0.06</p></td>
+<td><p>Step</p></td>
+</tr>
+<tr class="row-odd"><td><p>Increase load</p></td>
+<td><p>Load</p></td>
+<td class="text-right"><p>0.2-0.3 s</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Pl0</span></code></p></td>
+<td class="text-right"><p>-0.1</p></td>
+<td><p>Ramp</p></td>
+</tr>
+</tbody>
+</table>
+<p>From the GUI, event scenarios are created by adding an <code class="docutils literal notranslate"><span class="pre">RmsEventsGroup</span></code> and then attaching <code class="docutils literal notranslate"><span class="pre">RmsEvent</span></code> objects to the selected device.</p>
+</section>
+</section>
+<section id="rms-results">
+<h2>RMS results<a class="headerlink" href="#rms-results" title="Link to this heading"></a></h2>
+<p>The RMS dynamic results are stored in <code class="docutils literal notranslate"><span class="pre">RmsResults</span></code>.</p>
+<section id="registered-result-properties">
+<h3>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time_array</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DateVec</span></code></p></td>
+<td><p>Ordered simulation time samples.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">values</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Simulated RMS variable values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rms_events_group_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Ordered declared RMS event-group names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rms_events_group_idtags</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Ordered declared RMS event-group identifiers.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">has_event_group_results</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Mask indicating which declared event groups actually produced simulation data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">well_initialized</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Initialization status per event group.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Convergence status per event group.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dynamic_metadata_json</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Serialized metadata used to reconstruct variable and device bindings.</p></td>
+</tr>
+</tbody>
+</table>
+<p>In practice, users normally inspect:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">results.time_array</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">results.values</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">results.converged</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">results.well_initialized</span></code>.</p></li>
+</ul>
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>The RMS scripting workflow is:</p>
+<ol class="arabic simple">
+<li><p>Build or load the grid.</p></li>
+<li><p>Initialize RMS bus shells where required.</p></li>
+<li><p>Assign RMS templates to the dynamic devices.</p></li>
+<li><p>Run a power flow.</p></li>
+<li><p>Configure <code class="docutils literal notranslate"><span class="pre">RmsOptions</span></code>.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">RmsSimulationDriver</span></code>.</p></li>
+<li><p>Read <code class="docutils literal notranslate"><span class="pre">RmsResults</span></code>.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">Load</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicIntegrationMethod</span><span class="p">,</span> <span class="n">RmsInitializationMethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_complete_generator_template_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.line_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_line_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.load_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_load_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.bus_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_bus_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.templates_common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_rms_model</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsSimulationDriver</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">fbase</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+
+<span class="n">bus0</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus0&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">bus1</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus1&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">:</span>
+    <span class="n">initialize_bus_rms</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">vf</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 0-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus0</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.029585</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.071005</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">900.0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+<span class="n">load</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Load1&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">9.999999</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">0.999999</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load</span><span class="p">)</span>
+
+<span class="n">gen</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen0&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">vset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="mf">0.86138701</span><span class="p">,</span> <span class="n">r1</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus0</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
+
+<span class="n">gen_rms</span> <span class="o">=</span> <span class="n">get_complete_generator_template_rms</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line_rms</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">load_rms</span> <span class="o">=</span> <span class="n">get_load_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+
+<span class="n">set_rms_model</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">gen</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">gen_rms</span><span class="p">,</span> <span class="n">var_factory</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+<span class="n">set_rms_model</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">line</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">line_rms</span><span class="p">,</span> <span class="n">var_factory</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+<span class="n">set_rms_model</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">load</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">load_rms</span><span class="p">,</span> <span class="n">var_factory</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+
+<span class="n">load</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">set_parameter_in_model</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Pl0&quot;</span><span class="p">,</span> <span class="n">new_value</span><span class="o">=-</span><span class="mf">0.10</span><span class="p">)</span>
+
+<span class="n">pf_options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">pf_results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+
+<span class="n">rms_options</span> <span class="o">=</span> <span class="n">RmsOptions</span><span class="p">(</span>
+    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+    <span class="n">simulation_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">integration_method</span><span class="o">=</span><span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">,</span>
+    <span class="n">initialization_method</span><span class="o">=</span><span class="n">RmsInitializationMethod</span><span class="o">.</span><span class="n">Explicit</span><span class="p">,</span>
+    <span class="n">use_init_values</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">RmsSimulationDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">rms_options</span><span class="p">,</span> <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">well_initialized</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="practical-notes">
+<h2>Practical notes<a class="headerlink" href="#practical-notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Always validate the static power-flow solution before running RMS.</p></li>
+<li><p>Use RMS first when the main interest is electromechanical or controller-level behaviour.</p></li>
+<li><p>Keep the dynamic model only as detailed as the study requires.</p></li>
+<li><p>For linearized modal analysis around one RMS operating point or one RMS trajectory point, see <a class="reference internal" href="small_signal_stability.html"><span class="std std-doc">Small signal stability</span></a>.</p></li>
+<li><p>For the broad mathematical and architectural background of the dynamic engine, see <a class="reference internal" href="dynamic_simulations.html"><span class="std std-doc">Dynamic simulations</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dynamic_simulations.html" class="btn btn-neutral float-left" title="🧲 Dynamic simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="small_signal_stability.html" class="btn btn-neutral float-right" title="🔍Small-Signal Stability Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

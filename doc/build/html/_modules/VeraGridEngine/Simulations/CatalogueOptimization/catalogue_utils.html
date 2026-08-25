@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.overhead_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverheadLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.sequence_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.underground_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">UndergroundLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformerType</span>
+
+
+<span class="c1"># Type aliases for readability</span>
+<span class="n">LineTemplate</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">OverheadLineType</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">]</span>
+<span class="n">Branch</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Line</span><span class="p">,</span> <span class="n">Transformer2W</span><span class="p">]</span>
+<span class="n">Template</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">OverheadLineType</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">,</span> <span class="n">TransformerType</span><span class="p">]</span>
+
+<span class="c1"># TODO: extend support to DcLine, VSC and HVDC branches with their own catalogue handling.</span>
+<span class="c1"># Currently the catalogue optimization only supports AC `Line` and `Transformer2W` branches.</span>
+
+
+<div class="viewcode-block" id="LineSnapshot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.LineSnapshot">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LineSnapshot</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Snapshot of the editable fields of a `Line` that the `apply_template` method modifies.</span>
+<span class="sd">    Used to revert a line to its baseline state between optimization evaluations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;branch&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;R&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;X&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;R0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;X0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;B0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ys&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ysh&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;template&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rms_template&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;emt_template&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="n">Line</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Capture the baseline values of every attribute that `Line.apply_template` overwrites.</span>
+
+<span class="sd">        :param branch: line whose state is captured.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reference to the original branch so `restore` can mutate it back</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="p">:</span> <span class="n">Line</span> <span class="o">=</span> <span class="n">branch</span>
+
+        <span class="c1"># Electrical parameters in per-unit on the system base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">R0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">X0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">B0</span>
+
+        <span class="c1"># Thermal rating in MVA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">rate</span>
+
+        <span class="c1"># Sequence admittance matrices (for OverheadLine / SequenceLineType templates)</span>
+        <span class="c1"># We store the references; the template rewrites the attribute, so the original object is preserved.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">ys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ysh</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">ysh</span>
+
+        <span class="c1"># Template references (catalog identity + dynamic templates)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">rms_template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">emt_template</span>
+
+<div class="viewcode-block" id="LineSnapshot.restore">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.LineSnapshot.restore">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the captured values back to the underlying branch, undoing any `apply_template` mutation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Restoring the simple scalars overwrites whatever the optimization step applied</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">R0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">X0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span>
+
+        <span class="c1"># Re-attach the original admittance matrix references</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">ysh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ysh</span>
+
+        <span class="c1"># Re-attach the original template pointers (or `None` if there was no template)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TransformerSnapshot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.TransformerSnapshot">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformerSnapshot</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Snapshot of the editable fields of a `Transformer2W` that `apply_template` modifies.</span>
+<span class="sd">    Used to revert the transformer to its baseline state between optimization evaluations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;branch&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HV&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LV&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;R&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;X&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rate_prof&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Pcu&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Pfe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;I0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Vsc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tap_changer&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conn_f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conn_t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;template&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rms_template&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;emt_template&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="n">Transformer2W</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Capture the baseline values of every attribute that `Transformer2W.apply_template` overwrites.</span>
+
+<span class="sd">        :param branch: transformer whose state is captured.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reference to the original branch so `restore` can mutate it back</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="p">:</span> <span class="n">Transformer2W</span> <span class="o">=</span> <span class="n">branch</span>
+
+        <span class="c1"># Voltage ratings in kV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">HV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">HV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">LV</span>
+
+        <span class="c1"># Equivalent circuit parameters in per-unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">G</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">B</span>
+
+        <span class="c1"># Thermal rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">rate</span>
+        <span class="c1"># Take a copy of the rate profile because `apply_template` overwrites it in place via `.fill(rate)`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">rate_prof</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Nameplate values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">Sn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pcu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">Pcu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pfe</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">Pfe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">I0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">I0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vsc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">Vsc</span>
+
+        <span class="c1"># Tap changer object reference and winding connections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tap_changer</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">tap_changer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_f</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">conn_f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_t</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">conn_t</span>
+
+        <span class="c1"># Template references (catalog identity + dynamic templates)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">rms_template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">emt_template</span>
+
+<div class="viewcode-block" id="TransformerSnapshot.restore">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.TransformerSnapshot.restore">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the captured values back to the underlying transformer, undoing any `apply_template` mutation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Restore voltage ratings (these alter the virtual tap, so they must come back exactly)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">HV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">HV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">LV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LV</span>
+
+        <span class="c1"># Restore equivalent circuit and rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span>
+
+        <span class="c1"># Restore the rate profile to the snapshotted copy</span>
+        <span class="c1"># (we cannot just reuse the original reference because `apply_template` may keep mutating it)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">rate_prof</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span>
+
+        <span class="c1"># Restore nameplate values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">Sn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">Pcu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pcu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">Pfe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pfe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">I0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">I0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">Vsc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Vsc</span>
+
+        <span class="c1"># Restore tap changer and winding connections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">tap_changer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap_changer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">conn_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">conn_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_t</span>
+
+        <span class="c1"># Restore template pointers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="take_snapshot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.take_snapshot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">take_snapshot</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span> <span class="n">Branch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">LineSnapshot</span><span class="p">,</span> <span class="n">TransformerSnapshot</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produce the right snapshot type for the given branch.</span>
+
+<span class="sd">    :param branch: line or two-winding transformer whose state should be captured.</span>
+<span class="sd">    :return: a `LineSnapshot` for AC lines or a `TransformerSnapshot` for transformers.</span>
+<span class="sd">    :raises TypeError: if the branch is not a supported type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Discriminate the two supported branch classes; anything else is currently unsupported.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Line</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LineSnapshot</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Transformer2W</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TransformerSnapshot</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># The optimizer should never pass in unsupported branches; if it does, fail loud.</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Branch type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported by the catalogue optimization.&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_voltage_match</span><span class="p">(</span><span class="n">template_vn</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                   <span class="n">branch_vn</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                   <span class="n">voltage_tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check whether a template&#39;s nominal voltage is within +/-tolerance of a branch&#39;s nominal voltage.</span>
+
+<span class="sd">    Symmetric replacement for ``accept_line_connection`` (in `Devices/Branches/line.py`), which is</span>
+<span class="sd">    intentionally one-sided: that helper accepts any template whose voltage is at least</span>
+<span class="sd">    ``(1 - tol)`` of the branch voltage but applies no upper bound, so a 400 kV template is</span>
+<span class="sd">    considered &quot;compatible&quot; with a 33 kV line. For catalogue optimization we want a true band so</span>
+<span class="sd">    only templates whose rating is genuinely close to the branch are kept in the decision pool.</span>
+
+<span class="sd">    :param template_vn: template nominal voltage (kV).</span>
+<span class="sd">    :param branch_vn: branch nominal voltage (kV).</span>
+<span class="sd">    :param voltage_tolerance: relative tolerance, e.g. 0.1 for +/-10%.</span>
+<span class="sd">    :return: True if the voltages match within the symmetric band, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Branches with non-positive nominal voltage are degenerate; fall back to exact equality</span>
+    <span class="c1"># so we never divide by zero or accept arbitrary templates.</span>
+    <span class="k">if</span> <span class="n">branch_vn</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">template_vn</span> <span class="o">==</span> <span class="n">branch_vn</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Symmetric band: ratio must lie inside [1 - tol, 1 + tol].</span>
+        <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">template_vn</span> <span class="o">/</span> <span class="n">branch_vn</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">voltage_tolerance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">ratio</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">voltage_tolerance</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_line_template_matches</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span> <span class="n">Line</span><span class="p">,</span>
+                           <span class="n">template</span><span class="p">:</span> <span class="n">LineTemplate</span><span class="p">,</span>
+                           <span class="n">voltage_tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decide whether a line template can be applied to a given AC line by checking voltage compatibility.</span>
+
+<span class="sd">    :param branch: candidate line to receive the template.</span>
+<span class="sd">    :param template: template under consideration.</span>
+<span class="sd">    :param voltage_tolerance: relative tolerance accepted between template and line nominal voltages.</span>
+<span class="sd">    :return: True if the template&#39;s nominal voltage matches the line, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The line&#39;s nominal voltage is the maximum of its terminal nominal voltages</span>
+    <span class="n">line_vn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">()</span>
+
+    <span class="c1"># Each line template type exposes its rated voltage through the `Vnom` attribute</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">):</span>
+        <span class="n">template_vn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">Vnom</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">):</span>
+        <span class="n">template_vn</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">Vnom</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">):</span>
+        <span class="n">template_vn</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">Vnom</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Unsupported template type for an AC line: skip without erroring</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Symmetric voltage check (the catalogue-optimization needs a true band; see `_voltage_match`).</span>
+    <span class="k">return</span> <span class="n">_voltage_match</span><span class="p">(</span><span class="n">template_vn</span><span class="o">=</span><span class="n">template_vn</span><span class="p">,</span>
+                          <span class="n">branch_vn</span><span class="o">=</span><span class="n">line_vn</span><span class="p">,</span>
+                          <span class="n">voltage_tolerance</span><span class="o">=</span><span class="n">voltage_tolerance</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_transformer_template_matches</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span> <span class="n">Transformer2W</span><span class="p">,</span>
+                                  <span class="n">template</span><span class="p">:</span> <span class="n">TransformerType</span><span class="p">,</span>
+                                  <span class="n">voltage_tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decide whether a transformer template can be applied to a given two-winding transformer.</span>
+
+<span class="sd">    Both the HV and LV rated voltages must match within tolerance.</span>
+
+<span class="sd">    :param branch: candidate transformer to receive the template.</span>
+<span class="sd">    :param template: transformer type under consideration.</span>
+<span class="sd">    :param voltage_tolerance: relative tolerance accepted between template and transformer voltages.</span>
+<span class="sd">    :return: True if both HV and LV ratings match, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compare both windings symmetrically: the optimization should never swap a 220/110 trafo</span>
+    <span class="c1"># for a 220/20 unit (and the lopsided `accept_line_connection` would let that through).</span>
+    <span class="n">hv_match</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">_voltage_match</span><span class="p">(</span><span class="n">template_vn</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">HV</span><span class="p">,</span>
+                                    <span class="n">branch_vn</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">HV</span><span class="p">,</span>
+                                    <span class="n">voltage_tolerance</span><span class="o">=</span><span class="n">voltage_tolerance</span><span class="p">)</span>
+    <span class="n">lv_match</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">_voltage_match</span><span class="p">(</span><span class="n">template_vn</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">LV</span><span class="p">,</span>
+                                    <span class="n">branch_vn</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">LV</span><span class="p">,</span>
+                                    <span class="n">voltage_tolerance</span><span class="o">=</span><span class="n">voltage_tolerance</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hv_match</span> <span class="ow">and</span> <span class="n">lv_match</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gather_line_templates</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LineTemplate</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collect every line-compatible template that the grid currently holds in its catalogue.</span>
+
+<span class="sd">    :param grid: source multi-circuit whose template lists are read.</span>
+<span class="sd">    :return: combined list of overhead, sequence and underground line templates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Pre-allocate the combined pool by extending separate iterations to keep the order deterministic</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LineTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">tpl</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">overhead_line_types</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">tpl</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">sequence_line_types</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+    <span class="c1"># NOTE: the property is `underground_cable_types`, NOT `underground_line_types`</span>
+    <span class="k">for</span> <span class="n">tpl</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">underground_cable_types</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pool</span>
+
+
+<div class="viewcode-block" id="build_catalogue_pool">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.build_catalogue_pool">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_catalogue_pool</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                         <span class="n">selected_branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Branch</span><span class="p">],</span>
+                         <span class="n">voltage_tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Branch</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the per-branch catalogue pool for the optimization.</span>
+
+<span class="sd">    The function categorizes each selected branch (AC line or two-winding transformer), gathers the</span>
+<span class="sd">    templates of the matching kind from the grid catalogue, filters them by voltage compatibility,</span>
+<span class="sd">    and removes any branch whose pool would have one option or fewer (those slots cannot be optimized</span>
+<span class="sd">    over because there is nothing to choose from).</span>
+
+<span class="sd">    :param grid: multi-circuit whose template catalogues provide the candidate templates.</span>
+<span class="sd">    :param selected_branches: branches that the user has pre-selected on the schematic.</span>
+<span class="sd">    :param voltage_tolerance: relative voltage tolerance (e.g. 0.1 for 10%).</span>
+<span class="sd">    :param logger: logger that receives warnings about unsupported branches and dropped slots.</span>
+<span class="sd">    :return: parallel lists `(branches, pools)` such that `pools[i]` is the list of templates</span>
+<span class="sd">        compatible with `branches[i]`. Both lists have the same length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Pre-fetch the catalogues once: walking them per-branch would be wasteful</span>
+    <span class="n">line_templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LineTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">_gather_line_templates</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">transformer_templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TransformerType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">tpl</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">transformer_types</span><span class="p">:</span>
+        <span class="n">transformer_templates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+
+    <span class="c1"># Diagnostic dump of the four catalogue lists. Helps the user see whether the optimization</span>
+    <span class="c1"># found nothing because the catalogue is empty, or because it only holds the wrong type.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[CatalogueOptimization] Catalogue contents:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  overhead_line_types     : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">overhead_line_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sequence_line_types     : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">sequence_line_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  underground_cable_types : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">underground_cable_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  transformer_types       : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">transformer_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The two output lists are kept in lock-step: index i always refers to the same branch</span>
+    <span class="n">kept_branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Branch</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">kept_pools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># Iterate over the user selection and try to assign a non-degenerate template pool to each branch</span>
+    <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">selected_branches</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Line</span><span class="p">):</span>
+            <span class="c1"># Build the pool of voltage-compatible line templates for this specific line</span>
+            <span class="n">pool</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">tpl</span> <span class="ow">in</span> <span class="n">line_templates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_line_template_matches</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+                                          <span class="n">template</span><span class="o">=</span><span class="n">tpl</span><span class="p">,</span>
+                                          <span class="n">voltage_tolerance</span><span class="o">=</span><span class="n">voltage_tolerance</span><span class="p">):</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># template ignored; voltage rating does not match</span>
+            <span class="n">kept_branches</span><span class="p">,</span> <span class="n">kept_pools</span> <span class="o">=</span> <span class="n">_accept_or_drop_pool</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+                                                             <span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
+                                                             <span class="n">kept_branches</span><span class="o">=</span><span class="n">kept_branches</span><span class="p">,</span>
+                                                             <span class="n">kept_pools</span><span class="o">=</span><span class="n">kept_pools</span><span class="p">,</span>
+                                                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Transformer2W</span><span class="p">):</span>
+            <span class="c1"># Build the pool of voltage-compatible transformer templates for this specific transformer</span>
+            <span class="n">pool</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">tpl</span> <span class="ow">in</span> <span class="n">transformer_templates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_transformer_template_matches</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+                                                 <span class="n">template</span><span class="o">=</span><span class="n">tpl</span><span class="p">,</span>
+                                                 <span class="n">voltage_tolerance</span><span class="o">=</span><span class="n">voltage_tolerance</span><span class="p">):</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># template ignored; HV/LV ratings do not match</span>
+            <span class="n">kept_branches</span><span class="p">,</span> <span class="n">kept_pools</span> <span class="o">=</span> <span class="n">_accept_or_drop_pool</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+                                                             <span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
+                                                             <span class="n">kept_branches</span><span class="o">=</span><span class="n">kept_branches</span><span class="p">,</span>
+                                                             <span class="n">kept_pools</span><span class="o">=</span><span class="n">kept_pools</span><span class="p">,</span>
+                                                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: add catalogue support for DcLine, VSC and HVDC branches.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Unsupported branch type for catalogue optimization (AC Line and &quot;</span>
+                                   <span class="s2">&quot;Transformer2W only at this stage)&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                               <span class="n">device_class</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="c1"># Diagnostic dump of the per-slot pool sizes. Helps the user see, for every surviving branch,</span>
+    <span class="c1"># how many templates the optimizer has to choose from (i.e. the cardinality of each decision slot).</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CatalogueOptimization] Surviving branches: &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">kept_branches</span><span class="p">)</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_branches</span><span class="p">)</span><span class="si">}</span><span class="s2"> selected&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">kept_branch</span><span class="p">,</span> <span class="n">kept_pool</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">kept_branches</span><span class="p">,</span> <span class="n">kept_pools</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">kept_branch</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">30s</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">kept_pool</span><span class="p">)</span><span class="si">}</span><span class="s2"> compatible templates&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kept_branches</span><span class="p">,</span> <span class="n">kept_pools</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_accept_or_drop_pool</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span> <span class="n">Branch</span><span class="p">,</span>
+                         <span class="n">pool</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">],</span>
+                         <span class="n">kept_branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Branch</span><span class="p">],</span>
+                         <span class="n">kept_pools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]],</span>
+                         <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Branch</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decide whether the candidate pool of a branch is rich enough to be included in the optimization.</span>
+
+<span class="sd">    A pool is degenerate when it contains 0 or 1 templates: with no alternatives the optimizer has</span>
+<span class="sd">    nothing to choose, so the branch is silently dropped (with a logger entry) to keep the decision</span>
+<span class="sd">    vector small and meaningful.</span>
+
+<span class="sd">    :param branch: branch under evaluation.</span>
+<span class="sd">    :param pool: list of templates judged compatible with `branch`.</span>
+<span class="sd">    :param kept_branches: running accumulator of branches that survived the filter.</span>
+<span class="sd">    :param kept_pools: running accumulator of the corresponding template pools.</span>
+<span class="sd">    :param logger: logger that receives the explanatory warning.</span>
+<span class="sd">    :return: updated `(kept_branches, kept_pools)` lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Branch had zero compatible templates: warn the user so they can extend the catalogue</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Branch dropped from catalogue optimization: no compatible templates found&quot;</span><span class="p">,</span>
+                           <span class="n">device</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                           <span class="n">device_class</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Branch had exactly one option: the slot would be a constant, so it is not worth optimizing</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Branch dropped from catalogue optimization: only one compatible template available&quot;</span><span class="p">,</span>
+                           <span class="n">device</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                           <span class="n">device_class</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                           <span class="n">value</span><span class="o">=</span><span class="n">pool</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Two or more options: the slot becomes a real decision variable</span>
+        <span class="n">kept_branches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+        <span class="n">kept_pools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kept_branches</span><span class="p">,</span> <span class="n">kept_pools</span>
+
+
+<div class="viewcode-block" id="template_capex">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.CatalogueOptimization.html#VeraGridEngine.Simulations.CatalogueOptimization.catalogue_utils.template_capex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">template_capex</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span> <span class="n">Branch</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the capital expenditure of applying a template to a branch.</span>
+
+<span class="sd">    Line templates have a per-km capex (`currency/km`), so the cost scales with the line length.</span>
+<span class="sd">    Transformer templates carry a flat capex (`currency`).</span>
+
+<span class="sd">    :param branch: branch that would receive the template.</span>
+<span class="sd">    :param template: template under consideration.</span>
+<span class="sd">    :return: capex contribution in currency units.</span>
+<span class="sd">    :raises TypeError: if branch and template combination is not supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># AC line templates are priced per kilometer of line</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Line</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">capex</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;OverheadLineType can only be applied to a Line branch&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Line</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">capex</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;SequenceLineType can only be applied to a Line branch&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Line</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">capex</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;UndergroundLineType can only be applied to a Line branch&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">TransformerType</span><span class="p">):</span>
+        <span class="c1"># Transformer templates carry a flat capex regardless of the branch&#39;s &quot;length&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Transformer2W</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">capex</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;TransformerType can only be applied to a Transformer2W branch&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported template type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

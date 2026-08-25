@@ -1,0 +1,1435 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.SchematicWidget.Injections package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.Diagrams.SchematicWidget.Substation package" href="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.html" />
+    <link rel="prev" title="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid package" href="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.html">VeraGrid.Gui.Diagrams package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.SchematicWidget.html">VeraGrid.Gui.Diagrams.SchematicWidget package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.SchematicWidget.Injections package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Injections.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-diagrams-schematicwidget-injections-package">
+<h1>VeraGrid.Gui.Diagrams.SchematicWidget.Injections package<a class="headerlink" href="#veragrid-gui-diagrams-schematicwidget-injections-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-battery-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.</span></span><span class="sig-name descname"><span class="pre">BatteryGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/battery_graphics.html#BatteryGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/battery_graphics.html#BatteryGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the battery editor using the generator editor implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-controllable-shunt-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.</span></span><span class="sig-name descname"><span class="pre">ControllableShuntGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/controllable_shunt_graphics.html#ControllableShuntGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<p>ExternalGrid graphic item</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/controllable_shunt_graphics.html#ControllableShuntGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/controllable_shunt_graphics.html#ControllableShuntGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the controllable shunt editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-current-injection-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.</span></span><span class="sig-name descname"><span class="pre">CurrentInjectionGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/current_injection_graphics.html#CurrentInjectionGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<p>ExternalGrid graphic item</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-external-grid-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.</span></span><span class="sig-name descname"><span class="pre">ExternalGridGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/external_grid_graphics.html#ExternalGridGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<p>ExternalGrid graphic item</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/external_grid_graphics.html#ExternalGridGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-generator-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.</span></span><span class="sig-name descname"><span class="pre">GeneratorGraphicItem</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.clear_regulation_bus">
+<span class="sig-name descname"><span class="pre">clear_regulation_bus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.clear_regulation_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.clear_regulation_bus" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.clear_regulation_cn">
+<span class="sig-name descname"><span class="pre">clear_regulation_cn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.clear_regulation_cn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.clear_regulation_cn" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_dynamic_emt">
+<span class="sig-name descname"><span class="pre">edit_dynamic_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.edit_dynamic_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_dynamic_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the unified dynamic editor workspace for this generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_dynamic_rms">
+<span class="sig-name descname"><span class="pre">edit_dynamic_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.edit_dynamic_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_dynamic_rms" title="Link to this definition"></a></dt>
+<dd><p>Open the unified dynamic editor workspace for this generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_generator">
+<span class="sig-name descname"><span class="pre">edit_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.edit_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_generator" title="Link to this definition"></a></dt>
+<dd><p>Open the full generator editor dialogue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_q_curve">
+<span class="sig-name descname"><span class="pre">edit_q_curve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.edit_q_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.edit_q_curve" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.enable_disable_control_toggle">
+<span class="sig-name descname"><span class="pre">enable_disable_control_toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.enable_disable_control_toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.enable_disable_control_toggle" title="Link to this definition"></a></dt>
+<dd><p>Enable / Disable device voltage control</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.mouseDoubleClickEvent" title="Link to this definition"></a></dt>
+<dd><p>Open the generator editor on double click.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the generator editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.set_regulation_bus">
+<span class="sig-name descname"><span class="pre">set_regulation_bus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.set_regulation_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.set_regulation_bus" title="Link to this definition"></a></dt>
+<dd><p>Set regulation bus
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.solar_pv_wizard">
+<span class="sig-name descname"><span class="pre">solar_pv_wizard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.solar_pv_wizard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.solar_pv_wizard" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.to_battery">
+<span class="sig-name descname"><span class="pre">to_battery</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.to_battery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.to_battery" title="Link to this definition"></a></dt>
+<dd><p>Convert this generator to a battery</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.wind_farm_wizard">
+<span class="sig-name descname"><span class="pre">wind_farm_wizard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/generator_graphics.html#GeneratorGraphicItem.wind_farm_wizard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem.wind_farm_wizard" title="Link to this definition"></a></dt>
+<dd><p>Open the appropriate editor dialogue
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-injections-template-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">InjectionNexusPathItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><span class="pre">InjectionTemplateGraphicItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionNexusPathItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsPathItem</span></code></p>
+<p>Selectable nexus path that drives nexus-only editing for injections.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem.itemChange">
+<span class="sig-name descname"><span class="pre">itemChange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">change</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GraphicsItemChange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionNexusPathItem.itemChange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem.itemChange" title="Link to this definition"></a></dt>
+<dd><p>Refresh nexus edit handles when nexus selection changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>change</strong> – Graphics item change.</p></li>
+<li><p><strong>value</strong> – New value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Base implementation result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionNexusPathItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>Select the nexus itself instead of the injection glyph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem.shape">
+<span class="sig-name descname"><span class="pre">shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPainterPath</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionNexusPathItem.shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionNexusPathItem.shape" title="Link to this definition"></a></dt>
+<dd><p>Widen hit testing so the nexus can be selected easily.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Hit-test path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">InjectionTemplateGraphicItem</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget" title="VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericDiagramWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsItemGroup</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.apply_rotation_state">
+<span class="sig-name descname"><span class="pre">apply_rotation_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle_degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.apply_rotation_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.apply_rotation_state" title="Link to this definition"></a></dt>
+<dd><p>Apply one rotation angle around the widget center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle_degrees</strong> – Rotation angle in degrees.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.change_bus">
+<span class="sig-name descname"><span class="pre">change_bus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.change_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.change_bus" title="Link to this definition"></a></dt>
+<dd><p>Change the generator bus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.clear_nexus_edit_if_fully_deselected">
+<span class="sig-name descname"><span class="pre">clear_nexus_edit_if_fully_deselected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.clear_nexus_edit_if_fully_deselected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.clear_nexus_edit_if_fully_deselected" title="Link to this definition"></a></dt>
+<dd><p>Clear nexus editing when neither the glyph nor the nexus path remains selected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.delete" title="Link to this definition"></a></dt>
+<dd><p>Remove this element
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.delete_from_associations">
+<span class="sig-name descname"><span class="pre">delete_from_associations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.delete_from_associations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.delete_from_associations" title="Link to this definition"></a></dt>
+<dd><p>Delete this object from the bus or other parent hosting it</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_bottom">
+<span class="sig-name descname"><span class="pre">dock_bottom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.dock_bottom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_bottom" title="Link to this definition"></a></dt>
+<dd><p>Dock this injection on the bottom side of the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_left">
+<span class="sig-name descname"><span class="pre">dock_left</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.dock_left"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_left" title="Link to this definition"></a></dt>
+<dd><p>Dock this injection on the left side of the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_right">
+<span class="sig-name descname"><span class="pre">dock_right</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.dock_right"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_right" title="Link to this definition"></a></dt>
+<dd><p>Dock this injection on the right side of the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_top">
+<span class="sig-name descname"><span class="pre">dock_top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.dock_top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.dock_top" title="Link to this definition"></a></dt>
+<dd><p>Dock this injection on the top side of the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.edit_dynamic_emt">
+<span class="sig-name descname"><span class="pre">edit_dynamic_emt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.edit_dynamic_emt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.edit_dynamic_emt" title="Link to this definition"></a></dt>
+<dd><p>Open the unified dynamic editor workspace for this generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.edit_dynamic_rms">
+<span class="sig-name descname"><span class="pre">edit_dynamic_rms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.edit_dynamic_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.edit_dynamic_rms" title="Link to this definition"></a></dt>
+<dd><p>Open the unified dynamic editor workspace for this generator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.editor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">editor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.editor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.enable_disable_toggle">
+<span class="sig-name descname"><span class="pre">enable_disable_toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.enable_disable_toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.enable_disable_toggle" title="Link to this definition"></a></dt>
+<dd><p>&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_associated_widgets">
+<span class="sig-name descname"><span class="pre">get_associated_widgets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget" title="VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget"><span class="pre">GenericDiagramWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QGraphicsLineItem</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_associated_widgets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_associated_widgets" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all associated graphics
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_base_context_menu">
+<span class="sig-name descname"><span class="pre">get_base_context_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QMenu</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_base_context_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_base_context_menu" title="Link to this definition"></a></dt>
+<dd><p>Generate the base menu for injections
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_child_anchor_local_point_from_dock">
+<span class="sig-name descname"><span class="pre">get_child_anchor_local_point_from_dock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_child_anchor_local_point_from_dock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_child_anchor_local_point_from_dock" title="Link to this definition"></a></dt>
+<dd><p>Resolve the child-local nexus anchor from dock metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dock</strong> – Dock metadata.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Child-local anchor point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_child_anchor_local_point_from_parent_scene_anchor">
+<span class="sig-name descname"><span class="pre">get_child_anchor_local_point_from_parent_scene_anchor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_scene_anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_child_anchor_local_point_from_parent_scene_anchor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_child_anchor_local_point_from_parent_scene_anchor" title="Link to this definition"></a></dt>
+<dd><p>Project one parent anchor scene point to the child perimeter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent_scene_anchor</strong> – Parent-side scene anchor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Child-local anchor point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_child_nexus_anchor">
+<span class="sig-name descname"><span class="pre">get_child_nexus_anchor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_child_nexus_anchor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_child_nexus_anchor" title="Link to this definition"></a></dt>
+<dd><p>Get the current child-side nexus anchor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Child-side scene anchor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_dock_metadata">
+<span class="sig-name descname"><span class="pre">get_dock_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_dock_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_dock_metadata" title="Link to this definition"></a></dt>
+<dd><p>Return persisted dock metadata for this injection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dock metadata.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_extra_graphics">
+<span class="sig-name descname"><span class="pre">get_extra_graphics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_extra_graphics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_extra_graphics" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all QGraphicsItem that are not GenericDiagramWidget elements associated with this widget.
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_manual_dock_alignment">
+<span class="sig-name descname"><span class="pre">get_manual_dock_alignment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_manual_dock_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_manual_dock_alignment" title="Link to this definition"></a></dt>
+<dd><p>Compute the normalized horizontal alignment of the child center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Alignment factor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_manual_dock_offset">
+<span class="sig-name descname"><span class="pre">get_manual_dock_offset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_manual_dock_offset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_manual_dock_offset" title="Link to this definition"></a></dt>
+<dd><p>Compute the vertical offset of the child origin from the parent bottom-dock baseline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dock offset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_nexus_render_points">
+<span class="sig-name descname"><span class="pre">get_nexus_render_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_nexus_render_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_nexus_render_points" title="Link to this definition"></a></dt>
+<dd><p>Get the currently rendered nexus route points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Route points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_nexus_route_points_for_editing">
+<span class="sig-name descname"><span class="pre">get_nexus_route_points_for_editing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_nexus_route_points_for_editing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_nexus_route_points_for_editing" title="Link to this definition"></a></dt>
+<dd><p>Return the currently rendered nexus route points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Route points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_parent_anchor_local_point_from_child_position">
+<span class="sig-name descname"><span class="pre">get_parent_anchor_local_point_from_child_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_parent_anchor_local_point_from_child_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_parent_anchor_local_point_from_child_position" title="Link to this definition"></a></dt>
+<dd><p>Project the current child center to the parent electrical connection locus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Parent-local anchor point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_parent_anchor_local_point_from_dock">
+<span class="sig-name descname"><span class="pre">get_parent_anchor_local_point_from_dock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_parent_anchor_local_point_from_dock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_parent_anchor_local_point_from_dock" title="Link to this definition"></a></dt>
+<dd><p>Resolve the parent-local nexus anchor from dock metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dock</strong> – Dock metadata.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parent-local anchor point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_parent_nexus_anchor">
+<span class="sig-name descname"><span class="pre">get_parent_nexus_anchor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_parent_nexus_anchor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_parent_nexus_anchor" title="Link to this definition"></a></dt>
+<dd><p>Get the current parent-side nexus anchor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Parent-side scene anchor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_rotation_origin_local_point">
+<span class="sig-name descname"><span class="pre">get_rotation_origin_local_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.get_rotation_origin_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.get_rotation_origin_local_point" title="Link to this definition"></a></dt>
+<dd><p>Return the local rotation origin used for injection widgets.</p>
+<p>The injection symbol must rotate as a rigid body around its geometric
+center so the main widget does not orbit around one corner while the
+nexus route is refreshed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Local rotation origin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.is_nexus_edit_active">
+<span class="sig-name descname"><span class="pre">is_nexus_edit_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.is_nexus_edit_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.is_nexus_edit_active" title="Link to this definition"></a></dt>
+<dd><p>Determine whether nexus editing is active either from the glyph or nexus path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when nexus handles should be visible.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.itemChange">
+<span class="sig-name descname"><span class="pre">itemChange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">change</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GraphicsItemChange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.itemChange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.itemChange" title="Link to this definition"></a></dt>
+<dd><p>Keep the nexus line synchronized with scene-position changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.mouseDoubleClickEvent" title="Link to this definition"></a></dt>
+<dd><p>Open the device editor on double click.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>mouse press: display the editor
+:param QGraphicsSceneMouseEvent:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.mouseReleaseEvent" title="Link to this definition"></a></dt>
+<dd><p>Persist manual child placement after interactive dragging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_behind_converter">
+<span class="sig-name descname"><span class="pre">move_behind_converter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_behind_converter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_behind_converter" title="Link to this definition"></a></dt>
+<dd><p>Create a DC bus and a converter and move the injection there
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_dock_order">
+<span class="sig-name descname"><span class="pre">move_dock_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_dock_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_dock_order" title="Link to this definition"></a></dt>
+<dd><p>Move this injection earlier or later within its dock side ordering.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_dock_order_earlier">
+<span class="sig-name descname"><span class="pre">move_dock_order_earlier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_dock_order_earlier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_dock_order_earlier" title="Link to this definition"></a></dt>
+<dd><p>Move this injection earlier within its dock side ordering.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_dock_order_later">
+<span class="sig-name descname"><span class="pre">move_dock_order_later</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_dock_order_later"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_dock_order_later" title="Link to this definition"></a></dt>
+<dd><p>Move this injection later within its dock side ordering.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_nexus_endpoint_alignment">
+<span class="sig-name descname"><span class="pre">move_nexus_endpoint_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_nexus_endpoint_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_nexus_endpoint_alignment" title="Link to this definition"></a></dt>
+<dd><p>Move one nexus endpoint alignment along its host side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint</strong> – <code class="docutils literal notranslate"><span class="pre">&quot;child&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;parent&quot;</span></code>.</p></li>
+<li><p><strong>scene_pos</strong> – Scene point chosen by the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_nexus_segment">
+<span class="sig-name descname"><span class="pre">move_nexus_segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_nexus_segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_nexus_segment" title="Link to this definition"></a></dt>
+<dd><p>Move one interior nexus segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>segment_index</strong> – Segment index.</p></li>
+<li><p><strong>original_points</strong> – Route points captured at drag start.</p></li>
+<li><p><strong>delta_x</strong> – Horizontal scene delta.</p></li>
+<li><p><strong>delta_y</strong> – Vertical scene delta.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_nexus_vertex">
+<span class="sig-name descname"><span class="pre">move_nexus_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertex_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.move_nexus_vertex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.move_nexus_vertex" title="Link to this definition"></a></dt>
+<dd><p>Move one interior nexus vertex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertex_index</strong> – Vertex index.</p></li>
+<li><p><strong>scene_pos</strong> – New scene position.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.nudge_dock_inward">
+<span class="sig-name descname"><span class="pre">nudge_dock_inward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.nudge_dock_inward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.nudge_dock_inward" title="Link to this definition"></a></dt>
+<dd><p>Move this injection closer to the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.nudge_dock_offset">
+<span class="sig-name descname"><span class="pre">nudge_dock_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.nudge_dock_offset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.nudge_dock_offset" title="Link to this definition"></a></dt>
+<dd><p>Move this injection farther from or closer to the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.nudge_dock_outward">
+<span class="sig-name descname"><span class="pre">nudge_dock_outward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.nudge_dock_outward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.nudge_dock_outward" title="Link to this definition"></a></dt>
+<dd><p>Move this injection farther away from the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the default injection editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.parent">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parent</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NODE_GRAPHIC</span></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.parent" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.persist_manual_nexus_route">
+<span class="sig-name descname"><span class="pre">persist_manual_nexus_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.persist_manual_nexus_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.persist_manual_nexus_route" title="Link to this definition"></a></dt>
+<dd><p>Persist one manual nexus polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> – Route points.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot API objects profiles</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.prepare_for_glyph_interaction">
+<span class="sig-name descname"><span class="pre">prepare_for_glyph_interaction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.prepare_for_glyph_interaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.prepare_for_glyph_interaction" title="Link to this definition"></a></dt>
+<dd><p>Leave nexus edit mode before normal glyph interaction starts.</p>
+<p>Clicking the injection glyph must preserve normal selection and dragging.
+Nexus editing is only entered through the nexus path itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the colour according to the system theme</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.refresh_nexus_edit_locks">
+<span class="sig-name descname"><span class="pre">refresh_nexus_edit_locks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.refresh_nexus_edit_locks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.refresh_nexus_edit_locks" title="Link to this definition"></a></dt>
+<dd><p>Disable owner and parent dragging while nexus editing is active.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.refresh_nexus_handles">
+<span class="sig-name descname"><span class="pre">refresh_nexus_handles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.refresh_nexus_handles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.refresh_nexus_handles" title="Link to this definition"></a></dt>
+<dd><p>Refresh all visible nexus editor handles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.refresh_nexus_z_order">
+<span class="sig-name descname"><span class="pre">refresh_nexus_z_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.refresh_nexus_z_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.refresh_nexus_z_order" title="Link to this definition"></a></dt>
+<dd><p>Keep the selected nexus editor above the parent node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.rescale">
+<span class="sig-name descname"><span class="pre">rescale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.rescale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.rescale" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.rotate_90">
+<span class="sig-name descname"><span class="pre">rotate_90</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.rotate_90"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.rotate_90" title="Link to this definition"></a></dt>
+<dd><p>Rotate this injection graphic by 90 degrees and persist the new angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_dock_metadata">
+<span class="sig-name descname"><span class="pre">set_dock_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.set_dock_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_dock_metadata" title="Link to this definition"></a></dt>
+<dd><p>Persist dock metadata and keep the nexus refreshed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dock</strong> – Dock metadata.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_dock_side">
+<span class="sig-name descname"><span class="pre">set_dock_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.set_dock_side"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_dock_side" title="Link to this definition"></a></dt>
+<dd><p>Set the dock side for this injection and rearrange the parent node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_enable">
+<span class="sig-name descname"><span class="pre">set_enable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.set_enable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_enable" title="Link to this definition"></a></dt>
+<dd><p>Set the enable value, graphically and in the API
+&#64;param val:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_glyph">
+<span class="sig-name descname"><span class="pre">set_glyph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glyph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.Square" title="VeraGrid.Gui.Diagrams.generic_graphics.Square"><span class="pre">Square</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.Circle" title="VeraGrid.Gui.Diagrams.generic_graphics.Circle"><span class="pre">Circle</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.Polygon" title="VeraGrid.Gui.Diagrams.generic_graphics.Polygon"><span class="pre">Polygon</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.Condenser" title="VeraGrid.Gui.Diagrams.generic_graphics.Condenser"><span class="pre">Condenser</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.set_glyph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_glyph" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>glyph</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_nexus_edit_active">
+<span class="sig-name descname"><span class="pre">set_nexus_edit_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.set_nexus_edit_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.set_nexus_edit_active" title="Link to this definition"></a></dt>
+<dd><p>Set the explicit nexus-edit activation state.</p>
+<p>Plain selection must not surface nexus edit handles. Only a direct click on the
+injection glyph or nexus path enables the editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>active</strong> – Requested activation state.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.should_preserve_nexus_route_shape">
+<span class="sig-name descname"><span class="pre">should_preserve_nexus_route_shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.should_preserve_nexus_route_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.should_preserve_nexus_route_shape" title="Link to this definition"></a></dt>
+<dd><p>Determine whether the persisted nexus route should keep its elbows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the persisted nexus path is manual.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.sync_manual_dock_metadata_from_position">
+<span class="sig-name descname"><span class="pre">sync_manual_dock_metadata_from_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.sync_manual_dock_metadata_from_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.sync_manual_dock_metadata_from_position" title="Link to this definition"></a></dt>
+<dd><p>Persist the current child position as manual dock metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.update_nexus">
+<span class="sig-name descname"><span class="pre">update_nexus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#InjectionTemplateGraphicItem.update_nexus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem.update_nexus" title="Link to this definition"></a></dt>
+<dd><p>Update the routed nexus path that joins the parent and this object.
+:param pos: position of this object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">NexusEndpointHandleItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><span class="pre">InjectionTemplateGraphicItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusEndpointHandleItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsEllipseItem</span></code></p>
+<p>Draggable handle for one nexus endpoint alignment.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusEndpointHandleItem.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem.mouseMoveEvent" title="Link to this definition"></a></dt>
+<dd><p>Drag one nexus endpoint alignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusEndpointHandleItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>Accept the drag start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusEndpointHandleItem.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusEndpointHandleItem.mouseReleaseEvent" title="Link to this definition"></a></dt>
+<dd><p>Accept the drag end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">NexusSegmentHandleItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><span class="pre">InjectionTemplateGraphicItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusSegmentHandleItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsEllipseItem</span></code></p>
+<p>Draggable handle for one interior nexus segment.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusSegmentHandleItem.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.mouseMoveEvent" title="Link to this definition"></a></dt>
+<dd><p>Drag one interior nexus segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusSegmentHandleItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>Capture route state for segment dragging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusSegmentHandleItem.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.mouseReleaseEvent" title="Link to this definition"></a></dt>
+<dd><p>Finish the current segment drag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.set_segment_index">
+<span class="sig-name descname"><span class="pre">set_segment_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusSegmentHandleItem.set_segment_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusSegmentHandleItem.set_segment_index" title="Link to this definition"></a></dt>
+<dd><p>Set the controlled segment index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment_index</strong> – Segment index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">NexusVertexHandleItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><span class="pre">InjectionTemplateGraphicItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusVertexHandleItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsRectItem</span></code></p>
+<p>Draggable handle for one interior nexus vertex.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusVertexHandleItem.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.mouseMoveEvent" title="Link to this definition"></a></dt>
+<dd><p>Drag one nexus vertex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusVertexHandleItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>Accept the drag start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusVertexHandleItem.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.mouseReleaseEvent" title="Link to this definition"></a></dt>
+<dd><p>Accept the drag end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Mouse event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.set_vertex_index">
+<span class="sig-name descname"><span class="pre">set_vertex_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertex_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#NexusVertexHandleItem.set_vertex_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.NexusVertexHandleItem.set_vertex_index" title="Link to this definition"></a></dt>
+<dd><p>Set the controlled vertex index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vertex_index</strong> – Vertex index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.clamp_alignment">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">clamp_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#clamp_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.clamp_alignment" title="Link to this definition"></a></dt>
+<dd><p>Clamp one normalized alignment value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alignment</strong> – Optional alignment.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Clamped alignment.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.get_local_rect_side_anchor">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">get_local_rect_side_anchor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#get_local_rect_side_anchor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.get_local_rect_side_anchor" title="Link to this definition"></a></dt>
+<dd><p>Get one side anchor in item-local coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> – Rectangle width.</p></li>
+<li><p><strong>height</strong> – Rectangle height.</p></li>
+<li><p><strong>side</strong> – Requested side.</p></li>
+<li><p><strong>alignment</strong> – Normalized alignment on that side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Local anchor point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.get_opposite_attachment_side">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">get_opposite_attachment_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#get_opposite_attachment_side"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.get_opposite_attachment_side" title="Link to this definition"></a></dt>
+<dd><p>Get the opposite attachment side for a nexus endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>side</strong> – Parent-side attachment key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Opposite child-side attachment key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.get_rect_side_anchor">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.</span></span><span class="sig-name descname"><span class="pre">get_rect_side_anchor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/injections_template_graphics.html#get_rect_side_anchor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.get_rect_side_anchor" title="Link to this definition"></a></dt>
+<dd><p>Get one side anchor on a rectangle in scene coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> – Top-left scene point.</p></li>
+<li><p><strong>width</strong> – Rectangle width.</p></li>
+<li><p><strong>height</strong> – Rectangle height.</p></li>
+<li><p><strong>side</strong> – Requested side.</p></li>
+<li><p><strong>alignment</strong> – Normalized alignment on that side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Scene anchor point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-load-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.</span></span><span class="sig-name descname"><span class="pre">LoadGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/load_graphics.html#LoadGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/load_graphics.html#LoadGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.load_profile_wizard">
+<span class="sig-name descname"><span class="pre">load_profile_wizard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/load_graphics.html#LoadGraphicItem.load_profile_wizard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.load_profile_wizard" title="Link to this definition"></a></dt>
+<dd><p>Open the load profile composition wizard and apply the generated profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.open_device_editor">
+<span class="sig-name descname"><span class="pre">open_device_editor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/load_graphics.html#LoadGraphicItem.open_device_editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem.open_device_editor" title="Link to this definition"></a></dt>
+<dd><p>Open the load editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the editor was opened.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-shunt-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.</span></span><span class="sig-name descname"><span class="pre">ShuntGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/shunt_graphics.html#ShuntGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-injections-static-generator-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.</span></span><span class="sig-name descname"><span class="pre">StaticGeneratorGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Injections/static_generator_graphics.html#StaticGeneratorGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InjectionTemplateGraphicItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Injections" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.Diagrams.SchematicWidget.Fluid package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.Diagrams.SchematicWidget.Substation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

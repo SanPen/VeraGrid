@@ -1,0 +1,1122 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Branches.line &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Branches.line</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Branches.line</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">BuildStatus</span><span class="p">,</span> <span class="n">SubObjectType</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">PrpCat</span><span class="p">,</span>
+                                         <span class="n">ParamPowerFlowReferenceType</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.underground_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">UndergroundLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.overhead_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverheadLineType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.branch_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.sequence_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceLineType</span><span class="p">,</span> <span class="n">get_line_impedances_with_c</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.association</span><span class="w"> </span><span class="kn">import</span> <span class="n">Associations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line_locations</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineLocations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.admittance_matrix</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdmittanceMatrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCProp</span>
+
+
+<div class="viewcode-block" id="accept_line_connection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.accept_line_connection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">accept_line_connection</span><span class="p">(</span><span class="n">V1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">V2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">branch_connection_voltage_tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function checks if a line can be connected between 2 voltages</span>
+<span class="sd">    :param V1: Voltage 1</span>
+<span class="sd">    :param V2: Voltage 2</span>
+<span class="sd">    :param branch_connection_voltage_tolerance:</span>
+<span class="sd">    :return: Can be connected?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">V2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">per</span> <span class="o">=</span> <span class="n">V1</span> <span class="o">/</span> <span class="n">V2</span>
+
+        <span class="k">if</span> <span class="n">per</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">branch_connection_voltage_tolerance</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">V1</span> <span class="o">==</span> <span class="n">V2</span></div>
+
+
+
+<div class="viewcode-block" id="Line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Line</span><span class="p">(</span><span class="n">BranchParent</span><span class="p">):</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_length&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_tolerance&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_r_fault&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_x_fault&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_fault_pos&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_R&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_X&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_B&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_R0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_X0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_B0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_R2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_X2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_B2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_ys&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_ysh&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;temp_base&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;temp_oper&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_temp_oper_prof&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;alpha&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_circuit_idx&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;template&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;possible_tower_types&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;possible_underground_line_types&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;possible_sequence_line_types&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_locations&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Vmf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Vmt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Vaf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Vat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Pf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Pt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Qf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Qt&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;R&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total positive sequence resistance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+            <span class="n">dyn_ref</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total positive sequence reactance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">OPF</span><span class="p">],</span>
+            <span class="n">dyn_ref</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">l</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total positive sequence shunt susceptance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+            <span class="n">dyn_ref</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">bsh</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;R0&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total zero sequence resistance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;X0&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total zero sequence reactance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total zero sequence shunt susceptance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;R2&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total negative sequence resistance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;X2&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total negative sequence reactance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;B2&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Total negative sequence shunt susceptance.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">SC</span><span class="p">,</span> <span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s2">&quot;p.u.&quot;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">AdmittanceMatrix</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Series admittance matrix of the branch&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;ysh&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s2">&quot;p.u.&quot;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">AdmittanceMatrix</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Shunt admittance matrix of the branch&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF3</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;tolerance&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Tolerance expected for the impedance values </span><span class="si">% i</span><span class="s1">s expected &#39;</span>
+                          <span class="s1">&#39;for transformers0</span><span class="si">% f</span><span class="s1">or lines.&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">PF</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;circuit_idx&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Circuit index, used for multiple circuits sharing towers (starts at zero)&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;km&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Length of the line (not used for calculation)&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+            <span class="n">dyn_ref</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">line_length_km</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;template&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">AnyLineTemplateDevice</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;locations&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">LineLocations</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;possible_tower_types&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">Associations</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Possible overhead line types (&gt;1 to denote association, cat=[PrpCat.PF]), - to denote no association&#39;</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;possible_underground_line_types&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">Associations</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Possible underground line types (&gt;1 to denote association, cat=[PrpCat.PF]), &#39;</span>
+                          <span class="s1">&#39;- to denote no association&#39;</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;possible_sequence_line_types&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">Associations</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Possible sequence line types (&gt;1 to denote association, cat=[PrpCat.PF]), - to denote no association&#39;</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">bus_from</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">bus_to</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Line&#39;</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">code</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">design_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
+                 <span class="n">rate</span><span class="o">=</span><span class="mf">9999.0</span><span class="p">,</span>
+                 <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">cost</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+                 <span class="n">mttf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mttr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">r_fault</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">x_fault</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">fault_pos</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">length</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">temp_base</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                 <span class="n">temp_oper</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.00330</span><span class="p">,</span>
+                 <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">contingency_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">protection_rating_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
+                 <span class="n">contingency_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">monitor_loading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">r0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">b0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">r2</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">b2</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">capex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">opex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">circuit_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">build_status</span><span class="p">:</span> <span class="n">BuildStatus</span> <span class="o">=</span> <span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        AC current Line</span>
+<span class="sd">        :param bus_from: &quot;From&quot; :ref:`bus&lt;Bus&gt;` object</span>
+<span class="sd">        :param bus_to: &quot;To&quot; :ref:`bus&lt;Bus&gt;` object</span>
+<span class="sd">        :param name: Name of the branch</span>
+<span class="sd">        :param idtag: UUID code</span>
+<span class="sd">        :param code: secondary ID</span>
+<span class="sd">        :param r: Branch resistance in per unit</span>
+<span class="sd">        :param x: Branch reactance in per unit</span>
+<span class="sd">        :param b: Branch shunt susceptance in per unit</span>
+<span class="sd">        :param design_rate: Design rate (MVA)</span>
+<span class="sd">        :param rate: Branch rate in MVA</span>
+<span class="sd">        :param active: Is the branch active?</span>
+<span class="sd">        :param tolerance: Tolerance specified for the branch impedance in %</span>
+<span class="sd">        :param cost: overload cost</span>
+<span class="sd">        :param mttf: Mean time to failure in hours</span>
+<span class="sd">        :param mttr: Mean time to recovery in hours</span>
+<span class="sd">        :param r_fault: Mid-line fault resistance in per unit (SC only)</span>
+<span class="sd">        :param x_fault: Mid-line fault reactance in per unit (SC only)</span>
+<span class="sd">        :param fault_pos: Mid-line fault position in per unit (0.0 = `bus_from`, 0.5 = middle, 1.0 = `bus_to`)</span>
+<span class="sd">        :param length: Length of the branch in km</span>
+<span class="sd">        :param temp_base: Base temperature at which `r` is measured in °C</span>
+<span class="sd">        :param temp_oper: Operating temperature in °C</span>
+<span class="sd">        :param alpha: Thermal constant of the material in °C</span>
+<span class="sd">        :param template: Basic branch template</span>
+<span class="sd">        :param contingency_factor: Rating factor in case of contingency</span>
+<span class="sd">        :param protection_rating_factor: Rating factor before the protections tripping</span>
+<span class="sd">        :param contingency_enabled: enabled for contingencies (Legacy)</span>
+<span class="sd">        :param monitor_loading: monitor the loading (used in OPF)</span>
+<span class="sd">        :param r0: zero-sequence resistence (p.u.)</span>
+<span class="sd">        :param x0: zero-sequence reactance (p.u.)</span>
+<span class="sd">        :param b0: zero-sequence susceptance (p.u.)</span>
+<span class="sd">        :param r2: negative-sequence resistence (p.u.)</span>
+<span class="sd">        :param x2: negative-sequence reactance (p.u.)</span>
+<span class="sd">        :param b2: negative-sequence susceptance (p.u.)</span>
+<span class="sd">        :param capex: Cost of investment (e/MW)</span>
+<span class="sd">        :param opex: Cost of operation (e/MWh)</span>
+<span class="sd">        :param build_status: build status (now time)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">BranchParent</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                              <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                              <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                              <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                              <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                              <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+                              <span class="n">reducible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">design_rate</span><span class="o">=</span><span class="n">design_rate</span><span class="p">,</span>
+                              <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                              <span class="n">contingency_factor</span><span class="o">=</span><span class="n">contingency_factor</span><span class="p">,</span>
+                              <span class="n">protection_rating_factor</span><span class="o">=</span><span class="n">protection_rating_factor</span><span class="p">,</span>
+                              <span class="n">contingency_enabled</span><span class="o">=</span><span class="n">contingency_enabled</span><span class="p">,</span>
+                              <span class="n">monitor_loading</span><span class="o">=</span><span class="n">monitor_loading</span><span class="p">,</span>
+                              <span class="n">mttf</span><span class="o">=</span><span class="n">mttf</span><span class="p">,</span>
+                              <span class="n">mttr</span><span class="o">=</span><span class="n">mttr</span><span class="p">,</span>
+                              <span class="n">build_status</span><span class="o">=</span><span class="n">build_status</span><span class="p">,</span>
+                              <span class="n">capex</span><span class="o">=</span><span class="n">capex</span><span class="p">,</span>
+                              <span class="n">opex</span><span class="o">=</span><span class="n">opex</span><span class="p">,</span>
+                              <span class="n">cost</span><span class="o">=</span><span class="n">cost</span><span class="p">,</span>
+                              <span class="n">temp_base</span><span class="o">=</span><span class="n">temp_base</span><span class="p">,</span>
+                              <span class="n">temp_oper</span><span class="o">=</span><span class="n">temp_oper</span><span class="p">,</span>
+                              <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                              <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">)</span>
+
+        <span class="c1"># line length in km</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+
+        <span class="c1"># line impedance tolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+
+        <span class="c1"># short circuit impedance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_fault</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r_fault</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_fault</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x_fault</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fault_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fault_pos</span><span class="p">)</span>
+
+        <span class="c1"># total impedance and admittance in p.u.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_B0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_B2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span> <span class="o">=</span> <span class="n">AdmittanceMatrix</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span> <span class="o">=</span> <span class="n">AdmittanceMatrix</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">circuit_idx</span><span class="p">)</span>
+
+        <span class="c1"># type template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">:</span> <span class="n">OverheadLineType</span> <span class="o">|</span> <span class="n">SequenceLineType</span> <span class="o">|</span> <span class="n">UndergroundLineType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">template</span>
+
+        <span class="c1"># association with various templates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">possible_tower_types</span><span class="p">:</span> <span class="n">Associations</span> <span class="o">=</span> <span class="n">Associations</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">OverheadLineTypeDevice</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">possible_underground_line_types</span><span class="p">:</span> <span class="n">Associations</span> <span class="o">=</span> <span class="n">Associations</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">UnderGroundLineDevice</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">possible_sequence_line_types</span><span class="p">:</span> <span class="n">Associations</span> <span class="o">=</span> <span class="n">Associations</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">SequenceLineDevice</span><span class="p">)</span>
+
+        <span class="c1"># Line locations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="p">:</span> <span class="n">LineLocations</span> <span class="o">=</span> <span class="n">LineLocations</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span>
+
+    <span class="nd">@R</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span>
+
+    <span class="nd">@X</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_B</span>
+
+    <span class="nd">@B</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
+
+    <span class="nd">@R0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">X0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X0</span>
+
+    <span class="nd">@X0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">X0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_B0</span>
+
+    <span class="nd">@B0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_B0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R2</span>
+
+    <span class="nd">@R2</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">X2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X2</span>
+
+    <span class="nd">@X2</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">X2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_B2</span>
+
+    <span class="nd">@B2</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_B2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">circuit_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit_idx</span>
+
+    <span class="nd">@circuit_idx</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">circuit_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No impedance updates are being done, &quot;</span>
+                      <span class="s2">&quot;use the apply_template method to update the impedance values&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Line.set_circuit_idx">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.set_circuit_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_circuit_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">OverheadLineType</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the circuit_idx with additional behavior based on the is_user_action flag. Ensure that the template exists and is valid.</span>
+<span class="sd">        :param val: The value to set</span>
+<span class="sd">        :param obj: Template</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If the user is setting the circuit index, ensure that the template exists and is valid</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Template must be set before changing the circuit index.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">OverheadLineType</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid template type. Must be OverheadLineType, UndergroundLineType, or SequenceLineType.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">obj</span><span class="o">.</span><span class="n">n_circuits</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Circuit index exceeds the number of circuits in the template.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Circuit index must be greater than 0.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Line length in km</span>
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span>
+
+    <span class="nd">@length</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the length of the line, if a valid length is provided, the electric parameters are scaled appropriately</span>
+<span class="sd">        :param val:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_length</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Line.set_length">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.set_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the line length and change the electric parameters of the line as a consequence.</span>
+<span class="sd">        :param val: value in km</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
+                    <span class="n">factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">val</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># new length / old length</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X0</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">R2</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">X2</span> <span class="o">*=</span> <span class="n">factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">B2</span> <span class="o">*=</span> <span class="n">factor</span>
+
+                <span class="c1"># set the value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># print(&#39;The length cannot be zero, ignoring value&#39;)</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;The length must be a float value&#39;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">locations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineLocations</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cost profile</span>
+<span class="sd">        :return: Profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span>
+
+    <span class="nd">@locations</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LineLocations</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">LineLocations</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;not supported to be set into a locations&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R_corrected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a temperature corrected resistance based on a formula provided by:</span>
+<span class="sd">        NFPA 70-2005, National Electrical Code, Table 8, footnote #2; and</span>
+<span class="sd">        https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity#Linear_approximation</span>
+<span class="sd">        (version of 2019-01-03 at 15:20 EST).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_oper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_base</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdmittanceMatrix</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fill_3_phase_from_sequence</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span>
+
+    <span class="nd">@ys</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">AdmittanceMatrix</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">AdmittanceMatrix</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1"> is not a AdmittanceMatrix&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ysh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdmittanceMatrix</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fill_3_phase_from_sequence</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span>
+
+    <span class="nd">@ysh</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ysh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">AdmittanceMatrix</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">AdmittanceMatrix</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1"> is not a AdmittanceMatrix&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Line.change_base">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.change_base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Sbase_old</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sbase_new</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the impedance base</span>
+<span class="sd">        :param Sbase_old: old base (MVA)</span>
+<span class="sd">        :param Sbase_new: new base (MVA)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">Sbase_new</span> <span class="o">/</span> <span class="n">Sbase_old</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">*=</span> <span class="n">b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">*=</span> <span class="n">b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*=</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="Line.get_weight">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.get_weight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a weight of this line for graph purposes</span>
+<span class="sd">        the weight is the impedance module (sqrt(r^2 + x^2))</span>
+<span class="sd">        :return: weight value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Line.apply_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.apply_template">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">OverheadLineType</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">],</span>
+                       <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                       <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">(),</span>
+                       <span class="n">decimals_rounding</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply a line template to this object</span>
+<span class="sd">        :param obj: OverheadLineType, UndergroundLineType, SequenceLineType</span>
+<span class="sd">        :param Sbase: Nominal power in MVA</span>
+<span class="sd">        :param freq: Frequency in Hz</span>
+<span class="sd">        :param logger: Logger</span>
+<span class="sd">        :param decimals_rounding: Number of decimals to round to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">OverheadLineType</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_computed</span><span class="p">():</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_computed</span><span class="p">():</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;No admittance data&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">template_vn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Vnom</span>
+            <span class="n">vn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">accept_line_connection</span><span class="p">(</span><span class="n">template_vn</span><span class="p">,</span> <span class="n">vn</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Template voltage differs too much from the line nominal voltage&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">has_sequence_data</span><span class="p">():</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                                             <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                             <span class="n">circuit_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit_idx</span><span class="p">,</span>
+                                             <span class="n">Vnom</span><span class="o">=</span><span class="n">vn</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;No sequence data&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ys</span><span class="p">(</span><span class="n">circuit_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit_idx</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">vn</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ysh</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ysh</span><span class="p">(</span><span class="n">circuit_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit_idx</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">vn</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">obj</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">rms_template</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">emt_template</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">UndergroundLineType</span><span class="p">):</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">obj</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">rms_template</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">emt_template</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">SequenceLineType</span><span class="p">):</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                                         <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                         <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                         <span class="n">line_Vnom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">(),</span>
+                                         <span class="n">decimals_rounding</span><span class="o">=</span><span class="n">decimals_rounding</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ys_nabc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ysh</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ysh_nabc</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">obj</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">rms_template</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">emt_template</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;Template not recognised&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Line.get_line_type">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.get_line_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_line_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceLineType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the equivalent sequence line type of this line</span>
+<span class="sd">        :return: SequenceLineType</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Length must be greater than 0&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_type&quot;</span><span class="p">,</span>
+                                <span class="n">Imax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">(),</span>
+                                <span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                <span class="n">R0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                <span class="n">X0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                                <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span></div>
+
+
+    <span class="c1"># def get_save_data(self) -&gt; List[str]:</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Return the data that matches the edit_headers</span>
+    <span class="c1">#     :return:</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     data = list()</span>
+    <span class="c1">#     for name, properties in self.registered_properties.items():</span>
+    <span class="c1">#         obj = getattr(self, name)</span>
+    <span class="c1">#</span>
+    <span class="c1">#         if obj is None:</span>
+    <span class="c1">#             data.append(&quot;&quot;)</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#</span>
+    <span class="c1">#             if hasattr(obj, &#39;idtag&#39;):</span>
+    <span class="c1">#                 obj = obj.idtag</span>
+    <span class="c1">#             else:</span>
+    <span class="c1">#                 if properties.tpe not in [str, float, int, bool]:</span>
+    <span class="c1">#                     obj = str(obj)</span>
+    <span class="c1">#                 else:</span>
+    <span class="c1">#                     obj = str(obj)</span>
+    <span class="c1">#</span>
+    <span class="c1">#             data.append(obj)</span>
+    <span class="c1">#     return data</span>
+
+<div class="viewcode-block" id="Line.fix_inconsistencies">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.fix_inconsistencies">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fix_inconsistencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fix the inconsistencies</span>
+<span class="sd">        :param logger:</span>
+<span class="sd">        :return: any error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Corrected transformer R&lt;0&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">errors</span></div>
+
+
+<div class="viewcode-block" id="Line.get_equivalent_transformer">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.get_equivalent_transformer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_equivalent_transformer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transformer2W</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert this line into a transformer</span>
+<span class="sd">        This is necessary if the buses&#39; voltage differ too much</span>
+<span class="sd">        :return: Transformer2W</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">V1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+        <span class="n">V2</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="p">,</span>
+                            <span class="n">bus_to</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="p">,</span>
+                            <span class="n">idtag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
+                            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                            <span class="n">active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                            <span class="n">HV</span><span class="o">=</span><span class="n">V2</span><span class="p">,</span>
+                            <span class="n">LV</span><span class="o">=</span><span class="n">V1</span><span class="p">,</span>
+                            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                            <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                            <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+                            <span class="p">)</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_model</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">active_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_prof</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">contingency_factor_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_factor_prof</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">protection_rating_factor_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protection_rating_factor_prof</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">temp_oper_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_oper_prof</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">Cost_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Cost_prof</span>
+
+        <span class="k">return</span> <span class="n">elm</span></div>
+
+
+<div class="viewcode-block" id="Line.fill_design_properties">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.fill_design_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fill_design_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                               <span class="n">r_ohm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">x_ohm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">c_nf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">Imax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">apply_to_profile</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                               <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="s2">&quot;Line&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill R, X, B from not-in-per-unit parameters</span>
+<span class="sd">        :param r_ohm: Resistance per km in OHM/km</span>
+<span class="sd">        :param x_ohm: Reactance per km in OHM/km</span>
+<span class="sd">        :param c_nf: Capacitance per km in nF/km</span>
+<span class="sd">        :param length: length in kn</span>
+<span class="sd">        :param Imax: Maximum current in kA</span>
+<span class="sd">        :param freq: System frequency in Hz</span>
+<span class="sd">        :param Sbase: Base power in MVA (take always 100 MVA)</span>
+<span class="sd">        :param apply_to_profile: modify the ratings profile if checked</span>
+<span class="sd">        :param logger: Logger</span>
+<span class="sd">        :return self pointer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Vnom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">new_rate</span> <span class="o">=</span> <span class="n">get_line_impedances_with_c</span><span class="p">(</span><span class="n">r_ohm</span><span class="o">=</span><span class="n">r_ohm</span><span class="p">,</span>
+                                                                          <span class="n">x_ohm</span><span class="o">=</span><span class="n">x_ohm</span><span class="p">,</span>
+                                                                          <span class="n">c_nf</span><span class="o">=</span><span class="n">c_nf</span><span class="p">,</span>
+                                                                          <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span>
+                                                                          <span class="n">Imax</span><span class="o">=</span><span class="n">Imax</span><span class="p">,</span>
+                                                                          <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                                                          <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                                                                          <span class="n">Vnom</span><span class="o">=</span><span class="n">Vnom</span><span class="p">,</span>
+                                                                          <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+            <span class="n">old_rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">new_rate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="n">length</span>
+
+            <span class="k">if</span> <span class="n">apply_to_profile</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">old_rate</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">prof_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">prof_old</span> <span class="o">*</span> <span class="n">new_rate</span> <span class="o">/</span> <span class="n">old_rate</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">new_rate</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Nominal voltage is zero&quot;</span><span class="p">,</span> <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Line.get_tau">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.get_tau">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get EMT delay parameter (tau) in seconds</span>
+<span class="sd">        :param w: 2 * pi * freq</span>
+<span class="sd">        :return: tau value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: consider using line.ys and line.ysh instead</span>
+            <span class="c1"># Physical Parameters from Carson&#39;s</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">z_nabc</span>  <span class="c1"># from Carson ohm/km</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">y_nabc</span>  <span class="c1"># from Carson ohm/km</span>
+
+            <span class="n">Z_phys_m</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">/</span> <span class="mf">1e3</span>  <span class="c1"># ohm/m</span>
+            <span class="n">Y_phys_m</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">/</span> <span class="mf">1e3</span>  <span class="c1"># S/m</span>
+
+            <span class="c1"># line parameters / meter</span>
+            <span class="n">l_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">Z_phys_m</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span>  <span class="c1"># H/m</span>
+            <span class="n">c_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">Y_phys_m</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span>  <span class="c1"># F/m</span>
+
+            <span class="c1"># v_wave and tau from the travelling wave are taken only from the diagonal components</span>
+            <span class="n">L_w</span> <span class="o">=</span> <span class="n">l_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">C_w</span> <span class="o">=</span> <span class="n">c_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">v_wave</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">L_w</span> <span class="o">*</span> <span class="n">C_w</span><span class="p">)</span>
+
+            <span class="c1"># line time delay (tau) (only relevant for Bergeron and JMartí)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">/</span> <span class="n">v_wave</span>  <span class="c1"># s</span></div>
+
+
+<div class="viewcode-block" id="Line.fill_3_phase_from_sequence">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.fill_3_phase_from_sequence">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fill_3_phase_from_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the 3x3 from the sequence values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
+                                   <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ys_nabc</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ysh</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ysh_nabc</span><span class="p">()</span></div>
+
+
+    <span class="c1"># Scalar property accessors coerce assignments to the declared schema types.</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``tolerance``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span>
+
+    <span class="nd">@tolerance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``tolerance``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">r_fault</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``r_fault``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_fault</span>
+
+    <span class="nd">@r_fault</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">r_fault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``r_fault``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r_fault</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_fault</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``x_fault``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_fault</span>
+
+    <span class="nd">@x_fault</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_fault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``x_fault``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_fault</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fault_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ``fault_pos``.</span>
+
+<span class="sd">        :return: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fault_pos</span>
+
+    <span class="nd">@fault_pos</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fault_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set ``fault_pos``.</span>
+
+<span class="sd">        :param val: Value to assign.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fault_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

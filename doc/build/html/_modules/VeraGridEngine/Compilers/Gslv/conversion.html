@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Compilers.Gslv.conversion &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Compilers.Gslv.conversion</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Compilers.Gslv.conversion</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">Area</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.branch_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.country</span><span class="w"> </span><span class="kn">import</span> <span class="n">Country</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.facility</span><span class="w"> </span><span class="kn">import</span> <span class="n">Facility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.investments_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvestmentsGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.market_unit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarketUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.modelling_authority</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModellingAuthority</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.municipality</span><span class="w"> </span><span class="kn">import</span> <span class="n">Municipality</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.region</span><span class="w"> </span><span class="kn">import</span> <span class="n">Region</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.emission_gas</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmissionGas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.fuel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fuel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.technology</span><span class="w"> </span><span class="kn">import</span> <span class="n">Technology</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.contingency_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Substation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.voltage_level</span><span class="w"> </span><span class="kn">import</span> <span class="n">VoltageLevel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.activation</span><span class="w"> </span><span class="kn">import</span> <span class="n">pg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">TYPE_CHECKING</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.areas</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_areas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.zones</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_zones</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.countries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_countries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.municipalities</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_municipalities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.regions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_regions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.branch_groups</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_branch_groups</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.substations</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_substations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.voltage_levels</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_voltage_levels</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.contingencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_contingency_groups</span><span class="p">,</span> <span class="n">add_contingencies</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.investments</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_investment_groups</span><span class="p">,</span> <span class="n">add_investments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.facilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_facilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.market_units</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_market_units</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.modelling_authorities</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_modelling_authorities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.associations</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_emission_gases</span><span class="p">,</span> <span class="n">add_fuels</span><span class="p">,</span> <span class="n">add_technologies</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.buses</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_buses</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.loads</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_loads</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.static_generators</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_static_generators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.shunts</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_shunts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.controllable_shunts</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_controllable_shunts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.generators</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_generators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.batteries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_battery_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_lines</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.dc_lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_dc_lines</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_transformers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.transformers3w</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_transformers3w</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.vsc</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_vscs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Devices.hvdc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_hvdcs</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.opf_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimalPowerFlowResults</span>
+
+
+<div class="viewcode-block" id="GslvDicts">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GslvDicts</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hold the VeraGrid-to-GSLV object lookup dictionaries produced during conversion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;area_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;zone_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;substation_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;voltage_level_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;country_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;facility_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;market_unit_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;modelling_authorities_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;branch_groups_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;municipalities_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;regions_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;con_groups_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inv_groups_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;technology_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fuel_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;emission_gas_dict&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize every conversion lookup dictionary before the conversion stages fill them.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">area_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Area</span><span class="p">,</span> <span class="s2">&quot;pg.Area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zone_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Zone</span><span class="p">,</span> <span class="s2">&quot;pg.Zone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">substation_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Substation</span><span class="p">,</span> <span class="s2">&quot;pg.Substation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage_level_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">VoltageLevel</span><span class="p">,</span> <span class="s2">&quot;pg.VoltageLevel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Country</span><span class="p">,</span> <span class="s2">&quot;pg.Country&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Facility</span><span class="p">,</span> <span class="s2">&quot;pg.Facility&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">market_unit_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MarketUnit</span><span class="p">,</span> <span class="s2">&quot;pg.MarketUnit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">ModellingAuthority</span><span class="p">,</span> <span class="s2">&quot;pg.ModellingAuthority&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch_groups_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">BranchGroup</span><span class="p">,</span> <span class="s2">&quot;pg.BranchGroup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">municipalities_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Municipality</span><span class="p">,</span> <span class="s2">&quot;pg.Municipality&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">regions_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Region</span><span class="p">,</span> <span class="s2">&quot;pg.Region&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">con_groups_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">ContingencyGroup</span><span class="p">,</span> <span class="s2">&quot;pg.ContingencyGroup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_groups_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">InvestmentsGroup</span><span class="p">,</span> <span class="s2">&quot;pg.InvestmentGroup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Technology</span><span class="p">,</span> <span class="s2">&quot;pg.Technology&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuel_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Fuel</span><span class="p">,</span> <span class="s2">&quot;pg.Fuel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">emission_gas_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">EmissionGas</span><span class="p">,</span> <span class="s2">&quot;pg.EmissionGas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="to_gslv">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.conversion.to_gslv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_gslv</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+            <span class="n">use_time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">override_branch_controls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">opf_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">OptimalPowerFlowResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">add_three_phase_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;pg.MultiCircuit&quot;</span><span class="p">,</span> <span class="n">GslvDicts</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert VeraGrid circuit to GSLV</span>
+<span class="sd">    :param circuit: MultiCircuit</span>
+<span class="sd">    :param use_time_series: compile the time series from VeraGrid? otherwise just the snapshot</span>
+<span class="sd">    :param time_indices: Array of time indices</span>
+<span class="sd">    :param override_branch_controls: If true the branch controls are set to Fix</span>
+<span class="sd">    :param opf_results:</span>
+<span class="sd">    :param add_three_phase_data: Export explicit three-phase device data when possible.</span>
+<span class="sd">    :return: pg.MultiCircuit instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dicts</span> <span class="o">=</span> <span class="n">GslvDicts</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_time</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span> <span class="k">if</span> <span class="n">use_time_series</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">n_time</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">n_time</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_time</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_indices</span><span class="p">)</span>
+
+    <span class="n">pg_grid</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                              <span class="n">nt</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+                              <span class="n">Sbase</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                              <span class="n">fBase</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span>
+                              <span class="n">idtag</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">area_dict</span> <span class="o">=</span> <span class="n">add_areas</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">zone_dict</span> <span class="o">=</span> <span class="n">add_zones</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">substation_dict</span> <span class="o">=</span> <span class="n">add_substations</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span> <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">voltage_level_dict</span> <span class="o">=</span> <span class="n">add_voltage_levels</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+                                                  <span class="n">substations_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">substation_dict</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">country_dict</span> <span class="o">=</span> <span class="n">add_countries</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">substation</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">substations</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">substation</span><span class="o">.</span><span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dicts</span><span class="o">.</span><span class="n">substation_dict</span><span class="p">[</span><span class="n">substation</span><span class="p">]</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">dicts</span><span class="o">.</span><span class="n">country_dict</span><span class="p">[</span><span class="n">substation</span><span class="o">.</span><span class="n">country</span><span class="p">]</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span> <span class="o">=</span> <span class="n">add_facilities</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">market_unit_dict</span> <span class="o">=</span> <span class="n">add_market_units</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span> <span class="o">=</span> <span class="n">add_technologies</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">fuel_dict</span> <span class="o">=</span> <span class="n">add_fuels</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">emission_gas_dict</span> <span class="o">=</span> <span class="n">add_emission_gases</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">modelling_authorities_dict</span> <span class="o">=</span> <span class="n">add_modelling_authorities</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">branch_groups_dict</span> <span class="o">=</span> <span class="n">add_branch_groups</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">municipalities_dict</span> <span class="o">=</span> <span class="n">add_municipalities</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">regions_dict</span> <span class="o">=</span> <span class="n">add_regions</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">con_groups_dict</span> <span class="o">=</span> <span class="n">add_contingency_groups</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">add_contingencies</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span> <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span> <span class="n">groups_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">con_groups_dict</span><span class="p">)</span>
+
+    <span class="n">dicts</span><span class="o">.</span><span class="n">inv_groups_dict</span> <span class="o">=</span> <span class="n">add_investment_groups</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">)</span>
+
+    <span class="n">add_investments</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span> <span class="n">groups_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">inv_groups_dict</span><span class="p">)</span>
+
+    <span class="n">bus_dict</span> <span class="o">=</span> <span class="n">add_buses</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">area_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">area_dict</span><span class="p">,</span>
+        <span class="n">zone_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">zone_dict</span><span class="p">,</span>
+        <span class="n">substation_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">substation_dict</span><span class="p">,</span>
+        <span class="n">voltage_level_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">voltage_level_dict</span><span class="p">,</span>
+        <span class="n">country_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">country_dict</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_loads</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">,</span>
+        <span class="n">use_time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_static_generators</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_shunts</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_controllable_shunts</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_generators</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">,</span>
+        <span class="n">fuel_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">fuel_dict</span><span class="p">,</span>
+        <span class="n">emission_gas_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">emission_gas_dict</span><span class="p">,</span>
+        <span class="n">market_unit_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">market_unit_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_results</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_battery_data</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">technology_dict</span><span class="p">,</span>
+        <span class="n">fuel_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">fuel_dict</span><span class="p">,</span>
+        <span class="n">emission_gas_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">emission_gas_dict</span><span class="p">,</span>
+        <span class="n">market_unit_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">market_unit_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_results</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_lines</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">branch_groups_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">branch_groups_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_transformers</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">branch_groups_dict</span><span class="o">=</span><span class="n">dicts</span><span class="o">.</span><span class="n">branch_groups_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">override_controls</span><span class="o">=</span><span class="n">override_branch_controls</span><span class="p">,</span>
+        <span class="n">add_three_phase_data</span><span class="o">=</span><span class="n">add_three_phase_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">add_transformers3w</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+        <span class="n">override_controls</span><span class="o">=</span><span class="n">override_branch_controls</span>
+    <span class="p">)</span>
+
+    <span class="n">add_vscs</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span>
+    <span class="p">)</span>
+
+    <span class="n">add_dc_lines</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span>
+    <span class="p">)</span>
+
+    <span class="n">add_hvdcs</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">gslv_grid</span><span class="o">=</span><span class="n">pg_grid</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">use_time_series</span><span class="p">,</span>
+        <span class="n">n_time</span><span class="o">=</span><span class="n">n_time</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pg_grid</span><span class="p">,</span> <span class="n">dicts</span></div>
+
+
+
+<div class="viewcode-block" id="FakeAdmittances">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.conversion.FakeAdmittances">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeAdmittances</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fake admittances class needed to make the translation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one placeholder admittance container.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ybus</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Yf</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Yt</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="get_snapshots_from_gslv">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.conversion.get_snapshots_from_gslv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_snapshots_from_gslv</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">override_branch_controls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NumericalCircuit</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param circuit:</span>
+<span class="sd">    :param override_branch_controls:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gslv_grid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">to_gslv</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span>
+                           <span class="n">use_time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">override_branch_controls</span><span class="o">=</span><span class="n">override_branch_controls</span><span class="p">)</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+    <span class="n">npa_data_lst</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">gslv_grid</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">data_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">npa_data</span> <span class="ow">in</span> <span class="n">npa_data_lst</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">NumericalCircuit</span><span class="p">(</span><span class="n">nbus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nbr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nhvdc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nvsc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nload</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">ngen</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nbatt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nshunt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidnode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidturbine</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidpump</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidp2x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">nfluidpath</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">sbase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">t_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_connectivity_matrices</span><span class="p">()</span>
+        <span class="n">power_injections</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_power_injections</span><span class="p">()</span>
+        <span class="n">current_injections</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_current_injections</span><span class="p">()</span>
+        <span class="n">tpes</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_simulation_indices</span><span class="p">(</span><span class="n">power_injections</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">adm</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+        <span class="n">series_adm</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_series_admittances</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+        <span class="n">qmax_bus</span><span class="p">,</span> <span class="n">qmin_bus</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">get_reactive_power_limits</span><span class="p">()</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Vbus_</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Sbus_</span> <span class="o">=</span> <span class="n">power_injections</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Ibus_</span> <span class="o">=</span> <span class="n">current_injections</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">npa_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_f</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_f</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_t</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_t</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">npa_data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span> <span class="o">=</span> <span class="n">npa_data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span> <span class="o">=</span> <span class="n">FakeAdmittances</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span><span class="o">.</span><span class="n">Ybus</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span><span class="o">.</span><span class="n">Yf</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">Yf</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">admittances_</span><span class="o">.</span><span class="n">Yt</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">Yt</span>
+
+        <span class="c1"># The current wrapper does not expose NumericalCircuit::getLinearAdmittanceMatrices.</span>
+        <span class="c1"># The compatibility layer keeps VeraGrid&#39;s expected fields populated from the available admittance matrices.</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Bbus_</span> <span class="o">=</span> <span class="o">-</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="o">.</span><span class="n">imag</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Bf_</span> <span class="o">=</span> <span class="o">-</span><span class="n">adm</span><span class="o">.</span><span class="n">Yf</span><span class="o">.</span><span class="n">imag</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Yseries_</span> <span class="o">=</span> <span class="n">series_adm</span><span class="o">.</span><span class="n">Yseries</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Yshunt_</span> <span class="o">=</span> <span class="n">series_adm</span><span class="o">.</span><span class="n">Yshunt</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">B1_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Bbus_</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">B2_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Bbus_</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Cf_</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Cf</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Ct_</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">Ct</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span> <span class="o">=</span> <span class="n">tpes</span><span class="o">.</span><span class="n">types</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pq_</span> <span class="o">=</span> <span class="n">tpes</span><span class="o">.</span><span class="n">pq</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pv_</span> <span class="o">=</span> <span class="n">tpes</span><span class="o">.</span><span class="n">pv</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">vd_</span> <span class="o">=</span> <span class="n">tpes</span><span class="o">.</span><span class="n">vd</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pqpv_</span> <span class="o">=</span> <span class="n">tpes</span><span class="o">.</span><span class="n">no_slack</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">Qmax_bus_</span> <span class="o">=</span> <span class="n">qmax_bus</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Qmin_bus_</span> <span class="o">=</span> <span class="n">qmin_bus</span>
+
+        <span class="n">data_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data_lst</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

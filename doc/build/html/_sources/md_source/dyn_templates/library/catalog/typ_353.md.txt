@@ -1,0 +1,68 @@
+# Monostable
+
+This is Basic Block Catalog type `353` (`Monostable`). It implements logical or event-driven signal behaviour.
+
+<!-- veragrid-block-introduction:start -->
+**Monostable** evaluates a tabulated characteristic instead of assuming one closed-form equation. Interpolation maps measured or commanded inputs to empirical outputs such as efficiency, saturation, capability, or control schedules while preserving the supplied breakpoints.
+
+## Typical use
+
+- Use it when manufacturer data or a calibrated characteristic is available as points or a matrix.
+- Keep breakpoints ordered and decide deliberately whether values outside the table clip or extrapolate.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Logic and Events / Gates and Memory`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x}{dt} = (proc_{select\_2} \cdot 1 + (1 - proc_{select\_2}) \cdot 0)
+$$
+
+$$
+0 = (Monostable_{set} - \Theta\left(0.5 - proc_{lastvalue\_0} - 1 \times 10^{-6}\right) \cdot \Theta\left(yi - 0.5 + 1 \times 10^{-6}\right))
+$$
+
+$$
+0 = (Monostable_{rst} - \Theta\left(x - T - 0 - 1 \times 10^{-6}\right))
+$$
+
+$$
+0 = (yo - proc_{flipflop\_1})
+$$
+
+$$
+Monostable_{t0}(t_0) = glob_{time}
+$$
+
+$$
+Monostable_{set}(t_0) = 0
+$$
+
+$$
+Monostable_{rst}(t_0) = 0
+$$
+
+$$
+x(t_0) = 0
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `Monostable__x` | Internal dynamic state | model-dependent |
+| Parameter | `T` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.ucte.devices.ucte_base &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.ucte.devices.ucte_base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.ucte.devices.ucte_base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+
+<div class="viewcode-block" id="is_defined_number">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.is_defined_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_defined_number</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a numeric value is defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="coalesce_number">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.coalesce_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coalesce_number</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the fallback for undefined numeric values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">else</span> <span class="n">fallback</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sub_chunk</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract a fixed-width chunk and report whether the full slice was available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">b</span>
+
+
+<div class="viewcode-block" id="try_float">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_float</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse a float and log malformed values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                         <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                         <span class="n">value</span><span class="o">=</span><span class="n">chunk</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fallback_value</span></div>
+
+
+
+<div class="viewcode-block" id="try_optional_float">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_optional_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_optional_float</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                       <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse an optional float without logging on blank values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fallback_value</span>
+
+    <span class="k">return</span> <span class="n">try_float</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sub_float">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sub_float</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+              <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to get a value from a substring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span><span class="p">,</span> <span class="n">complete</span> <span class="o">=</span> <span class="n">_sub_chunk</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">complete</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Property not provided&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Could not parse property &lt;</span><span class="si">{</span><span class="n">prop_name</span><span class="si">}</span><span class="s2">&gt; &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;because the file row is too short, &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;setting fallback value&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                               <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="n">line</span><span class="p">,</span>
+                               <span class="n">expected_value</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fallback_value</span>
+
+    <span class="k">return</span> <span class="n">try_float</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sub_optional_float">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_optional_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sub_optional_float</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                       <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to get an optional float from a substring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_sub_chunk</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fallback_value</span>
+
+    <span class="k">return</span> <span class="n">try_float</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="try_int">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_int</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse an integer, accepting float-looking strings as a salvage path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="n">try_float</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">chunk</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                         <span class="n">prop_name</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                         <span class="n">fallback_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">val2</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fallback_value</span></div>
+
+
+
+<div class="viewcode-block" id="try_optional_int">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_optional_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_optional_int</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                     <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse an optional integer without logging on blank values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fallback_value</span>
+
+    <span class="k">return</span> <span class="n">try_int</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">fallback_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">fallback_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sub_int">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sub_int</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+            <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to get a value from a substring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span><span class="p">,</span> <span class="n">complete</span> <span class="o">=</span> <span class="n">_sub_chunk</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">complete</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Property not provided&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Could not parse &lt;</span><span class="si">{</span><span class="n">prop_name</span><span class="si">}</span><span class="s2">&gt; because the file row is too short&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">line</span><span class="p">,</span>
+                             <span class="n">expected_value</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fallback_value</span>
+
+    <span class="k">return</span> <span class="n">try_int</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sub_optional_int">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_optional_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sub_optional_int</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                     <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to get an optional integer from a substring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_sub_chunk</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fallback_value</span>
+
+    <span class="k">return</span> <span class="n">try_int</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">fallback_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">fallback_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sub_str">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_str">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sub_str</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+            <span class="n">fallback_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to get a value from a substring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunk</span><span class="p">,</span> <span class="n">complete</span> <span class="o">=</span> <span class="n">_sub_chunk</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">complete</span> <span class="ow">or</span> <span class="n">chunk</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">chunk</span>
+
+    <span class="k">if</span> <span class="n">prop_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Could not parse &lt;</span><span class="si">{</span><span class="n">prop_name</span><span class="si">}</span><span class="s2">&gt; because the file row is too short&quot;</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                         <span class="n">device_property</span><span class="o">=</span><span class="n">prop_name</span><span class="p">,</span>
+                         <span class="n">value</span><span class="o">=</span><span class="n">line</span><span class="p">,</span>
+                         <span class="n">expected_value</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fallback_value</span></div>
+
+
+
+<div class="viewcode-block" id="ucte_split">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.ucte_split">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ucte_split</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+               <span class="n">prefix_lengths</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+               <span class="n">total_fields</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">greedy_tail</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">skip_all_separators</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split malformed UCTE rows while preserving fixed-width identifiers.</span>
+
+<span class="sd">    The standard is fixed-width, but many files are right-trimmed or collapse</span>
+<span class="sd">    separators. This helper keeps the left-most fixed-width fields intact and</span>
+<span class="sd">    only tokenizes the remainder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">prefix_lengths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cursor</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cursor</span> <span class="o">+</span> <span class="n">length</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cursor</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">end</span>
+
+        <span class="k">if</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="n">cursor</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+            <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">skip_all_separators</span><span class="p">:</span>
+                <span class="k">while</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="n">cursor</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+                    <span class="n">cursor</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">remainder</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">cursor</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">total_fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fields</span> <span class="o">+</span> <span class="n">remainder</span>
+
+    <span class="n">remaining_fields</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">total_fields</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">remaining_fields</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fields</span><span class="p">[:</span><span class="n">total_fields</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">greedy_tail</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">remainder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">remaining_fields</span><span class="p">:</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">remainder</span><span class="p">[:</span><span class="n">remaining_fields</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remainder</span><span class="p">[</span><span class="n">remaining_fields</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">remainder</span><span class="p">[:</span><span class="n">remaining_fields</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">total_fields</span><span class="p">:</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">total_fields</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">fields</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">symbolic</span> <span class="k">as</span> <span class="n">sym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Emt.generator_emt_type_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_pf_positive_sequence_init_refs</span>
+
+
+<div class="viewcode-block" id="get_thevenin_internal_shared_references">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template.get_thevenin_internal_shared_references">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_thevenin_internal_shared_references</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the stable shared-reference contract of the Thevenin seed variables.</span>
+
+<span class="sd">    :return: Shared references for ``theta``, ``e_A``, ``e_B`` and ``e_C``.</span>
+<span class="sd">    :rtype: tuple[str, str, str, str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;thevenin_theta_internal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thevenin_e_a_internal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thevenin_e_b_internal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thevenin_e_c_internal&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_generator_thevenin_rl_emt_template_with_ref">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template.get_generator_thevenin_rl_emt_template_with_ref">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_generator_thevenin_rl_emt_template_with_ref</span><span class="p">(</span>
+        <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;emt_thevenin_eq_generator_template&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the ref-capable three-phase EMT Thevenin generator.</span>
+
+<span class="sd">    The dynamic equations intentionally preserve the original passive Thevenin</span>
+<span class="sd">    source behaviour that older EMT examples and snapshots rely on. The extra</span>
+<span class="sd">    sharing references are exposed only through the symbolic mappings so</span>
+<span class="sd">    ``EmtProblemDae`` can assign them consistently across devices without</span>
+<span class="sd">    altering the local Thevenin source dynamics.</span>
+
+<span class="sd">    Inputs</span>
+<span class="sd">    ------</span>
+<span class="sd">    ``v_A``, ``v_B``, ``v_C``:</span>
+<span class="sd">        Instantaneous bus terminal voltages in pu.</span>
+
+<span class="sd">    States</span>
+<span class="sd">    ------</span>
+<span class="sd">    ``i_A``, ``i_B``, ``i_C``:</span>
+<span class="sd">        Phase currents injected into the bus in pu.</span>
+
+<span class="sd">    ``theta``:</span>
+<span class="sd">        Absolute electrical angle of the internal balanced source in rad.</span>
+
+<span class="sd">    The optional sharing references are exposed through the mappings, but they do</span>
+<span class="sd">    not introduce extra EMT states or controller dynamics inside the template</span>
+<span class="sd">    itself.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Static generator parameters:</span>
+<span class="sd">        ``omega_base``, ``R_s``, ``X_s``</span>
+
+<span class="sd">    PF-derived initialization parameters:</span>
+<span class="sd">        ``phi_v``, ``phi``, ``Vpk``, ``Ipk``</span>
+
+<span class="sd">    Optional sharing references:</span>
+<span class="sd">        ``share_enable``, ``P_share_ref``, ``Q_share_ref``</span>
+
+<span class="sd">    Event parameters:</span>
+<span class="sd">        ``phi_v``, ``phi``, ``Vpk``, ``Ipk``, ``E_scale``</span>
+
+<span class="sd">    Initialization</span>
+<span class="sd">    --------------</span>
+<span class="sd">    The PF initialization reconstructs the positive-sequence internal emf using:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        E = V + (R + jX) I</span>
+
+<span class="sd">    and then initializes:</span>
+
+<span class="sd">    * ``theta = phi_v + delta``</span>
+
+<span class="sd">    so that the passive Thevenin source starts exactly from the PF operating</span>
+<span class="sd">    point used by the legacy EMT examples.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param name: Symbolic block name.</span>
+<span class="sd">    :return: Configured EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">theta_internal_reference</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">e_a_internal_reference</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">e_b_internal_reference</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">e_c_internal_reference</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">theta_internal_reference</span><span class="p">,</span> <span class="n">e_a_internal_reference</span><span class="p">,</span> <span class="n">e_b_internal_reference</span><span class="p">,</span> <span class="n">e_c_internal_reference</span> <span class="o">=</span> <span class="n">get_thevenin_internal_shared_references</span><span class="p">()</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Constants used in symbolic expressions.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">c05</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">c_eps_emf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0e-24</span><span class="p">)</span>
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Inputs: terminal bus voltages in abc.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">v_A</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">)</span>
+    <span class="n">v_B</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">)</span>
+    <span class="n">v_C</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">)</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">v_A</span><span class="p">,</span> <span class="n">v_B</span><span class="p">,</span> <span class="n">v_C</span><span class="p">])</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># States:</span>
+    <span class="c1"># - current dynamics</span>
+    <span class="c1"># - absolute synchronous angle</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">i_A</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">)</span>
+    <span class="n">i_B</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">)</span>
+    <span class="n">i_C</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">)</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="n">theta_internal_reference</span><span class="p">)</span>
+    <span class="c1"># parameter to create a phase jump</span>
+    <span class="n">theta_deviation_param</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;theta_deviation_param&quot;</span><span class="p">)</span>
+    <span class="c1"># parameter to create RoCoF</span>
+    <span class="n">w_scale</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;f_scale&quot;</span><span class="p">)</span>
+
+    <span class="n">d_i_A</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_i_A&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_A</span><span class="p">)</span>
+    <span class="n">d_i_B</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_i_B&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_B</span><span class="p">)</span>
+    <span class="n">d_i_C</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_i_C&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_C</span><span class="p">)</span>
+    <span class="n">d_theta</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_theta&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Algebraic variables:</span>
+    <span class="c1"># - internal phase emfs</span>
+    <span class="c1"># - measured active/reactive power</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">e_A</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;e_A&quot;</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="n">e_a_internal_reference</span><span class="p">)</span>
+    <span class="n">e_B</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;e_B&quot;</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="n">e_b_internal_reference</span><span class="p">)</span>
+    <span class="n">e_C</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;e_C&quot;</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="n">e_c_internal_reference</span><span class="p">)</span>
+    <span class="n">Pe</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pe&quot;</span><span class="p">)</span>
+    <span class="n">Qe</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Qe&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Static parameters and PF-derived initialization parameters.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">omega_base</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;omega_base&quot;</span><span class="p">)</span>
+    <span class="n">R_s</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;R_s&quot;</span><span class="p">)</span>
+    <span class="n">X_s</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X_s&quot;</span><span class="p">)</span>
+
+    <span class="n">phi_v</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi_v&quot;</span><span class="p">)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+    <span class="n">Vpk</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Vpk&quot;</span><span class="p">)</span>
+    <span class="n">Ipk</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Ipk&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Optional sharing references.</span>
+    <span class="c1"># The references are exposed for higher-level orchestration only. The passive</span>
+    <span class="c1"># Thevenin source does not use them internally.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">share_enable</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;share_enable&quot;</span><span class="p">)</span>
+    <span class="n">P_share_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;P_share_ref&quot;</span><span class="p">)</span>
+    <span class="n">Q_share_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Q_share_ref&quot;</span><span class="p">)</span>
+    <span class="n">E_scale</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;E_scale&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># PF-consistent positive-sequence internal emf.</span>
+    <span class="c1"># This part remains identical in spirit to the original Thevenin model.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">E_re</span> <span class="o">=</span> <span class="n">Vpk</span> <span class="o">+</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">Ipk</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">-</span> <span class="n">X_s</span> <span class="o">*</span> <span class="n">Ipk</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="n">E_im</span> <span class="o">=</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">Ipk</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">+</span> <span class="n">X_s</span> <span class="o">*</span> <span class="n">Ipk</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="c1"># ``atan2`` keeps the reconstructed emf angle consistent across quadrants and</span>
+    <span class="c1"># avoids undefined divisions when the steady-state real component is zero.</span>
+    <span class="n">delta_expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">E_im</span><span class="p">,</span> <span class="n">E_re</span><span class="p">)</span>
+    <span class="n">Epk_expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">E_re</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">E_im</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c_eps_emf</span><span class="p">)</span> <span class="o">**</span> <span class="n">c05</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># The ref-capable variant preserves the original passive Thevenin source.</span>
+    <span class="c1"># The exposed reference variables are mapped for higher-level orchestration,</span>
+    <span class="c1"># but they do not change the local source equations.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">theta_speed</span> <span class="o">=</span> <span class="n">omega_base</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Build the EMT block.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">state_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">omega_base</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_A</span> <span class="o">-</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">i_A</span> <span class="o">-</span> <span class="n">v_A</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">omega_base</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_B</span> <span class="o">-</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">i_B</span> <span class="o">-</span> <span class="n">v_B</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">omega_base</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_C</span> <span class="o">-</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">i_C</span> <span class="o">-</span> <span class="n">v_C</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">theta_speed</span> <span class="o">*</span> <span class="n">w_scale</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="n">state_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">i_A</span><span class="p">,</span>
+        <span class="n">i_B</span><span class="p">,</span>
+        <span class="n">i_C</span><span class="p">,</span>
+        <span class="n">theta</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">e_A</span> <span class="o">-</span> <span class="n">E_scale</span> <span class="o">*</span> <span class="n">Epk_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="n">theta_deviation_param</span><span class="p">),</span>
+        <span class="n">e_B</span> <span class="o">-</span> <span class="n">E_scale</span> <span class="o">*</span> <span class="n">Epk_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">theta_deviation_param</span><span class="p">),</span>
+        <span class="n">e_C</span> <span class="o">-</span> <span class="n">E_scale</span> <span class="o">*</span> <span class="n">Epk_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">theta_deviation_param</span><span class="p">),</span>
+        <span class="n">Pe</span> <span class="o">-</span> <span class="p">(</span><span class="n">i_A</span> <span class="o">*</span> <span class="n">v_A</span> <span class="o">+</span> <span class="n">i_B</span> <span class="o">*</span> <span class="n">v_B</span> <span class="o">+</span> <span class="n">i_C</span> <span class="o">*</span> <span class="n">v_C</span><span class="p">),</span>
+        <span class="n">Qe</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">v_A</span> <span class="o">-</span> <span class="n">v_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_C</span> <span class="o">+</span>
+            <span class="p">(</span><span class="n">v_B</span> <span class="o">-</span> <span class="n">v_C</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_A</span> <span class="o">+</span>
+            <span class="p">(</span><span class="n">v_C</span> <span class="o">-</span> <span class="n">v_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_B</span>
+        <span class="p">),</span>
+    <span class="p">])</span>
+
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">e_A</span><span class="p">,</span> <span class="n">e_B</span><span class="p">,</span> <span class="n">e_C</span><span class="p">,</span> <span class="n">Pe</span><span class="p">,</span> <span class="n">Qe</span><span class="p">])</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="n">state_eqs</span><span class="p">,</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="n">state_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">algebraic_eqs</span><span class="p">,</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">algebraic_vars</span><span class="p">,</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">i_A</span><span class="p">,</span> <span class="n">i_B</span><span class="p">,</span> <span class="n">i_C</span><span class="p">]),</span>
+    <span class="p">)</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">d_i_A</span><span class="p">,</span>
+        <span class="n">d_i_B</span><span class="p">,</span>
+        <span class="n">d_i_C</span><span class="p">,</span>
+        <span class="n">d_theta</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># External mapping:</span>
+    <span class="c1"># keep the original EMT injection interface intact.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">:</span> <span class="n">v_A</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">:</span> <span class="n">v_B</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">:</span> <span class="n">v_C</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">:</span> <span class="n">i_A</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">:</span> <span class="n">i_B</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">:</span> <span class="n">i_C</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">phi_v</span><span class="p">:</span> <span class="n">phi_v</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">phi</span><span class="p">:</span> <span class="n">phi</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vpk</span><span class="p">:</span> <span class="n">Vpk</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ipk</span><span class="p">:</span> <span class="n">Ipk</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q_A</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q_B</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q_C</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># API-object mapping:</span>
+    <span class="c1"># static generator parameters plus optional sharing references assigned</span>
+    <span class="c1"># by EmtProblemDae.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">omega_base</span><span class="p">:</span> <span class="n">omega_base</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">R1</span><span class="p">:</span> <span class="n">R_s</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">X1</span><span class="p">:</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">X0</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">generator_share_enable</span><span class="p">:</span> <span class="n">share_enable</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">generator_share_p_ref</span><span class="p">:</span> <span class="n">P_share_ref</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">generator_share_q_ref</span><span class="p">:</span> <span class="n">Q_share_ref</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Event parameters:</span>
+    <span class="c1"># PF-derived phasor quantities plus local controller gains.</span>
+    <span class="c1"># The gains are intentionally conservative compared with the version</span>
+    <span class="c1"># that acted directly on dtheta/dt.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">phi_v</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">phi</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">Vpk</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">Ipk</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="c1"># This remains a pure event/runtime parameter so scripts and EMT events</span>
+        <span class="c1"># can scale the Thevenin source magnitude from outside the model.</span>
+        <span class="n">E_scale</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">theta_deviation_param</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">w_scale</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">})</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Initialization equations:</span>
+    <span class="c1"># the sharing controller starts exactly from the PF-consistent open-loop</span>
+    <span class="c1"># operating point, so it does not create a jump at t = 0.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">theta</span><span class="p">:</span> <span class="n">phi_v</span> <span class="o">+</span> <span class="n">delta_expr</span><span class="p">,</span>
+        <span class="n">e_A</span><span class="p">:</span> <span class="n">E_scale</span> <span class="o">*</span> <span class="n">Epk_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="n">theta_deviation_param</span><span class="p">),</span>
+        <span class="n">e_B</span><span class="p">:</span> <span class="n">E_scale</span> <span class="o">*</span> <span class="n">Epk_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">theta_deviation_param</span><span class="p">),</span>
+        <span class="n">e_C</span><span class="p">:</span> <span class="n">E_scale</span> <span class="o">*</span> <span class="n">Epk_expr</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">theta_deviation_param</span><span class="p">),</span>
+        <span class="n">Pe</span><span class="p">:</span> <span class="p">(</span><span class="n">i_A</span> <span class="o">*</span> <span class="n">v_A</span> <span class="o">+</span> <span class="n">i_B</span> <span class="o">*</span> <span class="n">v_B</span> <span class="o">+</span> <span class="n">i_C</span> <span class="o">*</span> <span class="n">v_C</span><span class="p">),</span>
+        <span class="n">Qe</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">v_A</span> <span class="o">-</span> <span class="n">v_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_C</span> <span class="o">+</span>
+            <span class="p">(</span><span class="n">v_B</span> <span class="o">-</span> <span class="n">v_C</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_A</span> <span class="o">+</span>
+            <span class="p">(</span><span class="n">v_C</span> <span class="o">-</span> <span class="n">v_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_B</span>
+        <span class="p">),</span>
+    <span class="p">})</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Differential initialization equations:</span>
+    <span class="c1"># these keep the standard EMT explicit-init semantics.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">d_i_A</span><span class="p">:</span> <span class="n">omega_base</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_A</span> <span class="o">-</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">i_A</span> <span class="o">-</span> <span class="n">v_A</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">d_i_B</span><span class="p">:</span> <span class="n">omega_base</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_B</span> <span class="o">-</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">i_B</span> <span class="o">-</span> <span class="n">v_B</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">d_i_C</span><span class="p">:</span> <span class="n">omega_base</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_C</span> <span class="o">-</span> <span class="n">R_s</span> <span class="o">*</span> <span class="n">i_C</span> <span class="o">-</span> <span class="n">v_C</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_s</span><span class="p">,</span>
+        <span class="n">d_theta</span><span class="p">:</span> <span class="n">theta_speed</span> <span class="o">*</span> <span class="n">w_scale</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

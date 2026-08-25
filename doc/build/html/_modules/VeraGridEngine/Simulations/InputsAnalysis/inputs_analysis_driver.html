@@ -1,0 +1,1105 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.results_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.results_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">StudyResultsType</span><span class="p">,</span> <span class="n">ResultTypes</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">SimulationTypes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.opf_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimalPowerFlowResults</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.OPF.opf_ts_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimalPowerFlowTimeSeriesResults</span>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputsAnalysisResults</span><span class="p">(</span><span class="n">ResultsTemplate</span><span class="p">):</span>
+    <span class="n">LOCAL_RESULTS_DECLARATIONS</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;grid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;opf_results&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;opf_time_series_results&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;area_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;zone_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;substation_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;voltage_level_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;country_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;community_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;region_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;municipality_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gen_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;battery_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;load_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;static_gen_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;external_grid_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;current_injection_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;shunt_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_area_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_zone_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_substation_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_voltage_level_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_country_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_community_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_region_indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_municipality_indices&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">tpe</span> <span class="o">=</span> <span class="s1">&#39;Inputs Analysis&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">opf_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">OptimalPowerFlowResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">opf_time_series_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">OptimalPowerFlowTimeSeriesResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct the analysis</span>
+<span class="sd">        :param grid:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">available_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_available_results</span><span class="p">(</span><span class="n">has_time_series</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">ResultsTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Inputs analysis&#39;</span><span class="p">,</span>
+                                 <span class="n">available_results</span><span class="o">=</span><span class="n">available_results</span><span class="p">,</span>
+                                 <span class="n">time_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">clustering_results</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">study_results_type</span><span class="o">=</span><span class="n">StudyResultsType</span><span class="o">.</span><span class="n">InputsAnalysis</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opf_results</span> <span class="o">=</span> <span class="n">opf_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opf_time_series_results</span> <span class="o">=</span> <span class="n">opf_time_series_results</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">area_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zone_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">zones</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">substation_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_substations</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage_level_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">countries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">community_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_communities</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_regions</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">municipality_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_municipalities</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_generators_df</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">battery_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batteries_df</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loads_df</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_gen_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_static_generators_df</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">external_grid_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_external_grids_df</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_injection_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_injections_df</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shunt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shunts_df</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_index_dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_area_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_area_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_zone_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_zone_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_substation_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_substation_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_voltage_level_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_voltage_level_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_country_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_country_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_community_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_community_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_region_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_region_indices</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_municipality_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_municipality_indices</span><span class="p">()</span>
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_snapshot_result_types">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_snapshot_result_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_snapshot_result_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ResultTypes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the available snapshot result types for inputs analysis.</span>
+
+<span class="sd">        :return: List of snapshot result types</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityAnalysis</span><span class="p">,</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_available_results">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_available_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_available_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">has_time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">ResultTypes</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ResultTypes</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the available results grouped by spatial aggregation.</span>
+
+<span class="sd">        :param has_time_series: Whether time-series results are available</span>
+<span class="sd">        :return: Available results grouped by aggregation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">available_results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">ResultTypes</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ResultTypes</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionAnalysis</span><span class="p">],</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityResults</span><span class="p">:</span> <span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityAnalysis</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">has_time_series</span><span class="p">:</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+            <span class="n">available_results</span><span class="p">[</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityResults</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityBalanceAnalysis</span><span class="p">,</span>
+            <span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">available_results</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_series_result_types">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_series_result_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_series_result_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ResultTypes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the available time-series result types for inputs analysis.</span>
+
+<span class="sd">        :return: List of time-series result types</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityGenerationAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityLoadAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionBalanceAnalysis</span><span class="p">,</span>
+            <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityBalanceAnalysis</span><span class="p">,</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_collection_names">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_collection_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the unique names of a collection of aggregation objects.</span>
+
+<span class="sd">        :param elements: List of aggregation objects</span>
+<span class="sd">        :return: Sorted list of names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_aggregation_elements">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_elements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_aggregation_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the aggregation objects associated to an aggregation name.</span>
+
+<span class="sd">        This method preserves the collection order used by the bus-to-index</span>
+<span class="sd">        maps so that time-series matrices and index lookups share the same</span>
+<span class="sd">        coordinate system.</span>
+
+<span class="sd">        :param aggregation: Aggregation name</span>
+<span class="sd">        :return: Ordered list of aggregation objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Area&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Zone&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">zones</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Substation&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_substations</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;VoltageLevel&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Country&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">countries</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Community&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_communities</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Region&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_regions</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Municipality&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_municipalities</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown aggregation:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggregation</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_aggregation_headers">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_headers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_aggregation_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the dataframe aggregation column headers.</span>
+
+<span class="sd">        :return: Ordered list of aggregation column names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;Zone&quot;</span><span class="p">,</span> <span class="s2">&quot;Area&quot;</span><span class="p">,</span> <span class="s2">&quot;Substation&quot;</span><span class="p">,</span> <span class="s2">&quot;VoltageLevel&quot;</span><span class="p">,</span> <span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;Community&quot;</span><span class="p">,</span> <span class="s2">&quot;Region&quot;</span><span class="p">,</span> <span class="s2">&quot;Municipality&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_aggregation_values">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_aggregation_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_aggregation_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the aggregation names associated to a bus.</span>
+
+<span class="sd">        The bus getter methods are used so that direct bus assignments have</span>
+<span class="sd">        priority over values inferred from higher-level structures.</span>
+
+<span class="sd">        :param bus: Bus object or ``None``</span>
+<span class="sd">        :return: Aggregation names in dataframe column order</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">():</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_zone</span><span class="p">()</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_area</span><span class="p">()</span>
+            <span class="n">substation</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_substation</span><span class="p">()</span>
+            <span class="n">voltage_level</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_voltage_level</span><span class="p">()</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_country</span><span class="p">()</span>
+            <span class="n">community</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_community</span><span class="p">()</span>
+            <span class="n">region</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_region</span><span class="p">()</span>
+            <span class="n">municipality</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_municipality</span><span class="p">()</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zone</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">zone</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">area</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">substation</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">substation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltage_level</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">voltage_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">country</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">community</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">community</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">municipality</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">municipality</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_aggregation_names">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_aggregation_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the names associated to an aggregation type.</span>
+
+<span class="sd">        :param aggregation: Aggregation name</span>
+<span class="sd">        :return: List of aggregation names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Area&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Zone&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">zone_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Substation&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">substation_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;VoltageLevel&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage_level_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Country&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Community&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">community_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Region&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_names</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Municipality&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">municipality_names</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown grouping:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggregation</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_aggregation_device_type">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_aggregation_device_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_aggregation_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the device type associated to an aggregation.</span>
+
+<span class="sd">        :param aggregation: Aggregation name</span>
+<span class="sd">        :return: Corresponding device type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Area&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">AreaDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Zone&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ZoneDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Substation&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SubstationDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;VoltageLevel&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">VoltageLevelDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Country&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">CountryDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Community&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">CommunityDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Region&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">RegionDevice</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s2">&quot;Municipality&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">MunicipalityDevice</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown aggregation:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggregation</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_result_aggregation">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_result_aggregation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_result_aggregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_type</span><span class="p">:</span> <span class="n">ResultTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the aggregation name corresponding to a result type.</span>
+
+<span class="sd">        :param result_type: Result type</span>
+<span class="sd">        :return: Aggregation name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaAnalysis</span><span class="p">,</span>
+                           <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaGenerationAnalysis</span><span class="p">,</span>
+                           <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaLoadAnalysis</span><span class="p">,</span>
+                           <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Area&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Zone&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Substation&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;VoltageLevel&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Country&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Community&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Region&quot;</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityGenerationAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityLoadAnalysis</span><span class="p">,</span>
+                             <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityBalanceAnalysis</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Municipality&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown result type:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_type</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_generators_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_generators_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_generators_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">generators</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opf_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">P</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">P</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opf_results</span><span class="o">.</span><span class="n">generator_power</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">opf_results</span><span class="o">.</span><span class="n">generator_shedding</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">P</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Pf</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Snom</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Pmin</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">Pmax</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Qmin</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">Qmax</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Vset</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Pf&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Snom&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmax&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Qmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmax&#39;</span><span class="p">,</span> <span class="s1">&#39;Vset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_batteries_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_batteries_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_batteries_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_batteries</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">P</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Pf</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Snom</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Pmin</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">Pmax</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Qmin</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">Qmax</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Vset</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Pf&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Snom&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmax&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Qmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmax&#39;</span><span class="p">,</span> <span class="s1">&#39;Vset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_loads_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_loads_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_loads_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_loads</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">P</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Q</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+                <span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_static_generators_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_static_generators_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_static_generators_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_static_generators</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">P</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Q</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+                <span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_external_grids_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_external_grids_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_external_grids_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_external_grids</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">P</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Q</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+                <span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_current_injections_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_current_injections_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_injections_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_current_injections</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Ir</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">Ii</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+                <span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_shunts_df">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_shunts_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_shunts_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">aggregation_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_headers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_shunts</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_controllable_shunts</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">aggregation_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_aggregation_values</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+                <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">G</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+                            <span class="n">elm</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="n">elm</span><span class="o">.</span><span class="n">active</span><span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_values</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span>
+                <span class="p">]</span> <span class="o">+</span> <span class="n">aggregation_cols</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.group_by">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.group_by">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a DataFrame grouped by the requested aggregation.</span>
+
+<span class="sd">        :param group: Aggregation name</span>
+<span class="sd">        :return: Group DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_names</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">cols_gen</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmax&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmax&#39;</span><span class="p">]</span>
+        <span class="n">cols_load</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Pgen&#39;</span><span class="p">,</span> <span class="s1">&#39;Pload&#39;</span><span class="p">,</span> <span class="s1">&#39;Pbatt&#39;</span><span class="p">,</span> <span class="s1">&#39;Pstagen&#39;</span><span class="p">,</span> <span class="s1">&#39;Pext&#39;</span><span class="p">,</span> <span class="s1">&#39;Pcur&#39;</span><span class="p">,</span> <span class="s1">&#39;Pshunt&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Pmax&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmin&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmax&#39;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">))),</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen_data</span><span class="p">):</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_gen</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_gen</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_gen</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pgen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">battery_data</span><span class="p">):</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">battery_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_gen</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_gen</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_gen</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pbatt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_data</span><span class="p">):</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pload&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">static_gen_data</span><span class="p">):</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_gen_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pstagen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">external_grid_data</span><span class="p">):</span>
+            <span class="c1"># External grid follows the injection sign convention of LoadParent:</span>
+            <span class="c1"># positive P behaves as demand and negative P behaves as generation.</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">external_grid_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_injection_data</span><span class="p">):</span>
+            <span class="c1"># CurrentInjection has load-like sign convention in Ir/Ii.</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_injection_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pcur&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shunt_data</span><span class="p">):</span>
+            <span class="c1"># Shunt G/B are load-like power terms at V=1.0 p.u.</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">cols_load</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pshunt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_zone_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_zone_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_zone_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the zone index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any zone.</span>
+
+<span class="sd">        :return: Zone indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">zones</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_zone</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_area_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_area_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_area_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the area index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any area.</span>
+
+<span class="sd">        :return: Area indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_area</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_country_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_country_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_country_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the country index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any country.</span>
+
+<span class="sd">        :return: Country indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">countries</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_country</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_substation_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_substation_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_substation_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the substation index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any substation.</span>
+
+<span class="sd">        :return: Substation indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_substations</span><span class="p">())}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_substation</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_voltage_level_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_voltage_level_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_voltage_level_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the voltage-level index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any voltage level.</span>
+
+<span class="sd">        :return: Voltage-level indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">())}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_voltage_level</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_community_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_community_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_community_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the community index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any community.</span>
+
+<span class="sd">        :return: Community indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_communities</span><span class="p">())}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_community</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_region_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_region_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_region_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the region index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any region.</span>
+
+<span class="sd">        :return: Region indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_regions</span><span class="p">())}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_region</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_bus_municipality_indices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_bus_municipality_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bus_municipality_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the municipality index of each bus.</span>
+
+<span class="sd">        A value of ``-1`` means that the bus is not associated to any municipality.</span>
+
+<span class="sd">        :return: Municipality indices per bus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_municipalities</span><span class="p">())}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_municipality</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.get_collection_attr_series">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.get_collection_attr_series">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection_attr_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elms</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">aggregation</span><span class="o">=</span><span class="s2">&quot;Area&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param elms:</span>
+<span class="sd">        :param magnitude: Snapshot property name</span>
+<span class="sd">        :param aggregation:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Zone&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_zone_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Area&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_area_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Substation&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_substation_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;VoltageLevel&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_voltage_level_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Country&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_country_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Community&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_community_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Region&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_region_indices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;Municipality&#39;</span><span class="p">:</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bus_municipality_indices</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unknown Aggregation. Possible aggregations are Zone, Area, Substation, VoltageLevel, Country, Community, Region, Municipality&#39;</span><span class="p">)</span>
+
+        <span class="n">elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_elements</span><span class="p">(</span><span class="n">aggregation</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+        <span class="n">ne</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+
+        <span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span> <span class="n">ne</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">elms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span>
+                <span class="n">i2</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">i2</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">i3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i2</span><span class="p">)</span>
+                    <span class="n">x</span><span class="p">[:,</span> <span class="n">i3</span><span class="p">]</span> <span class="o">+=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_profile</span><span class="p">(</span><span class="n">magnitude</span><span class="o">=</span><span class="n">magnitude</span><span class="p">)</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">headers</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisResults.mdl">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisResults.mdl">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mdl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_type</span><span class="p">:</span> <span class="n">ResultTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ResultsTable&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the results</span>
+<span class="sd">        :param result_type: type of results (string)</span>
+<span class="sd">        :return: DataFrame of the results</span>
+<span class="sd">                (or None if the result was not understood)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_snapshot_result_types</span><span class="p">():</span>
+            <span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_result_aggregation</span><span class="p">(</span><span class="n">result_type</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">aggregation</span><span class="p">)</span>
+            <span class="n">aggregation_device_type</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_device_type</span><span class="p">(</span><span class="n">aggregation</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                <span class="n">idx_device_type</span><span class="o">=</span><span class="n">aggregation_device_type</span><span class="p">,</span>
+                                <span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                <span class="n">cols_device_type</span><span class="o">=</span><span class="n">aggregation_device_type</span><span class="p">,</span>
+                                <span class="n">title</span><span class="o">=</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionGenerationAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityGenerationAnalysis</span><span class="p">):</span>
+            <span class="n">aggregation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_result_aggregation</span><span class="p">(</span><span class="n">result_type</span><span class="p">)</span>
+            <span class="n">generators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_generators</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_batteries</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_static_generators</span><span class="p">()</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span><span class="n">generators</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                                <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">time_profile</span><span class="p">),</span>
+                                <span class="n">idx_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">TimeDevice</span><span class="p">,</span>
+                                <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                <span class="n">cols_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_device_type</span><span class="p">(</span><span class="n">aggregation</span><span class="p">),</span>
+                                <span class="n">title</span><span class="o">=</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="n">units</span><span class="o">=</span><span class="s2">&quot;(MW)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionLoadAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityLoadAnalysis</span><span class="p">):</span>
+            <span class="n">aggregation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_result_aggregation</span><span class="p">(</span><span class="n">result_type</span><span class="p">)</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_loads</span><span class="p">(),</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                                <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">time_profile</span><span class="p">),</span>
+                                <span class="n">idx_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">TimeDevice</span><span class="p">,</span>
+                                <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                <span class="n">cols_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_device_type</span><span class="p">(</span><span class="n">aggregation</span><span class="p">),</span>
+                                <span class="n">title</span><span class="o">=</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="n">units</span><span class="o">=</span><span class="s2">&quot;(MW)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">AreaBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ZoneBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">SubstationBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">VoltageLevelBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CountryBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">CommunityBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">RegionBalanceAnalysis</span><span class="p">,</span>
+                <span class="n">ResultTypes</span><span class="o">.</span><span class="n">MunicipalityBalanceAnalysis</span><span class="p">):</span>
+            <span class="n">aggregation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_result_aggregation</span><span class="p">(</span><span class="n">result_type</span><span class="p">)</span>
+            <span class="n">generators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_generators</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_batteries</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_static_generators</span><span class="p">()</span>
+            <span class="n">yg</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span><span class="n">generators</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">)</span>
+            <span class="n">yl</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_loads</span><span class="p">(),</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">)</span>
+            <span class="n">ye</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_external_grids</span><span class="p">(),</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">)</span>
+            <span class="n">yci</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_current_injections</span><span class="p">(),</span> <span class="s1">&#39;Ir&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="p">)</span>
+            <span class="n">ysh</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection_attr_series</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_shunts</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_controllable_shunts</span><span class="p">(),</span>
+                <span class="s1">&#39;G&#39;</span><span class="p">,</span>
+                <span class="n">aggregation</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">yg</span> <span class="o">-</span> <span class="n">yl</span> <span class="o">-</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">yci</span> <span class="o">-</span> <span class="n">ysh</span>
+            <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                                <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">time_profile</span><span class="p">),</span>
+                                <span class="n">idx_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">TimeDevice</span><span class="p">,</span>
+                                <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                <span class="n">cols_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_aggregation_device_type</span><span class="p">(</span><span class="n">aggregation</span><span class="p">),</span>
+                                <span class="n">title</span><span class="o">=</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="n">units</span><span class="o">=</span><span class="s2">&quot;(MW)&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Result type not understood:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_type</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="InputsAnalysisDriver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputsAnalysisDriver</span><span class="p">(</span><span class="n">DriverTemplate</span><span class="p">):</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Inputs Analysis&#39;</span>
+    <span class="n">tpe</span> <span class="o">=</span> <span class="n">SimulationTypes</span><span class="o">.</span><span class="n">InputsAnalysis_run</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        InputsAnalysisDriver class constructor</span>
+<span class="sd">        :param grid: MultiCircuit instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">DriverTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">InputsAnalysisResults</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span>
+
+<div class="viewcode-block" id="InputsAnalysisDriver.get_steps">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.get_steps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisDriver.run">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pack run_pf for the QThread</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="InputsAnalysisDriver.cancel">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.InputsAnalysis.html#VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver.InputsAnalysisDriver.cancel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span> <span class="o">=</span> <span class="kc">True</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

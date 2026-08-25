@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.InvestmentsEvaluation package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods package" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html" />
+    <link rel="prev" title="VeraGridEngine.Simulations.InputsAnalysis package" href="VeraGridEngine.Simulations.InputsAnalysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.InvestmentsEvaluation package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Simulations.InvestmentsEvaluation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-simulations-investmentsevaluation-package">
+<h1>VeraGridEngine.Simulations.InvestmentsEvaluation package<a class="headerlink" href="#veragridengine-simulations-investmentsevaluation-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html">VeraGridEngine.Simulations.InvestmentsEvaluation.Methods package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3">VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3 module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.BitflipMutation"><code class="docutils literal notranslate"><span class="pre">BitflipMutation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.GridNsga"><code class="docutils literal notranslate"><span class="pre">GridNsga</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.IntegerRandomSamplingVeraGrid"><code class="docutils literal notranslate"><span class="pre">IntegerRandomSamplingVeraGrid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.NSGA_3"><code class="docutils literal notranslate"><span class="pre">NSGA_3()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.QuadBinarySampling"><code class="docutils literal notranslate"><span class="pre">QuadBinarySampling</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.SkewedBinarySampling"><code class="docutils literal notranslate"><span class="pre">SkewedBinarySampling</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.SkewedIntegerSamplingRange"><code class="docutils literal notranslate"><span class="pre">SkewedIntegerSamplingRange</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.UniformBinarySampling"><code class="docutils literal notranslate"><span class="pre">UniformBinarySampling</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.finalize_seed_population"><code class="docutils literal notranslate"><span class="pre">finalize_seed_population()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3.get_nsga3_initial_population"><code class="docutils literal notranslate"><span class="pre">get_nsga3_initial_population()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.mixed_variable_NSGA_2">VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.mixed_variable_NSGA_2 module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.mixed_variable_NSGA_2.MixedVariableProblem"><code class="docutils literal notranslate"><span class="pre">MixedVariableProblem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.mixed_variable_NSGA_2.NSGA_2"><code class="docutils literal notranslate"><span class="pre">NSGA_2()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.random_eval">VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.random_eval module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.random_eval.random_trial"><code class="docutils literal notranslate"><span class="pre">random_trial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits">VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits.MaxItersStopCriterion"><code class="docutils literal notranslate"><span class="pre">MaxItersStopCriterion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits.MaxItersStopCriterion.add"><code class="docutils literal notranslate"><span class="pre">MaxItersStopCriterion.add()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits.StochStopCriterion"><code class="docutils literal notranslate"><span class="pre">StochStopCriterion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits.StochStopCriterion.add"><code class="docutils literal notranslate"><span class="pre">StochStopCriterion.add()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits.StopCriterion"><code class="docutils literal notranslate"><span class="pre">StopCriterion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits.StopCriterion.add"><code class="docutils literal notranslate"><span class="pre">StopCriterion.add()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba">VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#method-overview">Method overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#design-constraints">Design constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.TOOT_PINT_CBA"><code class="docutils literal notranslate"><span class="pre">TOOT_PINT_CBA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_candidate_activation_value"><code class="docutils literal notranslate"><span class="pre">get_candidate_activation_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_capex_objective_index"><code class="docutils literal notranslate"><span class="pre">get_capex_objective_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_normalized_cba_score"><code class="docutils literal notranslate"><span class="pre">get_normalized_cba_score()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_objective_scale"><code class="docutils literal notranslate"><span class="pre">get_objective_scale()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_reference_combination"><code class="docutils literal notranslate"><span class="pre">get_reference_combination()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_sorted_project_indices"><code class="docutils literal notranslate"><span class="pre">get_sorted_project_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_target_combination"><code class="docutils literal notranslate"><span class="pre">get_target_combination()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba.get_toot_pint_seed_population"><code class="docutils literal notranslate"><span class="pre">get_toot_pint_seed_population()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Methods">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem"><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.get_objectives_names"><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem.get_objectives_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.get_vars_names"><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem.get_vars_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.n_objectives"><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem.n_objectives()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.n_vars"><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem.n_vars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.AdequacyInvestmentProblem.objective_function"><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem.objective_function()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.apply_actives_mask"><code class="docutils literal notranslate"><span class="pre">apply_actives_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.correct_x"><code class="docutils literal notranslate"><span class="pre">correct_x()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem.determine_starting_index_of_every_year"><code class="docutils literal notranslate"><span class="pre">determine_starting_index_of_every_year()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate.get_investments_for_combination"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate.get_investments_for_combination()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate.get_objectives_names"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate.get_objectives_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate.get_vars_names"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate.get_vars_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate.n_objectives"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate.n_objectives()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate.n_vars"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate.n_vars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate.objective_function"><code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate.objective_function()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.all_elements_dict"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.all_elements_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.clustering_results"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.clustering_results</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.engine"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.engine</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.get_objectives_names"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.get_objectives_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.get_vars_names"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.get_vars_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.inv_group_capex"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.inv_group_capex</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.n_objectives"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.n_objectives()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.n_vars"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.n_vars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.objective_function"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.objective_function()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.opf_options"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.opf_options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.time_indices"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.time_indices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.TimeSeriesLinearOptimalPowerFlowInvestmentProblem.years_starts_indices"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem.years_starts_indices</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.apply_investments_by_year"><code class="docutils literal notranslate"><span class="pre">apply_investments_by_year()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.clone_linear_opf_options"><code class="docutils literal notranslate"><span class="pre">clone_linear_opf_options()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.collect_device_states"><code class="docutils literal notranslate"><span class="pre">collect_device_states()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.correct_x"><code class="docutils literal notranslate"><span class="pre">correct_x()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.determine_starting_index_of_every_year"><code class="docutils literal notranslate"><span class="pre">determine_starting_index_of_every_year()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.force_investment_candidates_off"><code class="docutils literal notranslate"><span class="pre">force_investment_candidates_off()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.get_objective_vector"><code class="docutils literal notranslate"><span class="pre">get_objective_vector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem.restore_device_states"><code class="docutils literal notranslate"><span class="pre">restore_device_states()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.PowerFlowInvestmentProblem"><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.PowerFlowInvestmentProblem.get_objectives_names"><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem.get_objectives_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.PowerFlowInvestmentProblem.get_vars_names"><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem.get_vars_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.PowerFlowInvestmentProblem.n_objectives"><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem.n_objectives()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.PowerFlowInvestmentProblem.n_vars"><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem.n_vars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.PowerFlowInvestmentProblem.objective_function"><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem.objective_function()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_problem.power_flow_function"><code class="docutils literal notranslate"><span class="pre">power_flow_function()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem">VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem"><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.get_objectives_names"><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem.get_objectives_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.get_vars_names"><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem.get_vars_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.n_objectives"><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem.n_objectives()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.n_vars"><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem.n_vars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.TimeSeriesPowerFlowInvestmentProblem.objective_function"><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem.objective_function()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem.power_flow_ts_function"><code class="docutils literal notranslate"><span class="pre">power_flow_ts_function()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#module-VeraGridEngine.Simulations.InvestmentsEvaluation.Problems">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver">
+<span id="veragridengine-simulations-investmentsevaluation-investments-evaluation-driver-module"></span><h2>VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver module<a class="headerlink" href="#module-VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.</span></span><span class="sig-name descname"><span class="pre">InvestmentsEvaluationDriver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions" title="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions"><span class="pre">InvestmentsEvaluationOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">problem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate" title="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate"><span class="pre">BlackBoxProblemTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EngineType" title="VeraGridEngine.enumerations.EngineType"><span class="pre">EngineType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">VeraGrid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.cancel" title="Link to this definition"></a></dt>
+<dd><p>Cancel the simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.evaluate_individual_investments">
+<span class="sig-name descname"><span class="pre">evaluate_individual_investments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.evaluate_individual_investments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.evaluate_individual_investments" title="Link to this definition"></a></dt>
+<dd><p>Run a one-by-one investment evaluation without considering multiple evaluation groups at a time</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.get_steps">
+<span class="sig-name descname"><span class="pre">get_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.get_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.get_steps" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.independent_evaluation">
+<span class="sig-name descname"><span class="pre">independent_evaluation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.independent_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.independent_evaluation" title="Link to this definition"></a></dt>
+<dd><p>Evaluate projects with a CBA-like reference/PINT/TOOT ranking and then build a cumulative portfolio.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the results
+:param max_iter: Maximum iterations</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Investments</span> <span class="pre">evaluation'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.objective_function">
+<span class="sig-name descname"><span class="pre">objective_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.objective_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.objective_function" title="Link to this definition"></a></dt>
+<dd><p>Function to evaluate a combination of investments
+:param x: vector of investments (yes/no). Length = number of investment groups
+:param record_results: record the results or not
+:return: multi-objective function criteria values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.objective_function_so">
+<span class="sig-name descname"><span class="pre">objective_function_so</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.objective_function_so"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.objective_function_so" title="Link to this definition"></a></dt>
+<dd><p>Single objective version of the objective function
+:param x: vector of investments (yes/no). Length = number of investment groups
+:return: summation of the objectives</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_mixed_nsga2">
+<span class="sig-name descname"><span class="pre">optimized_evaluation_mixed_nsga2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.optimized_evaluation_mixed_nsga2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_mixed_nsga2" title="Link to this definition"></a></dt>
+<dd><p>Run an optimized investment evaluation on mixed variables with NSGA2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_mvrsm_pareto">
+<span class="sig-name descname"><span class="pre">optimized_evaluation_mvrsm_pareto</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.optimized_evaluation_mvrsm_pareto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_mvrsm_pareto" title="Link to this definition"></a></dt>
+<dd><p>Run an optimized investment evaluation without considering multiple evaluation groups at a time</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_nsga3">
+<span class="sig-name descname"><span class="pre">optimized_evaluation_nsga3</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.optimized_evaluation_nsga3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_nsga3" title="Link to this definition"></a></dt>
+<dd><p>Run an optimized investment evaluation with NSGA3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_pint_toot_nsga3">
+<span class="sig-name descname"><span class="pre">optimized_evaluation_pint_toot_nsga3</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.optimized_evaluation_pint_toot_nsga3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.optimized_evaluation_pint_toot_nsga3" title="Link to this definition"></a></dt>
+<dd><p>Run an NSGA3 search warm-started with the direct PINT and TOOT evaluations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.options">
+<span class="sig-name descname"><span class="pre">options</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.options" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.problem">
+<span class="sig-name descname"><span class="pre">problem</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.html#VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate" title="VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template.BlackBoxProblemTemplate"><span class="pre">BlackBoxProblemTemplate</span></a></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.problem" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.randomized_evaluation">
+<span class="sig-name descname"><span class="pre">randomized_evaluation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.randomized_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.randomized_evaluation" title="Link to this definition"></a></dt>
+<dd><p>Run purely random evaluations, without any optimization</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_driver.html#InvestmentsEvaluationDriver.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.run" title="Link to this definition"></a></dt>
+<dd><p>run the QThread</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Investments</span> <span class="pre">evaluation'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver.InvestmentsEvaluationDriver.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options">
+<span id="veragridengine-simulations-investmentsevaluation-investments-evaluation-options-module"></span><h2>VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options module<a class="headerlink" href="#module-VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.</span></span><span class="sig-name descname"><span class="pre">InvestmentsEvaluationOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_eval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pf_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_options.OptimalPowerFlowOptions" title="VeraGridEngine.Simulations.OPF.opf_options.OptimalPowerFlowOptions"><span class="pre">OptimalPowerFlowOptions</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.InvestmentEvaluationMethod" title="VeraGridEngine.enumerations.InvestmentEvaluationMethod"><span class="pre">InvestmentEvaluationMethod</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">NSGA3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.InvestmentsEvaluationObjectives" title="VeraGridEngine.enumerations.InvestmentsEvaluationObjectives"><span class="pre">InvestmentsEvaluationObjectives</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PowerFlow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugin_fcn_ptr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_options.html#InvestmentsEvaluationOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.options_template.OptionsTemplate" title="VeraGridEngine.Simulations.options_template.OptionsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptionsTemplate</span></code></a></p>
+<p>Investments Evaluation Options</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_NON_EDITABLE_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes')</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_PROPERTIES_WITH_PROFILE">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTIES_WITH_PROFILE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_PROPERTIES_WITH_PROFILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:max_eval,</span> <span class="pre">prop:pf_options,</span> <span class="pre">prop:opf_options,</span> <span class="pre">prop:solver,</span> <span class="pre">prop:objf_tpe)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_PROPERTY_LIST">
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:max_eval,</span> <span class="pre">prop:pf_options,</span> <span class="pre">prop:opf_options,</span> <span class="pre">prop:solver,</span> <span class="pre">prop:objf_tpe)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">prop:action,</span> <span class="pre">'code':</span> <span class="pre">prop:code,</span> <span class="pre">'comment':</span> <span class="pre">prop:comment,</span> <span class="pre">'diff_changes':</span> <span class="pre">prop:diff_changes,</span> <span class="pre">'idtag':</span> <span class="pre">prop:idtag,</span> <span class="pre">'max_eval':</span> <span class="pre">prop:max_eval,</span> <span class="pre">'name':</span> <span class="pre">prop:name,</span> <span class="pre">'objf_tpe':</span> <span class="pre">prop:objf_tpe,</span> <span class="pre">'opf_options':</span> <span class="pre">prop:opf_options,</span> <span class="pre">'pf_options':</span> <span class="pre">prop:pf_options,</span> <span class="pre">'rdfid':</span> <span class="pre">prop:rdfid,</span> <span class="pre">'selected_to_merge':</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">'solver':</span> <span class="pre">prop:solver}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.LOCAL_PROPERTY_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:max_eval,</span> <span class="pre">prop:pf_options,</span> <span class="pre">prop:opf_options,</span> <span class="pre">prop:solver,</span> <span class="pre">prop:objf_tpe)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ActionType" title="VeraGridEngine.enumerations.ActionType"><span class="pre">ActionType</span></a></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.action" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.comment">
+<span class="sig-name descname"><span class="pre">comment</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.comment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.device_type">
+<span class="sig-name descname"><span class="pre">device_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.device_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.diff_changes">
+<span class="sig-name descname"><span class="pre">diff_changes</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.diff_changes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.selected_to_merge">
+<span class="sig-name descname"><span class="pre">selected_to_merge</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options.InvestmentsEvaluationOptions.selected_to_merge" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results">
+<span id="veragridengine-simulations-investmentsevaluation-investments-evaluation-results-module"></span><h2>VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results module<a class="headerlink" href="#module-VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.</span></span><span class="sig-name descname"><span class="pre">InvestmentsEvaluationResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_eval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_x_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_y_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_template.ResultsTemplate" title="VeraGridEngine.Simulations.results_template.ResultsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.CLASS_DATA_VARIABLES">
+<span class="sig-name descname"><span class="pre">CLASS_DATA_VARIABLES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'f':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'f_best':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'f_names':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'max_eval':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'plot_x_idx':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'plot_y_idx':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'sorting_indices':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'x':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'x_names':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.CLASS_DATA_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.CLASS_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.CLASS_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.LOCAL_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.LOCAL_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.add" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_vec</strong></p></li>
+<li><p><strong>f_vec</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.current_evaluation">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">current_evaluation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.current_evaluation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.f">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">f</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.f" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.f_best">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">f_best</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.f_best" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.f_names">
+<span class="sig-name descname"><span class="pre">f_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.f_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.finalize">
+<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.finalize" title="Link to this definition"></a></dt>
+<dd><p>Finalize the results after simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.get_index">
+<span class="sig-name descname"><span class="pre">get_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults.get_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.get_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.max_eval">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_eval</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.max_eval" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.mdl">
+<span class="sig-name descname"><span class="pre">mdl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable" title="VeraGridEngine.Simulations.results_table.ResultsTable"><span class="pre">ResultsTable</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults.mdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.mdl" title="Link to this definition"></a></dt>
+<dd><p>Plot the results
+:param result_type: type of results (string)
+:return: DataFrame of the results (or None if the result was not understood)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.plot_x_idx">
+<span class="sig-name descname"><span class="pre">plot_x_idx</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.plot_x_idx" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.plot_y_idx">
+<span class="sig-name descname"><span class="pre">plot_y_idx</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.plot_y_idx" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.set_at">
+<span class="sig-name descname"><span class="pre">set_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults.set_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.set_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong></p></li>
+<li><p><strong>x_vec</strong></p></li>
+<li><p><strong>f_vec</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.set_best_combination">
+<span class="sig-name descname"><span class="pre">set_best_combination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/InvestmentsEvaluation/investments_evaluation_results.html#InvestmentsEvaluationResults.set_best_combination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.set_best_combination" title="Link to this definition"></a></dt>
+<dd><p>Set the best combination of investment groups
+:param combination: Vector of integers (0/1)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.sorting_indices">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sorting_indices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.sorting_indices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Investments</span> <span class="pre">Evaluation</span> <span class="pre">Results'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.x">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">x</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.x" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.x_names">
+<span class="sig-name descname"><span class="pre">x_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results.InvestmentsEvaluationResults.x_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.InvestmentsEvaluation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Simulations.InvestmentsEvaluation" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Simulations.InputsAnalysis.html" class="btn btn-neutral float-left" title="VeraGridEngine.Simulations.InputsAnalysis package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.html" class="btn btn-neutral float-right" title="VeraGridEngine.Simulations.InvestmentsEvaluation.Methods package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

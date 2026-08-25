@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Topology.detect_substations &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Topology.detect_substations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Topology.detect_substations</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRANCH_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.topology</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_islands</span><span class="p">,</span> <span class="n">get_adjacency_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">lil_matrix</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+
+
+<div class="viewcode-block" id="get_bus_group_substation">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Topology.html#VeraGridEngine.Topology.detect_substations.get_bus_group_substation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bus_group_substation</span><span class="p">(</span><span class="n">bus_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of buses, return the first substation available</span>
+<span class="sd">    :param bus_indices:</span>
+<span class="sd">    :param buses: list of bus objects</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bus_indices</span><span class="p">:</span>
+        <span class="n">bus</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="detect_substations">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Topology.html#VeraGridEngine.Topology.detect_substations.detect_substations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_substations</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">r_x_threshold</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a Grid with buses, it will detect all the missing substations and voltage levels</span>
+<span class="sd">    :param grid: MultiCircuit</span>
+<span class="sd">    :param r_x_threshold: sum of r+x under which a line is considered a jumper</span>
+<span class="sd">    :return: (in-place)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">buses</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()</span>
+
+    <span class="c1"># create a connectivity matrix only with transformers and lines with small (r+x)</span>
+    <span class="n">branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BRANCH_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="c1"># these are devices that are supposed to &quot;live&quot; within a substation</span>
+    <span class="n">reducible_types</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span><span class="p">,</span>
+        <span class="n">DeviceType</span><span class="o">.</span><span class="n">WindingDevice</span><span class="p">,</span>
+        <span class="n">DeviceType</span><span class="o">.</span><span class="n">SeriesReactanceDevice</span><span class="p">,</span>
+        <span class="n">DeviceType</span><span class="o">.</span><span class="n">VscDevice</span><span class="p">,</span>
+        <span class="n">DeviceType</span><span class="o">.</span><span class="n">UpfcDevice</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">br</span><span class="o">.</span><span class="n">reducible</span> <span class="ow">or</span> <span class="n">br</span><span class="o">.</span><span class="n">device_type</span> <span class="ow">in</span> <span class="n">reducible_types</span><span class="p">:</span>
+            <span class="n">branches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">br</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&gt;</span> <span class="n">br</span><span class="o">.</span><span class="n">get_weight</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">r_x_threshold</span><span class="p">:</span>
+                <span class="n">branches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">br</span><span class="p">)</span>
+
+    <span class="c1"># build the connectivity matrix</span>
+    <span class="n">nbr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">branches</span><span class="p">)</span>
+    <span class="n">nbus</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">()</span>
+    <span class="n">bus_dict</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_bus_index_dict</span><span class="p">()</span>
+
+    <span class="c1"># declare the matrices</span>
+    <span class="n">Cf</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">nbr</span><span class="p">,</span> <span class="n">nbus</span><span class="p">))</span>
+    <span class="n">Ct</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">nbr</span><span class="p">,</span> <span class="n">nbus</span><span class="p">))</span>
+    <span class="n">br_active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># we will consider all branches as active for this</span>
+    <span class="n">bus_active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># fill matrices appropriately</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">branches</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
+            <span class="n">Cf</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
+            <span class="n">Ct</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># compose the adjacency matrix from the connectivity information</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">get_adjacency_matrix</span><span class="p">(</span><span class="n">C_branch_bus_f</span><span class="o">=</span><span class="n">Cf</span><span class="o">.</span><span class="n">tocsc</span><span class="p">(),</span>
+                             <span class="n">C_branch_bus_t</span><span class="o">=</span><span class="n">Ct</span><span class="o">.</span><span class="n">tocsc</span><span class="p">(),</span>
+                             <span class="n">branch_active</span><span class="o">=</span><span class="n">br_active</span><span class="p">,</span>
+                             <span class="n">bus_active</span><span class="o">=</span><span class="n">bus_active</span><span class="p">)</span>
+
+    <span class="c1"># perform the topology search, each island is a substation</span>
+    <span class="n">islands</span> <span class="o">=</span> <span class="n">find_islands</span><span class="p">(</span><span class="n">adj</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="n">bus_active</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">is_idx</span><span class="p">,</span> <span class="n">island</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">islands</span><span class="p">):</span>
+        <span class="n">bus0</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()[</span><span class="n">island</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">get_bus_group_substation</span><span class="p">(</span><span class="n">bus_indices</span><span class="o">=</span><span class="n">island</span><span class="p">,</span> <span class="n">buses</span><span class="o">=</span><span class="n">buses</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sub</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">bus0</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                 <span class="n">latitude</span><span class="o">=</span><span class="n">bus0</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                                 <span class="n">longitude</span><span class="o">=</span><span class="n">bus0</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                                 <span class="n">area</span><span class="o">=</span><span class="n">bus0</span><span class="o">.</span><span class="n">area</span> <span class="k">if</span> <span class="n">bus0</span><span class="o">.</span><span class="n">area</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">zone</span><span class="o">=</span><span class="n">bus0</span><span class="o">.</span><span class="n">zone</span> <span class="k">if</span> <span class="n">bus0</span><span class="o">.</span><span class="n">zone</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">country</span><span class="o">=</span><span class="n">bus0</span><span class="o">.</span><span class="n">country</span> <span class="k">if</span> <span class="n">bus0</span><span class="o">.</span><span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_substation</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
+
+        <span class="c1"># set the substation, and get the different voltages</span>
+        <span class="n">voltages</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">island</span><span class="p">:</span>
+            <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">bus</span><span class="o">.</span><span class="n">substation</span> <span class="o">=</span> <span class="n">sub</span>
+            <span class="n">voltages</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+        <span class="c1"># add the voltage levels</span>
+        <span class="n">voltages_vl</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">voltage</span> <span class="ow">in</span> <span class="n">voltages</span><span class="p">:</span>
+            <span class="n">vl</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">sub</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">voltage</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                  <span class="n">Vnom</span><span class="o">=</span><span class="n">voltage</span><span class="p">,</span>
+                                  <span class="n">substation</span><span class="o">=</span><span class="n">sub</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_voltage_level</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+            <span class="n">voltages_vl</span><span class="p">[</span><span class="n">voltage</span><span class="p">]</span> <span class="o">=</span> <span class="n">vl</span>
+
+        <span class="c1"># assign the VL&#39;s</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">island</span><span class="p">:</span>
+            <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">bus</span><span class="o">.</span><span class="n">voltage_level</span> <span class="o">=</span> <span class="n">voltages_vl</span><span class="p">[</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="detect_facilities">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Topology.html#VeraGridEngine.Topology.detect_substations.detect_facilities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_facilities</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create facilities automatically</span>
+<span class="sd">    In essence is packing all the injections connected to the same bus into a facility object</span>
+<span class="sd">    :param grid: MultiCircuit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dict_bus_inj</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_injection_devices_grouped_by_bus</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">bus</span><span class="p">,</span> <span class="n">inj_list</span> <span class="ow">in</span> <span class="n">dict_bus_inj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inj_list</span><span class="p">):</span>
+            <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">try_to_find_coordinates</span><span class="p">()</span>
+            <span class="n">plant</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Facility</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Facility at bus </span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_facility</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">plant</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">inj_list</span><span class="p">:</span>
+                <span class="n">elm</span><span class="o">.</span><span class="n">facility</span> <span class="o">=</span> <span class="n">plant</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

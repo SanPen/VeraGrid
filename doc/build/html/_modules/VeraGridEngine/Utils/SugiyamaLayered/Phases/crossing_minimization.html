@@ -1,0 +1,955 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.Phases.long_edges</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">SugiyamaNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsiderModelOrderStrategy</span><span class="p">,</span> <span class="n">CrossingMinimizationStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutContext</span><span class="p">,</span> <span class="n">LayoutPhaseBase</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_barycenter</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the barycenter of a list of positions.</span>
+
+<span class="sd">    :param values: Reference positions.</span>
+<span class="sd">    :param fallback: Fallback value when the list is empty.</span>
+<span class="sd">    :returns: Barycenter or fallback value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_median</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the median of a list of positions.</span>
+
+<span class="sd">    :param values: Reference positions.</span>
+<span class="sd">    :param fallback: Fallback value when the list is empty.</span>
+<span class="sd">    :returns: Median or fallback value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">ordered_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">middle_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_values</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_values</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">ordered_values</span><span class="p">[</span><span class="n">middle_index</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">ordered_values</span><span class="p">[</span><span class="n">middle_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">ordered_values</span><span class="p">[</span><span class="n">middle_index</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_neighbor_positions</span><span class="p">(</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">neighbors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">reference_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect neighbor positions from the reference layer.</span>
+
+<span class="sd">    :param node_id: Node whose neighbors are inspected.</span>
+<span class="sd">    :param neighbors: Adjacency mapping used for the sweep direction.</span>
+<span class="sd">    :param reference_order: Position of nodes in the adjacent layer.</span>
+<span class="sd">    :returns: Neighbor positions as floats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">neighbor_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># The sweep heuristics require positions in the adjacent layer so each node can be</span>
+    <span class="c1"># moved towards the center of its incident edges.</span>
+    <span class="k">for</span> <span class="n">neighbor_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">neighbors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())):</span>
+        <span class="k">if</span> <span class="n">neighbor_id</span> <span class="ow">in</span> <span class="n">reference_order</span><span class="p">:</span>
+            <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">reference_order</span><span class="p">[</span><span class="n">neighbor_id</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">positions</span> <span class="o">=</span> <span class="n">positions</span>
+
+    <span class="k">return</span> <span class="n">positions</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_crossings_between</span><span class="p">(</span>
+    <span class="n">upper</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">lower</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count edge crossings between two consecutive layers.</span>
+
+<span class="sd">    :param upper: Ordered nodes in the upper layer.</span>
+<span class="sd">    :param lower: Ordered nodes in the lower layer.</span>
+<span class="sd">    :param successors: Expanded successor adjacency.</span>
+<span class="sd">    :returns: Number of crossings between both layers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lower_position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">left_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">left_node</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">lower_index</span><span class="p">,</span> <span class="n">lower_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lower</span><span class="p">):</span>
+        <span class="n">lower_position</span><span class="p">[</span><span class="n">lower_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">lower_index</span>
+
+    <span class="c1"># Crossing count is the optimization target of the phase, so we measure every</span>
+    <span class="c1"># pair of edges induced by every pair of upper-layer nodes.</span>
+    <span class="k">for</span> <span class="n">left_index</span><span class="p">,</span> <span class="n">left_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">upper</span><span class="p">):</span>
+        <span class="n">left_targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">candidate_target</span> <span class="ow">in</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">left_node</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">candidate_target</span> <span class="ow">in</span> <span class="n">lower_position</span><span class="p">:</span>
+                <span class="n">left_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate_target</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left_targets</span> <span class="o">=</span> <span class="n">left_targets</span>
+
+        <span class="k">if</span> <span class="n">left_targets</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">right_node</span> <span class="ow">in</span> <span class="n">upper</span><span class="p">[</span><span class="n">left_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">right_targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">candidate_target</span> <span class="ow">in</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">right_node</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+                    <span class="k">if</span> <span class="n">candidate_target</span> <span class="ow">in</span> <span class="n">lower_position</span><span class="p">:</span>
+                        <span class="n">right_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate_target</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">right_targets</span> <span class="o">=</span> <span class="n">right_targets</span>
+
+                <span class="k">if</span> <span class="n">right_targets</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">left_target</span> <span class="ow">in</span> <span class="n">left_targets</span><span class="p">:</span>
+                        <span class="n">left_target_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">lower_position</span><span class="p">[</span><span class="n">left_target</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">right_target</span> <span class="ow">in</span> <span class="n">right_targets</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">lower_position</span><span class="p">[</span><span class="n">right_target</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">left_target_position</span><span class="p">:</span>
+                                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+
+    <span class="k">return</span> <span class="n">count</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_integer_candidate</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an optional integer candidate.</span>
+
+<span class="sd">    :param value: Raw value to parse.</span>
+<span class="sd">    :returns: Parsed integer or ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">parsed_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">parsed_value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_node_model_order</span><span class="p">(</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">],</span>
+    <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the stable model-order key for one node.</span>
+
+<span class="sd">    :param node_id: Node identifier.</span>
+<span class="sd">    :param fallback: Fallback ordering key.</span>
+<span class="sd">    :param expanded_nodes: Expanded-node lookup.</span>
+<span class="sd">    :param node_by_id: Original graph node lookup.</span>
+<span class="sd">    :returns: Stable model-order key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node_info</span><span class="p">:</span> <span class="n">VirtualNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">expanded_nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">resolved_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">if</span> <span class="n">node_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">node_info</span><span class="o">.</span><span class="n">model_order</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">node_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">candidates</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;modelOrder&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;model_order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span>
+                    <span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.groupModelOrder.crossingMinimizationId&quot;</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span>
+                    <span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.groupModelOrder.cycleBreakingId&quot;</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="n">parsed_candidate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_read_integer_candidate</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">parsed_candidate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">parsed_candidate</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">resolved_order</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">return</span> <span class="n">resolved_order</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_consider_model_order_enabled</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether model-order hints must affect crossing minimization.</span>
+
+<span class="sd">    :param context: Shared pipeline context.</span>
+<span class="sd">    :returns: ``True`` when the feature is enabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">option_resolver</span><span class="o">.</span><span class="n">resolve_for_element</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">layout_options</span><span class="p">)</span>
+    <span class="n">strategy_value</span><span class="p">:</span> <span class="n">ConsiderModelOrderStrategy</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.strategy&quot;</span><span class="p">,</span>
+        <span class="n">ConsiderModelOrderStrategy</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">is_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">strategy_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">ConsiderModelOrderStrategy</span><span class="o">.</span><span class="n">NONE</span>
+    <span class="k">return</span> <span class="n">is_enabled</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_crossing_strategy</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CrossingMinimizationStrategy</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the configured crossing-minimization strategy.</span>
+
+<span class="sd">    :param context: Shared pipeline context.</span>
+<span class="sd">    :returns: Configured strategy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">option_resolver</span><span class="o">.</span><span class="n">resolve_for_element</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">layout_options</span><span class="p">)</span>
+    <span class="n">strategy_value</span><span class="p">:</span> <span class="n">CrossingMinimizationStrategy</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;org.vera.sugiyama.layered.crossingMinimization.strategy&quot;</span><span class="p">,</span>
+        <span class="n">CrossingMinimizationStrategy</span><span class="o">.</span><span class="n">LAYER_SWEEP</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">strategy_value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_dummy_bias</span><span class="p">(</span><span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the bias that keeps dummy nodes stable during ordering.</span>
+
+<span class="sd">    :param node_id: Expanded node identifier.</span>
+<span class="sd">    :param expanded_nodes: Expanded-node lookup.</span>
+<span class="sd">    :returns: Bias applied to the primary heuristic score.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bias</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">node_info</span><span class="p">:</span> <span class="n">VirtualNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">expanded_nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">node_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">node_info</span><span class="o">.</span><span class="n">is_dummy</span><span class="p">:</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.25</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">bias</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sweep_score</span><span class="p">(</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">current_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">reference_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">neighbors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">chain_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">],</span>
+    <span class="n">model_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">use_median</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the ordering score for one node during one sweep.</span>
+
+<span class="sd">    :param node_id: Node to rank.</span>
+<span class="sd">    :param current_order: Current positions in the active layer.</span>
+<span class="sd">    :param reference_order: Positions in the adjacent reference layer.</span>
+<span class="sd">    :param neighbors: Adjacency used by the sweep direction.</span>
+<span class="sd">    :param chain_order: Order inside dummy-node chains.</span>
+<span class="sd">    :param expanded_nodes: Expanded-node lookup.</span>
+<span class="sd">    :param model_order: Stable model-order mapping.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order must affect ranking.</span>
+<span class="sd">    :param use_median: Whether the median should be the primary score.</span>
+<span class="sd">    :returns: Deterministic ranking key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fallback_position</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">current_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">neighbor_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">_neighbor_positions</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">,</span> <span class="n">reference_order</span><span class="p">)</span>
+    <span class="n">primary_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">fallback_position</span>
+    <span class="n">secondary_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">fallback_position</span>
+    <span class="n">stable_model_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">current_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_median</span><span class="p">:</span>
+        <span class="n">primary_score</span> <span class="o">=</span> <span class="n">_median</span><span class="p">(</span><span class="n">neighbor_values</span><span class="p">,</span> <span class="n">fallback_position</span><span class="p">)</span>
+        <span class="n">secondary_score</span> <span class="o">=</span> <span class="n">_barycenter</span><span class="p">(</span><span class="n">neighbor_values</span><span class="p">,</span> <span class="n">fallback_position</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">primary_score</span> <span class="o">=</span> <span class="n">_barycenter</span><span class="p">(</span><span class="n">neighbor_values</span><span class="p">,</span> <span class="n">fallback_position</span><span class="p">)</span>
+        <span class="n">secondary_score</span> <span class="o">=</span> <span class="n">_median</span><span class="p">(</span><span class="n">neighbor_values</span><span class="p">,</span> <span class="n">fallback_position</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">prefer_model_order</span><span class="p">:</span>
+        <span class="n">stable_model_order</span> <span class="o">=</span> <span class="n">model_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">current_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stable_model_order</span> <span class="o">=</span> <span class="n">current_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">primary_score</span> <span class="o">+</span> <span class="n">_dummy_bias</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">),</span>
+        <span class="n">secondary_score</span><span class="p">,</span>
+        <span class="n">chain_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">stable_model_order</span><span class="p">,</span>
+        <span class="n">current_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">node_id</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sweep_order</span><span class="p">(</span>
+    <span class="n">layer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">reference_layer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">neighbors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">chain_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">],</span>
+    <span class="n">model_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">use_median</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reorder one layer using barycenter or median sweeps.</span>
+
+<span class="sd">    :param layer: Layer being reordered.</span>
+<span class="sd">    :param reference_layer: Adjacent layer used as reference.</span>
+<span class="sd">    :param neighbors: Adjacency used by the sweep direction.</span>
+<span class="sd">    :param chain_order: Order inside dummy-node chains.</span>
+<span class="sd">    :param expanded_nodes: Expanded-node lookup.</span>
+<span class="sd">    :param model_order: Stable model-order mapping.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order must affect ranking.</span>
+<span class="sd">    :param use_median: Whether the median should be the primary score.</span>
+<span class="sd">    :returns: Reordered layer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reference_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">current_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">decorated_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">sorted_layer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># Reference positions are materialized once per sweep so every node can measure</span>
+    <span class="c1"># its preferred location relative to the adjacent layer.</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">reference_node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reference_layer</span><span class="p">):</span>
+        <span class="n">reference_order</span><span class="p">[</span><span class="n">reference_node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">current_node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+        <span class="n">current_order</span><span class="p">[</span><span class="n">current_node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>
+        <span class="n">score</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sweep_score</span><span class="p">(</span>
+            <span class="n">node_id</span><span class="p">,</span>
+            <span class="n">current_order</span><span class="p">,</span>
+            <span class="n">reference_order</span><span class="p">,</span>
+            <span class="n">neighbors</span><span class="p">,</span>
+            <span class="n">chain_order</span><span class="p">,</span>
+            <span class="n">expanded_nodes</span><span class="p">,</span>
+            <span class="n">model_order</span><span class="p">,</span>
+            <span class="n">prefer_model_order</span><span class="p">,</span>
+            <span class="n">use_median</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">decorated_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">score</span><span class="p">,</span> <span class="n">node_id</span><span class="p">))</span>
+
+    <span class="n">decorated_items</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">resolved_node_id</span> <span class="ow">in</span> <span class="n">decorated_items</span><span class="p">:</span>
+        <span class="n">sorted_layer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resolved_node_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sorted_layer</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_crossings_for_upper_pair</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">right</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">lower_position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count crossings before and after swapping two upper-layer nodes.</span>
+
+<span class="sd">    :param left: Left node in the upper layer.</span>
+<span class="sd">    :param right: Right node in the upper layer.</span>
+<span class="sd">    :param lower_position: Position of nodes in the lower layer.</span>
+<span class="sd">    :param successors: Expanded successor adjacency.</span>
+<span class="sd">    :returns: Crossing count before and after the swap.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left_targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">right_targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">before</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">after</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">lower_position</span><span class="p">:</span>
+            <span class="n">left_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lower_position</span><span class="p">[</span><span class="n">node_id</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left_targets</span> <span class="o">=</span> <span class="n">left_targets</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">lower_position</span><span class="p">:</span>
+            <span class="n">right_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lower_position</span><span class="p">[</span><span class="n">node_id</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right_targets</span> <span class="o">=</span> <span class="n">right_targets</span>
+
+    <span class="k">for</span> <span class="n">left_position</span> <span class="ow">in</span> <span class="n">left_targets</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">right_position</span> <span class="ow">in</span> <span class="n">right_targets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">right_position</span> <span class="o">&lt;</span> <span class="n">left_position</span><span class="p">:</span>
+                <span class="n">before</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">before</span> <span class="o">=</span> <span class="n">before</span>
+
+            <span class="k">if</span> <span class="n">left_position</span> <span class="o">&lt;</span> <span class="n">right_position</span><span class="p">:</span>
+                <span class="n">after</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">after</span> <span class="o">=</span> <span class="n">after</span>
+
+    <span class="k">return</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_crossings_for_lower_pair</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">right</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">upper_position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count crossings before and after swapping two lower-layer nodes.</span>
+
+<span class="sd">    :param left: Left node in the lower layer.</span>
+<span class="sd">    :param right: Right node in the lower layer.</span>
+<span class="sd">    :param upper_position: Position of nodes in the upper layer.</span>
+<span class="sd">    :param predecessors: Expanded predecessor adjacency.</span>
+<span class="sd">    :returns: Crossing count before and after the swap.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left_sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">right_sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">before</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">after</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">upper_position</span><span class="p">:</span>
+            <span class="n">left_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">upper_position</span><span class="p">[</span><span class="n">node_id</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left_sources</span> <span class="o">=</span> <span class="n">left_sources</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">upper_position</span><span class="p">:</span>
+            <span class="n">right_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">upper_position</span><span class="p">[</span><span class="n">node_id</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right_sources</span> <span class="o">=</span> <span class="n">right_sources</span>
+
+    <span class="k">for</span> <span class="n">left_position</span> <span class="ow">in</span> <span class="n">left_sources</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">right_position</span> <span class="ow">in</span> <span class="n">right_sources</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">right_position</span> <span class="o">&lt;</span> <span class="n">left_position</span><span class="p">:</span>
+                <span class="n">before</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">before</span> <span class="o">=</span> <span class="n">before</span>
+
+            <span class="k">if</span> <span class="n">left_position</span> <span class="o">&lt;</span> <span class="n">right_position</span><span class="p">:</span>
+                <span class="n">after</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">after</span> <span class="o">=</span> <span class="n">after</span>
+
+    <span class="k">return</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_prefer_swap_tie_break</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">right</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">chain_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">model_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether a tie should prefer swapping two nodes.</span>
+
+<span class="sd">    :param left: Left node in the current order.</span>
+<span class="sd">    :param right: Right node in the current order.</span>
+<span class="sd">    :param chain_order: Order inside dummy-node chains.</span>
+<span class="sd">    :param model_order: Stable model-order mapping.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order must affect ranking.</span>
+<span class="sd">    :returns: ``True`` when the swap is preferred on ties.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">should_swap</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">prefer_model_order</span><span class="p">:</span>
+        <span class="n">left_model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">model_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">right_model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">model_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">left_model</span> <span class="o">!=</span> <span class="n">right_model</span><span class="p">:</span>
+            <span class="n">should_swap</span> <span class="o">=</span> <span class="n">left_model</span> <span class="o">&gt;</span> <span class="n">right_model</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">should_swap</span> <span class="o">=</span> <span class="n">should_swap</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">should_swap</span> <span class="o">=</span> <span class="n">should_swap</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">should_swap</span><span class="p">:</span>
+        <span class="n">left_chain</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">chain_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">right_chain</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">chain_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">left_chain</span> <span class="o">!=</span> <span class="n">right_chain</span><span class="p">:</span>
+            <span class="n">should_swap</span> <span class="o">=</span> <span class="n">left_chain</span> <span class="o">&gt;</span> <span class="n">right_chain</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">should_swap</span> <span class="o">=</span> <span class="n">left</span> <span class="o">&gt;</span> <span class="n">right</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">should_swap</span> <span class="o">=</span> <span class="n">should_swap</span>
+
+    <span class="k">return</span> <span class="n">should_swap</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_transpose_layer_pair_local</span><span class="p">(</span>
+    <span class="n">upper</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">lower</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">chain_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">model_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run local adjacent transpositions on one layer pair.</span>
+
+<span class="sd">    :param upper: Upper layer, modified in place.</span>
+<span class="sd">    :param lower: Lower layer, modified in place.</span>
+<span class="sd">    :param successors: Expanded successor adjacency.</span>
+<span class="sd">    :param predecessors: Expanded predecessor adjacency.</span>
+<span class="sd">    :param chain_order: Order inside dummy-node chains.</span>
+<span class="sd">    :param model_order: Stable model-order mapping.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order must affect ranking.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">changed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Local transposition repairs crossing patterns that barycenter and median sweeps</span>
+    <span class="c1"># alone cannot remove because they depend on pairwise interactions.</span>
+    <span class="k">while</span> <span class="n">changed</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">lower_position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lower</span><span class="p">):</span>
+            <span class="n">lower_position</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="n">upper_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">upper_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">left_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span><span class="p">]</span>
+            <span class="n">right_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">before_count</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="n">after_count</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="n">before_count</span><span class="p">,</span> <span class="n">after_count</span> <span class="o">=</span> <span class="n">_crossings_for_upper_pair</span><span class="p">(</span><span class="n">left_node</span><span class="p">,</span> <span class="n">right_node</span><span class="p">,</span> <span class="n">lower_position</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">after_count</span> <span class="o">&lt;</span> <span class="n">before_count</span><span class="p">:</span>
+                <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span><span class="p">]</span>
+                <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">after_count</span> <span class="o">==</span> <span class="n">before_count</span> <span class="ow">and</span> <span class="n">_prefer_swap_tie_break</span><span class="p">(</span>
+                    <span class="n">left_node</span><span class="p">,</span>
+                    <span class="n">right_node</span><span class="p">,</span>
+                    <span class="n">chain_order</span><span class="p">,</span>
+                    <span class="n">model_order</span><span class="p">,</span>
+                    <span class="n">prefer_model_order</span><span class="p">,</span>
+                <span class="p">):</span>
+                    <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_index</span><span class="p">]</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="n">changed</span>
+
+            <span class="n">upper_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">upper_position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">upper</span><span class="p">):</span>
+            <span class="n">upper_position</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="n">lower_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">lower_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lower</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">left_node</span> <span class="o">=</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span><span class="p">]</span>
+            <span class="n">right_node</span> <span class="o">=</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">before_count</span><span class="p">,</span> <span class="n">after_count</span> <span class="o">=</span> <span class="n">_crossings_for_lower_pair</span><span class="p">(</span><span class="n">left_node</span><span class="p">,</span> <span class="n">right_node</span><span class="p">,</span> <span class="n">upper_position</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">after_count</span> <span class="o">&lt;</span> <span class="n">before_count</span><span class="p">:</span>
+                <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span><span class="p">],</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span><span class="p">]</span>
+                <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">after_count</span> <span class="o">==</span> <span class="n">before_count</span> <span class="ow">and</span> <span class="n">_prefer_swap_tie_break</span><span class="p">(</span>
+                    <span class="n">left_node</span><span class="p">,</span>
+                    <span class="n">right_node</span><span class="p">,</span>
+                    <span class="n">chain_order</span><span class="p">,</span>
+                    <span class="n">model_order</span><span class="p">,</span>
+                    <span class="n">prefer_model_order</span><span class="p">,</span>
+                <span class="p">):</span>
+                    <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span><span class="p">],</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">lower</span><span class="p">[</span><span class="n">lower_index</span><span class="p">]</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="n">changed</span>
+
+            <span class="n">lower_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_total_crossings</span><span class="p">(</span><span class="n">layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the total number of crossings in the expanded graph.</span>
+
+<span class="sd">    :param layers: Ordered nodes per layer.</span>
+<span class="sd">    :param successors: Expanded successor adjacency.</span>
+<span class="sd">    :returns: Total crossing count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">layer_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+    <span class="n">total_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pair_index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">for</span> <span class="n">pair_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layer_ids</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">upper_layer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">layer_ids</span><span class="p">[</span><span class="n">pair_index</span><span class="p">]</span>
+        <span class="n">lower_layer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">layer_ids</span><span class="p">[</span><span class="n">pair_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">total_count</span> <span class="o">+=</span> <span class="n">_crossings_between</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">upper_layer_id</span><span class="p">],</span> <span class="n">layers</span><span class="p">[</span><span class="n">lower_layer_id</span><span class="p">],</span> <span class="n">successors</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">total_count</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_copy_layers</span><span class="p">(</span><span class="n">layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deep-copy ordered layers.</span>
+
+<span class="sd">    :param layers: Layer mapping to copy.</span>
+<span class="sd">    :returns: Copied layer mapping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">copied_layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">layer_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">layer_id</span><span class="p">,</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="n">layers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">copied_layers</span><span class="p">[</span><span class="n">layer_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">copied_layers</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_expanded_adjacency</span><span class="p">(</span>
+    <span class="n">expanded_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build successor and predecessor tables for the expanded graph.</span>
+
+<span class="sd">    :param expanded_edges: Expanded edges generated by the long-edge phase.</span>
+<span class="sd">    :returns: Successor and predecessor adjacency tables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">edge_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">target_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">segment_index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">for</span> <span class="n">edge_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">segment_index</span> <span class="ow">in</span> <span class="n">expanded_edges</span><span class="p">:</span>
+        <span class="n">edge_id</span> <span class="o">=</span> <span class="n">edge_id</span>
+        <span class="n">segment_index</span> <span class="o">=</span> <span class="n">segment_index</span>
+        <span class="n">source_successors</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">target_predecessors</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">source_successors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target_id</span><span class="p">)</span>
+        <span class="n">target_predecessors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
+        <span class="n">successors</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_successors</span>
+        <span class="n">predecessors</span><span class="p">[</span><span class="n">target_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_predecessors</span>
+
+    <span class="k">return</span> <span class="n">successors</span><span class="p">,</span> <span class="n">predecessors</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_chain_order</span><span class="p">(</span><span class="n">edge_paths</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the order of nodes inside each dummy chain.</span>
+
+<span class="sd">    :param edge_paths: Expanded edge paths.</span>
+<span class="sd">    :returns: Best-known chain position per node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chain_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">edge_paths</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">previous_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">chain_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">previous_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">previous_index</span><span class="p">:</span>
+                <span class="n">chain_order</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">chain_order</span> <span class="o">=</span> <span class="n">chain_order</span>
+
+    <span class="k">return</span> <span class="n">chain_order</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_model_order</span><span class="p">(</span>
+    <span class="n">layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">],</span>
+    <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the stable model-order key for every expanded node.</span>
+
+<span class="sd">    :param layers: Ordered nodes per layer.</span>
+<span class="sd">    :param expanded_nodes: Expanded-node lookup.</span>
+<span class="sd">    :param node_by_id: Original graph node lookup.</span>
+<span class="sd">    :returns: Stable model-order mapping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">layer_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">layer_id</span><span class="p">,</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="n">layers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">layer_id</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">index</span>
+            <span class="n">model_order</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_node_model_order</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">fallback</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model_order</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_order_in_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the final index of every node inside its layer.</span>
+
+<span class="sd">    :param layers: Ordered nodes per layer.</span>
+<span class="sd">    :returns: Position mapping for every expanded node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">order_in_layer</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="n">order_in_layer</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+
+    <span class="k">return</span> <span class="n">order_in_layer</span>
+
+
+<div class="viewcode-block" id="CrossingMinimizationPhase">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CrossingMinimizationPhase</span><span class="p">(</span><span class="n">LayoutPhaseBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reduce edge crossings by alternating layer sweeps and local transpositions.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;crossing-minimization&quot;</span>
+
+<div class="viewcode-block" id="CrossingMinimizationPhase.run">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.crossing_minimization.CrossingMinimizationPhase.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the crossing-minimization phase.</span>
+
+<span class="sd">        :param context: Shared pipeline context.</span>
+<span class="sd">        :returns: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">expanded_layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_layers</span>
+        <span class="n">expanded_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_edges</span>
+        <span class="n">expanded_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VirtualNode</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_nodes</span>
+        <span class="n">edge_paths</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">edge_paths</span>
+        <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">node_by_id</span><span class="p">()</span>
+        <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">_consider_model_order_enabled</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">strategy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_crossing_strategy</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expanded_layers</span><span class="p">:</span>
+            <span class="n">layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_copy_layers</span><span class="p">(</span><span class="n">expanded_layers</span><span class="p">)</span>
+            <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+            <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+            <span class="n">successors</span><span class="p">,</span> <span class="n">predecessors</span> <span class="o">=</span> <span class="n">_build_expanded_adjacency</span><span class="p">(</span><span class="n">expanded_edges</span><span class="p">)</span>
+            <span class="n">chain_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_chain_order</span><span class="p">(</span><span class="n">edge_paths</span><span class="p">)</span>
+            <span class="n">model_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_model_order</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="n">expanded_nodes</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">)</span>
+            <span class="n">best_layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_copy_layers</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+            <span class="n">best_crossings</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_total_crossings</span><span class="p">(</span><span class="n">best_layers</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+            <span class="n">layer_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">strategy</span> <span class="ow">is</span> <span class="n">CrossingMinimizationStrategy</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
+                <span class="n">order_in_layer</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_order_in_layer</span><span class="p">(</span><span class="n">best_layers</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">ordered_layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">ordered_layers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">best_layers</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_successors</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_successors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">successors</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_predecessors</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_predecessors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">predecessors</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">order_in_layer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">order_in_layer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">order_in_layer</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="s2">&quot;Crossing minimization disabled by strategy option.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sweep_index</span><span class="p">:</span> <span class="nb">int</span>
+                <span class="k">for</span> <span class="n">sweep_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                    <span class="n">use_median</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">sweep_index</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span>
+                    <span class="n">layer_id</span><span class="p">:</span> <span class="nb">int</span>
+
+                    <span class="c1"># Downward sweeps place each layer relative to its predecessors so</span>
+                    <span class="c1"># the ordering follows the current shape of incoming edges.</span>
+                    <span class="k">for</span> <span class="n">layer_id</span> <span class="ow">in</span> <span class="n">layer_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                        <span class="n">layers</span><span class="p">[</span><span class="n">layer_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sweep_order</span><span class="p">(</span>
+                            <span class="n">layers</span><span class="p">[</span><span class="n">layer_id</span><span class="p">],</span>
+                            <span class="n">layers</span><span class="p">[</span><span class="n">layer_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="n">predecessors</span><span class="p">,</span>
+                            <span class="n">chain_order</span><span class="p">,</span>
+                            <span class="n">expanded_nodes</span><span class="p">,</span>
+                            <span class="n">model_order</span><span class="p">,</span>
+                            <span class="n">prefer_model_order</span><span class="p">,</span>
+                            <span class="n">use_median</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># Upward sweeps mirror the process with successors to avoid biasing</span>
+                    <span class="c1"># the solution toward only one traversal direction.</span>
+                    <span class="k">for</span> <span class="n">layer_id</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">layer_ids</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="n">layers</span><span class="p">[</span><span class="n">layer_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sweep_order</span><span class="p">(</span>
+                            <span class="n">layers</span><span class="p">[</span><span class="n">layer_id</span><span class="p">],</span>
+                            <span class="n">layers</span><span class="p">[</span><span class="n">layer_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="n">successors</span><span class="p">,</span>
+                            <span class="n">chain_order</span><span class="p">,</span>
+                            <span class="n">expanded_nodes</span><span class="p">,</span>
+                            <span class="n">model_order</span><span class="p">,</span>
+                            <span class="n">prefer_model_order</span><span class="p">,</span>
+                            <span class="n">use_median</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># Local transposition repairs residual inversions between adjacent</span>
+                    <span class="c1"># nodes once the coarse sweep position has been chosen.</span>
+                    <span class="n">pair_index</span><span class="p">:</span> <span class="nb">int</span>
+                    <span class="k">for</span> <span class="n">pair_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layer_ids</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">upper_layer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">layer_ids</span><span class="p">[</span><span class="n">pair_index</span><span class="p">]</span>
+                        <span class="n">lower_layer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">layer_ids</span><span class="p">[</span><span class="n">pair_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                        <span class="n">_transpose_layer_pair_local</span><span class="p">(</span>
+                            <span class="n">layers</span><span class="p">[</span><span class="n">upper_layer_id</span><span class="p">],</span>
+                            <span class="n">layers</span><span class="p">[</span><span class="n">lower_layer_id</span><span class="p">],</span>
+                            <span class="n">successors</span><span class="p">,</span>
+                            <span class="n">predecessors</span><span class="p">,</span>
+                            <span class="n">chain_order</span><span class="p">,</span>
+                            <span class="n">model_order</span><span class="p">,</span>
+                            <span class="n">prefer_model_order</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="n">current_crossings</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_total_crossings</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">current_crossings</span> <span class="o">&lt;</span> <span class="n">best_crossings</span><span class="p">:</span>
+                        <span class="n">best_crossings</span> <span class="o">=</span> <span class="n">current_crossings</span>
+                        <span class="n">best_layers</span> <span class="o">=</span> <span class="n">_copy_layers</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">best_crossings</span> <span class="o">=</span> <span class="n">best_crossings</span>
+
+                <span class="n">order_in_layer</span> <span class="o">=</span> <span class="n">_build_order_in_layer</span><span class="p">(</span><span class="n">best_layers</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">ordered_layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">ordered_layers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">best_layers</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_successors</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_successors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">successors</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_predecessors</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">expanded_predecessors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">predecessors</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">order_in_layer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">order_in_layer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">order_in_layer</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span>
+                    <span class="s2">&quot;Crossing minimization runs alternating barycenter/median sweeps with &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;local transpose; best crossing count=</span><span class="si">{</span><span class="n">best_crossings</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">ordered_layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

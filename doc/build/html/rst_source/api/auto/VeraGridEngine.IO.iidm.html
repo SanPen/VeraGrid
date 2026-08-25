@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.iidm package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.iidm package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.iidm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-iidm-package">
+<h1>VeraGridEngine.IO.iidm package<a class="headerlink" href="#veragridengine-io-iidm-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html">VeraGridEngine.IO.iidm.devices package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_area">VeraGridEngine.IO.iidm.devices.iidm_area module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_area.IidmArea"><code class="docutils literal notranslate"><span class="pre">IidmArea</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_area.IidmArea.to_veragrid"><code class="docutils literal notranslate"><span class="pre">IidmArea.to_veragrid()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_bus">VeraGridEngine.IO.iidm.devices.iidm_bus module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_bus.IidmBus"><code class="docutils literal notranslate"><span class="pre">IidmBus</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_bus.IidmBus.to_veragrid"><code class="docutils literal notranslate"><span class="pre">IidmBus.to_veragrid()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_busbar_section">VeraGridEngine.IO.iidm.devices.iidm_busbar_section module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_busbar_section.IidmBusbarSection"><code class="docutils literal notranslate"><span class="pre">IidmBusbarSection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_circuit">VeraGridEngine.IO.iidm.devices.iidm_circuit module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_circuit.IidmCircuit"><code class="docutils literal notranslate"><span class="pre">IidmCircuit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_dangling_line">VeraGridEngine.IO.iidm.devices.iidm_dangling_line module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_dangling_line.IidmDanglingLine"><code class="docutils literal notranslate"><span class="pre">IidmDanglingLine</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement">VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement.IidmDiscreteMeasurement"><code class="docutils literal notranslate"><span class="pre">IidmDiscreteMeasurement</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_generator">VeraGridEngine.IO.iidm.devices.iidm_generator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_generator.IidmGenerator"><code class="docutils literal notranslate"><span class="pre">IidmGenerator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_generator.IidmGeneratorShortCircuit"><code class="docutils literal notranslate"><span class="pre">IidmGeneratorShortCircuit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit">VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit.IidmIdentifiableShortCircuit"><code class="docutils literal notranslate"><span class="pre">IidmIdentifiableShortCircuit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_line">VeraGridEngine.IO.iidm.devices.iidm_line module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_line.IidmLine"><code class="docutils literal notranslate"><span class="pre">IidmLine</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_load">VeraGridEngine.IO.iidm.devices.iidm_load module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_load.IidmLoad"><code class="docutils literal notranslate"><span class="pre">IidmLoad</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology">VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology.IidmNodeBreakerTopology"><code class="docutils literal notranslate"><span class="pre">IidmNodeBreakerTopology</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.iidm_object">VeraGridEngine.IO.iidm.devices.iidm_object module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject"><code class="docutils literal notranslate"><span class="pre">IidmObject</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_prop_value"><code class="docutils literal notranslate"><span class="pre">IidmObject.get_prop_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_properties"><code class="docutils literal notranslate"><span class="pre">IidmObject.get_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.get_rdfid"><code class="docutils literal notranslate"><span class="pre">IidmObject.get_rdfid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_object.IidmObject.register_property"><code class="docutils literal notranslate"><span class="pre">IidmObject.register_property()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.observability_area">VeraGridEngine.IO.iidm.devices.observability_area module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.observability_area.ObservabilityArea"><code class="docutils literal notranslate"><span class="pre">ObservabilityArea</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.operating_status">VeraGridEngine.IO.iidm.devices.operating_status module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.operating_status.OperatingStatus"><code class="docutils literal notranslate"><span class="pre">OperatingStatus</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.rtesubstation">VeraGridEngine.IO.iidm.devices.rtesubstation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.rtesubstation.IidmSubstation"><code class="docutils literal notranslate"><span class="pre">IidmSubstation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.shunt">VeraGridEngine.IO.iidm.devices.shunt module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.shunt.Shunt"><code class="docutils literal notranslate"><span class="pre">Shunt</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.standby_automation">VeraGridEngine.IO.iidm.devices.standby_automation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.standby_automation.StandbyAutomaton"><code class="docutils literal notranslate"><span class="pre">StandbyAutomaton</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.startup">VeraGridEngine.IO.iidm.devices.startup module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.startup.Startup"><code class="docutils literal notranslate"><span class="pre">Startup</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.static_var_compensator">VeraGridEngine.IO.iidm.devices.static_var_compensator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.static_var_compensator.StaticVarCompensator"><code class="docutils literal notranslate"><span class="pre">StaticVarCompensator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.switch">VeraGridEngine.IO.iidm.devices.switch module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.switch.Switch"><code class="docutils literal notranslate"><span class="pre">Switch</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.two_winding_transformer">VeraGridEngine.IO.iidm.devices.two_winding_transformer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.two_winding_transformer.PhaseTapChanger"><code class="docutils literal notranslate"><span class="pre">PhaseTapChanger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.two_winding_transformer.RatioTapChanger"><code class="docutils literal notranslate"><span class="pre">RatioTapChanger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.two_winding_transformer.RatioTapChangerStep"><code class="docutils literal notranslate"><span class="pre">RatioTapChangerStep</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.two_winding_transformer.TwoWindingsTransformer"><code class="docutils literal notranslate"><span class="pre">TwoWindingsTransformer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices.voltage_level">VeraGridEngine.IO.iidm.devices.voltage_level module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.voltage_level.IidmVoltageLevel"><code class="docutils literal notranslate"><span class="pre">IidmVoltageLevel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.voltage_level.IidmVoltageLevel.to_veragrid"><code class="docutils literal notranslate"><span class="pre">IidmVoltageLevel.to_veragrid()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#module-VeraGridEngine.IO.iidm.devices">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.iidm.iidm_parser">
+<span id="veragridengine-io-iidm-iidm-parser-module"></span><h2>VeraGridEngine.IO.iidm.iidm_parser module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.iidm_parser" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.iidm_parser.parse_xiidm_file">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.iidm_parser.</span></span><span class="sig-name descname"><span class="pre">parse_xiidm_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.IO.iidm.devices.html#VeraGridEngine.IO.iidm.devices.iidm_circuit.IidmCircuit" title="VeraGridEngine.IO.iidm.devices.iidm_circuit.IidmCircuit"><span class="pre">IidmCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/iidm_parser.html#parse_xiidm_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.iidm_parser.parse_xiidm_file" title="Link to this definition"></a></dt>
+<dd><p>Parse Xiidm to IidmCircuit
+:param file_path: xiidm file path
+:return: IidmCircuit</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.iidm_parser.strip_ns">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.iidm_parser.</span></span><span class="sig-name descname"><span class="pre">strip_ns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/iidm_parser.html#strip_ns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.iidm_parser.strip_ns" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tag</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm.iidm_parser_pypowsybl">
+<span id="veragridengine-io-iidm-iidm-parser-pypowsybl-module"></span><h2>VeraGridEngine.IO.iidm.iidm_parser_pypowsybl module<a class="headerlink" href="#module-VeraGridEngine.IO.iidm.iidm_parser_pypowsybl" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.IidmParser">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.</span></span><span class="sig-name descname"><span class="pre">IidmParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/iidm_parser_pypowsybl.html#IidmParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.IidmParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Xiidm file parser</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.IidmParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/iidm/iidm_parser_pypowsybl.html#IidmParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.iidm.iidm_parser_pypowsybl.IidmParser.parse" title="Link to this definition"></a></dt>
+<dd><p>Convert the PowSybl structures to  deeac
+:return: Network</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.iidm">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.iidm" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

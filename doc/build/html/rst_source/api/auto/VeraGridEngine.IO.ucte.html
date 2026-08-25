@@ -1,0 +1,1104 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.ucte package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.ucte package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.ucte.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-ucte-package">
+<h1>VeraGridEngine.IO.ucte package<a class="headerlink" href="#veragridengine-io-ucte-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html">VeraGridEngine.IO.ucte.devices package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_base">VeraGridEngine.IO.ucte.devices.ucte_base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.coalesce_number"><code class="docutils literal notranslate"><span class="pre">coalesce_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.is_defined_number"><code class="docutils literal notranslate"><span class="pre">is_defined_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_float"><code class="docutils literal notranslate"><span class="pre">sub_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_int"><code class="docutils literal notranslate"><span class="pre">sub_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_optional_float"><code class="docutils literal notranslate"><span class="pre">sub_optional_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_optional_int"><code class="docutils literal notranslate"><span class="pre">sub_optional_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.sub_str"><code class="docutils literal notranslate"><span class="pre">sub_str()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_float"><code class="docutils literal notranslate"><span class="pre">try_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_int"><code class="docutils literal notranslate"><span class="pre">try_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_optional_float"><code class="docutils literal notranslate"><span class="pre">try_optional_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.try_optional_int"><code class="docutils literal notranslate"><span class="pre">try_optional_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_base.ucte_split"><code class="docutils literal notranslate"><span class="pre">ucte_split()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_circuit">VeraGridEngine.IO.ucte.devices.ucte_circuit module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><code class="docutils literal notranslate"><span class="pre">UcteCircuit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.check_file_extension"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.check_file_extension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.fuse_comments"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.fuse_comments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.get_transformer_regulation"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.get_transformer_regulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.get_transformers_tap_table"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.get_transformers_tap_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.normalize"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.normalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.parse_file"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.parse_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.summary"><code class="docutils literal notranslate"><span class="pre">UcteCircuit.summary()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_comment">VeraGridEngine.IO.ucte.devices.ucte_comment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_comment.UcteComment"><code class="docutils literal notranslate"><span class="pre">UcteComment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_comment.UcteComment.parse"><code class="docutils literal notranslate"><span class="pre">UcteComment.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_exchange_power">VeraGridEngine.IO.ucte.devices.ucte_exchange_power module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_exchange_power.UcteExchangePower"><code class="docutils literal notranslate"><span class="pre">UcteExchangePower</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_exchange_power.UcteExchangePower.parse"><code class="docutils literal notranslate"><span class="pre">UcteExchangePower.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_line">VeraGridEngine.IO.ucte.devices.ucte_line module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_line.UcteLine"><code class="docutils literal notranslate"><span class="pre">UcteLine</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_line.UcteLine.is_active_and_reducible"><code class="docutils literal notranslate"><span class="pre">UcteLine.is_active_and_reducible()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_line.UcteLine.parse"><code class="docutils literal notranslate"><span class="pre">UcteLine.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_node">VeraGridEngine.IO.ucte.devices.ucte_node module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode"><code class="docutils literal notranslate"><span class="pre">UcteNode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.has_gen"><code class="docutils literal notranslate"><span class="pre">UcteNode.has_gen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.has_load"><code class="docutils literal notranslate"><span class="pre">UcteNode.has_load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.is_generator"><code class="docutils literal notranslate"><span class="pre">UcteNode.is_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.is_regulating_voltage"><code class="docutils literal notranslate"><span class="pre">UcteNode.is_regulating_voltage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.normalize"><code class="docutils literal notranslate"><span class="pre">UcteNode.normalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.UcteNode.parse"><code class="docutils literal notranslate"><span class="pre">UcteNode.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.get_default_power_limit"><code class="docutils literal notranslate"><span class="pre">get_default_power_limit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_node.try_parse_voltage"><code class="docutils literal notranslate"><span class="pre">try_parse_voltage()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_transformer">VeraGridEngine.IO.ucte.devices.ucte_transformer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer.UcteTransformer"><code class="docutils literal notranslate"><span class="pre">UcteTransformer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer.UcteTransformer.get_primary_key"><code class="docutils literal notranslate"><span class="pre">UcteTransformer.get_primary_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer.UcteTransformer.is_active_and_reducible"><code class="docutils literal notranslate"><span class="pre">UcteTransformer.is_active_and_reducible()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer.UcteTransformer.parse"><code class="docutils literal notranslate"><span class="pre">UcteTransformer.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation">VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation.UcteTransformerRegulation"><code class="docutils literal notranslate"><span class="pre">UcteTransformerRegulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation.UcteTransformerRegulation.get_primary_key"><code class="docutils literal notranslate"><span class="pre">UcteTransformerRegulation.get_primary_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation.UcteTransformerRegulation.has_angle_regulation"><code class="docutils literal notranslate"><span class="pre">UcteTransformerRegulation.has_angle_regulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation.UcteTransformerRegulation.has_phase_regulation"><code class="docutils literal notranslate"><span class="pre">UcteTransformerRegulation.has_phase_regulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation.UcteTransformerRegulation.normalize"><code class="docutils literal notranslate"><span class="pre">UcteTransformerRegulation.normalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation.UcteTransformerRegulation.parse"><code class="docutils literal notranslate"><span class="pre">UcteTransformerRegulation.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices.ucte_transformer_tap_table">VeraGridEngine.IO.ucte.devices.ucte_transformer_tap_table module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_tap_table.UcteTransformerTapTable"><code class="docutils literal notranslate"><span class="pre">UcteTransformerTapTable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_tap_table.UcteTransformerTapTable.get_primary_key"><code class="docutils literal notranslate"><span class="pre">UcteTransformerTapTable.get_primary_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_transformer_tap_table.UcteTransformerTapTable.parse"><code class="docutils literal notranslate"><span class="pre">UcteTransformerTapTable.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#module-VeraGridEngine.IO.ucte.devices">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.ucte.ucte_to_veragrid">
+<span id="veragridengine-io-ucte-ucte-to-veragrid-module"></span><h2>VeraGridEngine.IO.ucte.ucte_to_veragrid module<a class="headerlink" href="#module-VeraGridEngine.IO.ucte.ucte_to_veragrid" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.add_fixed_shunt_from_ucte_line">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">add_fixed_shunt_from_ucte_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#add_fixed_shunt_from_ucte_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_fixed_shunt_from_ucte_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.add_standard_line">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">add_standard_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#add_standard_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_standard_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">add_switch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#add_switch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch_from_line">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">add_switch_from_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#add_switch_from_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch_from_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch_from_transformer">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">add_switch_from_transformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#add_switch_from_transformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch_from_transformer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.add_transformer_from_mismatch_line">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">add_transformer_from_mismatch_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#add_transformer_from_mismatch_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_transformer_from_mismatch_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.apply_tap_table">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">apply_tap_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tap_tables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_tap_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_tap_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#apply_tap_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.apply_tap_table" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.build_current_tap_state">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">build_current_tap_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tap_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapChangerTypes" title="VeraGridEngine.enumerations.TapChangerTypes"><span class="pre">TapChangerTypes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#build_current_tap_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_current_tap_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.build_tap_changer_type">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">build_tap_changer_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regulator</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapChangerTypes" title="VeraGridEngine.enumerations.TapChangerTypes"><span class="pre">TapChangerTypes</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#build_tap_changer_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_tap_changer_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.build_technologies">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">build_technologies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#build_technologies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_technologies" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.build_transformer_tap_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">build_transformer_tap_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tap_tables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_fixed_tap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#build_transformer_tap_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_transformer_tap_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.build_xnode_active_line_counts">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">build_xnode_active_line_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#build_xnode_active_line_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_xnode_active_line_counts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.choose_tap_number">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">choose_tap_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regulator</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#choose_tap_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.choose_tap_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.compute_switch_rate">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">compute_switch_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#compute_switch_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.compute_switch_rate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.compute_tap_span">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">compute_tap_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tap_tables</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#compute_tap_span"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.compute_tap_span" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.convert_ucte_to_veragrid">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_ucte_to_veragrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#convert_ucte_to_veragrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.convert_ucte_to_veragrid" title="Link to this definition"></a></dt>
+<dd><p>Convert UCTE grid to VeraGrid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.discover_nominal_voltages">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">discover_nominal_voltages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#discover_nominal_voltages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.discover_nominal_voltages" title="Link to this definition"></a></dt>
+<dd><p>Attempt to discover the nominal voltage for each level character.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.get_current_limit_a">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">get_current_limit_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#get_current_limit_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.get_current_limit_a" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.get_current_limit_ka">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">get_current_limit_ka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#get_current_limit_ka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.get_current_limit_ka" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.get_default_power_limit">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">get_default_power_limit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#get_default_power_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.get_default_power_limit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.has_zero_transformer_impedance">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">has_zero_transformer_impedance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#has_zero_transformer_impedance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.has_zero_transformer_impedance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.is_canonical_ucte_node_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">is_canonical_ucte_node_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#is_canonical_ucte_node_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_canonical_ucte_node_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">is_fictitious_shunt_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#is_fictitious_shunt_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_line">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">is_fictitious_shunt_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#is_fictitious_shunt_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_node">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">is_fictitious_shunt_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_node</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#is_fictitious_shunt_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_node" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.is_standard_ucte_country_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">is_standard_ucte_country_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#is_standard_ucte_country_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_standard_ucte_country_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.is_xnode_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">is_xnode_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#is_xnode_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_xnode_code" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_exchange_power">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">parse_exchange_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#parse_exchange_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_exchange_power" title="Link to this definition"></a></dt>
+<dd><p>Exchange powers are currently ignored by the VeraGrid UCTE importer.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_lines">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">parse_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#parse_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_lines" title="Link to this definition"></a></dt>
+<dd><p>Parse UCTE lines and couplers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_nodes">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">parse_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#parse_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_nodes" title="Link to this definition"></a></dt>
+<dd><p>Create buses and their injections.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_transformer">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">parse_transformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#parse_transformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_transformer" title="Link to this definition"></a></dt>
+<dd><p>Parse UCTE transformers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.repair_nominal_voltages_from_references">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">repair_nominal_voltages_from_references</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit" title="VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit"><span class="pre">UcteCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#repair_nominal_voltages_from_references"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.repair_nominal_voltages_from_references" title="Link to this definition"></a></dt>
+<dd><p>Fix clearly inconsistent nominal voltages in non-canonical UCTE variants.</p>
+<p>If Vref/Vnom is outside a realistic range for steady-state operation,
+infer Vnom from Vref directly using a conservative nominal-level palette.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.same_nominal_voltage">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">same_nominal_voltage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#same_nominal_voltage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.same_nominal_voltage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.should_import_mismatch_line_as_transformer">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">should_import_mismatch_line_as_transformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#should_import_mismatch_line_as_transformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.should_import_mismatch_line_as_transformer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.snap_nominal_voltage_from_reference">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">snap_nominal_voltage_from_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voltage_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#snap_nominal_voltage_from_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.snap_nominal_voltage_from_reference" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.ucte_to_veragrid.use_legacy_ucte_transformer_orientation">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.ucte_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">use_legacy_ucte_transformer_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ucte_elm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_node1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_node2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/ucte_to_veragrid.html#use_legacy_ucte_transformer_orientation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.ucte_to_veragrid.use_legacy_ucte_transformer_orientation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.ucte.veragrid_to_ucte">
+<span id="veragridengine-io-ucte-veragrid-to-ucte-module"></span><h2>VeraGridEngine.IO.ucte.veragrid_to_ucte module<a class="headerlink" href="#module-VeraGridEngine.IO.ucte.veragrid_to_ucte" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBranchCounter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">UcteBranchCounter</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#UcteBranchCounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBranchCounter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Assign one-character UCTE order codes per branch endpoint pair.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBranchCounter.get_next_code">
+<span class="sig-name descname"><span class="pre">get_next_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#UcteBranchCounter.get_next_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBranchCounter.get_next_code" title="Link to this definition"></a></dt>
+<dd><p>Get the next order code for one endpoint pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_1</strong> – First node code.</p></li>
+<li><p><strong>node_2</strong> – Second node code.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One-character UCTE order code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">UcteBusAggregate</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#UcteBusAggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Store the bus-level values required by one exported UCTE node.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.active_gen_mw">
+<span class="sig-name descname"><span class="pre">active_gen_mw</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.active_gen_mw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.active_load_mw">
+<span class="sig-name descname"><span class="pre">active_load_mw</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.active_load_mw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.has_generation_limits">
+<span class="sig-name descname"><span class="pre">has_generation_limits</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.has_generation_limits" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.has_generation_record">
+<span class="sig-name descname"><span class="pre">has_generation_record</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.has_generation_record" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.max_gen_mvar">
+<span class="sig-name descname"><span class="pre">max_gen_mvar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.max_gen_mvar" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.max_gen_mw">
+<span class="sig-name descname"><span class="pre">max_gen_mw</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.max_gen_mw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.min_gen_mvar">
+<span class="sig-name descname"><span class="pre">min_gen_mvar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.min_gen_mvar" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.min_gen_mw">
+<span class="sig-name descname"><span class="pre">min_gen_mw</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.min_gen_mw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.node_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.plant_type">
+<span class="sig-name descname"><span class="pre">plant_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.plant_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.reactive_gen_mvar">
+<span class="sig-name descname"><span class="pre">reactive_gen_mvar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.reactive_gen_mvar" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.reactive_load_mvar">
+<span class="sig-name descname"><span class="pre">reactive_load_mvar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.reactive_load_mvar" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.shunt_b_mvar">
+<span class="sig-name descname"><span class="pre">shunt_b_mvar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.shunt_b_mvar" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.voltage_reference_kv">
+<span class="sig-name descname"><span class="pre">voltage_reference_kv</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate.voltage_reference_kv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.add_generator_like_device">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">add_generator_like_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#add_generator_like_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.add_generator_like_device" title="Link to this definition"></a></dt>
+<dd><p>Add one generator-like device to the bus aggregate using UCTE sign semantics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregate</strong> – Target bus aggregate.</p></li>
+<li><p><strong>device</strong> – Generator-like device.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.add_load_like_device">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">add_load_like_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#add_load_like_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.add_load_like_device" title="Link to this definition"></a></dt>
+<dd><p>Add one load-like device to the bus aggregate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregate</strong> – Target bus aggregate.</p></li>
+<li><p><strong>device</strong> – Load or load-mode external grid.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.build_bus_aggregate">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">build_bus_aggregate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_injections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#build_bus_aggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.build_bus_aggregate" title="Link to this definition"></a></dt>
+<dd><p>Aggregate all supported VeraGrid injections attached to one bus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>bus</strong> – Bus to aggregate.</p></li>
+<li><p><strong>bus_injections</strong> – Bus-grouped injection lookup.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filled node aggregate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.build_bus_node_code_map">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">build_bus_node_code_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#build_bus_node_code_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.build_bus_node_code_map" title="Link to this definition"></a></dt>
+<dd><p>Build one deterministic UCTE node-code map for every exported bus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bus-to-node-code mapping.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.build_shunt_node_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">build_shunt_node_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#build_shunt_node_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.build_shunt_node_code" title="Link to this definition"></a></dt>
+<dd><p>Build the fictitious-shunt node code paired to one exported bus code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bus_code</strong> – Main bus node code.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fictitious-shunt node code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.format_line_row">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">format_line_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resistance_ohm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactance_ohm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">susceptance_us</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_limit_a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#format_line_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.format_line_row" title="Link to this definition"></a></dt>
+<dd><p>Format one UCTE line record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_1</strong> – First node code.</p></li>
+<li><p><strong>node_2</strong> – Second node code.</p></li>
+<li><p><strong>order_code</strong> – One-character order code.</p></li>
+<li><p><strong>status</strong> – UCTE status code.</p></li>
+<li><p><strong>resistance_ohm</strong> – Series resistance in ohm.</p></li>
+<li><p><strong>reactance_ohm</strong> – Series reactance in ohm.</p></li>
+<li><p><strong>susceptance_us</strong> – Total shunt susceptance in uS.</p></li>
+<li><p><strong>current_limit_a</strong> – Current limit in A.</p></li>
+<li><p><strong>name</strong> – Device name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Line row text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.format_node_row">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">format_node_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#format_node_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.format_node_row" title="Link to this definition"></a></dt>
+<dd><p>Format one UCTE node record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_code</strong> – Exported node code.</p></li>
+<li><p><strong>bus</strong> – Source bus.</p></li>
+<li><p><strong>aggregate</strong> – Aggregated node state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Node row text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.format_optional_float">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">format_optional_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#format_optional_float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.format_optional_float" title="Link to this definition"></a></dt>
+<dd><p>Format one optional float for tolerant UCTE text output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – Numeric value.</p></li>
+<li><p><strong>decimals</strong> – Number of decimal places.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted text or an empty string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.format_optional_float_width">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">format_optional_float_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#format_optional_float_width"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.format_optional_float_width" title="Link to this definition"></a></dt>
+<dd><p>Format one optional float using one strict fixed-width UCTE field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – Numeric value.</p></li>
+<li><p><strong>width</strong> – Field width.</p></li>
+<li><p><strong>decimals</strong> – Number of decimal places.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fixed-width text or blanks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.format_transformer_row">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">format_transformer_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rated_voltage_1_kv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rated_voltage_2_kv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nominal_power_mva</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resistance_ohm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactance_ohm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">susceptance_us</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conductance_us</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_limit_a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#format_transformer_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.format_transformer_row" title="Link to this definition"></a></dt>
+<dd><p>Format one UCTE transformer record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_1</strong> – Non-regulated winding node code.</p></li>
+<li><p><strong>node_2</strong> – Regulated winding node code.</p></li>
+<li><p><strong>order_code</strong> – One-character order code.</p></li>
+<li><p><strong>status</strong> – UCTE status code.</p></li>
+<li><p><strong>rated_voltage_1_kv</strong> – Rated voltage on node1 side.</p></li>
+<li><p><strong>rated_voltage_2_kv</strong> – Rated voltage on node2 side.</p></li>
+<li><p><strong>nominal_power_mva</strong> – Nominal power in MVA.</p></li>
+<li><p><strong>resistance_ohm</strong> – Series resistance in ohm.</p></li>
+<li><p><strong>reactance_ohm</strong> – Series reactance in ohm.</p></li>
+<li><p><strong>susceptance_us</strong> – Total shunt susceptance in uS.</p></li>
+<li><p><strong>conductance_us</strong> – Total shunt conductance in uS.</p></li>
+<li><p><strong>current_limit_a</strong> – Current limit in A.</p></li>
+<li><p><strong>name</strong> – Device name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transformer row text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_bus_voltage_reference">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_bus_voltage_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_bus_voltage_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_bus_voltage_reference" title="Link to this definition"></a></dt>
+<dd><p>Convert the VeraGrid bus voltage seed to the UCTE <code class="docutils literal notranslate"><span class="pre">Uref</span></code> value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bus</strong> – VeraGrid bus.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voltage reference in kV.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_country_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_country_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_country_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_country_code" title="Link to this definition"></a></dt>
+<dd><p>Get the UCTE country code to use for one bus block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bus</strong> – VeraGrid bus.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two-letter country code or <code class="docutils literal notranslate"><span class="pre">XX</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_line_current_limit_a">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_line_current_limit_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vnom_kv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_line_current_limit_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_line_current_limit_a" title="Link to this definition"></a></dt>
+<dd><p>Convert one VeraGrid line rate to a UCTE current limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line</strong> – VeraGrid line.</p></li>
+<li><p><strong>vnom_kv</strong> – Nominal voltage in kV.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current limit in A or <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_line_ucte_impedance">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_line_ucte_impedance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_line_ucte_impedance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_line_ucte_impedance" title="Link to this definition"></a></dt>
+<dd><p>Convert one VeraGrid line impedance to UCTE units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line</strong> – VeraGrid line.</p></li>
+<li><p><strong>circuit</strong> – Circuit base values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resistance in ohm, reactance in ohm, susceptance in uS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_snapshot_datetime">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_snapshot_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_snapshot_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_snapshot_datetime" title="Link to this definition"></a></dt>
+<dd><p>Get the export timestamp represented by one UCTE file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Snapshot datetime.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_transformer_current_limit_a">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_transformer_current_limit_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transformer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_transformer_current_limit_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_transformer_current_limit_a" title="Link to this definition"></a></dt>
+<dd><p>Convert one VeraGrid transformer rate to a UCTE current limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformer</strong> – VeraGrid transformer.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current limit in A or <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_transformer_ucte_impedance">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_transformer_ucte_impedance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transformer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rated_voltage_1_kv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_transformer_ucte_impedance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_transformer_ucte_impedance" title="Link to this definition"></a></dt>
+<dd><p>Convert one VeraGrid transformer impedance to UCTE units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformer</strong> – VeraGrid transformer.</p></li>
+<li><p><strong>circuit</strong> – Circuit base values.</p></li>
+<li><p><strong>rated_voltage_1_kv</strong> – UCTE rated voltage on node1 side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resistance in ohm, reactance in ohm, susceptance in uS, conductance in uS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.get_ucte_voltage_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">get_ucte_voltage_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voltage_kv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#get_ucte_voltage_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.get_ucte_voltage_code" title="Link to this definition"></a></dt>
+<dd><p>Map one nominal voltage value to the closest standard UCTE voltage code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>voltage_kv</strong> – Nominal voltage in kV.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One-character voltage code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.is_standard_ucte_country_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">is_standard_ucte_country_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#is_standard_ucte_country_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.is_standard_ucte_country_code" title="Link to this definition"></a></dt>
+<dd><p>Check if one country code matches the standard UCTE two-letter form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>country_code</strong> – Country code to inspect.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the code is standard.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.is_usable_ucte_bus_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">is_usable_ucte_bus_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#is_usable_ucte_bus_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.is_usable_ucte_bus_code" title="Link to this definition"></a></dt>
+<dd><p>Check if one bus code can be reused directly as a canonical UCTE node code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_code</strong> – Candidate node code.</p></li>
+<li><p><strong>bus</strong> – VeraGrid bus.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the code is already UCTE-safe.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.normalize_reusable_noncanonical_ucte_bus_code">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">normalize_reusable_noncanonical_ucte_bus_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#normalize_reusable_noncanonical_ucte_bus_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.normalize_reusable_noncanonical_ucte_bus_code" title="Link to this definition"></a></dt>
+<dd><p>Normalize one existing non-canonical node code for roundtrip preservation.</p>
+<p>This keeps non-canonical UCTE identifiers from imported synthetic datasets
+so that the importer can continue applying its nominal-voltage repair
+heuristics on roundtrip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node_code</strong> – Candidate node code.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized 8-character code or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.update_aggregate_from_external_grid">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">update_aggregate_from_external_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#update_aggregate_from_external_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.update_aggregate_from_external_grid" title="Link to this definition"></a></dt>
+<dd><p>Apply one external-grid device to the UCTE node aggregate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregate</strong> – Target bus aggregate.</p></li>
+<li><p><strong>bus</strong> – Parent bus.</p></li>
+<li><p><strong>external_grid</strong> – External-grid device.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.update_aggregate_voltage_control_from_generator">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">update_aggregate_voltage_control_from_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#update_aggregate_voltage_control_from_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.update_aggregate_voltage_control_from_generator" title="Link to this definition"></a></dt>
+<dd><p>Apply one generator voltage-control mode to the aggregate node state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregate</strong> – Target bus aggregate.</p></li>
+<li><p><strong>bus</strong> – Parent bus.</p></li>
+<li><p><strong>generator</strong> – Generator or battery.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.update_generation_limits_from_generator">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">update_generation_limits_from_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#update_generation_limits_from_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.update_generation_limits_from_generator" title="Link to this definition"></a></dt>
+<dd><p>Accumulate UCTE generation limits from one VeraGrid generator-like device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregate</strong> – Target bus aggregate.</p></li>
+<li><p><strong>generator</strong> – Generator or battery device.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.use_legacy_transformer_orientation">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">use_legacy_transformer_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bus_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#use_legacy_transformer_orientation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.use_legacy_transformer_orientation" title="Link to this definition"></a></dt>
+<dd><p>Select the transformer orientation expected by the UCTE importer.</p>
+<p>Standard country-coded UCTE data uses the legacy regulated/non-regulated
+winding convention, while IEEE-like synthetic files use the direct
+<code class="docutils literal notranslate"><span class="pre">node1</span> <span class="pre">-&gt;</span> <span class="pre">node2</span></code> orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bus_from</strong> – VeraGrid transformer <code class="docutils literal notranslate"><span class="pre">bus_from</span></code> side.</p></li>
+<li><p><strong>bus_to</strong> – VeraGrid transformer <code class="docutils literal notranslate"><span class="pre">bus_to</span></code> side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the legacy UCTE orientation must be exported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.write_comment_block">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">write_comment_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_pointer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TextIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#write_comment_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.write_comment_block" title="Link to this definition"></a></dt>
+<dd><p>Write the UCTE comment block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+<li><p><strong>file_pointer</strong> – Open output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.write_empty_regulation_blocks">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">write_empty_regulation_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_pointer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TextIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#write_empty_regulation_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.write_empty_regulation_blocks" title="Link to this definition"></a></dt>
+<dd><p>Write the optional UCTE blocks that are not populated yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_pointer</strong> – Open output file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.write_line_block">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">write_line_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_code_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate_by_bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_pointer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TextIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#write_line_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.write_line_block" title="Link to this definition"></a></dt>
+<dd><p>Write the UCTE line block, including switch couplers and fictitious shunts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>bus_code_map</strong> – Bus-to-node-code mapping.</p></li>
+<li><p><strong>aggregate_by_bus</strong> – Precomputed bus aggregates.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+<li><p><strong>file_pointer</strong> – Open output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.write_node_blocks_from_aggregates">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">write_node_blocks_from_aggregates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_code_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate_by_bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate" title="VeraGridEngine.IO.ucte.veragrid_to_ucte.UcteBusAggregate"><span class="pre">UcteBusAggregate</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_pointer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TextIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#write_node_blocks_from_aggregates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.write_node_blocks_from_aggregates" title="Link to this definition"></a></dt>
+<dd><p>Write the UCTE node sections grouped by country block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>bus_code_map</strong> – Bus-to-node-code mapping.</p></li>
+<li><p><strong>aggregate_by_bus</strong> – Precomputed bus aggregates.</p></li>
+<li><p><strong>file_pointer</strong> – Open output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.write_transformer_block">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">write_transformer_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_code_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_pointer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TextIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#write_transformer_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.write_transformer_block" title="Link to this definition"></a></dt>
+<dd><p>Write the UCTE transformer block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>bus_code_map</strong> – Bus-to-node-code mapping.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index.</p></li>
+<li><p><strong>logger</strong> – Export logger.</p></li>
+<li><p><strong>file_pointer</strong> – Open output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.ucte.veragrid_to_ucte.write_ucte">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.ucte.veragrid_to_ucte.</span></span><span class="sig-name descname"><span class="pre">write_ucte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/ucte/veragrid_to_ucte.html#write_ucte"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.ucte.veragrid_to_ucte.write_ucte" title="Link to this definition"></a></dt>
+<dd><p>Write one VeraGrid circuit as one UCTE text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> – Target file path.</p></li>
+<li><p><strong>circuit</strong> – Circuit to export.</p></li>
+<li><p><strong>t_idx</strong> – Optional profile index. <code class="docutils literal notranslate"><span class="pre">None</span></code> means snapshot export.</p></li>
+<li><p><strong>logger</strong> – Optional logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logger with export messages.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.ucte">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.ucte" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

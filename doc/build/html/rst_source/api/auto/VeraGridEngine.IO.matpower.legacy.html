@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.matpower.legacy package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.matpower.legacy package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.matpower.legacy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-matpower-legacy-package">
+<h1>VeraGridEngine.IO.matpower.legacy package<a class="headerlink" href="#veragridengine-io-matpower-legacy-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.matpower.legacy.matpower_branch_definitions">
+<span id="veragridengine-io-matpower-legacy-matpower-branch-definitions-module"></span><h2>VeraGridEngine.IO.matpower.legacy.matpower_branch_definitions module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.legacy.matpower_branch_definitions" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.matpower.legacy.matpower_bus_definitions">
+<span id="veragridengine-io-matpower-legacy-matpower-bus-definitions-module"></span><h2>VeraGridEngine.IO.matpower.legacy.matpower_bus_definitions module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.legacy.matpower_bus_definitions" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions">
+<span id="veragridengine-io-matpower-legacy-matpower-gen-definitions-module"></span><h2>VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions.gen_headers">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions.</span></span><span class="sig-name descname"><span class="pre">gen_headers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['bus',</span> <span class="pre">'Pg',</span> <span class="pre">'Qg',</span> <span class="pre">'Qmax',</span> <span class="pre">'Qmin',</span> <span class="pre">'Vg',</span> <span class="pre">'mBase',</span> <span class="pre">'status',</span> <span class="pre">'Pmax',</span> <span class="pre">'Pmin',</span> <span class="pre">'Pc1',</span> <span class="pre">'Pc2',</span> <span class="pre">'Qc1min',</span> <span class="pre">'Qc1max',</span> <span class="pre">'Qc2min',</span> <span class="pre">'Qc2max',</span> <span class="pre">'ramp_agc',</span> <span class="pre">'ramp_10',</span> <span class="pre">'ramp_30',</span> <span class="pre">'ramp_q',</span> <span class="pre">'apf',</span> <span class="pre">'MU_PMAX',</span> <span class="pre">'MU_PMIN',</span> <span class="pre">'MU_QMAX',</span> <span class="pre">'MU_QMIN',</span> <span class="pre">'Dispatchable',</span> <span class="pre">'Fix_power']</span></span><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions.gen_headers" title="Link to this definition"></a></dt>
+<dd><p>Defines constants for named column indices to gencost matrix.</p>
+<p>Some examples of usage, after defining the constants using the line above,
+are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">gencost</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="n">STARTUP</span><span class="p">]</span>       <span class="c1"># get startup cost of generator 4</span>
+<span class="n">gencost</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">NCOST</span><span class="p">:</span><span class="n">COST</span><span class="o">+</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">POLYNOMIAL</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="c1"># set the cost of generator 2 to a linear function COST = 30 * Pg</span>
+</pre></div>
+</div>
+<p>The index, name and meaning of each column of the gencost matrix is given
+below:</p>
+<dl>
+<dt>columns 1-5</dt><dd><ol class="arabic simple">
+<li><p>C{MODEL}       cost model, 1 - piecewise linear, 2 - polynomial</p></li>
+<li><p>C{STARTUP}     startup cost in US dollars</p></li>
+<li><p>C{SHUTDOWN}    shutdown cost in US dollars</p></li>
+</ol>
+<p>4.  C{NCOST}       number of cost coefficients to follow for polynomial
+cost function, or number of data points for piecewise linear
+5.  C{COST}        1st column of cost parameters
+cost data defining total cost function
+For polynomial cost (highest order coeff first):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">cn</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c0</span>
+</pre></div>
+</div>
+<p>where the polynomial is C{c0 + c1*P + … + cn*P^n}
+For piecewise linear cost:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>where C{x0 &lt; x1 &lt; x2 &lt; …} and the points C{(x0,y0), (x1,y1),
+(x2,y2), …} are the end- and break-points of the total cost function.</p>
+</dd>
+<dt>additional constants, used to assign/compare values in the C{MODEL} column</dt><dd><ol class="arabic simple">
+<li><p>C{PW_LINEAR}   piecewise linear generator cost model</p></li>
+<li><p>C{POLYNOMIAL}  polynomial generator cost model</p></li>
+</ol>
+</dd>
+</dl>
+<p>&#64;author: Ray Zimmerman (PSERC Cornell)
+&#64;author: Richard Lincoln</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.matpower.legacy.matpower_parser">
+<span id="veragridengine-io-matpower-legacy-matpower-parser-module"></span><h2>VeraGridEngine.IO.matpower.legacy.matpower_parser module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.legacy.matpower_parser" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.arr_to_dict">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">arr_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#arr_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.arr_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Match header-data pair into a dictionary
+:param hdr: array of header data
+:param arr: array of values
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.find_between">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">find_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#find_between"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.find_between" title="Link to this definition"></a></dt>
+<dd><p>Find sting between two sub-strings
+Args:</p>
+<blockquote>
+<div><p>s: Main string
+first: first sub-string
+last: second sub-string</p>
+</div></blockquote>
+<p>Example find_between(‘[Hello]’, ‘[’, ‘]’)  -&gt; returns ‘Hello’
+Returns:</p>
+<blockquote>
+<div><p>String between the first and second sub-strings, if any was found otherwise returns an empty string</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.get_branches">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">get_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#get_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.get_branches" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong></p></li>
+<li><p><strong>bus_dict</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.get_buses">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">get_buses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#get_buses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.get_buses" title="Link to this definition"></a></dt>
+<dd><p>Get matpower buses structure
+:param circuit: MultiCircuit
+:return: list of buses structure, buses dictionary {Bus: bus int}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.get_generation">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">get_generation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#get_generation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.get_generation" title="Link to this definition"></a></dt>
+<dd><p>Get generation and generation cost data
+:param circuit:
+:param bus_dict:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.get_matpower_case_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">get_matpower_case_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_linear_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#get_matpower_case_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.get_matpower_case_data" title="Link to this definition"></a></dt>
+<dd><p>Parse matpower .m file and get the case data structure
+:param filename: Name of the file
+:param force_linear_cost: Force linear cost when costs are found?
+:return: Matpower case data dictionary</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.interpret_data_v1">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">interpret_data_v1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#interpret_data_v1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.interpret_data_v1" title="Link to this definition"></a></dt>
+<dd><p>Pass the loaded table-like data to the  structures
+:param data: Data dictionary
+:param logger: Logger
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_areas_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">parse_areas_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#parse_areas_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_areas_data" title="Link to this definition"></a></dt>
+<dd><p>Parse Matpower / FUBM Matpower area data into VeraGrid
+:param circuit: MultiCircuit instance
+:param data: data dictionary
+:param logger: Logger
+:return: area index -&gt; object dictionary</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_branches_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">parse_branches_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_idx_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#parse_branches_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_branches_data" title="Link to this definition"></a></dt>
+<dd><p>Parse Matpower / FUBM Matpower branch data into VeraGrid
+:param circuit: MultiCircuit instance
+:param data: data dictionary
+:param bus_idx_dict: bus index -&gt; object dictionary
+:param logger: Logger
+:return: Nothing</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_buses_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">parse_buses_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_idx_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#parse_buses_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_buses_data" title="Link to this definition"></a></dt>
+<dd><p>Parse Matpower / FUBM Matpower bus data into VeraGrid
+:param circuit: MultiCircuit instance
+:param data: data dictionary
+:param area_idx_dict: area index -&gt; object dictionary
+:param logger: Logger
+:return: bus index -&gt; object dictionary</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_generators">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">parse_generators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_idx_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#parse_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_generators" title="Link to this definition"></a></dt>
+<dd><p>Parse Matpower / FUBM Matpower generator data into VeraGrid
+:param circuit: MultiCircuit instance
+:param data: data dictionary
+:param bus_idx_dict: bus index -&gt; object dictionary
+:param logger: Logger
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_matpower_file">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">parse_matpower_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'VeraGridEngine.Devices.multi_circuit.MultiCircuit'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'VeraGridEngine.basic_structures.Logger'&gt;]</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#parse_matpower_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_matpower_file" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>filename:
+export:</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.read_matpower_file">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">read_matpower_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#read_matpower_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.read_matpower_file" title="Link to this definition"></a></dt>
+<dd><p>Read a Matpower case and return the structures
+:param filename:
+:param logger:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.to_matpower">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">to_matpower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;VeraGridEngine.basic_structures.Logger</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#to_matpower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.to_matpower" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong></p></li>
+<li><p><strong>logger</strong></p></li>
+<li><p><strong>t_idx</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.legacy.matpower_parser.txt2mat">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.legacy.matpower_parser.</span></span><span class="sig-name descname"><span class="pre">txt2mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_splitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">';'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_float</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/legacy/matpower_parser.html#txt2mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.legacy.matpower_parser.txt2mat" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>txt</strong></p></li>
+<li><p><strong>line_splitter</strong></p></li>
+<li><p><strong>to_float</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.matpower.legacy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.legacy" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

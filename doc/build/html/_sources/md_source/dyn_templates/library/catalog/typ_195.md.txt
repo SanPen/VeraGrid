@@ -1,0 +1,84 @@
+# (1+sTb)(sTa)^2/(1+sTa)^4
+
+This is Basic Block Catalog type `195` (`(1+sTb)(sTa)^2/(1+sTa)^4`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**(1+sTb)(sTa)^2/(1+sTa)^4** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 4.
+- Configurable parameters: 2.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x1}{dt} = (1+sTb)(sTa)^2/(1+sTa)^4_{dx1}
+$$
+
+$$
+\frac{d x2}{dt} = (1+sTb)(sTa)^2/(1+sTa)^4_{dx2}
+$$
+
+$$
+\frac{d x3}{dt} = (1+sTb)(sTa)^2/(1+sTa)^4_{dx3}
+$$
+
+$$
+\frac{d x4}{dt} = (\frac{(1+sTb)(sTa)^2/(1+sTa)^4_{yo3} - x4}{Ta})
+$$
+
+$$
+0 = ((1+sTb)(sTa)^2/(1+sTa)^4_{dx1} - \frac{yi - x1}{Ta})
+$$
+
+$$
+0 = ((1+sTb)(sTa)^2/(1+sTa)^4_{yo1} - (x1 + Tb \cdot (1+sTb)(sTa)^2/(1+sTa)^4_{dx1}))
+$$
+
+$$
+0 = ((1+sTb)(sTa)^2/(1+sTa)^4_{dx2} - \frac{(1+sTb)(sTa)^2/(1+sTa)^4_{yo1} - x2}{Ta})
+$$
+
+$$
+0 = ((1+sTb)(sTa)^2/(1+sTa)^4_{yo2} - Ta \cdot (1+sTb)(sTa)^2/(1+sTa)^4_{dx2})
+$$
+
+$$
+0 = ((1+sTb)(sTa)^2/(1+sTa)^4_{dx3} - \frac{(1+sTb)(sTa)^2/(1+sTa)^4_{yo2} - x3}{Ta})
+$$
+
+$$
+0 = ((1+sTb)(sTa)^2/(1+sTa)^4_{yo3} - Ta \cdot (1+sTb)(sTa)^2/(1+sTa)^4_{dx3})
+$$
+
+$$
+0 = (yo - x4)
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `(1+sTb)(sTa)^2/(1+sTa)^4__x1` | Internal dynamic state | model-dependent |
+| State | `(1+sTb)(sTa)^2/(1+sTa)^4__x2` | Internal dynamic state | model-dependent |
+| State | `(1+sTb)(sTa)^2/(1+sTa)^4__x3` | Internal dynamic state | model-dependent |
+| State | `(1+sTb)(sTa)^2/(1+sTa)^4__x4` | Internal dynamic state | model-dependent |
+| Parameter | `Tb` | Configurable model parameter | model-dependent |
+| Parameter | `Ta` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

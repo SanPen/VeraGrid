@@ -1,0 +1,630 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.importer.model_description &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.importer.model_description</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.fmu.importer.model_description</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuArchiveError</span><span class="p">,</span> <span class="n">FmuModeError</span>
+
+
+<div class="viewcode-block" id="FmuVariableType">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuVariableType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuVariableType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumerate the FMI 2.0 scalar variable primitive types.</span>
+
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">REAL</span> <span class="o">=</span> <span class="s2">&quot;Real&quot;</span>
+    <span class="n">INTEGER</span> <span class="o">=</span> <span class="s2">&quot;Integer&quot;</span>
+    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s2">&quot;Boolean&quot;</span>
+    <span class="n">STRING</span> <span class="o">=</span> <span class="s2">&quot;String&quot;</span>
+    <span class="n">ENUMERATION</span> <span class="o">=</span> <span class="s2">&quot;Enumeration&quot;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuInterfaceMode">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuInterfaceMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuInterfaceMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumerate the FMI 2.0 execution modes supported by VeraGrid.</span>
+
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CO_SIMULATION</span> <span class="o">=</span> <span class="s2">&quot;CoSimulation&quot;</span>
+    <span class="n">MODEL_EXCHANGE</span> <span class="o">=</span> <span class="s2">&quot;ModelExchange&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuVariableDescription">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuVariableDescription">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuVariableDescription</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store the metadata for one FMU scalar variable.</span>
+
+<span class="sd">    :param name: FMI variable name.</span>
+<span class="sd">    :param value_reference: FMI value reference.</span>
+<span class="sd">    :param variable_type: FMI scalar primitive type.</span>
+<span class="sd">    :param causality: FMI causality string.</span>
+<span class="sd">    :param variability: FMI variability string.</span>
+<span class="sd">    :param initial: FMI initial string.</span>
+<span class="sd">    :param start: FMI start value string.</span>
+<span class="sd">    :param derivative_index: FMI derivative index if available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value_reference&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;variable_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;causality&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;variability&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;initial&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;start&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;derivative_index&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value_reference</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">variable_type</span><span class="p">:</span> <span class="n">FmuVariableType</span><span class="p">,</span>
+        <span class="n">causality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">variability</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">derivative_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the parsed scalar-variable metadata.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_reference</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">value_reference</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_type</span><span class="p">:</span> <span class="n">FmuVariableType</span> <span class="o">=</span> <span class="n">variable_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">causality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">causality</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variability</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">variability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivative_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">derivative_index</span></div>
+
+
+
+<div class="viewcode-block" id="FmuModelDescription">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuModelDescription</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store the execution metadata extracted from an FMU archive.</span>
+
+<span class="sd">    :param path: Absolute FMU path.</span>
+<span class="sd">    :param fmi_version: FMI version string.</span>
+<span class="sd">    :param model_name: Model name declared in the FMU.</span>
+<span class="sd">    :param guid: FMI GUID.</span>
+<span class="sd">    :param variable_naming_convention: FMI naming convention.</span>
+<span class="sd">    :param interface_modes: Supported FMI modes.</span>
+<span class="sd">    :param model_identifiers: Mapping from FMI mode to model identifier.</span>
+<span class="sd">    :param platforms: Available binary platforms.</span>
+<span class="sd">    :param variables: Ordered scalar variables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fmi_version&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;guid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;variable_naming_convention&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;number_of_event_indicators&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;interface_modes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_identifiers&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;platforms&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;variables&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">fmi_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">guid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">variable_naming_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">number_of_event_indicators</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">interface_modes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">model_identifiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">platforms</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">variables</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the parsed FMU execution metadata.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmi_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">fmi_version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">guid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_naming_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">variable_naming_convention</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_event_indicators</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">number_of_event_indicators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">interface_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_identifiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_identifiers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">platforms</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">platforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">variables</span>
+
+<div class="viewcode-block" id="FmuModelDescription.get_model_identifier">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_model_identifier">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">FmuInterfaceMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the FMI `modelIdentifier` for the requested mode.</span>
+
+<span class="sd">        :param mode: Requested FMI execution mode.</span>
+<span class="sd">        :return: The FMI model identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">identifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_identifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identifier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FmuModeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The FMU does not support mode </span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">identifier</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.get_supports_co_simulation">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_supports_co_simulation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supports_co_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the FMU declares the Co-Simulation interface.</span>
+
+<span class="sd">        :return: `True` when Co-Simulation is declared.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.get_supports_model_exchange">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_supports_model_exchange">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supports_model_exchange</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the FMU declares the Model Exchange interface.</span>
+
+<span class="sd">        :return: `True` when Model Exchange is declared.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.get_variable_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_variable_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_variable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the ordered scalar-variable names.</span>
+
+<span class="sd">        :return: Tuple with the FMU variable names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">variable_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">variable_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">variable_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.get_variable">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_variable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuVariableDescription</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the scalar-variable metadata for the requested name.</span>
+
+<span class="sd">        :param name: Requested FMU variable name.</span>
+<span class="sd">        :return: Matching variable metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">candidate</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">candidate</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.get_state_variables">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_state_variables">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_state_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the FMI variables representing continuous states.</span>
+
+<span class="sd">        :return: Tuple with the continuous-state variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">state_variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">causality</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span> <span class="ow">and</span> <span class="n">variable</span><span class="o">.</span><span class="n">variability</span> <span class="o">==</span> <span class="s2">&quot;continuous&quot;</span><span class="p">:</span>
+                <span class="n">state_variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">state_variables</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.get_derivative_variables">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.get_derivative_variables">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_derivative_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the FMI variables representing continuous derivatives.</span>
+
+<span class="sd">        :return: Tuple with the derivative variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">derivative_variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">derivative_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">derivative_variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">derivative_variables</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FmuModelDescription.resolve_mode">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.FmuModelDescription.resolve_mode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preferred_mode</span><span class="p">:</span> <span class="n">FmuInterfaceMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuInterfaceMode</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Choose the effective FMI mode to execute.</span>
+
+<span class="sd">        :param preferred_mode: Optional preferred FMI mode.</span>
+<span class="sd">        :return: Effective FMI mode to execute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">preferred_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">preferred_mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">preferred_mode</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">FmuModeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The FMU does not support preferred mode </span><span class="si">{</span><span class="n">preferred_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface_modes</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">FmuModeError</span><span class="p">(</span><span class="s2">&quot;The FMU does not declare Co-Simulation or Model Exchange&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_archive_xml</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the FMU XML bytes and available binary platforms.</span>
+
+<span class="sd">    :param path: FMU archive path or extracted directory.</span>
+<span class="sd">    :return: Tuple with XML bytes and supported platforms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+        <span class="n">xml_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;modelDescription.xml&quot;</span>
+        <span class="k">if</span> <span class="n">xml_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">binaries_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;binaries&quot;</span>
+            <span class="n">platforms_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">binaries_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">entry</span><span class="p">:</span> <span class="n">Path</span>
+                <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">binaries_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                    <span class="n">platforms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">return</span> <span class="n">xml_path</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">(),</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">platforms_list</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FmuArchiveError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> does not contain modelDescription.xml&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">archive</span><span class="p">:</span>
+                    <span class="n">xml_bytes</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;modelDescription.xml&quot;</span><span class="p">)</span>
+                    <span class="n">platform_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                    <span class="n">archive_name</span><span class="p">:</span> <span class="nb">str</span>
+                    <span class="k">for</span> <span class="n">archive_name</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">archive_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;binaries/&quot;</span><span class="p">):</span>
+                            <span class="n">parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">archive_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                                <span class="n">platform_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                    <span class="k">return</span> <span class="n">xml_bytes</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">platform_names</span><span class="p">))</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">FmuArchiveError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not read modelDescription.xml from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FmuArchiveError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FMU file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_interface_modes</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the supported FMI interface modes from the XML root.</span>
+
+<span class="sd">    :param root: XML root element.</span>
+<span class="sd">    :return: Supported modes and their model identifiers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">modes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">identifiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">co_simulation_node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CoSimulation&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">co_simulation_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">)</span>
+        <span class="n">identifiers</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">]</span> <span class="o">=</span> <span class="n">co_simulation_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modelIdentifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">model_exchange_node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ModelExchange&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model_exchange_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">)</span>
+        <span class="n">identifiers</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_exchange_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modelIdentifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">modes</span><span class="p">),</span> <span class="n">identifiers</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_variable_type</span><span class="p">(</span><span class="n">variable_node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableType</span><span class="p">,</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the primitive FMI type for one scalar variable.</span>
+
+<span class="sd">    :param variable_node: ScalarVariable XML node.</span>
+<span class="sd">    :return: Primitive FMI type and matching child node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">child_node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span>
+    <span class="k">for</span> <span class="n">child_node</span> <span class="ow">in</span> <span class="n">variable_node</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FmuVariableType</span><span class="p">(</span><span class="n">child_node</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span> <span class="n">child_node</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">FmuVariableType</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_variables</span><span class="p">(</span><span class="n">model_variables_node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the ordered scalar variables declared in the FMU.</span>
+
+<span class="sd">    :param model_variables_node: XML `&lt;ModelVariables&gt;` node.</span>
+<span class="sd">    :return: Ordered scalar-variable descriptions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">model_variables_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scalar_variable_node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span>
+        <span class="k">for</span> <span class="n">scalar_variable_node</span> <span class="ow">in</span> <span class="n">model_variables_node</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;ScalarVariable&quot;</span><span class="p">):</span>
+            <span class="n">variable_type</span><span class="p">:</span> <span class="n">FmuVariableType</span>
+            <span class="n">type_node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span> <span class="o">|</span> <span class="kc">None</span>
+            <span class="n">variable_type</span><span class="p">,</span> <span class="n">type_node</span> <span class="o">=</span> <span class="n">_parse_variable_type</span><span class="p">(</span><span class="n">scalar_variable_node</span><span class="p">)</span>
+            <span class="n">derivative_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">type_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">derivative_raw</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;derivative&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">derivative_raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">derivative_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">derivative_raw</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">derivative_index</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">type_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">FmuVariableDescription</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">scalar_variable_node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                    <span class="n">value_reference</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">scalar_variable_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;valueReference&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)),</span>
+                    <span class="n">variable_type</span><span class="o">=</span><span class="n">variable_type</span><span class="p">,</span>
+                    <span class="n">causality</span><span class="o">=</span><span class="n">scalar_variable_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;causality&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="n">variability</span><span class="o">=</span><span class="n">scalar_variable_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;variability&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="n">initial</span><span class="o">=</span><span class="n">scalar_variable_node</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+                    <span class="n">derivative_index</span><span class="o">=</span><span class="n">derivative_index</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_fmu_model_description">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.read_fmu_model_description">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_fmu_model_description</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuModelDescription</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the FMU archive and build the runtime metadata object.</span>
+
+<span class="sd">    :param path: FMU archive path or extracted directory.</span>
+<span class="sd">    :return: Parsed FMU metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">normalized_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+    <span class="c1"># First the archive is inspected to recover the XML and the binary platforms.</span>
+    <span class="n">xml_bytes</span><span class="p">:</span> <span class="nb">bytes</span>
+    <span class="n">platforms</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">xml_bytes</span><span class="p">,</span> <span class="n">platforms</span> <span class="o">=</span> <span class="n">_read_archive_xml</span><span class="p">(</span><span class="n">normalized_path</span><span class="p">)</span>
+
+    <span class="c1"># Then the XML is parsed into an element tree to extract each metadata section.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">root</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">xml_bytes</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ET</span><span class="o">.</span><span class="n">ParseError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">FmuArchiveError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid modelDescription.xml in </span><span class="si">{</span><span class="n">normalized_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+    <span class="n">interface_modes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">model_identifiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="n">interface_modes</span><span class="p">,</span> <span class="n">model_identifiers</span> <span class="o">=</span> <span class="n">_parse_interface_modes</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_variables</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ModelVariables&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Finally the immutable metadata container is assembled for the callers.</span>
+    <span class="k">return</span> <span class="n">FmuModelDescription</span><span class="p">(</span>
+        <span class="n">path</span><span class="o">=</span><span class="n">normalized_path</span><span class="p">,</span>
+        <span class="n">fmi_version</span><span class="o">=</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fmiVersion&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modelName&quot;</span><span class="p">,</span> <span class="n">normalized_path</span><span class="o">.</span><span class="n">stem</span><span class="p">),</span>
+        <span class="n">guid</span><span class="o">=</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;guid&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">variable_naming_convention</span><span class="o">=</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;variableNamingConvention&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">number_of_event_indicators</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;numberOfEventIndicators&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)),</span>
+        <span class="n">interface_modes</span><span class="o">=</span><span class="n">interface_modes</span><span class="p">,</span>
+        <span class="n">model_identifiers</span><span class="o">=</span><span class="n">model_identifiers</span><span class="p">,</span>
+        <span class="n">platforms</span><span class="o">=</span><span class="n">platforms</span><span class="p">,</span>
+        <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="list_fmu_variable_names">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.list_fmu_variable_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_fmu_variable_names</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the ordered scalar-variable names declared by the FMU.</span>
+
+<span class="sd">    :param path: FMU archive path or extracted directory.</span>
+<span class="sd">    :return: Tuple with the variable names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span> <span class="o">=</span> <span class="n">read_fmu_model_description</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_variable_names</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="choose_fmu_mode">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.model_description.choose_fmu_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">choose_fmu_mode</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">preferred_mode</span><span class="p">:</span> <span class="n">FmuInterfaceMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuInterfaceMode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Choose the FMI mode to use for the FMU runtime.</span>
+
+<span class="sd">    :param path: FMU archive path or extracted directory.</span>
+<span class="sd">    :param preferred_mode: Optional preferred FMI mode.</span>
+<span class="sd">    :return: Effective FMI execution mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span> <span class="o">=</span> <span class="n">read_fmu_model_description</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metadata</span><span class="o">.</span><span class="n">resolve_mode</span><span class="p">(</span><span class="n">preferred_mode</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

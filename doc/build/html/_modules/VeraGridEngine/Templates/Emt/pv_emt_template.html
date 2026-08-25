@@ -1,0 +1,950 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.pv_emt_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.pv_emt_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.pv_emt_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">find_name_in_block</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Emt.converter_emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_build_pseudo_emt_converter_vsc_block</span><span class="p">,</span>
+    <span class="n">_build_pseudo_emt_converter_pll_block</span><span class="p">,</span>
+    <span class="n">_build_pseudo_emt_converter_outer_loop_block</span><span class="p">,</span>
+    <span class="n">_build_pseudo_emt_converter_inner_loop_block</span><span class="p">,</span>
+    <span class="n">_build_pseudo_emt_converter_transformer_block</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">out_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span> <span class="n">in_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span> <span class="n">shared_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add one shared reference to both ends of one internal child-block connection.</span>
+
+<span class="sd">    The EMT editor derives visible inter-block edges from shared references on</span>
+<span class="sd">    child ports. The runtime symbolic connection is still registered through the</span>
+<span class="sd">    shared variable factory, but the explicit shared tag keeps the editor graph</span>
+<span class="sd">    readable without exposing the signal at the root block.</span>
+
+<span class="sd">    :param vf: Shared variable factory.</span>
+<span class="sd">    :param out_var: Source child output.</span>
+<span class="sd">    :param in_var: Destination child input.</span>
+<span class="sd">    :param shared_name: Shared-reference identifier.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_shared_ref_to_var</span><span class="p">(</span><span class="n">out_var</span><span class="p">,</span> <span class="n">shared_name</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_shared_ref_to_var</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">shared_name</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_block_var</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">var_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Var</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find one variable by name inside one block and fail loudly if missing.</span>
+
+<span class="sd">    :param block: Block to inspect.</span>
+<span class="sd">    :param var_name: Variable name.</span>
+<span class="sd">    :return: Matching variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">find_name_in_block</span><span class="p">(</span><span class="n">var_name</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> not found in block </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="PvEmtModelLevel">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pv_emt_template.PvEmtModelLevel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PvEmtModelLevel</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerate the supported PV EMT template detail levels.</span>
+
+<span class="sd">    ``LEVEL_1`` is the simplified PV availability plus MPPT-lag model, while</span>
+<span class="sd">    ``LEVEL_2`` adds the averaged PV plus DC-DC boost dynamics.</span>
+
+<span class="sd">    :ivar LEVEL_1: Simplified PV availability plus MPPT-lag model.</span>
+<span class="sd">    :ivar LEVEL_2: Averaged PV plus DC-DC boost model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LEVEL_1</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">LEVEL_2</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Shared converter assembly helpers</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_converter_blocks</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Block</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the imported pseudo-EMT converter sub-blocks used by both PV levels.</span>
+
+<span class="sd">    This helper intentionally reuses the existing VeraGrid converter blocks. The</span>
+<span class="sd">    PV templates in this file add only the PV/DC-source side and then wire it to</span>
+<span class="sd">    the imported VSC DC terminal. This keeps PLL, VSC, outer-loop, inner-loop</span>
+<span class="sd">    and dq0/abc interface behaviour consistent with the already available</span>
+<span class="sd">    pseudo-EMT converter template.</span>
+
+<span class="sd">    :param vf: EMT symbolic variable factory.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Tuple with VSC, PLL, outer-loop, inner-loop and AC-interface blocks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vsc_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_vsc_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">pll_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_pll_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">outer_loop_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_outer_loop_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">inner_loop_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_inner_loop_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">transformer_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_transformer_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">vsc_block</span><span class="p">,</span> <span class="n">pll_block</span><span class="p">,</span> <span class="n">outer_loop_block</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="p">,</span> <span class="n">transformer_block</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_connect_imported_converter_blocks</span><span class="p">(</span>
+    <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">v_A</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">v_B</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">v_C</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">dc_voltage_source</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span>
+    <span class="n">vsc_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">pll_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">outer_loop_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">inner_loop_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">transformer_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wire the imported pseudo-EMT converter blocks to one internal DC source.</span>
+
+<span class="sd">    The wiring mirrors ``get_full_pseudo_emt_converter`` except that the VSC</span>
+<span class="sd">    DC-terminal voltage is not an external DC bus. Instead it is supplied by the</span>
+<span class="sd">    PV-side block of the current template. The VSC DC current output is also</span>
+<span class="sd">    exposed to the PV-side block so that the PV/DC stage can compute its own DC</span>
+<span class="sd">    power and internal dynamics.</span>
+
+<span class="sd">    :param v_A: Phase-A terminal voltage input.</span>
+<span class="sd">    :param v_B: Phase-B terminal voltage input.</span>
+<span class="sd">    :param v_C: Phase-C terminal voltage input.</span>
+<span class="sd">    :param dc_voltage_source: Internal DC terminal voltage supplied to the VSC.</span>
+<span class="sd">    :param vsc_block: Imported VSC/DC-link block.</span>
+<span class="sd">    :param pll_block: Imported PLL block.</span>
+<span class="sd">    :param outer_loop_block: Imported outer-loop block.</span>
+<span class="sd">    :param inner_loop_block: Imported inner-loop block.</span>
+<span class="sd">    :param transformer_block: Imported AC-side dq0/abc interface block.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transformer_i_A</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;i_A&quot;</span><span class="p">)</span>
+    <span class="n">transformer_i_B</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;i_B&quot;</span><span class="p">)</span>
+    <span class="n">transformer_i_C</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;i_C&quot;</span><span class="p">)</span>
+    <span class="n">transformer_v_d</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;v_d&quot;</span><span class="p">)</span>
+    <span class="n">transformer_v_q</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;v_q&quot;</span><span class="p">)</span>
+    <span class="n">transformer_v_0</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;v_0&quot;</span><span class="p">)</span>
+    <span class="n">transformer_i_d</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;i_d&quot;</span><span class="p">)</span>
+    <span class="n">transformer_i_q</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;i_q&quot;</span><span class="p">)</span>
+    <span class="n">transformer_i_0</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">transformer_block</span><span class="p">,</span> <span class="s2">&quot;i_0&quot;</span><span class="p">)</span>
+
+    <span class="n">vsc_v_dc</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;v_dc&quot;</span><span class="p">)</span>
+    <span class="n">vsc_i_dc</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;i_dc&quot;</span><span class="p">)</span>
+    <span class="n">vsc_P</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">)</span>
+    <span class="n">vsc_Q</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">)</span>
+    <span class="n">vsc_sbase</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;sbase&quot;</span><span class="p">)</span>
+    <span class="n">vsc_P_ref</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;P_ref&quot;</span><span class="p">)</span>
+    <span class="n">vsc_Q_ref</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;Q_ref&quot;</span><span class="p">)</span>
+    <span class="n">vsc_Vdc_ref</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;Vdc_ref&quot;</span><span class="p">)</span>
+    <span class="n">vsc_omega_base</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;omega_base&quot;</span><span class="p">)</span>
+    <span class="n">vsc_phi_v</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;phi_v&quot;</span><span class="p">)</span>
+    <span class="n">vsc_Vpk</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;Vpk&quot;</span><span class="p">)</span>
+    <span class="n">vsc_R_eq</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;R_eq&quot;</span><span class="p">)</span>
+    <span class="n">vsc_L_eq</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;L_eq&quot;</span><span class="p">)</span>
+    <span class="n">vsc_pll_kp</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;pll_kp&quot;</span><span class="p">)</span>
+    <span class="n">vsc_pll_ki</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;pll_ki&quot;</span><span class="p">)</span>
+    <span class="n">vsc_i_kp</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;i_kp&quot;</span><span class="p">)</span>
+    <span class="n">vsc_i_ki</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;i_ki&quot;</span><span class="p">)</span>
+    <span class="n">vsc_vdc_kp</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;vdc_kp&quot;</span><span class="p">)</span>
+    <span class="n">vsc_vdc_ki</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;vdc_ki&quot;</span><span class="p">)</span>
+    <span class="n">vsc_q_kp</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;q_kp&quot;</span><span class="p">)</span>
+    <span class="n">vsc_q_ki</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;q_ki&quot;</span><span class="p">)</span>
+    <span class="n">vsc_i_max</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;i_max&quot;</span><span class="p">)</span>
+    <span class="n">vsc_m_max</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;m_max&quot;</span><span class="p">)</span>
+    <span class="n">vsc_P_loss0</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;P_loss0&quot;</span><span class="p">)</span>
+    <span class="n">vsc_tau_meas</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;tau_meas&quot;</span><span class="p">)</span>
+    <span class="n">vsc_aw_gain</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;aw_gain&quot;</span><span class="p">)</span>
+    <span class="n">vsc_vdc_floor</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;vdc_floor&quot;</span><span class="p">)</span>
+    <span class="n">vsc_i_dc_conv</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;i_dc_conv&quot;</span><span class="p">)</span>
+    <span class="n">vsc_regulate_vdc</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;regulate_vdc_mode&quot;</span><span class="p">)</span>
+    <span class="n">vsc_regulate_q</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;regulate_q_mode&quot;</span><span class="p">)</span>
+    <span class="n">vsc_regulate_active</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">vsc_block</span><span class="p">,</span> <span class="s2">&quot;regulate_active_mode&quot;</span><span class="p">)</span>
+
+    <span class="n">pll_theta</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">pll_block</span><span class="p">,</span> <span class="s2">&quot;theta_pll&quot;</span><span class="p">)</span>
+    <span class="n">pll_omega</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">pll_block</span><span class="p">,</span> <span class="s2">&quot;omega_pll&quot;</span><span class="p">)</span>
+
+    <span class="n">outer_P_f</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="p">,</span> <span class="s2">&quot;P_f&quot;</span><span class="p">)</span>
+    <span class="n">outer_Q_f</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="p">,</span> <span class="s2">&quot;Q_f&quot;</span><span class="p">)</span>
+    <span class="n">outer_i_0_ref</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="p">,</span> <span class="s2">&quot;i_0_ref&quot;</span><span class="p">)</span>
+    <span class="n">outer_i_d_ref</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="p">,</span> <span class="s2">&quot;i_d_ref&quot;</span><span class="p">)</span>
+    <span class="n">outer_i_q_ref</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="p">,</span> <span class="s2">&quot;i_q_ref&quot;</span><span class="p">)</span>
+
+    <span class="n">inner_v_cmd_d</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="p">,</span> <span class="s2">&quot;v_cmd_d&quot;</span><span class="p">)</span>
+    <span class="n">inner_v_cmd_q</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="p">,</span> <span class="s2">&quot;v_cmd_q&quot;</span><span class="p">)</span>
+    <span class="n">inner_v_cmd_0</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="p">,</span> <span class="s2">&quot;v_cmd_0&quot;</span><span class="p">)</span>
+    <span class="n">inner_k_v_conv</span> <span class="o">=</span> <span class="n">_find_block_var</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="p">,</span> <span class="s2">&quot;k_v_conv&quot;</span><span class="p">)</span>
+
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">v_A</span><span class="p">,</span> <span class="n">v_B</span><span class="p">,</span> <span class="n">v_C</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">6</span><span class="p">]],</span> <span class="p">[</span><span class="n">dc_voltage_source</span><span class="p">])</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">dc_voltage_source</span><span class="p">,</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_vdc_src&quot;</span><span class="p">)</span>
+
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">transformer_v_d</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">transformer_v_0</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="n">transformer_i_d</span><span class="p">,</span> <span class="n">transformer_i_q</span><span class="p">,</span> <span class="n">transformer_i_0</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">pll_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">transformer_v_q</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">transformer_v_d</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">transformer_v_0</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="n">transformer_i_d</span><span class="p">,</span> <span class="n">transformer_i_q</span><span class="p">,</span> <span class="n">transformer_i_0</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">transformer_v_d</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">transformer_v_0</span><span class="p">])</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="n">transformer_i_d</span><span class="p">,</span> <span class="n">transformer_i_q</span><span class="p">,</span> <span class="n">transformer_i_0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;v_d&quot;</span><span class="p">,</span> <span class="s2">&quot;v_q&quot;</span><span class="p">,</span> <span class="s2">&quot;v_0&quot;</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">transformer_v_d</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">transformer_v_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_vsc&quot;</span><span class="p">)</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">transformer_v_d</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">transformer_v_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_outer&quot;</span><span class="p">)</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">transformer_v_d</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">transformer_v_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_inner&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;i_d&quot;</span><span class="p">,</span> <span class="s2">&quot;i_q&quot;</span><span class="p">,</span> <span class="s2">&quot;i_0&quot;</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">transformer_i_d</span><span class="p">,</span> <span class="n">transformer_i_q</span><span class="p">,</span> <span class="n">transformer_i_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_vsc&quot;</span><span class="p">)</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">transformer_i_d</span><span class="p">,</span> <span class="n">transformer_i_q</span><span class="p">,</span> <span class="n">transformer_i_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_outer&quot;</span><span class="p">)</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">transformer_i_d</span><span class="p">,</span> <span class="n">transformer_i_q</span><span class="p">,</span> <span class="n">transformer_i_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_inner&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">transformer_v_q</span><span class="p">,</span> <span class="n">pll_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_v_q_pll_in&quot;</span><span class="p">)</span>
+
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="n">pll_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">vsc_omega_base</span><span class="p">,</span> <span class="n">vsc_pll_kp</span><span class="p">,</span> <span class="n">vsc_pll_ki</span><span class="p">,</span> <span class="n">vsc_phi_v</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;omega_base&quot;</span><span class="p">,</span> <span class="s2">&quot;pll_kp&quot;</span><span class="p">,</span> <span class="s2">&quot;pll_ki&quot;</span><span class="p">,</span> <span class="s2">&quot;phi_v&quot;</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">vsc_omega_base</span><span class="p">,</span> <span class="n">vsc_pll_kp</span><span class="p">,</span> <span class="n">vsc_pll_ki</span><span class="p">,</span> <span class="n">vsc_phi_v</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">pll_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">_pll&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">8</span><span class="p">]],</span>
+        <span class="p">[</span><span class="n">vsc_v_dc</span><span class="p">,</span> <span class="n">vsc_P</span><span class="p">,</span> <span class="n">vsc_Q</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">in_idx</span><span class="p">,</span> <span class="n">out_var</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">6</span><span class="p">,</span> <span class="n">vsc_v_dc</span><span class="p">,</span> <span class="s2">&quot;v_dc_outer&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">vsc_P</span><span class="p">,</span> <span class="s2">&quot;p_outer&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">vsc_Q</span><span class="p">,</span> <span class="s2">&quot;q_outer&quot;</span><span class="p">)]:</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">out_var</span><span class="p">,</span> <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="n">in_idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">25</span><span class="p">],</span>
+        <span class="p">[</span>
+            <span class="n">vsc_sbase</span><span class="p">,</span> <span class="n">vsc_P_ref</span><span class="p">,</span> <span class="n">vsc_Q_ref</span><span class="p">,</span> <span class="n">vsc_Vdc_ref</span><span class="p">,</span> <span class="n">vsc_Vpk</span><span class="p">,</span>
+            <span class="n">vsc_i_max</span><span class="p">,</span> <span class="n">vsc_vdc_kp</span><span class="p">,</span> <span class="n">vsc_vdc_ki</span><span class="p">,</span> <span class="n">vsc_q_kp</span><span class="p">,</span> <span class="n">vsc_q_ki</span><span class="p">,</span>
+            <span class="n">vsc_P_loss0</span><span class="p">,</span> <span class="n">vsc_tau_meas</span><span class="p">,</span> <span class="n">vsc_aw_gain</span><span class="p">,</span> <span class="n">vsc_regulate_vdc</span><span class="p">,</span> <span class="n">vsc_regulate_q</span><span class="p">,</span> <span class="n">vsc_regulate_active</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">out_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">vsc_sbase</span><span class="p">,</span> <span class="n">vsc_P_ref</span><span class="p">,</span> <span class="n">vsc_Q_ref</span><span class="p">,</span> <span class="n">vsc_Vdc_ref</span><span class="p">,</span> <span class="n">vsc_Vpk</span><span class="p">,</span>
+                                      <span class="n">vsc_i_max</span><span class="p">,</span> <span class="n">vsc_vdc_kp</span><span class="p">,</span> <span class="n">vsc_vdc_ki</span><span class="p">,</span> <span class="n">vsc_q_kp</span><span class="p">,</span> <span class="n">vsc_q_ki</span><span class="p">,</span>
+                                      <span class="n">vsc_P_loss0</span><span class="p">,</span> <span class="n">vsc_tau_meas</span><span class="p">,</span> <span class="n">vsc_aw_gain</span><span class="p">,</span> <span class="n">vsc_regulate_vdc</span><span class="p">,</span> <span class="n">vsc_regulate_q</span><span class="p">,</span> <span class="n">vsc_regulate_active</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">out_var</span><span class="p">,</span> <span class="n">outer_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">9</span> <span class="o">+</span> <span class="n">offset</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_outer_aux_</span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">9</span><span class="p">]],</span>
+        <span class="p">[</span><span class="n">pll_omega</span><span class="p">,</span> <span class="n">vsc_omega_base</span><span class="p">,</span> <span class="n">vsc_R_eq</span><span class="p">,</span> <span class="n">vsc_L_eq</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">pll_omega</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_omega_pll_to_inner&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_omega_base</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_omega_base_inner&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_R_eq</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_r_eq_inner&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_L_eq</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_l_eq_inner&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">13</span><span class="p">],</span> <span class="p">[</span><span class="n">outer_i_0_ref</span><span class="p">,</span> <span class="n">outer_i_d_ref</span><span class="p">,</span> <span class="n">outer_i_q_ref</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;v_cmd_d&quot;</span><span class="p">,</span> <span class="s2">&quot;v_cmd_q&quot;</span><span class="p">,</span> <span class="s2">&quot;v_cmd_0&quot;</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">outer_i_0_ref</span><span class="p">,</span> <span class="n">outer_i_d_ref</span><span class="p">,</span> <span class="n">outer_i_q_ref</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">10</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">13</span><span class="p">:</span><span class="mi">25</span><span class="p">],</span>
+        <span class="p">[</span>
+            <span class="n">vsc_i_kp</span><span class="p">,</span> <span class="n">vsc_i_ki</span><span class="p">,</span> <span class="n">vsc_aw_gain</span><span class="p">,</span> <span class="n">vsc_m_max</span><span class="p">,</span>
+            <span class="n">vsc_Vdc_ref</span><span class="p">,</span> <span class="n">vsc_v_dc</span><span class="p">,</span> <span class="n">vsc_vdc_floor</span><span class="p">,</span> <span class="n">vsc_sbase</span><span class="p">,</span>
+            <span class="n">vsc_P_ref</span><span class="p">,</span> <span class="n">vsc_Q_ref</span><span class="p">,</span> <span class="n">vsc_P_loss0</span><span class="p">,</span> <span class="n">vsc_Vpk</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">out_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">vsc_i_kp</span><span class="p">,</span> <span class="n">vsc_i_ki</span><span class="p">,</span> <span class="n">vsc_aw_gain</span><span class="p">,</span> <span class="n">vsc_m_max</span><span class="p">,</span>
+                                      <span class="n">vsc_Vdc_ref</span><span class="p">,</span> <span class="n">vsc_v_dc</span><span class="p">,</span> <span class="n">vsc_vdc_floor</span><span class="p">,</span> <span class="n">vsc_sbase</span><span class="p">,</span>
+                                      <span class="n">vsc_P_ref</span><span class="p">,</span> <span class="n">vsc_Q_ref</span><span class="p">,</span> <span class="n">vsc_P_loss0</span><span class="p">,</span> <span class="n">vsc_Vpk</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">out_var</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">13</span> <span class="o">+</span> <span class="n">offset</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_inner_aux_</span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">4</span><span class="p">]],</span> <span class="p">[</span><span class="n">pll_theta</span><span class="p">,</span> <span class="n">pll_omega</span><span class="p">])</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">pll_theta</span><span class="p">,</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_theta_pll&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">pll_omega</span><span class="p">,</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_omega_pll&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">8</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">vsc_omega_base</span><span class="p">,</span> <span class="n">vsc_R_eq</span><span class="p">,</span> <span class="n">vsc_L_eq</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;omega_base_tf&quot;</span><span class="p">,</span> <span class="s2">&quot;r_eq_tf&quot;</span><span class="p">,</span> <span class="s2">&quot;l_eq_tf&quot;</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">vsc_omega_base</span><span class="p">,</span> <span class="n">vsc_R_eq</span><span class="p">,</span> <span class="n">vsc_L_eq</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">5</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">11</span><span class="p">],</span> <span class="p">[</span><span class="n">inner_v_cmd_d</span><span class="p">,</span> <span class="n">inner_v_cmd_q</span><span class="p">,</span> <span class="n">inner_v_cmd_0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">shared_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;v_cmd_d_tf&quot;</span><span class="p">,</span> <span class="s2">&quot;v_cmd_q_tf&quot;</span><span class="p">,</span> <span class="s2">&quot;v_cmd_0_tf&quot;</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="p">[</span><span class="n">inner_v_cmd_d</span><span class="p">,</span> <span class="n">inner_v_cmd_q</span><span class="p">,</span> <span class="n">inner_v_cmd_0</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">8</span> <span class="o">+</span> <span class="n">idx</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">shared_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">vsc_sbase</span><span class="p">,</span> <span class="n">vsc_P_ref</span><span class="p">,</span> <span class="n">vsc_Q_ref</span><span class="p">,</span> <span class="n">vsc_P_loss0</span><span class="p">,</span> <span class="n">vsc_Vpk</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">out_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">vsc_sbase</span><span class="p">,</span> <span class="n">vsc_P_ref</span><span class="p">,</span> <span class="n">vsc_Q_ref</span><span class="p">,</span> <span class="n">vsc_P_loss0</span><span class="p">,</span> <span class="n">vsc_Vpk</span><span class="p">]):</span>
+        <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">out_var</span><span class="p">,</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">11</span> <span class="o">+</span> <span class="n">offset</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_tf_aux_</span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Level 1 — PV AVM grid-following</span>
+<span class="c1"># PV availability + MPPT lag + imported VSC controls</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_level1_pv_availability_block</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the Level-1 PV availability and MPPT-lag DC source block.</span>
+
+<span class="sd">    The Level-1 PV model is intentionally equivalent in complexity to the BESS</span>
+<span class="sd">    Level-1 block. It does not model a DC-DC converter. Instead, it aggregates</span>
+<span class="sd">    the PV array into a DC source whose available power depends on irradiance</span>
+<span class="sd">    and cell temperature, and whose active-power availability follows an MPPT</span>
+<span class="sd">    first-order lag.</span>
+
+<span class="sd">    The imported VSC block still owns the explicit DC-link capacitor ``C_dc``.</span>
+<span class="sd">    Therefore this PV block supplies only the internal DC terminal voltage used</span>
+<span class="sd">    by the VSC and computes diagnostic PV current/power quantities from the VSC</span>
+<span class="sd">    DC current feedback.</span>
+
+<span class="sd">    :param vf: EMT symbolic variable factory.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Level-1 PV availability block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i_dc</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_dc_pv_l1_in&quot;</span><span class="p">)</span>
+    <span class="n">v_dc_ctrl</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_ctrl_pv_l1_in&quot;</span><span class="p">)</span>
+
+    <span class="n">p_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_mppt_l1&quot;</span><span class="p">)</span>
+    <span class="n">d_p_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_p_mppt_l1&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">p_mppt</span><span class="p">)</span>
+
+    <span class="n">v_dc_bus</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_bus_pv_l1&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">)</span>
+    <span class="n">p_avail</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_avail_l1&quot;</span><span class="p">)</span>
+    <span class="n">p_pv</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_pv_l1&quot;</span><span class="p">)</span>
+    <span class="n">i_pv</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_pv_l1&quot;</span><span class="p">)</span>
+    <span class="n">v_oc</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_oc_pv_l1&quot;</span><span class="p">)</span>
+    <span class="n">p_curt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_curt_l1&quot;</span><span class="p">)</span>
+
+    <span class="n">p_rated</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_rated_l1&quot;</span><span class="p">)</span>
+    <span class="n">irradiance</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;irradiance_l1&quot;</span><span class="p">)</span>
+    <span class="n">irradiance_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;irradiance_ref_l1&quot;</span><span class="p">)</span>
+    <span class="n">t_cell</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;t_cell_l1&quot;</span><span class="p">)</span>
+    <span class="n">t_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;t_ref_l1&quot;</span><span class="p">)</span>
+    <span class="n">temp_coeff_p</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;temp_coeff_p_l1&quot;</span><span class="p">)</span>
+    <span class="n">t_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;t_mppt_l1&quot;</span><span class="p">)</span>
+    <span class="n">v_dc_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_ref_l1&quot;</span><span class="p">)</span>
+    <span class="n">r_pv</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;r_pv_l1&quot;</span><span class="p">)</span>
+    <span class="n">k_pv_power</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;k_pv_power_l1&quot;</span><span class="p">)</span>
+    <span class="n">k_vdc_ctrl</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;k_vdc_ctrl_l1&quot;</span><span class="p">)</span>
+
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span>
+
+    <span class="n">irradiance_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">irradiance_ref</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">p_avail_raw</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">p_rated</span> <span class="o">*</span> <span class="p">(</span><span class="n">irradiance</span> <span class="o">/</span> <span class="n">irradiance_eff</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">temp_coeff_p</span> <span class="o">*</span> <span class="p">(</span><span class="n">t_cell</span> <span class="o">-</span> <span class="n">t_ref</span><span class="p">))</span>
+    <span class="n">p_avail_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">p_avail_raw</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="n">p_rated</span><span class="p">)</span>
+    <span class="n">mppt_limited_power</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">p_mppt</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="n">p_avail</span><span class="p">)</span>
+    <span class="n">r_pv_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">r_pv</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">p_pv_init</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">mppt_limited_power</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="p">(</span><span class="n">v_dc_ref</span> <span class="o">*</span> <span class="n">v_dc_ref</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">r_pv_eff</span><span class="p">))</span>
+    <span class="n">p_init_disc</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v_dc_ref</span> <span class="o">*</span> <span class="n">v_dc_ref</span> <span class="o">-</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">r_pv_eff</span> <span class="o">*</span> <span class="n">p_pv_init</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">i_pv_init_mag</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_dc_ref</span> <span class="o">-</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p_init_disc</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">r_pv_eff</span><span class="p">)</span>
+    <span class="n">i_pv_init</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="o">-</span><span class="n">i_pv_init_mag</span>
+    <span class="n">v_dc_bus_init</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_dc_ref</span> <span class="o">+</span> <span class="n">r_pv_eff</span> <span class="o">*</span> <span class="n">i_pv_init</span>
+    <span class="n">v_oc_ctrl_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_dc_ref</span> <span class="o">-</span> <span class="n">k_vdc_ctrl</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_dc_ctrl</span> <span class="o">-</span> <span class="n">v_dc_ref</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="c1"># Irradiance and temperature modify the available PV power. MPPT is</span>
+            <span class="c1"># represented as a first-order lag between available power and the</span>
+            <span class="c1"># power that the inverter can actually request from the PV array.</span>
+            <span class="p">(</span><span class="n">p_avail</span> <span class="o">-</span> <span class="n">p_mppt</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">t_mppt</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">p_mppt</span><span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">d_p_mppt</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">p_avail</span> <span class="o">-</span> <span class="n">p_avail_expr</span><span class="p">,</span>
+            <span class="c1"># PV-side DC sign convention:</span>
+            <span class="c1"># * positive ``p_pv`` means PV power delivered to the converter,</span>
+            <span class="c1"># * positive ``i_pv`` would mean source current delivered to the</span>
+            <span class="c1">#   converter, but the imported pseudo-EMT converter reports the</span>
+            <span class="c1">#   same terminal current with the opposite sign during export.</span>
+            <span class="c1"># Therefore exported PV operation uses ``i_pv &lt; 0`` and ``i_dc &gt; 0``</span>
+            <span class="c1"># or equivalently ``i_pv + i_dc = 0`` at the shared internal port.</span>
+            <span class="n">i_pv</span> <span class="o">+</span> <span class="n">i_dc</span><span class="p">,</span>
+            <span class="n">p_pv</span> <span class="o">+</span> <span class="n">v_dc_bus</span> <span class="o">*</span> <span class="n">i_pv</span><span class="p">,</span>
+            <span class="c1"># The Level-1 source is a Thevenin-like PV equivalent around one</span>
+            <span class="c1"># MPPT operating voltage. A power droop term drives the delivered</span>
+            <span class="c1"># DC power toward the irradiance-limited MPPT target without adding</span>
+            <span class="c1"># a second internal DC storage state.</span>
+            <span class="c1"># Local PV-side Vdc feedback trims the source open-circuit voltage so</span>
+            <span class="c1"># the PV block can regulate the converter DC-link without modifying</span>
+            <span class="c1"># the shared converter outer-loop implementation.</span>
+            <span class="n">v_oc</span> <span class="o">-</span> <span class="n">v_oc_ctrl_expr</span><span class="p">,</span>
+            <span class="n">v_dc_bus</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_oc</span> <span class="o">+</span> <span class="n">r_pv</span> <span class="o">*</span> <span class="n">i_pv</span> <span class="o">-</span> <span class="n">k_pv_power</span> <span class="o">*</span> <span class="p">(</span><span class="n">p_pv</span> <span class="o">-</span> <span class="n">mppt_limited_power</span><span class="p">)),</span>
+            <span class="c1"># Curtailment is the available PV power that is not delivered to the</span>
+            <span class="c1"># converter. Keep it non-negative even under small numerical errors.</span>
+            <span class="n">p_curt</span> <span class="o">-</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p_avail</span> <span class="o">-</span> <span class="n">mppt_limited_power</span><span class="p">,</span> <span class="n">c0</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">v_dc_bus</span><span class="p">,</span> <span class="n">p_avail</span><span class="p">,</span> <span class="n">p_pv</span><span class="p">,</span> <span class="n">i_pv</span><span class="p">,</span> <span class="n">v_oc</span><span class="p">,</span> <span class="n">p_curt</span><span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">p_rated</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">irradiance</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
+            <span class="n">irradiance_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
+            <span class="n">t_cell</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span>
+            <span class="n">t_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span>
+            <span class="n">temp_coeff_p</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.004</span><span class="p">),</span>
+            <span class="n">t_mppt</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.20</span><span class="p">),</span>
+            <span class="n">v_dc_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">r_pv</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>
+            <span class="n">k_pv_power</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span>
+            <span class="n">k_vdc_ctrl</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">p_avail</span><span class="p">:</span> <span class="n">p_avail_expr</span><span class="p">,</span>
+            <span class="n">p_mppt</span><span class="p">:</span> <span class="n">p_avail_expr</span><span class="p">,</span>
+            <span class="n">p_pv</span><span class="p">:</span> <span class="n">p_pv_init</span><span class="p">,</span>
+            <span class="n">i_pv</span><span class="p">:</span> <span class="n">i_pv_init</span><span class="p">,</span>
+            <span class="n">v_oc</span><span class="p">:</span> <span class="n">v_dc_ref</span><span class="p">,</span>
+            <span class="n">v_dc_bus</span><span class="p">:</span> <span class="n">v_dc_bus_init</span><span class="p">,</span>
+            <span class="n">p_curt</span><span class="p">:</span> <span class="n">p_avail_expr</span> <span class="o">-</span> <span class="n">p_pv_init</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">diff_init_eqs</span><span class="o">=</span><span class="p">{</span><span class="n">d_p_mppt</span><span class="p">:</span> <span class="n">c0</span><span class="p">},</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span><span class="n">i_dc</span><span class="p">,</span> <span class="n">v_dc_ctrl</span><span class="p">],</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">v_dc_bus</span><span class="p">,</span> <span class="n">p_mppt</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_pv_level1&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_pv_avm_grid_following_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pv_emt_template.get_pv_avm_grid_following_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pv_avm_grid_following_emt_template</span><span class="p">(</span>
+    <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pv_avm_grid_following_emt&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the Level-1 PV averaged-value grid-following EMT template.</span>
+
+<span class="sd">    This model is the PV counterpart of the Level-1 BESS model. It can replace</span>
+<span class="sd">    the BESS template in the same AC EMT examples because the external network</span>
+<span class="sd">    interface is the same: three AC phase voltages as inputs and three AC phase</span>
+<span class="sd">    currents as outputs.</span>
+
+<span class="sd">    Structure</span>
+<span class="sd">    ---------</span>
+<span class="sd">    The assembled model is::</span>
+
+<span class="sd">        PV availability from irradiance and temperature</span>
+<span class="sd">            -&gt; first-order MPPT power availability</span>
+<span class="sd">            -&gt; internal DC terminal voltage</span>
+<span class="sd">            -&gt; imported VSC/DC-link block</span>
+<span class="sd">            -&gt; imported SRF-PLL</span>
+<span class="sd">            -&gt; imported outer P/Q or Vdc/Q loop</span>
+<span class="sd">            -&gt; imported inner dq0 current controller</span>
+<span class="sd">            -&gt; imported AC-side dq0/abc interface</span>
+<span class="sd">            -&gt; abc current injection into the EMT network</span>
+
+<span class="sd">    Included behaviour</span>
+<span class="sd">    ------------------</span>
+<span class="sd">    * Irradiance-dependent available active power.</span>
+<span class="sd">    * Cell-temperature active-power correction.</span>
+<span class="sd">    * MPPT first-order lag.</span>
+<span class="sd">    * PV curtailment diagnostic channel.</span>
+<span class="sd">    * Existing averaged VSC power balance and DC-link dynamics.</span>
+<span class="sd">    * Existing PLL, dq0 current control, current limiting and modulation limit.</span>
+
+<span class="sd">    Not included</span>
+<span class="sd">    ------------</span>
+<span class="sd">    * Explicit PV diode equation or cell-level model.</span>
+<span class="sd">    * Explicit averaged boost converter.</span>
+<span class="sd">    * Switching-level PWM or semiconductor devices.</span>
+<span class="sd">    * Plant-level PPC beyond the imported converter control interface.</span>
+
+<span class="sd">    :param vf: EMT symbolic variable factory.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Fully assembled Level-1 PV EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">v_A</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">)</span>
+    <span class="n">v_B</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">)</span>
+    <span class="n">v_C</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">)</span>
+
+    <span class="n">vsc_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_vsc_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">pll_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_pll_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">outer_loop_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_outer_loop_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">inner_loop_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_inner_loop_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">transformer_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_pseudo_emt_converter_transformer_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">pv_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_level1_pv_availability_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">_connect_imported_converter_blocks</span><span class="p">(</span>
+        <span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">v_A</span><span class="o">=</span><span class="n">v_A</span><span class="p">,</span>
+        <span class="n">v_B</span><span class="o">=</span><span class="n">v_B</span><span class="p">,</span>
+        <span class="n">v_C</span><span class="o">=</span><span class="n">v_C</span><span class="p">,</span>
+        <span class="n">dc_voltage_source</span><span class="o">=</span><span class="n">pv_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">vsc_block</span><span class="o">=</span><span class="n">vsc_block</span><span class="p">,</span>
+        <span class="n">pll_block</span><span class="o">=</span><span class="n">pll_block</span><span class="p">,</span>
+        <span class="n">outer_loop_block</span><span class="o">=</span><span class="n">outer_loop_block</span><span class="p">,</span>
+        <span class="n">inner_loop_block</span><span class="o">=</span><span class="n">inner_loop_block</span><span class="p">,</span>
+        <span class="n">transformer_block</span><span class="o">=</span><span class="n">transformer_block</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">pv_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pv_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_i_dc_feedback&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pv_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_v_dc_feedback&quot;</span><span class="p">)</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">pv_block</span><span class="p">,</span> <span class="n">vsc_block</span><span class="p">,</span> <span class="n">pll_block</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="p">,</span> <span class="n">outer_loop_block</span><span class="p">,</span> <span class="n">transformer_block</span><span class="p">])</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">v_A</span><span class="p">,</span> <span class="n">v_B</span><span class="p">,</span> <span class="n">v_C</span><span class="p">]</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">]</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">:</span> <span class="n">v_A</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">:</span> <span class="n">v_B</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">:</span> <span class="n">v_C</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">:</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">:</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">:</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">phi_v</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vpk</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Level 2 — PV + averaged DC-DC</span>
+<span class="c1"># PV array + boost converter average + DC-link + VSC</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_level2_pv_boost_block</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the Level-2 PV array plus averaged boost-converter DC source block.</span>
+
+<span class="sd">    This block adds an explicit averaged boost stage between the PV array and</span>
+<span class="sd">    the imported VSC DC terminal. It remains an aggregated network EMT model,</span>
+<span class="sd">    not a switching model. The PV array is represented by an irradiance and</span>
+<span class="sd">    temperature dependent MPP voltage/current pair. The boost duty cycle follows</span>
+<span class="sd">    a PI MPPT control law and determines the PV-side voltage through the average</span>
+<span class="sd">    boost relation::</span>
+
+<span class="sd">        v_pv = (1 - duty) * v_dc_bus</span>
+
+<span class="sd">    The block still does not duplicate the VSC internal DC-link capacitor. The</span>
+<span class="sd">    imported VSC block owns that state. This block supplies a controlled DC</span>
+<span class="sd">    terminal voltage and exposes PV-side diagnostics such as ``v_pv``, ``duty``,</span>
+<span class="sd">    ``p_src`` and ``p_curt``.</span>
+
+<span class="sd">    :param vf: EMT symbolic variable factory.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Level-2 PV averaged boost block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i_dc</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_dc_pv_l2_in&quot;</span><span class="p">)</span>
+    <span class="n">v_dc_ctrl</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_ctrl_pv_l2_in&quot;</span><span class="p">)</span>
+
+    <span class="n">xi_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;xi_mppt_l2&quot;</span><span class="p">)</span>
+    <span class="n">duty</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;duty_l2&quot;</span><span class="p">)</span>
+    <span class="n">d_xi_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_xi_mppt_l2&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">xi_mppt</span><span class="p">)</span>
+    <span class="n">d_duty</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_duty_l2&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">duty</span><span class="p">)</span>
+
+    <span class="n">v_dc_bus</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_bus_pv_l2&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">)</span>
+    <span class="n">v_mp</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_mp_l2&quot;</span><span class="p">)</span>
+    <span class="n">i_mp</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_mp_l2&quot;</span><span class="p">)</span>
+    <span class="n">p_avail</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_avail_l2&quot;</span><span class="p">)</span>
+    <span class="n">v_pv</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_pv_l2&quot;</span><span class="p">)</span>
+    <span class="n">p_src</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_src_l2&quot;</span><span class="p">)</span>
+    <span class="n">p_to_vsc</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_to_vsc_l2&quot;</span><span class="p">)</span>
+    <span class="n">i_pv</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_pv_l2&quot;</span><span class="p">)</span>
+    <span class="n">duty_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;duty_ref_l2&quot;</span><span class="p">)</span>
+    <span class="n">p_curt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_curt_l2&quot;</span><span class="p">)</span>
+
+    <span class="n">p_rated</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;p_rated_l2&quot;</span><span class="p">)</span>
+    <span class="n">irradiance</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;irradiance_l2&quot;</span><span class="p">)</span>
+    <span class="n">irradiance_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;irradiance_ref_l2&quot;</span><span class="p">)</span>
+    <span class="n">t_cell</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;t_cell_l2&quot;</span><span class="p">)</span>
+    <span class="n">t_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;t_ref_l2&quot;</span><span class="p">)</span>
+    <span class="n">v_mp_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_mp_ref_l2&quot;</span><span class="p">)</span>
+    <span class="n">i_mp_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_mp_ref_l2&quot;</span><span class="p">)</span>
+    <span class="n">temp_coeff_v</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;temp_coeff_v_l2&quot;</span><span class="p">)</span>
+    <span class="n">temp_coeff_i</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;temp_coeff_i_l2&quot;</span><span class="p">)</span>
+    <span class="n">v_dc_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_dc_ref_l2&quot;</span><span class="p">)</span>
+    <span class="n">r_dc</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;r_dc_l2&quot;</span><span class="p">)</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d0_l2&quot;</span><span class="p">)</span>
+    <span class="n">d_min</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_min_l2&quot;</span><span class="p">)</span>
+    <span class="n">d_max</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_max_l2&quot;</span><span class="p">)</span>
+    <span class="n">kp_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;kp_mppt_l2&quot;</span><span class="p">)</span>
+    <span class="n">ki_mppt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ki_mppt_l2&quot;</span><span class="p">)</span>
+    <span class="n">t_duty</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;t_duty_l2&quot;</span><span class="p">)</span>
+    <span class="n">eta_boost</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;eta_boost_l2&quot;</span><span class="p">)</span>
+    <span class="n">k_src</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;k_src_l2&quot;</span><span class="p">)</span>
+    <span class="n">k_boost_power</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;k_boost_power_l2&quot;</span><span class="p">)</span>
+    <span class="n">k_vdc_ctrl</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;k_vdc_ctrl_l2&quot;</span><span class="p">)</span>
+
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span>
+
+    <span class="n">irradiance_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">irradiance_ref</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">v_mp_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v_mp_ref</span> <span class="o">*</span> <span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="n">temp_coeff_v</span> <span class="o">*</span> <span class="p">(</span><span class="n">t_cell</span> <span class="o">-</span> <span class="n">t_ref</span><span class="p">)),</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">i_mp_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">i_mp_ref</span> <span class="o">*</span> <span class="p">(</span><span class="n">irradiance</span> <span class="o">/</span> <span class="n">irradiance_eff</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="n">temp_coeff_i</span> <span class="o">*</span> <span class="p">(</span><span class="n">t_cell</span> <span class="o">-</span> <span class="n">t_ref</span><span class="p">)),</span> <span class="n">c0</span><span class="p">)</span>
+    <span class="n">p_avail_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">v_mp_expr</span> <span class="o">*</span> <span class="n">i_mp_expr</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="n">p_rated</span><span class="p">)</span>
+
+    <span class="n">v_pv_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">((</span><span class="n">c1</span> <span class="o">-</span> <span class="n">duty</span><span class="p">)</span> <span class="o">*</span> <span class="n">v_dc_bus</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">mppt_error</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_mp</span> <span class="o">-</span> <span class="n">v_pv</span>
+    <span class="n">duty_ref_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">d0</span> <span class="o">+</span> <span class="n">kp_mppt</span> <span class="o">*</span> <span class="n">mppt_error</span> <span class="o">+</span> <span class="n">ki_mppt</span> <span class="o">*</span> <span class="n">xi_mppt</span><span class="p">,</span> <span class="n">d_min</span><span class="p">,</span> <span class="n">d_max</span><span class="p">)</span>
+    <span class="n">p_src_raw</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">p_avail</span> <span class="o">-</span> <span class="n">k_src</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_pv</span> <span class="o">-</span> <span class="n">v_mp</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_pv</span> <span class="o">-</span> <span class="n">v_mp</span><span class="p">)</span>
+    <span class="n">p_src_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">p_src_raw</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="n">p_avail</span><span class="p">)</span>
+    <span class="n">p_to_vsc_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">eta_boost</span> <span class="o">*</span> <span class="n">p_src</span>
+    <span class="n">r_dc_eff</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">r_dc</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">v_dc_src_ctrl_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_dc_ref</span> <span class="o">-</span> <span class="n">k_vdc_ctrl</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_dc_ctrl</span> <span class="o">-</span> <span class="n">v_dc_ref</span><span class="p">)</span>
+    <span class="n">p_to_vsc_init_disc</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v_dc_ref</span> <span class="o">*</span> <span class="n">v_dc_ref</span> <span class="o">+</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">r_dc_eff</span> <span class="o">*</span> <span class="n">p_to_vsc_expr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">i_pv_init</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_dc_ref</span> <span class="o">-</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p_to_vsc_init_disc</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">r_dc_eff</span><span class="p">)</span>
+    <span class="n">v_dc_bus_init</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_dc_ref</span> <span class="o">-</span> <span class="n">r_dc_eff</span> <span class="o">*</span> <span class="n">i_pv_init</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="c1"># MPPT PI integrator driven by the PV voltage error.</span>
+            <span class="n">mppt_error</span><span class="p">,</span>
+            <span class="c1"># Averaged duty-cycle actuator.</span>
+            <span class="p">(</span><span class="n">duty_ref</span> <span class="o">-</span> <span class="n">duty</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">t_duty</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">xi_mppt</span><span class="p">,</span> <span class="n">duty</span><span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">d_xi_mppt</span><span class="p">,</span> <span class="n">d_duty</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">v_mp</span> <span class="o">-</span> <span class="n">v_mp_expr</span><span class="p">,</span>
+            <span class="n">i_mp</span> <span class="o">-</span> <span class="n">i_mp_expr</span><span class="p">,</span>
+            <span class="n">p_avail</span> <span class="o">-</span> <span class="n">p_avail_expr</span><span class="p">,</span>
+            <span class="n">v_pv</span> <span class="o">-</span> <span class="n">v_pv_expr</span><span class="p">,</span>
+            <span class="n">duty_ref</span> <span class="o">-</span> <span class="n">duty_ref_expr</span><span class="p">,</span>
+            <span class="n">p_src</span> <span class="o">-</span> <span class="n">p_src_expr</span><span class="p">,</span>
+            <span class="c1"># PV-side DC sign convention matches Level 1 and the imported VSC</span>
+            <span class="c1"># terminal current convention during export: positive PV power</span>
+            <span class="c1"># delivery to the converter is represented with ``i_pv &lt; 0`` while</span>
+            <span class="c1"># the imported VSC reports the shared terminal current with the</span>
+            <span class="c1"># opposite sign. Therefore the common internal port satisfies</span>
+            <span class="c1"># ``i_pv + i_dc = 0`` during export.</span>
+            <span class="n">i_pv</span> <span class="o">+</span> <span class="n">i_dc</span><span class="p">,</span>
+            <span class="c1"># Keep ``p_to_vsc`` positive when PV power is delivered from the</span>
+            <span class="c1"># source side into the converter interface.</span>
+            <span class="n">p_to_vsc</span> <span class="o">+</span> <span class="n">v_dc_bus</span> <span class="o">*</span> <span class="n">i_pv</span><span class="p">,</span>
+            <span class="c1"># The boost output is represented as a controlled Thevenin-like DC</span>
+            <span class="c1"># source around v_dc_ref. A power droop term drives the delivered</span>
+            <span class="c1"># power toward the MPPT/boost target while the imported VSC block</span>
+            <span class="c1"># keeps the explicit converter DC-link state.</span>
+            <span class="n">v_dc_bus</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_dc_src_ctrl_expr</span> <span class="o">-</span> <span class="n">r_dc</span> <span class="o">*</span> <span class="n">i_pv</span> <span class="o">-</span> <span class="n">k_boost_power</span> <span class="o">*</span> <span class="p">(</span><span class="n">p_to_vsc</span> <span class="o">-</span> <span class="n">p_to_vsc_expr</span><span class="p">)),</span>
+            <span class="n">p_curt</span> <span class="o">-</span> <span class="p">(</span><span class="n">p_avail</span> <span class="o">-</span> <span class="n">p_src</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">v_dc_bus</span><span class="p">,</span> <span class="n">v_mp</span><span class="p">,</span> <span class="n">i_mp</span><span class="p">,</span> <span class="n">p_avail</span><span class="p">,</span> <span class="n">v_pv</span><span class="p">,</span> <span class="n">p_src</span><span class="p">,</span> <span class="n">p_to_vsc</span><span class="p">,</span> <span class="n">i_pv</span><span class="p">,</span> <span class="n">duty_ref</span><span class="p">,</span> <span class="n">p_curt</span><span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">p_rated</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">irradiance</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
+            <span class="n">irradiance_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
+            <span class="n">t_cell</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span>
+            <span class="n">t_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span>
+            <span class="n">v_mp_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.80</span><span class="p">),</span>
+            <span class="n">i_mp_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">temp_coeff_v</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.002</span><span class="p">),</span>
+            <span class="n">temp_coeff_i</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0005</span><span class="p">),</span>
+            <span class="n">v_dc_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">r_dc</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>
+            <span class="n">d0</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0000001</span><span class="p">),</span><span class="c1">#0.20),</span>
+            <span class="n">d_min</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">d_max</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.95</span><span class="p">),</span>
+            <span class="n">kp_mppt</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span>
+            <span class="n">ki_mppt</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">t_duty</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>
+            <span class="n">eta_boost</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.98</span><span class="p">),</span>
+            <span class="n">k_src</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">k_boost_power</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span>
+            <span class="n">k_vdc_ctrl</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">xi_mppt</span><span class="p">:</span> <span class="n">c0</span><span class="p">,</span>
+            <span class="n">duty</span><span class="p">:</span> <span class="n">d0</span><span class="p">,</span>
+            <span class="n">v_mp</span><span class="p">:</span> <span class="n">v_mp_expr</span><span class="p">,</span>
+            <span class="n">i_mp</span><span class="p">:</span> <span class="n">i_mp_expr</span><span class="p">,</span>
+            <span class="n">p_avail</span><span class="p">:</span> <span class="n">p_avail_expr</span><span class="p">,</span>
+            <span class="n">v_pv</span><span class="p">:</span>  <span class="n">v_dc_ref</span><span class="p">,</span> <span class="c1">#(c1 - d0) * v_dc_ref,</span>
+            <span class="n">duty_ref</span><span class="p">:</span> <span class="n">d0</span><span class="p">,</span>
+            <span class="n">p_src</span><span class="p">:</span> <span class="n">p_avail_expr</span><span class="p">,</span>
+            <span class="n">p_to_vsc</span><span class="p">:</span> <span class="n">p_to_vsc_expr</span><span class="p">,</span>
+            <span class="n">i_pv</span><span class="p">:</span> <span class="n">i_pv_init</span><span class="p">,</span>
+            <span class="n">v_dc_bus</span><span class="p">:</span> <span class="n">v_dc_bus_init</span><span class="p">,</span>
+            <span class="n">p_curt</span><span class="p">:</span> <span class="n">c0</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">diff_init_eqs</span><span class="o">=</span><span class="p">{</span><span class="n">d_xi_mppt</span><span class="p">:</span> <span class="n">c0</span><span class="p">,</span> <span class="n">d_duty</span><span class="p">:</span> <span class="n">c0</span><span class="p">},</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span><span class="n">i_dc</span><span class="p">,</span> <span class="n">v_dc_ctrl</span><span class="p">],</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">v_dc_bus</span><span class="p">,</span> <span class="n">p_avail</span><span class="p">,</span> <span class="n">p_src</span><span class="p">,</span> <span class="n">p_to_vsc</span><span class="p">,</span> <span class="n">v_pv</span><span class="p">,</span> <span class="n">duty</span><span class="p">,</span> <span class="n">v_mp</span><span class="p">,</span> <span class="n">i_mp</span><span class="p">,</span> <span class="n">p_curt</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_pv_level2_boost&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_pv_avm_boost_grid_following_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pv_emt_template.get_pv_avm_boost_grid_following_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pv_avm_boost_grid_following_emt_template</span><span class="p">(</span>
+    <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pv_avm_boost_grid_following_emt&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the Level-2 PV averaged DC-DC plus grid-following VSC EMT template.</span>
+
+<span class="sd">    Structure</span>
+<span class="sd">    ---------</span>
+<span class="sd">    The assembled model is::</span>
+
+<span class="sd">        PV array equivalent from irradiance and temperature</span>
+<span class="sd">            -&gt; averaged boost converter with MPPT duty-cycle dynamics</span>
+<span class="sd">            -&gt; internal DC terminal voltage</span>
+<span class="sd">            -&gt; imported VSC/DC-link block</span>
+<span class="sd">            -&gt; imported SRF-PLL</span>
+<span class="sd">            -&gt; imported outer P/Q or Vdc/Q loop</span>
+<span class="sd">            -&gt; imported inner dq0 current controller</span>
+<span class="sd">            -&gt; imported AC-side dq0/abc interface</span>
+<span class="sd">            -&gt; abc current injection into the EMT network</span>
+
+<span class="sd">    Compared with Level 1</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">    Level 1 only computes available PV power and applies an MPPT lag. Level 2</span>
+<span class="sd">    adds explicit averaged boost-converter variables: PV MPP voltage/current,</span>
+<span class="sd">    PV-side voltage, duty-cycle state, MPPT PI integrator and boost efficiency.</span>
+
+<span class="sd">    Not included</span>
+<span class="sd">    ------------</span>
+<span class="sd">    * Switching-level DC-DC or PWM detail.</span>
+<span class="sd">    * Semiconductor device models.</span>
+<span class="sd">    * Cell-level diode equations.</span>
+<span class="sd">    * Plant-level PPC beyond the imported converter control interface.</span>
+
+<span class="sd">    :param vf: EMT symbolic variable factory.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Fully assembled Level-2 PV EMT template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">v_A</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">)</span>
+    <span class="n">v_B</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">)</span>
+    <span class="n">v_C</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;v_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">)</span>
+
+    <span class="n">vsc_block</span><span class="p">,</span> <span class="n">pll_block</span><span class="p">,</span> <span class="n">outer_loop_block</span><span class="p">,</span> <span class="n">inner_loop_block</span><span class="p">,</span> <span class="n">transformer_block</span> <span class="o">=</span> <span class="n">_build_converter_blocks</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">pv_boost_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_build_level2_pv_boost_block</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">_connect_imported_converter_blocks</span><span class="p">(</span>
+        <span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">v_A</span><span class="o">=</span><span class="n">v_A</span><span class="p">,</span>
+        <span class="n">v_B</span><span class="o">=</span><span class="n">v_B</span><span class="p">,</span>
+        <span class="n">v_C</span><span class="o">=</span><span class="n">v_C</span><span class="p">,</span>
+        <span class="n">dc_voltage_source</span><span class="o">=</span><span class="n">pv_boost_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">vsc_block</span><span class="o">=</span><span class="n">vsc_block</span><span class="p">,</span>
+        <span class="n">pll_block</span><span class="o">=</span><span class="n">pll_block</span><span class="p">,</span>
+        <span class="n">outer_loop_block</span><span class="o">=</span><span class="n">outer_loop_block</span><span class="p">,</span>
+        <span class="n">inner_loop_block</span><span class="o">=</span><span class="n">inner_loop_block</span><span class="p">,</span>
+        <span class="n">transformer_block</span><span class="o">=</span><span class="n">transformer_block</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">pv_boost_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pv_boost_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_i_dc_feedback&quot;</span><span class="p">)</span>
+    <span class="n">_tag_connected_pair</span><span class="p">(</span><span class="n">vf</span><span class="p">,</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pv_boost_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_v_dc_feedback&quot;</span><span class="p">)</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+        <span class="n">pv_boost_block</span><span class="p">,</span>
+        <span class="n">vsc_block</span><span class="p">,</span>
+        <span class="n">pll_block</span><span class="p">,</span>
+        <span class="n">inner_loop_block</span><span class="p">,</span>
+        <span class="n">outer_loop_block</span><span class="p">,</span>
+        <span class="n">transformer_block</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">v_A</span><span class="p">,</span> <span class="n">v_B</span><span class="p">,</span> <span class="n">v_C</span><span class="p">]</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">]</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">:</span> <span class="n">v_A</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">:</span> <span class="n">v_B</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">:</span> <span class="n">v_C</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">:</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">:</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">:</span> <span class="n">transformer_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">phi_v</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vpk</span><span class="p">:</span> <span class="n">vsc_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">vsc_block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<div class="viewcode-block" id="get_pv_grid_following_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pv_emt_template.get_pv_grid_following_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pv_grid_following_emt_template</span><span class="p">(</span>
+    <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">PvEmtModelLevel</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one PV EMT template from the requested model-detail level.</span>
+
+<span class="sd">    This helper keeps the Level-1 and Level-2 public constructors unchanged</span>
+<span class="sd">    while giving scripts one typed selection point for level-aware examples.</span>
+
+<span class="sd">    :param vf: EMT symbolic variable factory.</span>
+<span class="sd">    :param level: Requested PV model-detail level.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: Fully assembled PV EMT template for the requested level.</span>
+<span class="sd">    :raises ValueError: If the requested level is not supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pv_level</span><span class="p">:</span> <span class="n">PvEmtModelLevel</span> <span class="o">=</span> <span class="n">PvEmtModelLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pv_level</span> <span class="o">==</span> <span class="n">PvEmtModelLevel</span><span class="o">.</span><span class="n">LEVEL_1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_pv_avm_grid_following_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pv_level</span> <span class="o">==</span> <span class="n">PvEmtModelLevel</span><span class="o">.</span><span class="n">LEVEL_2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_pv_avm_boost_grid_following_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported PV EMT model level: </span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

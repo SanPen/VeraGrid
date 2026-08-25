@@ -1,0 +1,40 @@
+# MIN (3 inputs)
+
+This is Basic Block Catalog type `365` (`MIN3`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**MIN (3 inputs)** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 3.
+- Outputs: 1.
+- Declared states: 0.
+- Configurable parameters: 0.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (yo - ((yi1 \cdot \Theta\left(yi2 - yi1\right) + yi2 \cdot (1 - \Theta\left(yi2 - yi1\right))) \cdot \Theta\left(yi3 - (yi1 \cdot \Theta\left(yi2 - yi1\right) + yi2 \cdot (1 - \Theta\left(yi2 - yi1\right)))\right) + yi3 \cdot (1 - \Theta\left(yi3 - (yi1 \cdot \Theta\left(yi2 - yi1\right) + yi2 \cdot (1 - \Theta\left(yi2 - yi1\right)))\right))))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi1` | Input signal consumed by the block | model-dependent |
+| Input | `yi2` | Input signal consumed by the block | model-dependent |
+| Input | `yi3` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

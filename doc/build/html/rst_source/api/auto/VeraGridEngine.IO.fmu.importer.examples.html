@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.importer.examples package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.importer.examples package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-fmu-importer-examples-package">
+<h1>VeraGridEngine.IO.fmu.importer.examples package<a class="headerlink" href="#veragridengine-io-fmu-importer-examples-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples.common">
+<span id="veragridengine-io-fmu-importer-examples-common-module"></span><h2>VeraGridEngine.IO.fmu.importer.examples.common module<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples.common" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.export_example_emt_cs_fmu">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">export_example_emt_cs_fmu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#export_example_emt_cs_fmu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.export_example_emt_cs_fmu" title="Link to this definition"></a></dt>
+<dd><p>Export the self-contained EMT CS device FMU used by the example scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory for the generated FMU.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated FMU path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.export_example_emt_me_fmu">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">export_example_emt_me_fmu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#export_example_emt_me_fmu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.export_example_emt_me_fmu" title="Link to this definition"></a></dt>
+<dd><p>Export the self-contained EMT ME device FMU used by the example scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory for the generated FMU.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated FMU path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.export_example_rms_cs_fmu">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">export_example_rms_cs_fmu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#export_example_rms_cs_fmu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.export_example_rms_cs_fmu" title="Link to this definition"></a></dt>
+<dd><p>Export the self-contained RMS CS device FMU used by the example scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory for the generated FMU.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated FMU path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.export_example_rms_me_fmu">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">export_example_rms_me_fmu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#export_example_rms_me_fmu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.export_example_rms_me_fmu" title="Link to this definition"></a></dt>
+<dd><p>Export the self-contained RMS ME device FMU used by the example scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory for the generated FMU.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated FMU path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.get_example_output_dir">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">get_example_output_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#get_example_output_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.get_example_output_dir" title="Link to this definition"></a></dt>
+<dd><p>Return the directory used by the FMU import example scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Example output directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.run_emt_cs_example">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">run_emt_cs_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#run_emt_cs_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.run_emt_cs_example" title="Link to this definition"></a></dt>
+<dd><p>Run the full EMT Co-Simulation FMU device example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory used for the FMU and the report.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated report path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.run_emt_me_example">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">run_emt_me_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#run_emt_me_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.run_emt_me_example" title="Link to this definition"></a></dt>
+<dd><p>Run the full EMT Model Exchange FMU device example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory used for the FMU and the report.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated report path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.run_rms_cs_example">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">run_rms_cs_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#run_rms_cs_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.run_rms_cs_example" title="Link to this definition"></a></dt>
+<dd><p>Run the full RMS Co-Simulation FMU device example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory used for the FMU and the report.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated report path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.run_rms_me_example">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">run_rms_me_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#run_rms_me_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.run_rms_me_example" title="Link to this definition"></a></dt>
+<dd><p>Run the full RMS Model Exchange FMU device example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> – Output directory used for the FMU and the report.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated report path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.common.write_example_report">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.common.</span></span><span class="sig-name descname"><span class="pre">write_example_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/common.html#write_example_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.common.write_example_report" title="Link to this definition"></a></dt>
+<dd><p>Write a plain-text report for one FMU import example run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>report_path</strong> – Report output path.</p></li>
+<li><p><strong>lines</strong> – Lines written to the report.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Final report path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples.run_all_device_examples">
+<span id="veragridengine-io-fmu-importer-examples-run-all-device-examples-module"></span><h2>VeraGridEngine.IO.fmu.importer.examples.run_all_device_examples module<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples.run_all_device_examples" title="Link to this heading"></a></h2>
+<p>Run all FMU device import examples and print the generated reports.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.run_all_device_examples.main">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.run_all_device_examples.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/run_all_device_examples.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.run_all_device_examples.main" title="Link to this definition"></a></dt>
+<dd><p>Execute the four FMU device import examples and print their report paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Process exit code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples.run_emt_cs_device_example">
+<span id="veragridengine-io-fmu-importer-examples-run-emt-cs-device-example-module"></span><h2>VeraGridEngine.IO.fmu.importer.examples.run_emt_cs_device_example module<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples.run_emt_cs_device_example" title="Link to this heading"></a></h2>
+<p>Run the EMT Co-Simulation FMU device example.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.run_emt_cs_device_example.main">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.run_emt_cs_device_example.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/run_emt_cs_device_example.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.run_emt_cs_device_example.main" title="Link to this definition"></a></dt>
+<dd><p>Execute the EMT CS example and print the report path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Process exit code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples.run_emt_me_device_example">
+<span id="veragridengine-io-fmu-importer-examples-run-emt-me-device-example-module"></span><h2>VeraGridEngine.IO.fmu.importer.examples.run_emt_me_device_example module<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples.run_emt_me_device_example" title="Link to this heading"></a></h2>
+<p>Run the EMT Model Exchange FMU device example.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.run_emt_me_device_example.main">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.run_emt_me_device_example.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/run_emt_me_device_example.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.run_emt_me_device_example.main" title="Link to this definition"></a></dt>
+<dd><p>Execute the EMT ME example and print the report path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Process exit code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples.run_rms_cs_device_example">
+<span id="veragridengine-io-fmu-importer-examples-run-rms-cs-device-example-module"></span><h2>VeraGridEngine.IO.fmu.importer.examples.run_rms_cs_device_example module<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples.run_rms_cs_device_example" title="Link to this heading"></a></h2>
+<p>Run the RMS Co-Simulation FMU device example.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.run_rms_cs_device_example.main">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.run_rms_cs_device_example.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/run_rms_cs_device_example.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.run_rms_cs_device_example.main" title="Link to this definition"></a></dt>
+<dd><p>Execute the RMS CS example and print the report path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Process exit code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples.run_rms_me_device_example">
+<span id="veragridengine-io-fmu-importer-examples-run-rms-me-device-example-module"></span><h2>VeraGridEngine.IO.fmu.importer.examples.run_rms_me_device_example module<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples.run_rms_me_device_example" title="Link to this heading"></a></h2>
+<p>Run the RMS Model Exchange FMU device example.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.fmu.importer.examples.run_rms_me_device_example.main">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.fmu.importer.examples.run_rms_me_device_example.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/fmu/importer/examples/run_rms_me_device_example.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.fmu.importer.examples.run_rms_me_device_example.main" title="Link to this definition"></a></dt>
+<dd><p>Execute the RMS ME example and print the report path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Process exit code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.fmu.importer.examples">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.fmu.importer.examples" title="Link to this heading"></a></h2>
+<p>Examples for experimental FMU device import in VeraGrid.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

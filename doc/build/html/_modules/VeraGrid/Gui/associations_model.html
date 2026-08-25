@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.associations_model &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.associations_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.associations_model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">FloatDelegate</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.wrappable_table_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">WrappableTableModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.association</span><span class="w"> </span><span class="kn">import</span> <span class="n">Association</span><span class="p">,</span> <span class="n">Associations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASSOCIATION_TYPES</span><span class="p">,</span> <span class="n">ALL_DEV_TYPES</span>
+
+
+<div class="viewcode-block" id="try_convert_to_float">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.try_convert_to_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_convert_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param value:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="AssociationsModel">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AssociationsModel</span><span class="p">(</span><span class="n">WrappableTableModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to populate a Qt table view with the properties of objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">],</span>
+                 <span class="n">associated_objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ASSOCIATION_TYPES</span><span class="p">],</span>
+                 <span class="n">gc_prop</span><span class="p">:</span> <span class="n">GCProp</span><span class="p">,</span>
+                 <span class="n">table_view</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">,</span>
+                 <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param objects:</span>
+<span class="sd">        :param associated_objects:</span>
+<span class="sd">        :param gc_prop:</span>
+<span class="sd">        :param table_view:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WrappableTableModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table_view</span> <span class="o">=</span> <span class="n">table_view</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="n">objects</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ASSOCIATION_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="n">associated_objects</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_associated_obj_2_idx</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">ASSOCIATION_TYPES</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_associated_obj_2_idx</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gc_prop</span> <span class="o">=</span> <span class="n">gc_prop</span>
+
+        <span class="c1"># relate the objects to the associations</span>
+        <span class="c1"># [object index][associated object index] -&gt; association</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sp_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Association</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">):</span>
+            <span class="n">associations_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Association</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">entries_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_obj_2_idx</span><span class="p">[</span><span class="n">asoc</span><span class="o">.</span><span class="n">api_object</span><span class="p">]:</span> <span class="n">asoc</span> <span class="k">for</span> <span class="n">asoc</span> <span class="ow">in</span> <span class="n">associations_list</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sp_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entries_dict</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_formatter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;%.2f&quot;</span> <span class="o">%</span> <span class="n">x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decimals</span> <span class="o">=</span> <span class="n">decimals</span>
+
+<div class="viewcode-block" id="AssociationsModel.get_association">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.get_association">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_association</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Association</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the association at some coordinates</span>
+<span class="sd">        :param i: row index</span>
+<span class="sd">        :param j: column index</span>
+<span class="sd">        :return: Association or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># return self._sp_data[i].get(j, None)</span>
+        <span class="n">associations</span><span class="p">:</span> <span class="n">Associations</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">associated_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">associations</span><span class="o">.</span><span class="n">at_key</span><span class="p">(</span><span class="n">associated_obj</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.create_association">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.create_association">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_association</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Association</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the association at some coordinates</span>
+<span class="sd">        :param i: row index</span>
+<span class="sd">        :param j: column index</span>
+<span class="sd">        :param value: value to associate</span>
+<span class="sd">        :return: Association</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">associations</span><span class="p">:</span> <span class="n">Associations</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">assoc</span> <span class="o">=</span> <span class="n">associations</span><span class="o">.</span><span class="n">add_object</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">assoc</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.remove_association">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.remove_association">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_association</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the association at some coordinates</span>
+<span class="sd">        :param i: row index</span>
+<span class="sd">        :param j: column index</span>
+<span class="sd">        :return: Association or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">associations</span><span class="p">:</span> <span class="n">Associations</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">associated_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">associations</span><span class="o">.</span><span class="n">remove_by_key</span><span class="p">(</span><span class="n">associated_obj</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.set_delegates">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.set_delegates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_delegates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the cell editor types depending on the attribute_types array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">)):</span>
+            <span class="n">delegate</span> <span class="o">=</span> <span class="n">FloatDelegate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_view</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_decimals</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_table_view</span><span class="o">.</span><span class="n">setItemDelegateForColumn</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">delegate</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.update">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        update table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># row = self.rowCount()</span>
+        <span class="c1"># self.beginInsertRows(QtCore.QModelIndex(), row, row)</span>
+        <span class="c1"># # whatever code</span>
+        <span class="c1"># self.endInsertRows()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutAboutToBeChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.flags">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.flags">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the display mode</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="o">.</span><span class="n">ItemIsEditable</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemFlag</span><span class="o">.</span><span class="n">ItemIsSelectable</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.rowCount">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.rowCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get number of rows</span>
+<span class="sd">        :param parent:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.columnCount">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.columnCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get number of columns</span>
+<span class="sd">        :param parent:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the data to display</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :param role:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
+
+                <span class="n">association</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_association</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">j</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">association</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;-&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.setData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.setData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">role</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set data by simple editor (whatever text)</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :param role:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">value2</span> <span class="o">=</span> <span class="n">try_convert_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value2</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="n">association</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_association</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">j</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">association</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># create an association</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_association</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">j</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">(),</span> <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">value2</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created association </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># there was a previous association, change the value</span>
+                <span class="n">association</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value2</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value2</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">value2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_association</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">j</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">())</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed association </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="AssociationsModel.headerData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.associations_model.AssociationsModel.headerData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">section</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                   <span class="n">orientation</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="p">,</span>
+                   <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the headers to display</span>
+<span class="sd">        :param section:</span>
+<span class="sd">        :param orientation:</span>
+<span class="sd">        :param role:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hide_headers_mode</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
+
+            <span class="c1"># Normal</span>
+            <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">:</span>
+                <span class="c1"># return f&quot;H{section}&quot;  #</span>
+                <span class="c1"># if 0 &lt;= section &lt; len(self._associated_objects):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_associated_objects</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="k">elif</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">Vertical</span><span class="p">:</span>
+                <span class="c1"># return f&quot;V{section}&quot;  #</span>
+                <span class="c1"># if 0 &lt;= section &lt; len(self._objects):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># add a tooltip</span>
+        <span class="c1"># elif role == QtCore.Qt.ItemDataRole.ToolTipRole:</span>
+        <span class="c1">#     if orientation == QtCore.Qt.Orientation.Horizontal:</span>
+        <span class="c1">#         return f&quot;{section}:{self.associated_objects[section].name}&quot;</span>
+        <span class="c1">#</span>
+        <span class="c1">#     elif orientation == QtCore.Qt.Orientation.Vertical:</span>
+        <span class="c1">#         return f&quot;{section}:{self.objects[section].name}&quot;</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

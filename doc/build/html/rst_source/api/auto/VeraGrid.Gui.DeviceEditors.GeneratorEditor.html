@@ -1,0 +1,891 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.DeviceEditors.GeneratorEditor package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard package" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html" />
+    <link rel="prev" title="VeraGrid.Gui.DeviceEditors.DcLineEditor package" href="VeraGrid.Gui.DeviceEditors.DcLineEditor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.DeviceEditors.html">VeraGrid.Gui.DeviceEditors package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.DeviceEditors.GeneratorEditor package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.DeviceEditors.GeneratorEditor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-deviceeditors-generatoreditor-package">
+<h1>VeraGrid.Gui.DeviceEditors.GeneratorEditor package<a class="headerlink" href="#veragrid-gui-deviceeditors-generatoreditor-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html">VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizard_gui">VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizard_gui module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizard_gui.Ui_MainWindow"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizard_gui.Ui_MainWindow.retranslateUi"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow.retranslateUi()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizard_gui.Ui_MainWindow.setupUi"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow.setupUi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard">VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.accept_click"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.accept_click()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.df"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.df</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.generate_click"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.generate_click()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.irradiation"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.irradiation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.is_accepted"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.is_accepted</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.plot"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.selected_indices"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.selected_indices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.temperature"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.temperature</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.update_results"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.update_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard.wind_speed"><code class="docutils literal notranslate"><span class="pre">SolarPvWizard.wind_speed</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.get_pv_lib_weather_df"><code class="docutils literal notranslate"><span class="pre">get_pv_lib_weather_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.get_weather_column"><code class="docutils literal notranslate"><span class="pre">get_weather_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.parse_pv_time_array"><code class="docutils literal notranslate"><span class="pre">parse_pv_time_array()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.update_gui_file">VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.update_gui_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html">VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.update_gui_file">VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.update_gui_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizard_gui">VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizard_gui module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizard_gui.Ui_MainWindow"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizard_gui.Ui_MainWindow.retranslateUi"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow.retranslateUi()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizard_gui.Ui_MainWindow.setupUi"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow.setupUi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard">VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.P"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.P</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.accept_click"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.accept_click()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.df"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.df</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.generate_click"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.generate_click()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.get_parameter_df"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.get_parameter_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.get_selected_hub_height"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.get_selected_hub_height()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.get_selected_plant_power"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.get_selected_plant_power()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.get_selected_turbine_row_index_from_combo"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.get_selected_turbine_row_index_from_combo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.get_selected_turbine_type"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.get_selected_turbine_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.get_selected_windpowerlib_turbine"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.get_selected_windpowerlib_turbine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.is_accepted"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.is_accepted</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.load_turbine_templates"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.load_turbine_templates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.ok"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.ok</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.parameter_model"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.parameter_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.plot"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.plot_design_curves"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.plot_design_curves()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.temperature"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.temperature</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.template_df"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.template_df</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.time_array"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.time_array</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.ui"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.ui</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.update_results"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.update_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.update_turbine_parameter_table"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.update_turbine_parameter_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard.wind_speed"><code class="docutils literal notranslate"><span class="pre">WindFarmWizard.wind_speed</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.columnCount"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.columnCount()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.data"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.data_frame"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.data_frame</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.flags"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.flags()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.headerData"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.headerData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.rowCount"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.rowCount()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.setData"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.setData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindTurbineParameterModel.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">WindTurbineParameterModel.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.app"><code class="docutils literal notranslate"><span class="pre">app</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.build_generic_wind_power_curve"><code class="docutils literal notranslate"><span class="pre">build_generic_wind_power_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.build_mapped_wind_time_index"><code class="docutils literal notranslate"><span class="pre">build_mapped_wind_time_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.build_turbine_parameter_table"><code class="docutils literal notranslate"><span class="pre">build_turbine_parameter_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.build_windpowerlib_weather_df"><code class="docutils literal notranslate"><span class="pre">build_windpowerlib_weather_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.calculate_wind_power_with_windpowerlib"><code class="docutils literal notranslate"><span class="pre">calculate_wind_power_with_windpowerlib()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.create_windpowerlib_turbine"><code class="docutils literal notranslate"><span class="pre">create_windpowerlib_turbine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.direction"><code class="docutils literal notranslate"><span class="pre">direction</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.enrich_turbine_template_table"><code class="docutils literal notranslate"><span class="pre">enrich_turbine_template_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.get_open_meteo_wind_weather_df"><code class="docutils literal notranslate"><span class="pre">get_open_meteo_wind_weather_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.get_parameter_value"><code class="docutils literal notranslate"><span class="pre">get_parameter_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.get_selected_turbine_type"><code class="docutils literal notranslate"><span class="pre">get_selected_turbine_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.get_wind_power_df"><code class="docutils literal notranslate"><span class="pre">get_wind_power_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.get_wind_reference_base_year"><code class="docutils literal notranslate"><span class="pre">get_wind_reference_base_year()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.load_windpowerlib_turbine_templates"><code class="docutils literal notranslate"><span class="pre">load_windpowerlib_turbine_templates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.longitude"><code class="docutils literal notranslate"><span class="pre">longitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.make_turbine_template_label"><code class="docutils literal notranslate"><span class="pre">make_turbine_template_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.offset"><code class="docutils literal notranslate"><span class="pre">offset</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.parse_wind_time_array"><code class="docutils literal notranslate"><span class="pre">parse_wind_time_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.start_time"><code class="docutils literal notranslate"><span class="pre">start_time</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.time_array"><code class="docutils literal notranslate"><span class="pre">time_array</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.window"><code class="docutils literal notranslate"><span class="pre">window</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor">
+<span id="veragrid-gui-deviceeditors-generatoreditor-generator-editor-module"></span><h2>VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">EmbeddedSolarPvEditorWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#EmbeddedSolarPvEditorWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard.SolarPvWizard"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolarPvWizard</span></code></a></p>
+<p>Solar editor embedded as a child widget inside the generator editor tab.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.accept_click">
+<span class="sig-name descname"><span class="pre">accept_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#EmbeddedSolarPvEditorWidget.accept_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.accept_click" title="Link to this definition"></a></dt>
+<dd><p>Notify parent listeners without closing embedded widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.generate_click">
+<span class="sig-name descname"><span class="pre">generate_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#EmbeddedSolarPvEditorWidget.generate_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.generate_click" title="Link to this definition"></a></dt>
+<dd><p>Generate the solar profile and notify parent listeners.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.generation_finished">
+<span class="sig-name descname"><span class="pre">generation_finished</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.generation_finished" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;EmbeddedSolarPvEditorWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;SolarPvWizard&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#41</span> <span class="pre">type=Signal,</span> <span class="pre">signature=generation_finished(bool),</span> <span class="pre">parameters=bool</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">EmbeddedWindFarmEditorWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#EmbeddedWindFarmEditorWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.html#VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard.WindFarmWizard"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindFarmWizard</span></code></a></p>
+<p>Wind farm editor embedded as a child widget inside the generator editor tab.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.accept_click">
+<span class="sig-name descname"><span class="pre">accept_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#EmbeddedWindFarmEditorWidget.accept_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.accept_click" title="Link to this definition"></a></dt>
+<dd><p>Notify parent listeners without closing embedded widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.generate_click">
+<span class="sig-name descname"><span class="pre">generate_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#EmbeddedWindFarmEditorWidget.generate_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.generate_click" title="Link to this definition"></a></dt>
+<dd><p>Generate the wind profile and notify parent listeners.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.generation_finished">
+<span class="sig-name descname"><span class="pre">generation_finished</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.generation_finished" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;EmbeddedWindFarmEditorWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;WindFarmWizard&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#41</span> <span class="pre">type=Signal,</span> <span class="pre">signature=generation_finished(bool),</span> <span class="pre">parameters=bool</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">GeneratorEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.html#VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor" title="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code></a></p>
+<p>Generator editor that extends <code class="docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code> with specialized tabs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.api_object">
+<span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.api_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorEditor.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Synchronize q-curve table edits before dialog closes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Qt close event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.solar_editor_widget">
+<span class="sig-name descname"><span class="pre">solar_editor_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget"><span class="pre">EmbeddedSolarPvEditorWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.solar_editor_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;TemplateDeviceEditor&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.wind_editor_widget">
+<span class="sig-name descname"><span class="pre">wind_editor_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget"><span class="pre">EmbeddedWindFarmEditorWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor.wind_editor_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditorDialog">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">GeneratorEditorDialog</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditorDialog" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneratorEditor</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">GeneratorQCurveEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Snom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Standalone reactive power capability curve editor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Pmax">
+<span class="sig-name descname"><span class="pre">Pmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Pmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Pmin">
+<span class="sig-name descname"><span class="pre">Pmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Pmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Qmax">
+<span class="sig-name descname"><span class="pre">Qmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Qmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Qmin">
+<span class="sig-name descname"><span class="pre">Qmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Qmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Snom">
+<span class="sig-name descname"><span class="pre">Snom</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.Snom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditor.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Save edited data when closing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Qt close event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.main_layout">
+<span class="sig-name descname"><span class="pre">main_layout</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QVBoxLayout</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.main_layout" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.q_curve">
+<span class="sig-name descname"><span class="pre">q_curve</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.q_curve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.q_curve_widget">
+<span class="sig-name descname"><span class="pre">q_curve_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget"><span class="pre">GeneratorQCurveEditorWidget</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.q_curve_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorQCurveEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">GeneratorQCurveEditorTableModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QObject</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
+<p>Table model for reactive power capability points.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.add_row">
+<span class="sig-name descname"><span class="pre">add_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.add_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.add_row" title="Link to this definition"></a></dt>
+<dd><p>Append one row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>row_data</strong> – Row data with three values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.callback" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;PySide6.QtCore.QModelIndex(-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QObject(0x0))&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.columnCount" title="Link to this definition"></a></dt>
+<dd><p>Return number of columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> – Unused parent index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Column count.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.data" title="Link to this definition"></a></dt>
+<dd><p>Return displayed and edited value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Target table index.</p></li>
+<li><p><strong>role</strong> – Qt data role.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted cell value or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.del_last_row">
+<span class="sig-name descname"><span class="pre">del_last_row</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.del_last_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.del_last_row" title="Link to this definition"></a></dt>
+<dd><p>Remove last row if any.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.del_row">
+<span class="sig-name descname"><span class="pre">del_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.del_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.del_row" title="Link to this definition"></a></dt>
+<dd><p>Remove row at index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>row_index</strong> – Row index to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ItemFlag</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.flags" title="Link to this definition"></a></dt>
+<dd><p>Return editable item flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Target table index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Item flags.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.get_data" title="Link to this definition"></a></dt>
+<dd><p>Get table matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Data matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.headerData" title="Link to this definition"></a></dt>
+<dd><p>Return column headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong> – Header section.</p></li>
+<li><p><strong>orientation</strong> – Header orientation.</p></li>
+<li><p><strong>role</strong> – Qt role.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Header text or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;PySide6.QtCore.QModelIndex(-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QObject(0x0))&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.rowCount" title="Link to this definition"></a></dt>
+<dd><p>Return number of rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> – Unused parent index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Row count.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.setData">
+<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.setData" title="Link to this definition"></a></dt>
+<dd><p>Set one numeric cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Target table index.</p></li>
+<li><p><strong>value</strong> – New value.</p></li>
+<li><p><strong>role</strong> – Qt data role.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Success flag.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.sort_data">
+<span class="sig-name descname"><span class="pre">sort_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorTableModel.sort_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.sort_data" title="Link to this definition"></a></dt>
+<dd><p>Sort rows by active power column.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorQCurveEditorTableModel&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QAbstractTableModel&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">GeneratorQCurveEditorWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Snom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Reactive power capability curve editor widget backed by a Qt Designer <cite>.ui</cite>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Pmax">
+<span class="sig-name descname"><span class="pre">Pmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Pmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Pmin">
+<span class="sig-name descname"><span class="pre">Pmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Pmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Qmax">
+<span class="sig-name descname"><span class="pre">Qmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Qmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Qmin">
+<span class="sig-name descname"><span class="pre">Qmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Qmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Snom">
+<span class="sig-name descname"><span class="pre">Snom</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.Snom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.add_row">
+<span class="sig-name descname"><span class="pre">add_row</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorWidget.add_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.add_row" title="Link to this definition"></a></dt>
+<dd><p>Add one empty row.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorWidget.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Save edited data when closing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Qt close event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.collect_data">
+<span class="sig-name descname"><span class="pre">collect_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorWidget.collect_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.collect_data" title="Link to this definition"></a></dt>
+<dd><p>Collect values from the table model and update scalar limits.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.curve_changed">
+<span class="sig-name descname"><span class="pre">curve_changed</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.curve_changed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.headers">
+<span class="sig-name descname"><span class="pre">headers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.headers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorWidget.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot capability envelope and q-curve limits.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.q_curve">
+<span class="sig-name descname"><span class="pre">q_curve</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.q_curve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.remove_selected_row">
+<span class="sig-name descname"><span class="pre">remove_selected_row</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditorWidget.remove_selected_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.remove_selected_row" title="Link to this definition"></a></dt>
+<dd><p>Remove selected row or the last row when no selection exists.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorQCurveEditorWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=curve_changed()</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.table_model">
+<span class="sig-name descname"><span class="pre">table_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorTableModel"><span class="pre">GeneratorQCurveEditorTableModel</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget.table_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.build_safe_single_point_curve">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">build_safe_single_point_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#build_safe_single_point_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.build_safe_single_point_curve" title="Link to this definition"></a></dt>
+<dd><p>Build a one-point capability curve used as safe fallback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qmin</strong> – Reactive lower limit in MVAr.</p></li>
+<li><p><strong>qmax</strong> – Reactive upper limit in MVAr.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matrix with one row <code class="docutils literal notranslate"><span class="pre">[P,</span> <span class="pre">Qmin,</span> <span class="pre">Qmax]</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.bus_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">bus_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.bus_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.circuit_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">circuit_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.circuit_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.dialog_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">dialog_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor"><span class="pre">GeneratorEditor</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.dialog_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.draw_styled_qcurve_plot">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">draw_styled_qcurve_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plotter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Widgets.html#VeraGrid.Gui.Widgets.matplotlibwidget.MatplotlibWidget" title="VeraGrid.Gui.Widgets.matplotlibwidget.MatplotlibWidget"><span class="pre">MatplotlibWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chart_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#draw_styled_qcurve_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.draw_styled_qcurve_plot" title="Link to this definition"></a></dt>
+<dd><p>Draw a styled generator capability chart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plotter</strong> – Plot widget where the chart is rendered.</p></li>
+<li><p><strong>q_curve</strong> – Generator reactive capability curve object.</p></li>
+<li><p><strong>chart_title</strong> – Plot title text.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.generator_demo">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">generator_demo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.generator_demo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.qt_app">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.</span></span><span class="sig-name descname"><span class="pre">qt_app</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QApplication</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.qt_app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui">
+<span id="veragrid-gui-deviceeditors-generatoreditor-generator-editor-gui-module"></span><h2>VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.Ui_GeneratorQCurveEditorDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.</span></span><span class="sig-name descname"><span class="pre">Ui_GeneratorQCurveEditorDialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor_gui.html#Ui_GeneratorQCurveEditorDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.Ui_GeneratorQCurveEditorDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.Ui_GeneratorQCurveEditorDialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GeneratorQCurveEditorDialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor_gui.html#Ui_GeneratorQCurveEditorDialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.Ui_GeneratorQCurveEditorDialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.Ui_GeneratorQCurveEditorDialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GeneratorQCurveEditorDialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor_gui.html#Ui_GeneratorQCurveEditorDialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor_gui.Ui_GeneratorQCurveEditorDialog.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.update_gui_file">
+<span id="veragrid-gui-deviceeditors-generatoreditor-update-gui-file-module"></span><h2>VeraGrid.Gui.DeviceEditors.GeneratorEditor.update_gui_file module<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor.update_gui_file" title="Link to this heading"></a></h2>
+<p>Script to update correctly the main GUI (.py) file from the Qt design (.ui) file</p>
+</section>
+<section id="module-VeraGrid.Gui.DeviceEditors.GeneratorEditor">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.DeviceEditors.GeneratorEditor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.</span></span><span class="sig-name descname"><span class="pre">GeneratorEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.html#VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor" title="VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor.TemplateDeviceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code></a></p>
+<p>Generator editor that extends <code class="docutils literal notranslate"><span class="pre">TemplateDeviceEditor</span></code> with specialized tabs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.api_object">
+<span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.api_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorEditor.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Synchronize q-curve table edits before dialog closes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Qt close event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.solar_editor_widget">
+<span class="sig-name descname"><span class="pre">solar_editor_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedSolarPvEditorWidget"><span class="pre">EmbeddedSolarPvEditorWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.solar_editor_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;TemplateDeviceEditor&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.wind_editor_widget">
+<span class="sig-name descname"><span class="pre">wind_editor_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.EmbeddedWindFarmEditorWidget"><span class="pre">EmbeddedWindFarmEditorWidget</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditor.wind_editor_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditorDialog">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.</span></span><span class="sig-name descname"><span class="pre">GeneratorEditorDialog</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorEditorDialog" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneratorEditor</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.DeviceEditors.GeneratorEditor.</span></span><span class="sig-name descname"><span class="pre">GeneratorQCurveEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Qmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Snom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Standalone reactive power capability curve editor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Pmax">
+<span class="sig-name descname"><span class="pre">Pmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Pmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Pmin">
+<span class="sig-name descname"><span class="pre">Pmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Pmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Qmax">
+<span class="sig-name descname"><span class="pre">Qmax</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Qmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Qmin">
+<span class="sig-name descname"><span class="pre">Qmin</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Qmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Snom">
+<span class="sig-name descname"><span class="pre">Snom</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.Snom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/DeviceEditors/GeneratorEditor/generator_editor.html#GeneratorQCurveEditor.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Save edited data when closing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – Qt close event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.main_layout">
+<span class="sig-name descname"><span class="pre">main_layout</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QVBoxLayout</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.main_layout" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.q_curve">
+<span class="sig-name descname"><span class="pre">q_curve</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve" title="VeraGridEngine.Devices.Injections.generator_q_curve.GeneratorQCurve"><span class="pre">GeneratorQCurve</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.q_curve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.q_curve_widget">
+<span class="sig-name descname"><span class="pre">q_curve_widget</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor.GeneratorQCurveEditorWidget"><span class="pre">GeneratorQCurveEditorWidget</span></a></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.q_curve_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorQCurveEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.DeviceEditors.GeneratorEditor.GeneratorQCurveEditor.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.DeviceEditors.DcLineEditor.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.DeviceEditors.DcLineEditor package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

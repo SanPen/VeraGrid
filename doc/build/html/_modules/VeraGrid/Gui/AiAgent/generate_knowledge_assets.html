@@ -1,0 +1,1125 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.AiAgent.generate_knowledge_assets &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.AiAgent.generate_knowledge_assets</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.AiAgent.generate_knowledge_assets</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generate packaged AI knowledge assets for VeraGrid.</span>
+
+<span class="sd">This script converts selected repository sources into markdown knowledge files</span>
+<span class="sd">that ship with the AI agent. The generated files are written under</span>
+<span class="sd">``VeraGrid/Gui/AiAgent/knowledge`` so the retrieval layer can load them through</span>
+<span class="sd">package resources in production builds.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="KnowledgeAsset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.KnowledgeAsset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One generated markdown knowledge asset.</span>
+
+<span class="sd">    :param output_name: Output filename relative to the knowledge directory.</span>
+<span class="sd">    :param content: Markdown content to write.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;output_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the generated asset payload.</span>
+
+<span class="sd">        :param output_name: Output filename relative to the knowledge directory.</span>
+<span class="sd">        :param content: Markdown content to write.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">output_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">content</span></div>
+
+
+
+<div class="viewcode-block" id="build_repository_root">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_repository_root">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_repository_root</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate the repository root from this script location.</span>
+
+<span class="sd">    :returns: Absolute repository root path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">script_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">repository_root</span></div>
+
+
+
+<div class="viewcode-block" id="build_knowledge_directory">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_knowledge_directory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_knowledge_directory</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the packaged knowledge directory path.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Absolute knowledge directory path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">knowledge_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">repository_root</span><span class="p">,</span>
+        <span class="s2">&quot;src&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VeraGrid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Gui&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;AiAgent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;knowledge&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">knowledge_directory</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_generated_filename">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.normalize_generated_filename">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_generated_filename</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a filesystem-safe generated filename for one source path.</span>
+
+<span class="sd">    :param prefix: Filename prefix.</span>
+<span class="sd">    :param relative_path: Source path relative to the repository root.</span>
+<span class="sd">    :returns: Generated markdown filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">relative_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+    <span class="n">normalized_name</span> <span class="o">=</span> <span class="n">normalized_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
+    <span class="n">normalized_name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^A-Za-z0-9_\.]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">normalized_name</span><span class="p">)</span>
+    <span class="n">normalized_name</span> <span class="o">=</span> <span class="n">normalized_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">normalized_name</span><span class="si">}</span><span class="s2">.md&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="read_text_file">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.read_text_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_text_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read one UTF-8 text file.</span>
+
+<span class="sd">    :param path: Absolute file path.</span>
+<span class="sd">    :returns: File text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_pointer</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">file_pointer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="write_text_file">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.write_text_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_text_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write one UTF-8 text file.</span>
+
+<span class="sd">    :param path: Absolute file path.</span>
+<span class="sd">    :param content: File text.</span>
+<span class="sd">    :returns: Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_pointer</span><span class="p">:</span>
+        <span class="n">file_pointer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="list_markdown_document_paths">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.list_markdown_document_paths">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_markdown_document_paths</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List source markdown documents to package for static RAG.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Absolute markdown source paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;md_source&quot;</span><span class="p">)</span>
+    <span class="n">collected_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">file_names</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">source_directory</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">file_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.md&quot;</span><span class="p">):</span>
+                <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="n">collected_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">collected_paths</span></div>
+
+
+
+<div class="viewcode-block" id="list_gui_main_source_paths">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.list_gui_main_source_paths">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_gui_main_source_paths</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List ``Gui/Main`` sources to package for static RAG.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Absolute GUI/Main source paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;VeraGrid&quot;</span><span class="p">,</span> <span class="s2">&quot;Gui&quot;</span><span class="p">,</span> <span class="s2">&quot;Main&quot;</span><span class="p">)</span>
+    <span class="n">collected_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">file_names</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">source_directory</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">file_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+                <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ui&quot;</span><span class="p">):</span>
+                    <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">):</span>
+                        <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+    <span class="n">collected_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">collected_paths</span></div>
+
+
+
+<div class="viewcode-block" id="list_veragrid_engine_source_paths">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.list_veragrid_engine_source_paths">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_veragrid_engine_source_paths</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List ``src/VeraGridEngine`` sources to package for static RAG.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Absolute VeraGridEngine source paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;VeraGridEngine&quot;</span><span class="p">)</span>
+    <span class="n">collected_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">file_names</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">source_directory</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">file_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+                <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.md&quot;</span><span class="p">):</span>
+                    <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">):</span>
+                        <span class="n">collected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+    <span class="n">collected_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">collected_paths</span></div>
+
+
+
+<div class="viewcode-block" id="make_relative_repository_path">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.make_relative_repository_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a repository-relative path for one source file.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source path.</span>
+<span class="sd">    :returns: Repository-relative path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="n">repository_root</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">relative_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_markdown_source_text">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.normalize_markdown_source_text">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_markdown_source_text</span><span class="p">(</span><span class="n">source_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize one markdown document for packaged retrieval.</span>
+
+<span class="sd">    :param source_text: Raw markdown text.</span>
+<span class="sd">    :returns: Normalized markdown text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="n">line_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="c1"># Remove noisy image references because they help the docs visually but</span>
+        <span class="c1"># add low-signal tokens to retrieval.</span>
+        <span class="k">if</span> <span class="n">line_text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;![&quot;</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">normalized_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">normalized_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">normalized_lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">normalized_text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_doc_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_doc_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_doc_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a VeraGrid markdown document.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_doc&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">source_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span>
+    <span class="n">normalized_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_markdown_source_text</span><span class="p">(</span><span class="n">source_text</span><span class="p">)</span>
+    <span class="n">title_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">source_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# Official VeraGrid Doc: </span><span class="si">{</span><span class="n">title_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: official documentation&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Document Content&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">normalized_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="extract_docstring_summary">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.extract_docstring_summary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_docstring_summary</span><span class="p">(</span><span class="n">docstring_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the first meaningful line from a docstring.</span>
+
+<span class="sd">    :param docstring_text: Raw docstring text.</span>
+<span class="sd">    :returns: Summary line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">docstring_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;No docstring provided.&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">docstring_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="n">stripped_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stripped_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">stripped_text</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="s2">&quot;No docstring provided.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="build_argument_signature">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_argument_signature">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_argument_signature</span><span class="p">(</span><span class="n">arguments</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a compact signature string from AST arguments.</span>
+
+<span class="sd">    :param arguments: AST arguments object.</span>
+<span class="sd">    :returns: Signature text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">positional_arguments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">posonlyargs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">positional_arguments</span><span class="p">):</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">positional_arguments</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">arguments</span><span class="o">.</span><span class="n">vararg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">arguments</span><span class="o">.</span><span class="n">vararg</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">):</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">kwonlyargs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">arguments</span><span class="o">.</span><span class="n">kwarg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;**&quot;</span> <span class="o">+</span> <span class="n">arguments</span><span class="o">.</span><span class="n">kwarg</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_function_heading">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_function_heading">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_function_heading</span><span class="p">(</span><span class="n">function_node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span> <span class="o">|</span> <span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a readable heading for one function or method.</span>
+
+<span class="sd">    :param function_node: AST function node.</span>
+<span class="sd">    :returns: Heading text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">signature_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">build_argument_signature</span><span class="p">(</span><span class="n">function_node</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">function_node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">signature_text</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="build_class_method_lines">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_class_method_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_class_method_lines</span><span class="p">(</span><span class="n">class_node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build markdown bullet lines for one class method list.</span>
+
+<span class="sd">    :param class_node: AST class node.</span>
+<span class="sd">    :returns: Markdown bullet lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">child_node</span> <span class="ow">in</span> <span class="n">class_node</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child_node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child_node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">child_node</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">child_node</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">method_summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">child_node</span><span class="p">))</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- `</span><span class="si">{</span><span class="n">build_function_heading</span><span class="p">(</span><span class="n">child_node</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Summary: </span><span class="si">{</span><span class="n">method_summary</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- No methods detected.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">lines</span></div>
+
+
+
+<div class="viewcode-block" id="build_base_class_names">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_base_class_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_base_class_names</span><span class="p">(</span><span class="n">class_node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build readable base-class names for one AST class.</span>
+
+<span class="sd">    :param class_node: AST class node.</span>
+<span class="sd">    :returns: Base-class name list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">base_node</span> <span class="ow">in</span> <span class="n">class_node</span><span class="o">.</span><span class="n">bases</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+            <span class="n">base_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+                <span class="n">attribute_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">current_node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span> <span class="o">=</span> <span class="n">base_node</span>
+
+                <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+                    <span class="n">attribute_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+                    <span class="n">current_node</span> <span class="o">=</span> <span class="n">current_node</span><span class="o">.</span><span class="n">value</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+                    <span class="n">attribute_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">attribute_parts</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                <span class="n">base_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attribute_parts</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">base_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">base_node</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">base_names</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_python_module_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_python_module_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_python_module_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a Python module.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_gui_main&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">module_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span>
+    <span class="n">module_ast</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">module_text</span><span class="p">)</span>
+    <span class="n">module_docstring</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">module_ast</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">class_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">function_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# VeraGrid GUI Main Module: </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated GUI/Main code summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Module Summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">module_docstring</span><span class="p">))</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">module_ast</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">):</span>
+            <span class="n">class_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">):</span>
+                <span class="n">function_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Module Surface&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Class count: </span><span class="si">{</span><span class="n">class_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Top-level function count: </span><span class="si">{</span><span class="n">function_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">module_ast</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">):</span>
+            <span class="n">base_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_base_class_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;## Class: </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">base_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Bases: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_names</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Bases: none&quot;</span><span class="p">)</span>
+
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Summary: &quot;</span> <span class="o">+</span> <span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;### Methods&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">build_class_method_lines</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">):</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;## Function: </span><span class="si">{</span><span class="n">build_function_heading</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_ui_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_ui_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_ui_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a Qt Designer ``.ui`` file.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_gui_main&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">source_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span>
+    <span class="n">root_element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">source_text</span><span class="p">)</span>
+    <span class="n">class_name_element</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_element</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">)</span>
+    <span class="n">widget_element</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_element</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;widget&quot;</span><span class="p">)</span>
+    <span class="n">action_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">widget_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">menu_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">root_element</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
+        <span class="n">element_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">element_tag</span> <span class="o">==</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span>
+            <span class="n">action_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">action_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">element_tag</span> <span class="o">==</span> <span class="s2">&quot;widget&quot;</span><span class="p">:</span>
+                <span class="n">widget_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">widget_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">widget_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">widget_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">widget_class_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">widget_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">element_tag</span> <span class="o">==</span> <span class="s2">&quot;addaction&quot;</span><span class="p">:</span>
+                    <span class="n">menu_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">menu_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">menu_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">menu_name</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# VeraGrid GUI Main UI: </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated Qt Designer UI summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## UI Summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">class_name_element</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Form class: unknown&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Form class: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">class_name_element</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">widget_element</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Root widget: unknown&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;- Root widget: &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">widget_element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">widget_element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Declared widget count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">widget_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Declared action count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">action_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Representative Widgets&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">widget_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- No widgets detected.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">widget_names</span><span class="p">),</span> <span class="mi">120</span><span class="p">):</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">widget_names</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Actions And Menus&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">menu_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- No actions detected.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">action_names</span><span class="p">),</span> <span class="mi">120</span><span class="p">):</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- action: </span><span class="si">{</span><span class="n">action_names</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">menu_names</span><span class="p">),</span> <span class="mi">120</span><span class="p">):</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- menu/action reference: </span><span class="si">{</span><span class="n">menu_names</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_plain_text_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_plain_text_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_plain_text_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a plain text file.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_gui_main&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">source_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# VeraGrid GUI Main Text Resource: </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated plain text resource summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Resource Content&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_text</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_engine_markdown_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_engine_markdown_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_engine_markdown_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a VeraGridEngine markdown document.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_engine&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">source_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span>
+    <span class="n">normalized_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_markdown_source_text</span><span class="p">(</span><span class="n">source_text</span><span class="p">)</span>
+    <span class="n">title_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">source_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# VeraGridEngine Doc: </span><span class="si">{</span><span class="n">title_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated VeraGridEngine documentation&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Document Content&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">normalized_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_engine_python_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_engine_python_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_engine_python_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a VeraGridEngine Python module.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_engine&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">module_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span>
+    <span class="n">module_ast</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">module_text</span><span class="p">)</span>
+    <span class="n">module_docstring</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">module_ast</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">class_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">function_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">import_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# VeraGridEngine Module: </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated VeraGridEngine code summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Module Summary&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">module_docstring</span><span class="p">))</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">module_ast</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">):</span>
+            <span class="n">class_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">):</span>
+                <span class="n">function_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Import</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">alias_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                        <span class="n">import_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alias_node</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ImportFrom</span><span class="p">):</span>
+                        <span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">node</span><span class="o">.</span><span class="n">module</span>
+                        <span class="n">import_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Module Surface&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Class count: </span><span class="si">{</span><span class="n">class_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Top-level function count: </span><span class="si">{</span><span class="n">function_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">import_lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Representative imports: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">import_lines</span><span class="p">[:</span><span class="mi">16</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Representative imports: none&quot;</span><span class="p">)</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">module_ast</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">):</span>
+            <span class="n">base_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_base_class_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;## Class: </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">base_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Bases: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_names</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Bases: none&quot;</span><span class="p">)</span>
+
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Summary: &quot;</span> <span class="o">+</span> <span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;### Methods&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">build_class_method_lines</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+            <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">):</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;## Function: </span><span class="si">{</span><span class="n">build_function_heading</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extract_docstring_summary</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">get_docstring</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+                <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_engine_plain_text_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.summarize_engine_plain_text_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_engine_plain_text_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one packaged knowledge asset from a VeraGridEngine plain text file.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param source_path: Absolute source file path.</span>
+<span class="sd">    :returns: Generated markdown asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">make_relative_repository_path</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">normalize_generated_filename</span><span class="p">(</span><span class="s2">&quot;generated_engine&quot;</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+    <span class="n">source_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">read_text_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# VeraGridEngine Text Resource: </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Original source path: `</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated VeraGridEngine text resource&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Resource Content&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_text</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="build_catalog_asset">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_catalog_asset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_catalog_asset</span><span class="p">(</span>
+    <span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">doc_assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">],</span>
+    <span class="n">gui_assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">],</span>
+    <span class="n">engine_assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KnowledgeAsset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a catalog asset describing the generated static RAG corpus.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :param doc_assets: Generated documentation assets.</span>
+<span class="sd">    :param gui_assets: Generated GUI/Main assets.</span>
+<span class="sd">    :returns: Generated catalog asset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;# Generated VeraGrid AI Knowledge Catalog&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;- Knowledge kind: generated asset catalog&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Repository root: `</span><span class="si">{</span><span class="n">repository_root</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Documentation asset count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">doc_assets</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- GUI/Main asset count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gui_assets</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- VeraGridEngine asset count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">engine_assets</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Documentation Assets&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_assets</span><span class="p">):</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- `</span><span class="si">{</span><span class="n">doc_assets</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">output_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## GUI/Main Assets&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">gui_assets</span><span class="p">):</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- `</span><span class="si">{</span><span class="n">gui_assets</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">output_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## VeraGridEngine Assets&quot;</span><span class="p">)</span>
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine_assets</span><span class="p">):</span>
+        <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- `</span><span class="si">{</span><span class="n">engine_assets</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">output_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">content_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">KnowledgeAsset</span><span class="p">(</span><span class="n">output_name</span><span class="o">=</span><span class="s2">&quot;generated_knowledge_catalog.md&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_lines</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="remove_stale_generated_assets">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.remove_stale_generated_assets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_stale_generated_assets</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete previously generated markdown assets from the knowledge directory.</span>
+
+<span class="sd">    :param knowledge_directory: Absolute knowledge directory path.</span>
+<span class="sd">    :returns: Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;generated_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.md&quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="build_doc_assets">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_doc_assets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_doc_assets</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate packaged assets from ``doc/md_source``.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Generated documentation assets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">source_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_markdown_document_paths</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">source_path</span> <span class="ow">in</span> <span class="n">source_paths</span><span class="p">:</span>
+        <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_doc_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">assets</span></div>
+
+
+
+<div class="viewcode-block" id="build_gui_main_assets">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_gui_main_assets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_gui_main_assets</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate packaged assets from ``src/VeraGrid/Gui/Main``.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Generated GUI/Main assets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">source_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_gui_main_source_paths</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">source_path</span> <span class="ow">in</span> <span class="n">source_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+            <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_python_module_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">source_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ui&quot;</span><span class="p">):</span>
+                <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_ui_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_plain_text_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">assets</span></div>
+
+
+
+<div class="viewcode-block" id="build_veragrid_engine_assets">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.build_veragrid_engine_assets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_veragrid_engine_assets</span><span class="p">(</span><span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate packaged assets from ``src/VeraGridEngine``.</span>
+
+<span class="sd">    :param repository_root: Repository root path.</span>
+<span class="sd">    :returns: Generated VeraGridEngine assets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">source_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_veragrid_engine_source_paths</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">source_path</span> <span class="ow">in</span> <span class="n">source_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+            <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_engine_python_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">source_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.md&quot;</span><span class="p">):</span>
+                <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_engine_markdown_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summarize_engine_plain_text_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">source_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">assets</span></div>
+
+
+
+<div class="viewcode-block" id="write_assets">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.write_assets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_assets</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write generated assets into the packaged knowledge directory.</span>
+
+<span class="sd">    :param knowledge_directory: Absolute knowledge directory path.</span>
+<span class="sd">    :param assets: Assets to write.</span>
+<span class="sd">    :returns: Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
+        <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">,</span> <span class="n">asset</span><span class="o">.</span><span class="n">output_name</span><span class="p">)</span>
+
+        <span class="c1"># Write each generated asset deterministically so the packaged corpus is</span>
+        <span class="c1"># stable and versionable.</span>
+        <span class="n">write_text_file</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">asset</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_generation">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.AiAgent.html#VeraGrid.Gui.AiAgent.generate_knowledge_assets.run_generation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_generation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the packaged knowledge generation workflow.</span>
+
+<span class="sd">    :returns: Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">repository_root</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">build_repository_root</span><span class="p">()</span>
+    <span class="n">knowledge_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">build_knowledge_directory</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+    <span class="n">doc_assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_doc_assets</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+    <span class="n">gui_assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_gui_main_assets</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+    <span class="n">engine_assets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_veragrid_engine_assets</span><span class="p">(</span><span class="n">repository_root</span><span class="p">)</span>
+    <span class="n">catalog_asset</span><span class="p">:</span> <span class="n">KnowledgeAsset</span> <span class="o">=</span> <span class="n">build_catalog_asset</span><span class="p">(</span><span class="n">repository_root</span><span class="p">,</span> <span class="n">doc_assets</span><span class="p">,</span> <span class="n">gui_assets</span><span class="p">,</span> <span class="n">engine_assets</span><span class="p">)</span>
+    <span class="n">assets_to_write</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeAsset</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">doc_assets</span><span class="p">)</span>
+    <span class="n">assets_to_write</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">gui_assets</span><span class="p">)</span>
+    <span class="n">assets_to_write</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">engine_assets</span><span class="p">)</span>
+    <span class="n">assets_to_write</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">catalog_asset</span><span class="p">)</span>
+
+    <span class="c1"># Remove the older generated corpus first so deleted sources do not leave</span>
+    <span class="c1"># stale retrieval entries behind.</span>
+    <span class="n">remove_stale_generated_assets</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">)</span>
+
+    <span class="c1"># Write the regenerated corpus in one pass.</span>
+    <span class="n">write_assets</span><span class="p">(</span><span class="n">knowledge_directory</span><span class="p">,</span> <span class="n">assets_to_write</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_generation</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

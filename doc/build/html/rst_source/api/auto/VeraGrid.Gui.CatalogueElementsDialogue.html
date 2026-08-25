@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.CatalogueElementsDialogue package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.ContingencyPlanner package" href="VeraGrid.Gui.ContingencyPlanner.html" />
+    <link rel="prev" title="VeraGrid.Gui.Analysis package" href="VeraGrid.Gui.Analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.CatalogueElementsDialogue package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.CatalogueElementsDialogue.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-catalogueelementsdialogue-package">
+<h1>VeraGrid.Gui.CatalogueElementsDialogue package<a class="headerlink" href="#veragrid-gui-catalogueelementsdialogue-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions">
+<span id="veragrid-gui-catalogueelementsdialogue-catalogue-actions-module"></span><h2>VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions module<a class="headerlink" href="#module-VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.</span></span><span class="sig-name descname"><span class="pre">CatalogueAction</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_actions.html#CatalogueAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Lightweight action wrapper storing a kind and an explicit tuple of arguments.
+The action is executed lazily when the user accepts the dialog.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.args">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">args</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.args" title="Link to this definition"></a></dt>
+<dd><p>Get the action arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[object, …]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_actions.html#CatalogueAction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.execute" title="Link to this definition"></a></dt>
+<dd><p>Execute the action against the provided circuit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>circuit</strong> – Target circuit.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.function_ptr">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">function_ptr</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.function_ptr" title="Link to this definition"></a></dt>
+<dd><p>Get deferred function pointer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[…, Any] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.kind">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">kind</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind"><span class="pre">CatalogueActionKind</span></a></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.kind" title="Link to this definition"></a></dt>
+<dd><p>Get the action kind.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CatalogueActionKind</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.name" title="Link to this definition"></a></dt>
+<dd><p>Get display name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.power_text">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">power_text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.power_text" title="Link to this definition"></a></dt>
+<dd><p>Get display power text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.unique_key">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">unique_key</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.unique_key" title="Link to this definition"></a></dt>
+<dd><p>Get unique key for duplication filtering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.voltage_text">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">voltage_text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction.voltage_text" title="Link to this definition"></a></dt>
+<dd><p>Get display voltage text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.</span></span><span class="sig-name descname"><span class="pre">CatalogueActionKind</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_actions.html#CatalogueActionKind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>This enum defines the kinds of operations supported by the catalogue selection dialog.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddEmtTemplate">
+<span class="sig-name descname"><span class="pre">AddEmtTemplate</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddEmtTemplate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddRmsTemplate">
+<span class="sig-name descname"><span class="pre">AddRmsTemplate</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddRmsTemplate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddSequenceLineType">
+<span class="sig-name descname"><span class="pre">AddSequenceLineType</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddSequenceLineType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddTransformerType">
+<span class="sig-name descname"><span class="pre">AddTransformerType</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddTransformerType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddUndergroundLineType">
+<span class="sig-name descname"><span class="pre">AddUndergroundLineType</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddUndergroundLineType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddWire">
+<span class="sig-name descname"><span class="pre">AddWire</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueActionKind.AddWire" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue">
+<span id="veragrid-gui-catalogueelementsdialogue-catalogue-elements-dialogue-module"></span><h2>VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue module<a class="headerlink" href="#module-VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.</span></span><span class="sig-name descname"><span class="pre">CatalogueElementsSelectionDialogue</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>This dialog presents a tree of catalogue elements grouped by category.
+Each leaf item corresponds to a concrete template object that can be added to a circuit.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.added_count">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">added_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.added_count" title="Link to this definition"></a></dt>
+<dd><p>Get the number of actions executed when the dialog was accepted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.append_category">
+<span class="sig-name descname"><span class="pre">append_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction"><span class="pre">CatalogueAction</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.append_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.append_category" title="Link to this definition"></a></dt>
+<dd><p>Append a category row and its children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category_name</strong> – Category caption.</p></li>
+<li><p><strong>objects_list</strong> – List of template objects in that category.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.build_catalogue_categories">
+<span class="sig-name descname"><span class="pre">build_catalogue_categories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction"><span class="pre">CatalogueAction</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.build_catalogue_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.build_catalogue_categories" title="Link to this definition"></a></dt>
+<dd><p>Build the tree payload using lightweight actions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping category names to action lists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.build_emt_actions">
+<span class="sig-name descname"><span class="pre">build_emt_actions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction"><span class="pre">CatalogueAction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.build_emt_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.build_emt_actions" title="Link to this definition"></a></dt>
+<dd><p>Build the EMT template action list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[CatalogueAction]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.build_rms_actions">
+<span class="sig-name descname"><span class="pre">build_rms_actions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction"><span class="pre">CatalogueAction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.build_rms_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.build_rms_actions" title="Link to this definition"></a></dt>
+<dd><p>Build the RMS template action list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[CatalogueAction]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.compute_mva_from_v_i">
+<span class="sig-name descname"><span class="pre">compute_mva_from_v_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_kv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_ka</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.compute_mva_from_v_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.compute_mva_from_v_i" title="Link to this definition"></a></dt>
+<dd><p>Compute the 3-phase apparent power rating from nominal voltage and current.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v_kv</strong> – Voltage in kV.</p></li>
+<li><p><strong>i_ka</strong> – Current in kA.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>MVA value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.create_leaf_row">
+<span class="sig-name descname"><span class="pre">create_leaf_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction"><span class="pre">CatalogueAction</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">QStandardItem</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.create_leaf_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.create_leaf_row" title="Link to this definition"></a></dt>
+<dd><p>Create the 3-column row representing a concrete template object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> – CatalogueAction.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of 3 <code class="docutils literal notranslate"><span class="pre">QStandardItem</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.get_existing_keys">
+<span class="sig-name descname"><span class="pre">get_existing_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.get_existing_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.get_existing_keys" title="Link to this definition"></a></dt>
+<dd><p>Build the current circuit key set used to avoid duplicate imports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary used as a set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.get_selected_elements">
+<span class="sig-name descname"><span class="pre">get_selected_elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction" title="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_actions.CatalogueAction"><span class="pre">CatalogueAction</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.get_selected_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.get_selected_elements" title="Link to this definition"></a></dt>
+<dd><p>Get selected leaf objects grouped by their category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary <code class="docutils literal notranslate"><span class="pre">{category_name:</span> <span class="pre">[objects...]}</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.on_accept">
+<span class="sig-name descname"><span class="pre">on_accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.on_accept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.on_accept" title="Link to this definition"></a></dt>
+<dd><p>Execute the selected catalogue actions and close the dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.on_item_changed">
+<span class="sig-name descname"><span class="pre">on_item_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QStandardItem</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.on_item_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.on_item_changed" title="Link to this definition"></a></dt>
+<dd><p>Handle checkbox state propagation:</p>
+<ol class="arabic simple">
+<li><p>If a category item is toggled, apply its state to its children.</p></li>
+<li><p>If a leaf item is toggled, update its parent category tri-state.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> – Changed item.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.populate_from_dict">
+<span class="sig-name descname"><span class="pre">populate_from_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.populate_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.populate_from_dict" title="Link to this definition"></a></dt>
+<dd><p>Populate the tree from <code class="docutils literal notranslate"><span class="pre">self._catalogue_categories</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.propagate_category_state">
+<span class="sig-name descname"><span class="pre">propagate_category_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QStandardItem</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.propagate_category_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.propagate_category_state" title="Link to this definition"></a></dt>
+<dd><p>Apply a category checkbox state to all its children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>category_item</strong> – Category item.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.select_all">
+<span class="sig-name descname"><span class="pre">select_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.select_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.select_all" title="Link to this definition"></a></dt>
+<dd><p>Mark all leaf items as selected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.select_none">
+<span class="sig-name descname"><span class="pre">select_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.select_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.select_none" title="Link to this definition"></a></dt>
+<dd><p>Mark all leaf items as unselected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.set_all_check_state">
+<span class="sig-name descname"><span class="pre">set_all_check_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CheckState</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.set_all_check_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.set_all_check_state" title="Link to this definition"></a></dt>
+<dd><p>Set all leaf checkboxes to a given state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – Desired state (Checked/Unchecked).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;CatalogueElementsSelectionDialogue&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.ui">
+<span class="sig-name descname"><span class="pre">ui</span></span><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.ui" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.update_parent_state_from_children">
+<span class="sig-name descname"><span class="pre">update_parent_state_from_children</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">leaf_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QStandardItem</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_dialogue.html#CatalogueElementsSelectionDialogue.update_parent_state_from_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue.CatalogueElementsSelectionDialogue.update_parent_state_from_children" title="Link to this definition"></a></dt>
+<dd><p>Update parent category tri-state from the states of all children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>leaf_item</strong> – Leaf item that changed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui">
+<span id="veragrid-gui-catalogueelementsdialogue-catalogue-elements-gui-module"></span><h2>VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui module<a class="headerlink" href="#module-VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.Ui_CatalogueElementsDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.</span></span><span class="sig-name descname"><span class="pre">Ui_CatalogueElementsDialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_gui.html#Ui_CatalogueElementsDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.Ui_CatalogueElementsDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>UI definition for the catalogue elements selection dialog.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.Ui_CatalogueElementsDialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CatalogueElementsDialog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QDialog</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_gui.html#Ui_CatalogueElementsDialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.Ui_CatalogueElementsDialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd><p>Set translated strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CatalogueElementsDialog</strong> – QDialog instance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.Ui_CatalogueElementsDialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CatalogueElementsDialog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QDialog</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/CatalogueElementsDialogue/catalogue_elements_gui.html#Ui_CatalogueElementsDialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_gui.Ui_CatalogueElementsDialog.setupUi" title="Link to this definition"></a></dt>
+<dd><p>Setup the UI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CatalogueElementsDialog</strong> – QDialog instance where the UI is installed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.CatalogueElementsDialogue">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.CatalogueElementsDialogue" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.Analysis.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.Analysis package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.ContingencyPlanner.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.ContingencyPlanner package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

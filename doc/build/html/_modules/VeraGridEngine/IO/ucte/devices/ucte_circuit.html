@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.ucte.devices.ucte_circuit &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.ucte.devices.ucte_circuit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.ucte.devices.ucte_circuit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_node</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_comment</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteComment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteLine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteTransformer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteTransformerRegulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_transformer_tap_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteTransformerTapTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_exchange_power</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteExchangePower</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+
+<div class="viewcode-block" id="UcteCircuit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UcteCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    UCTE circuit class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteComment</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteLine</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteTransformer</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regulations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteTransformerRegulation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteTransformerTapTable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exchange_powers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteExchangePower</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">regulations_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UcteTransformerRegulation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteTransformerTapTable</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="UcteCircuit.check_file_extension">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.check_file_extension">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_file_extension</span><span class="p">(</span><span class="n">f_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that file extension is ok</span>
+<span class="sd">        :param f_name: file name</span>
+<span class="sd">        :return: is ok?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fname2</span> <span class="o">=</span> <span class="n">f_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fname2</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ucte&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname2</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.uct&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteCircuit.parse_file">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.parse_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        parse a list of UCTE files</span>
+<span class="sd">        :param files: list of UCTE files</span>
+<span class="sd">        :param logger: logger object</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_file_extension</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="n">current_block</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">current_country</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##&quot;</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##C&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;comments&quot;</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##N&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;nodes&quot;</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##Z&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;nodes&quot;</span>
+                                <span class="n">current_country</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span> <span class="k">else</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##L&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##TT&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;special_transformers&quot;</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##T&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;transformers&quot;</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##R&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;regulations&quot;</span>
+                            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;##E&quot;</span><span class="p">):</span>
+                                <span class="n">current_block</span> <span class="o">=</span> <span class="s2">&quot;exchange_powers&quot;</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">pass</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;comments&quot;</span><span class="p">:</span>
+                                <span class="n">comment</span> <span class="o">=</span> <span class="n">UcteComment</span><span class="p">()</span>
+                                <span class="n">comment</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+
+                            <span class="k">elif</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;nodes&quot;</span><span class="p">:</span>
+                                <span class="n">node</span> <span class="o">=</span> <span class="n">UcteNode</span><span class="p">()</span>
+                                <span class="n">node</span><span class="o">.</span><span class="n">current_country</span> <span class="o">=</span> <span class="n">current_country</span>
+                                <span class="n">node</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+                            <span class="k">elif</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;lines&quot;</span><span class="p">:</span>
+                                <span class="n">line_obj</span> <span class="o">=</span> <span class="n">UcteLine</span><span class="p">()</span>
+                                <span class="n">line_obj</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_obj</span><span class="p">)</span>
+
+                            <span class="k">elif</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;transformers&quot;</span><span class="p">:</span>
+                                <span class="n">transformer</span> <span class="o">=</span> <span class="n">UcteTransformer</span><span class="p">()</span>
+                                <span class="n">transformer</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span>
+
+                            <span class="k">elif</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;regulations&quot;</span><span class="p">:</span>
+                                <span class="n">regulation</span> <span class="o">=</span> <span class="n">UcteTransformerRegulation</span><span class="p">()</span>
+                                <span class="n">regulation</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">regulations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">regulation</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">regulations_dict</span><span class="p">[</span><span class="n">regulation</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">()]</span> <span class="o">=</span> <span class="n">regulation</span>
+
+                            <span class="k">elif</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;special_transformers&quot;</span><span class="p">:</span>
+                                <span class="n">special_transformer</span> <span class="o">=</span> <span class="n">UcteTransformerTapTable</span><span class="p">()</span>
+                                <span class="n">special_transformer</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">special_transformer</span><span class="p">)</span>
+                                <span class="n">key</span> <span class="o">=</span> <span class="n">special_transformer</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">()</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">special_transformer</span><span class="p">)</span>
+
+                            <span class="k">elif</span> <span class="n">current_block</span> <span class="o">==</span> <span class="s2">&quot;exchange_powers&quot;</span><span class="p">:</span>
+                                <span class="n">exchange</span> <span class="o">=</span> <span class="n">UcteExchangePower</span><span class="p">()</span>
+                                <span class="n">exchange</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">exchange_powers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exchange</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Passed non-ucte file to UCTE reading process&quot;</span><span class="p">,</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteCircuit.normalize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.normalize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Normalize optional data after parsing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="n">node_voltage_by_code</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">voltage</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">regulation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">regulations</span><span class="p">:</span>
+            <span class="n">regulation</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">node_voltage_by_code</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">regulation</span><span class="o">.</span><span class="n">node2</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">logger</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tables</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">tables</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">table</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">tap_position</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteCircuit.get_transformer_regulation">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.get_transformer_regulation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_transformer_regulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elm</span><span class="p">:</span> <span class="n">UcteTransformer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UcteTransformerRegulation</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param elm:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">regulations_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteCircuit.get_transformers_tap_table">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.get_transformers_tap_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_transformers_tap_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elm</span><span class="p">:</span> <span class="n">UcteTransformer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">UcteTransformerTapTable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param elm:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="UcteCircuit.summary">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print grid summary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Comments: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nodes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lines: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transformers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Regulations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regulations</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Special Transformers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformer_tap_tables</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exchange Powers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exchange_powers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UcteCircuit.fuse_comments">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.devices.html#VeraGridEngine.IO.ucte.devices.ucte_circuit.UcteCircuit.fuse_comments">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fuse_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fuse comments as one</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">cmnt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">+=</span> <span class="n">cmnt</span><span class="o">.</span><span class="n">content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">val</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

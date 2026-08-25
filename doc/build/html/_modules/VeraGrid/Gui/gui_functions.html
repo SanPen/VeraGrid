@@ -1,0 +1,1692 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.gui_functions &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.gui_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.gui_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span><span class="p">,</span> <span class="n">CGMES_ASSETS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line_locations</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineLocations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.font_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">MENU_FONT_SIZE</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.object_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectsModel</span>
+
+
+<div class="viewcode-block" id="TreeDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TreeDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TreeDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning QComboBox in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        :param data: dictionary of lists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="c1"># dictionary of lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">defaultdict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TreeDelegate.double_click">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TreeDelegate.double_click">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">double_click</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        double click</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="TreeDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TreeDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTreeView</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s1">&#39;Template&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># add parent node</span>
+            <span class="n">parent1</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+            <span class="c1"># add children to parent</span>
+            <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                <span class="n">child1</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="p">))</span>
+                <span class="n">parent1</span><span class="o">.</span><span class="n">appendRow</span><span class="p">([</span><span class="n">child1</span><span class="p">])</span>
+
+            <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">parent1</span><span class="p">)</span>
+
+        <span class="n">tree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">doubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">double_click</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tree</span></div>
+
+
+<div class="viewcode-block" id="TreeDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TreeDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TreeDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TreeDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+</div>
+
+
+        <span class="c1"># model.setData(index, self.object_names[editor.currentIndex()])</span>
+
+
+<div class="viewcode-block" id="ComboDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComboDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComboDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning QComboBox in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">,</span> <span class="n">objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">object_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        :param objects: List of objects to set. i.e. [True, False] or [Line1, Line2, ...]</span>
+<span class="sd">        :param object_names: List of Object names to display. i.e. [&#39;True&#39;, &#39;False&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="c1"># objects to sent to the model associated to the combobox. i.e. [True, False]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span>
+
+        <span class="c1"># object description to display in the combobox. i.e. [&#39;True&#39;, &#39;False&#39;]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object_names</span> <span class="o">=</span> <span class="n">object_names</span>
+
+<div class="viewcode-block" id="ComboDelegate.currentIndexChanged">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComboDelegate.currentIndexChanged">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">currentIndexChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        currentIndexChanged</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ComboDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComboDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">combo</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">combo</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_names</span><span class="p">)</span>
+        <span class="n">combo</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">combo</span></div>
+
+
+<div class="viewcode-block" id="ComboDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComboDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ComboDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComboDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">,</span>
+                     <span class="n">model</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractItemModel</span><span class="p">,</span>
+                     <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">editor</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">):</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">editor</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()])</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TextDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TextDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TextDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning QLineEdit in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TextDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TextDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returnPressed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="TextDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TextDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span>
+                     <span class="n">option</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QStyleOptionViewItem</span><span class="p">,</span>
+                     <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">returnPressed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+
+<div class="viewcode-block" id="TextDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TextDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TextDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.TextDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FloatDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.FloatDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FloatDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning QDoubleSpinBox in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">,</span>
+                 <span class="n">min_</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e200</span><span class="p">,</span>
+                 <span class="n">max_</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e200</span><span class="p">,</span>
+                 <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">min_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">max_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decimals</span> <span class="o">=</span> <span class="n">decimals</span>
+
+<div class="viewcode-block" id="FloatDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.FloatDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returnPressed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="FloatDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.FloatDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span>
+                     <span class="n">option</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QStyleOptionViewItem</span><span class="p">,</span>
+                     <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decimals</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">returnPressed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+
+<div class="viewcode-block" id="FloatDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.FloatDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FloatDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.FloatDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">editor</span><span class="o">.</span><span class="n">value</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="IntDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.IntDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning QDoubleSpinBox in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">,</span> <span class="n">min_</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99999</span><span class="p">,</span> <span class="n">max_</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">99999</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">min_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">max_</span>
+
+<div class="viewcode-block" id="IntDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.IntDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returnPressed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="IntDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.IntDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">returnPressed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+
+<div class="viewcode-block" id="IntDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.IntDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">))</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.IntDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">editor</span><span class="o">.</span><span class="n">value</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ComplexDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComplexDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComplexDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning Complex Editor in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ComplexDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComplexDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ComplexDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComplexDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">main_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">real</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">()</span>
+        <span class="n">real</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">real</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">real</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">imag</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">()</span>
+        <span class="n">imag</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">imag</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">imag</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">imag</span><span class="p">)</span>
+        <span class="c1"># main_layout.addWidget(button)</span>
+
+        <span class="c1"># button.clicked.connect(self.returnPressed)</span>
+
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+
+<div class="viewcode-block" id="ComplexDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComplexDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">))</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ComplexDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ComplexDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">editor</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">editor</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LineLocationsDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.LineLocationsDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LineLocationsDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A delegate that places a fully functioning LineLocations Editor in every</span>
+<span class="sd">    cell of the column to which it&#39;s applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param parent: QTableView parent object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_locations</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">LineLocations</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LineLocationsDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.LineLocationsDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="LineLocationsDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.LineLocationsDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span>
+                     <span class="n">option</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QStyleOptionViewItem</span><span class="p">,</span>
+                     <span class="n">index</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">main_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">()</span>
+
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="c1"># main_layout.addWidget(button)</span>
+
+        <span class="c1"># button.clicked.connect(self.returnPressed)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">showNormal</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+
+<div class="viewcode-block" id="LineLocationsDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.LineLocationsDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_locations</span><span class="p">:</span> <span class="n">LineLocations</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+        <span class="c1"># editor.children()[1].setValue(val.real)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LineLocationsDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.LineLocationsDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ObjectsModel</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+        <span class="c1"># model.setData(index, val)</span>
+
+
+<div class="viewcode-block" id="ColorPickerDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ColorPickerDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColorPickerDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Color picker delegate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ColorPickerDelegate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ColorPickerDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ColorPickerDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ColorPickerDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ColorPickerDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">colorDialog</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QColorDialog</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">colorDialog</span></div>
+
+
+<div class="viewcode-block" id="ColorPickerDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ColorPickerDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QColorDialog</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="o">.</span><span class="n">fromString</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setCurrentColor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ColorPickerDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.ColorPickerDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QColorDialog</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">editor</span><span class="o">.</span><span class="n">currentColor</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DateTimeDelegate">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.DateTimeDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DateTimeDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DateTime picker delegate that handles Unix epoch seconds</span>
+<span class="sd">    and can be initialized with a default epoch date.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">commitData</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">default_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="c1"># Store default epoch or None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">default_epoch</span>
+
+<div class="viewcode-block" id="DateTimeDelegate.returnPressed">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.DateTimeDelegate.returnPressed">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">returnPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="DateTimeDelegate.createEditor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.DateTimeDelegate.createEditor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        :param option:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDateTimeEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setCalendarPopup</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setDisplayFormat</span><span class="p">(</span><span class="s2">&quot;yyyy/MM/dd HH:mm:ss&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set initial datetime from default_epoch if provided</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDateTime</span><span class="o">.</span><span class="n">fromSecsSinceEpoch</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_epoch</span><span class="p">))</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">setDateTime</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+
+        <span class="n">editor</span><span class="o">.</span><span class="n">dateTimeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">editor</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+
+<div class="viewcode-block" id="DateTimeDelegate.setEditorData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.DateTimeDelegate.setEditorData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDateTimeEdit</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDateTime</span><span class="o">.</span><span class="n">fromSecsSinceEpoch</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDateTime</span><span class="o">.</span><span class="n">fromString</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;yyyy/MM/dd&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># fallback to current datetime or default_epoch if provided</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDateTime</span><span class="o">.</span><span class="n">fromSecsSinceEpoch</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_epoch</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDateTime</span><span class="o">.</span><span class="n">currentDateTime</span><span class="p">()</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setDateTime</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DateTimeDelegate.setModelData">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.DateTimeDelegate.setModelData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDateTimeEdit</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param model:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">dateTime</span><span class="p">()</span>
+        <span class="n">epoch_seconds</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">toSecsSinceEpoch</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">epoch_seconds</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_list_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_list_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_list_model</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ALL_DEV_TYPES</span><span class="p">]],</span>
+                   <span class="n">checks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">check_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pass a list to a list model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">lst</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">checks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+                <span class="c1"># for the list model</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+                <span class="c1"># for the list model</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">check_value</span><span class="p">:</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+                <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">list_model</span></div>
+
+
+
+<div class="viewcode-block" id="get_elm_chck_list_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_elm_chck_list_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_elm_chck_list_model</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">],</span> <span class="n">check_status</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pass a list to a list model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">elm</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">check_status</span><span class="p">):</span>
+        <span class="c1"># for the list model</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+        <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">list_model</span></div>
+
+
+
+<div class="viewcode-block" id="get_chck_list_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_chck_list_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chck_list_model</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">check_status</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pass a list to a list model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">elm</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">check_status</span><span class="p">):</span>
+        <span class="c1"># for the list model</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+        <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">list_model</span></div>
+
+
+
+<div class="viewcode-block" id="enums_to_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.enums_to_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enums_to_model</span><span class="p">(</span><span class="n">enums_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the model and dict from a list of Enum value</span>
+<span class="sd">    :param enums_lst:</span>
+<span class="sd">    :return: dictionary, model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">val_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">enums_lst</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="n">val_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">mdl</span> <span class="o">=</span> <span class="n">get_list_model</span><span class="p">(</span><span class="n">val_list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">mdl</span></div>
+
+
+<div class="viewcode-block" id="enums_to_icons_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.enums_to_icons_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enums_to_icons_model</span><span class="p">(</span><span class="n">enums_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the model and dict from a list of Enum value</span>
+<span class="sd">    :param enums_lst: Tuple of (enum, icon string)</span>
+<span class="sd">    :return: dictionary, model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">val_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">icon_str</span> <span class="ow">in</span> <span class="n">enums_lst</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="n">val_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">icon_str</span><span class="p">))</span>
+
+    <span class="n">mdl</span> <span class="o">=</span> <span class="n">get_icon_list_model</span><span class="p">(</span><span class="n">val_list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">mdl</span></div>
+
+
+
+<div class="viewcode-block" id="CustomFileSystemModel">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.CustomFileSystemModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomFileSystemModel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileSystemModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CustomFileSystemModel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ext_filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CustomFileSystemModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ext_filter</span> <span class="o">=</span> <span class="n">ext_filter</span> <span class="k">if</span> <span class="n">ext_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;*.py&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setNameFilters</span><span class="p">(</span><span class="n">ext_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setRootPath</span><span class="p">(</span><span class="n">root_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_logger_tree_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_logger_tree_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_logger_tree_model</span><span class="p">(</span><span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill logger tree</span>
+<span class="sd">    :param logger: Logger instance</span>
+<span class="sd">    :return: QStandardItemModel instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">editable</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Element&#39;</span><span class="p">,</span> <span class="s1">&#39;Class&#39;</span><span class="p">,</span> <span class="s1">&#39;Property&#39;</span><span class="p">,</span> <span class="s1">&#39;Value&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected value&#39;</span><span class="p">,</span> <span class="s1">&#39;comment&#39;</span><span class="p">])</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">severity</span><span class="p">,</span> <span class="n">messages_dict</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">severity_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">severity</span><span class="p">)</span>
+
+        <span class="c1"># print(severity)</span>
+
+        <span class="k">for</span> <span class="n">message</span><span class="p">,</span> <span class="n">data_list</span> <span class="ow">in</span> <span class="n">messages_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">message_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+            <span class="c1"># print(&#39;\t&#39;, message)</span>
+
+            <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">elm</span><span class="p">,</span> <span class="n">elm_class</span><span class="p">,</span> <span class="n">elm_property</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">expected_value</span><span class="p">,</span> <span class="n">comment</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+                <span class="c1"># print(&#39;\t&#39;, &#39;\t&#39;, time, elm, value, expected_value)</span>
+
+                <span class="n">time_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+                <span class="n">time_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">elm_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="p">))</span>
+                <span class="n">elm_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">elm_class_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elm_class</span><span class="p">))</span>
+                <span class="n">elm_class_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">elm_property_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elm_property</span><span class="p">))</span>
+                <span class="n">elm_property_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">expected_val_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">expected_value</span><span class="p">))</span>
+                <span class="n">expected_val_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">comment_val_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">comment</span><span class="p">))</span>
+                <span class="n">comment_val_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">message_child</span><span class="o">.</span><span class="n">appendRow</span><span class="p">([</span><span class="n">time_child</span><span class="p">,</span> <span class="n">elm_child</span><span class="p">,</span> <span class="n">elm_class_child</span><span class="p">,</span>
+                                         <span class="n">elm_property_child</span><span class="p">,</span> <span class="n">value_child</span><span class="p">,</span> <span class="n">expected_val_child</span><span class="p">,</span> <span class="n">comment_val_child</span><span class="p">])</span>
+
+            <span class="n">message_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+            <span class="n">severity_child</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">message_child</span><span class="p">)</span>
+
+        <span class="n">severity_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">severity_child</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="get_icon_list_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_icon_list_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_icon_list_model</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">checks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">check_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param lst:</span>
+<span class="sd">    :param checks:</span>
+<span class="sd">    :param check_value:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">lst</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">checks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">icon_path</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+                <span class="c1"># for the list model</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+                <span class="n">icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">icon_path</span><span class="p">))</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+                <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">icon_path</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+                <span class="c1"># for the list model</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                <span class="n">icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+                <span class="n">icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">icon_path</span><span class="p">))</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">check_value</span><span class="p">:</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+                <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">list_model</span></div>
+
+
+
+<div class="viewcode-block" id="get_checked_indices">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_checked_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_checked_indices</span><span class="p">(</span><span class="n">mdl</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of the selected indices in a QStandardItemModel</span>
+<span class="sd">    :param mdl:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+            <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_checked_values">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_checked_values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_checked_values</span><span class="p">(</span><span class="n">mdl</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of the selected values in a QStandardItemModel</span>
+<span class="sd">    :param mdl:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+            <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">idx</span></div>
+
+
+
+<div class="viewcode-block" id="fill_model_from_dict">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.fill_model_from_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_model_from_dict</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">,</span>
+                         <span class="n">d</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+                         <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">icons</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">MENU_FONT_SIZE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill TreeViewModel from dictionary</span>
+<span class="sd">    :param parent: Parent QStandardItem</span>
+<span class="sd">    :param d: item</span>
+<span class="sd">    :param editable</span>
+<span class="sd">    :param icons</span>
+<span class="sd">    :param font_size</span>
+<span class="sd">    :return: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">()</span>
+    <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">icons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">icon_path</span> <span class="o">=</span> <span class="n">icons</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">icon_path</span> <span class="o">=</span> <span class="n">icons</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="n">_icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+                    <span class="n">_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">icon_path</span><span class="p">))</span>
+                    <span class="n">child</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">_icon</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                    <span class="c1"># print(f&quot;path {name} has no icon: check &#39;setup_objects_tree()&#39;&quot;)</span>
+
+            <span class="n">parent</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="n">fill_model_from_dict</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">fill_model_from_dict</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">icons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">icon_path</span> <span class="o">=</span> <span class="n">icons</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">icon_path</span> <span class="o">=</span> <span class="n">icons</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">_icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+                <span class="n">_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">icon_path</span><span class="p">))</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">_icon</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+                <span class="c1"># print(f&quot;path {name} has no icon: check &#39;setup_objects_tree()&#39;&quot;)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_tree_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_tree_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tree_model</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">icons</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a tree model from a dictionary</span>
+<span class="sd">    :param d: Any dictionary</span>
+<span class="sd">    :param top: Table header</span>
+<span class="sd">    :param icons: Dictionary of icons (name of the node, icon to match)</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="n">top</span><span class="p">])</span>
+    <span class="n">fill_model_from_dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">(),</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">icons</span><span class="o">=</span><span class="n">icons</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="get_tree_item_path">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_tree_item_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tree_item_path</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the path of an item in a tree</span>
+<span class="sd">    :param item: QStandardItem</span>
+<span class="sd">    :return: path in a list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">item_parent</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()]</span>
+    <span class="k">while</span> <span class="n">item_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parent_text</span> <span class="o">=</span> <span class="n">item_parent</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent_text</span><span class="p">)</span>
+        <span class="n">item_parent</span> <span class="o">=</span> <span class="n">item_parent</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+
+<span class="n">CIM_OBJECT_ROLE</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span> <span class="o">+</span> <span class="mi">120</span>
+<span class="n">CIM_LOADED_ROLE</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span> <span class="o">+</span> <span class="mi">121</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_cim_object_id</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;rdfid&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">rdfid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">rdfid</span>
+    <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_cim_object_label</span><span class="p">(</span><span class="n">class_tag</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">class_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">class_tag</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;rdfid&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">device</span><span class="o">.</span><span class="n">rdfid</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_cim_ancestor_ids</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="n">ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">item</span>
+    <span class="k">while</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">CIM_OBJECT_ROLE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">_get_cim_object_id</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ids</span>
+
+
+<div class="viewcode-block" id="create_cim_object_item">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.create_cim_object_item">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cim_object_item</span><span class="p">(</span><span class="n">class_tag</span><span class="p">,</span>
+                           <span class="n">device</span><span class="p">:</span> <span class="n">CGMES_ASSETS</span><span class="p">,</span>
+                           <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">:</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">_get_cim_object_label</span><span class="p">(</span><span class="n">class_tag</span><span class="p">,</span> <span class="n">device</span><span class="p">))</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">CIM_OBJECT_ROLE</span><span class="p">)</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">CIM_LOADED_ROLE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lazy</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;declared_properties&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Placeholder child to show expand arrow; removed on load.</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lazy</span><span class="p">:</span>
+        <span class="n">populate_cim_item_children</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="n">editable</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">item</span></div>
+
+
+
+<div class="viewcode-block" id="populate_cim_item_children">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.populate_cim_item_children">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">populate_cim_item_children</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Populate immediate children for a CIM object item. Designed for lazy loading.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">CIM_OBJECT_ROLE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">CIM_LOADED_ROLE</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="n">ancestor_ids</span> <span class="o">=</span> <span class="n">_collect_cim_ancestor_ids</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">removeRows</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">rowCount</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">cim_prop</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">property_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">property_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">property_value</span><span class="p">,</span> <span class="s1">&#39;rdfid&#39;</span><span class="p">):</span>
+
+            <span class="n">prop_id</span> <span class="o">=</span> <span class="n">_get_cim_object_id</span><span class="p">(</span><span class="n">property_value</span><span class="p">)</span>
+            <span class="n">we_are_in_a_recursive_loop</span> <span class="o">=</span> <span class="n">prop_id</span> <span class="ow">in</span> <span class="n">ancestor_ids</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">we_are_in_a_recursive_loop</span><span class="p">:</span>
+                <span class="n">tpe</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">property_value</span><span class="o">.</span><span class="n">tpe</span><span class="p">)</span>
+                <span class="n">class_name_child</span> <span class="o">=</span> <span class="n">create_cim_object_item</span><span class="p">(</span><span class="n">class_tag</span><span class="o">=</span><span class="n">tpe</span><span class="p">,</span>
+                                                          <span class="n">device</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
+                                                          <span class="n">editable</span><span class="o">=</span><span class="n">editable</span><span class="p">,</span>
+                                                          <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">class_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">property_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">tpe</span><span class="p">)</span>
+                <span class="n">property_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">property_value</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span>
+                <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">class_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;Recursive object (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ancestor_ids</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+                <span class="n">class_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">property_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">property_name</span><span class="p">)</span>
+                <span class="n">property_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span>
+                <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tpe</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+            <span class="n">class_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">tpe</span><span class="p">)</span>
+            <span class="n">class_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+            <span class="n">property_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">property_name</span><span class="p">)</span>
+            <span class="n">property_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+            <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span>
+            <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+        <span class="n">item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">([</span><span class="n">class_name_child</span><span class="p">,</span> <span class="n">property_name_child</span><span class="p">,</span> <span class="n">value_child</span><span class="p">])</span>
+
+    <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">CIM_LOADED_ROLE</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_cim_object_node">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.add_cim_object_node">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_cim_object_node</span><span class="p">(</span><span class="n">class_tag</span><span class="p">,</span>
+                        <span class="n">device</span><span class="p">:</span> <span class="n">CGMES_ASSETS</span><span class="p">,</span>
+                        <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">already_visited</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param class_tag:</span>
+<span class="sd">    :param device:</span>
+<span class="sd">    :param editable:</span>
+<span class="sd">    :param already_visited:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">already_visited</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">already_visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">class_tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">class_tag</span> <span class="o">=</span> <span class="n">_get_cim_object_label</span><span class="p">(</span><span class="n">class_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># create root node</span>
+    <span class="n">device_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">class_tag</span><span class="p">)</span>
+
+    <span class="c1"># register visit to avoid cyclic recursion</span>
+    <span class="n">device_id</span> <span class="o">=</span> <span class="n">_get_cim_object_id</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">already_visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">cim_prop</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">declared_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">property_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">property_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">property_value</span><span class="p">,</span> <span class="s1">&#39;rdfid&#39;</span><span class="p">):</span>
+
+                <span class="n">prop_id</span> <span class="o">=</span> <span class="n">_get_cim_object_id</span><span class="p">(</span><span class="n">property_value</span><span class="p">)</span>
+                <span class="n">we_are_in_a_recursive_loop</span> <span class="o">=</span> <span class="n">prop_id</span> <span class="ow">in</span> <span class="n">already_visited</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">we_are_in_a_recursive_loop</span><span class="p">:</span>
+
+                    <span class="c1"># if the property is an object, recursively add it</span>
+                    <span class="n">tpe</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">property_value</span><span class="o">.</span><span class="n">tpe</span><span class="p">)</span>
+                    <span class="n">class_name_child</span> <span class="o">=</span> <span class="n">add_cim_object_node</span><span class="p">(</span><span class="n">class_tag</span><span class="o">=</span><span class="n">tpe</span><span class="p">,</span>
+                                                           <span class="n">device</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
+                                                           <span class="n">editable</span><span class="o">=</span><span class="n">editable</span><span class="p">,</span>
+                                                           <span class="n">already_visited</span><span class="o">=</span><span class="n">already_visited</span><span class="p">)</span>
+                    <span class="n">class_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                    <span class="n">property_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">tpe</span><span class="p">)</span>
+                    <span class="n">property_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                    <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">property_value</span><span class="o">.</span><span class="n">rdfid</span><span class="p">)</span>
+                    <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># print(&#39;Recursive loop...&#39;)</span>
+                    <span class="c1"># return device_child</span>
+                    <span class="n">class_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;Recursive object (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">already_visited</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+                    <span class="n">class_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                    <span class="n">property_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">property_name</span><span class="p">)</span>
+                    <span class="n">property_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                    <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span>
+                    <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># if the property is a value (float, str, bool, etc.) just add it</span>
+
+                <span class="n">tpe</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                       <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                       <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                       <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+                <span class="n">class_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">tpe</span><span class="p">)</span>
+                <span class="n">class_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">property_name_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">property_name</span><span class="p">)</span>
+                <span class="n">property_name_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+                <span class="n">value_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span>
+                <span class="n">value_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+            <span class="n">device_child</span><span class="o">.</span><span class="n">appendRow</span><span class="p">([</span><span class="n">class_name_child</span><span class="p">,</span> <span class="n">property_name_child</span><span class="p">,</span> <span class="n">value_child</span><span class="p">])</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">already_visited</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">device_child</span></div>
+
+
+
+<div class="viewcode-block" id="get_cim_tree_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.get_cim_tree_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cim_tree_model</span><span class="p">(</span><span class="n">cim_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill logger tree</span>
+<span class="sd">    :param cim_model: Logger instance</span>
+<span class="sd">    :return: QStandardItemModel instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">editable</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s1">&#39;Object class&#39;</span><span class="p">,</span> <span class="s1">&#39;Property&#39;</span><span class="p">,</span> <span class="s1">&#39;Value&#39;</span><span class="p">])</span>
+    <span class="n">root_node</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">device_list</span> <span class="ow">in</span> <span class="n">cim_model</span><span class="o">.</span><span class="n">elements_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">class_child</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">class_name</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">device_list</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">device_list</span><span class="p">:</span>
+            <span class="c1"># add device with all it&#39;s properties</span>
+            <span class="n">device_child</span> <span class="o">=</span> <span class="n">create_cim_object_item</span><span class="p">(</span><span class="n">class_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                  <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                                  <span class="n">editable</span><span class="o">=</span><span class="n">editable</span><span class="p">,</span>
+                                                  <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">device_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+
+            <span class="n">class_child</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">device_child</span><span class="p">)</span>
+
+        <span class="n">class_child</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">editable</span><span class="p">)</span>
+        <span class="n">root_node</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">class_child</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="add_sub_menu">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.add_sub_menu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_sub_menu</span><span class="p">(</span><span class="n">menu</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">,</span>
+                 <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">icon_pixmap</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">):</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">icon_pixmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">icon_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">edit_icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+            <span class="n">edit_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">icon_path</span><span class="p">))</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">edit_icon</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># prefer the icon pixmap if provided</span>
+        <span class="n">edit_icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+        <span class="n">edit_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">icon_pixmap</span><span class="p">)</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">edit_icon</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">entry</span></div>
+
+
+
+<div class="viewcode-block" id="add_menu_entry">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.add_menu_entry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">,</span>
+                   <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                   <span class="n">icon_pixmap</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">function_ptr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">checkeable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">checked_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">MENU_FONT_SIZE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a context menu entry</span>
+<span class="sd">    :param menu:</span>
+<span class="sd">    :param text:</span>
+<span class="sd">    :param icon_path:</span>
+<span class="sd">    :param icon_pixmap:</span>
+<span class="sd">    :param function_ptr:</span>
+<span class="sd">    :param checkeable:</span>
+<span class="sd">    :param checked_value:</span>
+<span class="sd">    :param font_size:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entry</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">()</span>
+    <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">checkeable</span><span class="p">:</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="n">checkeable</span><span class="p">)</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">checked_value</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">icon_pixmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">icon_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">edit_icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+            <span class="n">edit_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">icon_path</span><span class="p">))</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">edit_icon</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># prefer the icon pixmap if provided</span>
+        <span class="n">edit_icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+        <span class="n">edit_icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">icon_pixmap</span><span class="p">)</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">edit_icon</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">function_ptr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">function_ptr</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">entry</span></div>
+
+
+
+<div class="viewcode-block" id="create_spinbox">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.create_spinbox">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_spinbox</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">minimum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">maximum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param value:</span>
+<span class="sd">    :param minimum:</span>
+<span class="sd">    :param maximum:</span>
+<span class="sd">    :param decimals:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sn_spinner</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">()</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="n">minimum</span><span class="p">)</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="n">maximum</span><span class="p">)</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sn_spinner</span></div>
+
+
+
+<div class="viewcode-block" id="create_int_spinbox">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.create_int_spinbox">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_int_spinbox</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">minimum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">maximum</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param value:</span>
+<span class="sd">    :param minimum:</span>
+<span class="sd">    :param maximum:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sn_spinner</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">()</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="n">minimum</span><span class="p">)</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="n">maximum</span><span class="p">)</span>
+    <span class="n">sn_spinner</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sn_spinner</span></div>
+
+
+
+<div class="viewcode-block" id="AsyncTask">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.AsyncTask">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncTask</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRunnable</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
+
+<div class="viewcode-block" id="AsyncTask.run">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.AsyncTask.run">[docs]</a>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="create_menu_button">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Gui.html#VeraGrid.Gui.gui_functions.create_menu_button">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_menu_button</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span>
+                       <span class="n">toolbar</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">,</span>
+                       <span class="n">position</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">,</span>
+                       <span class="n">actions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">],</span>
+                       <span class="n">pixmap_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                       <span class="n">tooltip_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                       <span class="n">remove_actions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QToolButton</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param parent: parent widget</span>
+<span class="sd">    :param toolbar: Toolbar to insert the button</span>
+<span class="sd">    :param position: Position at which to insert the button</span>
+<span class="sd">    :param actions: List of actions to pack</span>
+<span class="sd">    :param pixmap_name: optional button icon</span>
+<span class="sd">    :param tooltip_text: Tooltip text to show</span>
+<span class="sd">    :param remove_actions: optional remove actions</span>
+<span class="sd">    :return: QToolButton</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">button</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QToolButton</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pixmap_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">pixmap_name</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">icon</span><span class="p">())</span>
+
+    <span class="n">button</span><span class="o">.</span><span class="n">setPopupMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QToolButton</span><span class="o">.</span><span class="n">ToolButtonPopupMode</span><span class="o">.</span><span class="n">MenuButtonPopup</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tooltip_text</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tooltip_text</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">toolTip</span><span class="p">())</span>
+
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">setMenu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span>
+
+    <span class="c1"># Main click executes the first action</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">trigger</span><span class="p">)</span>
+
+    <span class="n">toolbar</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">button</span><span class="p">)</span>
+
+    <span class="c1"># Remove the original actions from the toolbar so they are only available in the menu</span>
+    <span class="k">if</span> <span class="n">remove_actions</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+            <span class="n">toolbar</span><span class="o">.</span><span class="n">removeAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">button</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

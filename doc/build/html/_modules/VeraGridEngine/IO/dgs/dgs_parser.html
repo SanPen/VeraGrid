@@ -1,0 +1,1405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.dgs.dgs_parser &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.dgs.dgs_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.dgs.dgs_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConverterControlType</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+
+<span class="c1"># def get_transformer_impedances(Uhv, Ulv, Sn, Pcu, Pfe, I0, Usc, GR_hv1=0.5, GX_hv1=0.5):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Get the transformer series and shunt equivalent impedances from the short circuit values</span>
+<span class="c1">#     @param Uhv: Nominal voltage at the high side (kV)</span>
+<span class="c1">#     @param Ulv: Nominal voltage at the low side (kV)</span>
+<span class="c1">#     @param Sn: Nominal power (MVA)</span>
+<span class="c1">#     @param Pcu: Copper losses (kW) (Losses due to the Joule effect)</span>
+<span class="c1">#     @param Pfe: Iron-losses (kW)  (Losses in the magnetic circuit)</span>
+<span class="c1">#     @param I0: No-load current (%)</span>
+<span class="c1">#     @param Usc: Short-circuit voltage (%)</span>
+<span class="c1">#     @param GR_hv1: Resistive short circuit contribution to the HV side. It is a value from 0 to 1.</span>
+<span class="c1">#     @param GX_hv1: Reactive short circuit contribution to the HV side. It is a value from 0 to 1.</span>
+<span class="c1">#     @return:</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     # Nominal impedance HV (Ohm)</span>
+<span class="c1">#     Zn_hv = Uhv * Uhv / Sn</span>
+<span class="c1">#</span>
+<span class="c1">#     # Nominal impedance LV (Ohm)</span>
+<span class="c1">#     Zn_lv = Ulv * Ulv / Sn</span>
+<span class="c1">#</span>
+<span class="c1">#     # Short circuit impedance (p.u.)</span>
+<span class="c1">#     zsc = Usc / 100.0</span>
+<span class="c1">#</span>
+<span class="c1">#     # Short circuit resistance (p.u.)</span>
+<span class="c1">#     rsc = (Pcu / 1000.0) / Sn</span>
+<span class="c1">#</span>
+<span class="c1">#     # Short circuit reactance (p.u.)</span>
+<span class="c1">#     xsc = np.sqrt(zsc * zsc - rsc * rsc)</span>
+<span class="c1">#</span>
+<span class="c1">#     # HV resistance (p.u.)</span>
+<span class="c1">#     rcu_hv = rsc * GR_hv1</span>
+<span class="c1">#</span>
+<span class="c1">#     # LV resistance (p.u.)</span>
+<span class="c1">#     rcu_lv = rsc * (1.0 - GR_hv1)</span>
+<span class="c1">#</span>
+<span class="c1">#     # HV shunt reactance (p.u.)</span>
+<span class="c1">#     xs_hv = xsc * GX_hv1</span>
+<span class="c1">#</span>
+<span class="c1">#     # LV shunt reactance (p.u.)</span>
+<span class="c1">#     xs_lv = xsc * (1.0 - GX_hv1)</span>
+<span class="c1">#</span>
+<span class="c1">#     # Shunt resistance (p.u.)</span>
+<span class="c1">#     if Pfe &gt; 0:</span>
+<span class="c1">#         rfe = Sn / (Pfe / 1000.0)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         rfe = 1e-20</span>
+<span class="c1">#</span>
+<span class="c1">#     # Magnetization impedance (p.u.)</span>
+<span class="c1">#     if I0 &gt; 0:</span>
+<span class="c1">#         zm = 1.0 / (I0 / 100.0)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         zm = 1e-20</span>
+<span class="c1">#</span>
+<span class="c1">#     # Magnetization reactance (p.u.)</span>
+<span class="c1">#     xm = 0.0</span>
+<span class="c1">#     if rfe &gt; zm:</span>
+<span class="c1">#         xm = 1.0 / np.sqrt(1.0 / (zm * zm) - 1.0 / (rfe * rfe))</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         xm = 0.0  # the square root cannot be computed</span>
+<span class="c1">#</span>
+<span class="c1">#     # Calculated parameters in per unit</span>
+<span class="c1">#     # leakage_impedance = rsc + 1j * xsc</span>
+<span class="c1">#     # magnetizing_impedance = rfe + 1j * xm</span>
+<span class="c1">#</span>
+<span class="c1">#     leakage_impedance = (rcu_hv + rcu_lv) + 1j * (xs_hv + xs_lv)</span>
+<span class="c1">#     magnetizing_impedance = rfe + 1j * xm</span>
+<span class="c1">#</span>
+<span class="c1">#     return leakage_impedance, magnetizing_impedance</span>
+
+
+<div class="viewcode-block" id="read_DGS">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_parser.read_DGS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_DGS</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a DigSilent Power Factory .dgs file and return a dictionary with the data</span>
+<span class="sd">    Args:</span>
+<span class="sd">        filename: File name or path</span>
+
+<span class="sd">    Returns: Dictionary of data where the keys are the object types and the values</span>
+<span class="sd">             are the data of the objects of the key object type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">###############################################################################</span>
+    <span class="c1"># Read the file</span>
+    <span class="c1">###############################################################################</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1">###############################################################################</span>
+    <span class="c1"># Process the data</span>
+    <span class="c1">###############################################################################</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Numpy types:</span>
+
+<span class="sd">    &#39;b&#39; 	boolean</span>
+<span class="sd">    &#39;i&#39; 	(signed) integer</span>
+<span class="sd">    &#39;u&#39; 	unsigned integer</span>
+<span class="sd">    &#39;f&#39; 	floating-point</span>
+<span class="sd">    &#39;c&#39; 	complex-floating point</span>
+<span class="sd">    &#39;O&#39; 	(Python) objects</span>
+<span class="sd">    &#39;S&#39;, &#39;a&#39; 	(byte-)string</span>
+<span class="sd">    &#39;U&#39; 	Unicode</span>
+<span class="sd">    &#39;V&#39; 	raw data (void)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DGS types</span>
+
+<span class="sd">    a</span>
+<span class="sd">    p</span>
+<span class="sd">    i</span>
+<span class="sd">    r</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">types_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">types_dict</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">types_dict</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">types_dict</span><span class="p">[</span><span class="s2">&quot;i&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">types_dict</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+    <span class="n">types_dict</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+
+    <span class="n">types_dict2</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">current_type</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">Headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="c1"># parse the file lines</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$$&quot;</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">chnks</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+            <span class="n">current_type</span> <span class="o">=</span> <span class="n">chnks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">current_type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="c1"># analyze types</span>
+            <span class="n">data_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chnks</span><span class="p">)):</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">chnks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">tpe</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">data_types</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">tpe</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+                <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">types_dict2</span><span class="p">[</span><span class="n">current_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_types</span>
+
+            <span class="n">Headers</span><span class="p">[</span><span class="n">current_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span>
+
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">current_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">chnks</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+                <span class="n">chnks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">chnks</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">current_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">chnks</span><span class="p">)))</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    # format keys</span>
+<span class="sd">    for key in data.keys():</span>
+<span class="sd">        header = Headers[key]</span>
+<span class="sd">        df = pd.DataFrame(data=data[key], columns=header)</span>
+
+<span class="sd">        # parse the stupid numbers separated by comma</span>
+<span class="sd">        for col_name, tpe in types_dict2[key]:</span>
+<span class="sd">            if tpe == float:</span>
+<span class="sd">                df[col_name] = df[col_name].str.replace(&#39;,&#39;, &#39;.&#39;).astype(float)</span>
+<span class="sd">            elif tpe == int:</span>
+<span class="sd">                df[col_name] = df[col_name].str.replace(&#39;,&#39;, &#39;.&#39;).astype(int)</span>
+<span class="sd">            else:</span>
+<span class="sd">                pass</span>
+<span class="sd">        data[key] = df</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">Headers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="n">fixed_rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+
+            <span class="c1"># --- skip empty rows safely ---</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># convert np.array rows to list (safe)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">n_cols</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[:</span><span class="n">n_cols</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_cols</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">row</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_cols</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+
+            <span class="n">fixed_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">fixed_rows</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="c1"># parse numbers with commas</span>
+        <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">tpe</span> <span class="ow">in</span> <span class="n">types_dict2</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">tpe</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">tpe</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+
+    <span class="c1"># positions dictionary</span>
+    <span class="n">obj_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;IntGrf&#39;</span><span class="p">][</span><span class="s1">&#39;pDataObj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">x_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;IntGrf&#39;</span><span class="p">][</span><span class="s1">&#39;rCenterX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;IntGrf&#39;</span><span class="p">][</span><span class="s1">&#39;rCenterY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">pos_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj_id</span><span class="p">)):</span>
+        <span class="n">pos_dict</span><span class="p">[</span><span class="n">obj_id</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_vec</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y_vec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">pos_dict</span></div>
+
+
+
+<div class="viewcode-block" id="data_to_grid_object">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_parser.data_to_grid_object">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">data_to_grid_object</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+                        <span class="n">pos_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+                        <span class="n">codification</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+                        <span class="n">options</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;statgen&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Turns the read data dictionary into a VeraGrid MultiCircuit object</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data: Dictionary of data read from a DGS file</span>
+<span class="sd">        pos_dict: Dictionary of objects and their positions read from a DGS file</span>
+<span class="sd">        codification: codification type</span>
+<span class="sd">    Returns: VeraGrid MultiCircuit object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">###############################################################################</span>
+    <span class="c1"># Refactor data into classes</span>
+    <span class="c1">###############################################################################</span>
+
+    <span class="c1"># store tables for easy reference</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Line</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypLne,TypTow,TypGeo,TypCabsys</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  dline: Parameters: Length of Line in km</span>
+<span class="sd">    *  fline: Parameters: Derating Factor</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  pStoch: Failures: Element model in StoTyplne</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ElmLne&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Line Type</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  Ithr: Rated Short-Time (1s) Current (Conductor) in kA</span>
+<span class="sd">    *  aohl_: Cable / OHL</span>
+<span class="sd">    *  cline: Parameters per Length 1,2-Sequence: Capacitance C&#39; in uF/km</span>
+<span class="sd">    *  cline0: Parameters per Length Zero Sequence: Capacitance C0&#39; in uF/km</span>
+<span class="sd">    *  nlnph: Phases:1:2:3</span>
+<span class="sd">    *  nneutral: Number of Neutrals:0:1</span>
+<span class="sd">    *  rline: Parameters per Length 1,2-Sequence: AC-Resistance R&#39;(20°C) in Ohm/km</span>
+<span class="sd">    *  rline0: Parameters per Length Zero Sequence: AC-Resistance R0&#39; in Ohm/km</span>
+<span class="sd">    *  rtemp: Max. End Temperature in degC</span>
+<span class="sd">    *  sline: Rated Current in kA</span>
+<span class="sd">    *  uline: Rated Voltage in kV</span>
+<span class="sd">    *  xline: Parameters per Length 1,2-Sequence: Reactance X&#39; in Ohm/km</span>
+<span class="sd">    *  xline0: Parameters per Length Zero Sequence: Reactance X0&#39; in Ohm/km</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;TypLne&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">lines_types</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TypLne&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  2-Winding Transformer</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypTr2</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  sernum: Serial Number</span>
+<span class="sd">    *  constr: Year of Construction</span>
+<span class="sd">    *  cgnd_h: Internal Grounding Impedance, HV Side: Star Point:Connected:Not connected</span>
+<span class="sd">    *  cgnd_l: Internal Grounding Impedance, LV Side: Star Point:Connected:Not connected</span>
+<span class="sd">    *  i_auto: Auto Transformer</span>
+<span class="sd">    *  nntap: Tap Changer 1: Tap Position</span>
+<span class="sd">    *  ntrcn: Controller, Tap Changer 1: Automatic Tap Changing</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  ratfac: Rating Factor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmTr2&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">transformers</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmTr2&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">transformers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  2-Winding Transformer Type</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  curmg: Magnetising Impedance: No Load Current in %</span>
+<span class="sd">    *  dutap: Tap Changer 1: Additional Voltage per Tap in %</span>
+<span class="sd">    *  frnom: Nominal Frequency in Hz</span>
+<span class="sd">    *  manuf: Manufacturer</span>
+<span class="sd">    *  nntap0: Tap Changer 1: Neutral Position</span>
+<span class="sd">    *  nt2ag: Vector Group: Phase Shift in *30deg</span>
+<span class="sd">    *  ntpmn: Tap Changer 1: Minimum Position</span>
+<span class="sd">    *  ntpmx: Tap Changer 1: Maximum Position</span>
+<span class="sd">    *  pcutr: Positive Sequence Impedance: Copper Losses in kW</span>
+<span class="sd">    *  pfe: Magnetising Impedance: No Load Losses in kW</span>
+<span class="sd">    *  phitr: Tap Changer 1: Phase of du in deg</span>
+<span class="sd">    *  strn: Rated Power in MVA</span>
+<span class="sd">    *  tap_side: Tap Changer 1: at Side:HV:LV</span>
+<span class="sd">    *  tr2cn_h: Vector Group: HV-Side:Y :YN:Z :ZN:D</span>
+<span class="sd">    *  tr2cn_l: Vector Group: LV-Side:Y :YN:Z :ZN:D</span>
+<span class="sd">    *  uk0tr: Zero Sequence Impedance: Short-Circuit Voltage uk0 in %</span>
+<span class="sd">    *  uktr: Positive Sequence Impedance: Short-Circuit Voltage uk in %</span>
+<span class="sd">    *  ur0tr: Zero Sequence Impedance: SHC-Voltage (Re(uk0)) uk0r in %</span>
+<span class="sd">    *  utrn_h: Rated Voltage: HV-Side in kV</span>
+<span class="sd">    *  utrn_l: Rated Voltage: LV-Side in kV</span>
+<span class="sd">    *  zx0hl_n: Zero Sequence Magnetising Impedance: Mag. Impedance/uk0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;TypTr2&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">transformers_types</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TypTr2&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">transformers_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Terminal</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypBar</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  iUsage: Usage:Busbar:Junction Node:Internal Node</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  phtech: Phase Technology:ABC:ABC-N:BI:BI-N:2PH:2PH-N:1PH:1PH-N:N</span>
+<span class="sd">    *  uknom: Nominal Voltage: Line-Line in kV</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmTerm&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">buses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmTerm&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">buses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Cubicle</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  obj_bus: Bus Index</span>
+<span class="sd">    *  obj_id: Connected with in Elm*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;StaCubic&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">cubicles</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;StaCubic&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cubicles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  General Load</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypLod,TypLodind</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  plini: Operating Point: Active Power in MW</span>
+<span class="sd">    *  qlini: Operating Point: Reactive Power in Mvar</span>
+<span class="sd">    *  scale0: Operating Point: Scaling Factor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmLod&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">loads</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmLod&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">loads</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  External Grid</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  bustp: Bus Type:PQ:PV:SL</span>
+<span class="sd">    *  cgnd: Internal Grounding Impedance: Star Point:Connected:Not connected</span>
+<span class="sd">    *  iintgnd: Neutral Conductor: N-Connection:None:At terminal (ABC-N):Separate terminal</span>
+<span class="sd">    *  ikssmin: Min. Values: Short-Circuit Current Ik&#39;&#39;min in kA</span>
+<span class="sd">    *  r0tx0: Max. Values Impedance Ratio: R0/X0 max.</span>
+<span class="sd">    *  r0tx0min: Min. Values Impedance Ratio: R0/X0 min.</span>
+<span class="sd">    *  rntxn: Max. Values: R/X Ratio (max.)</span>
+<span class="sd">    *  rntxnmin: Min. Values: R/X Ratio (min.)</span>
+<span class="sd">    *  snss: Max. Values: Short-Circuit Power Sk&#39;&#39;max in MVA</span>
+<span class="sd">    *  snssmin: Min. Values: Short-Circuit Power Sk&#39;&#39;min in MVA</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmXnet&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">external</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmXnet&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">external</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Grid</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  frnom: Nominal Frequency in Hz</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmNet&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmNet&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmGenstat&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">static_generators</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmGenstat&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">static_generators</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Synchronous Machine</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypSym</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  i_mot: Generator/Motor</span>
+<span class="sd">    *  iv_mode: Local Controller</span>
+<span class="sd">    *  ngnum: Number of: parallel Machines</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  pgini: Dispatch: Active Power in MW</span>
+<span class="sd">    *  q_max: Reactive Power Operational Limits: Max. in p.u.</span>
+<span class="sd">    *  q_min: Reactive Power Operational Limits: Min. in p.u.</span>
+<span class="sd">    *  qgini: Dispatch: Reactive Power in Mvar</span>
+<span class="sd">    *  usetp: Dispatch: Voltage in p.u.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmSym&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">synchronous_machine</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmSym&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">synchronous_machine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Synchronous Machine Type</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  cosn: Power Factor</span>
+<span class="sd">    *  rstr: Stator Resistance: rstr in p.u.</span>
+<span class="sd">    *  satur: For single fed short-circuit: Machine Type IEC909/IEC60909</span>
+<span class="sd">    *  sgn: Nominal Apparent Power in MVA</span>
+<span class="sd">    *  ugn: Nominal Voltage in kV</span>
+<span class="sd">    *  xd: Synchronous Reactances: xd in p.u.</span>
+<span class="sd">    *  xdsat: For single fed short-circuit: Reciprocal of short-circuit ratio (xdsat) in p.u.</span>
+<span class="sd">    *  xdsss: Subtransient Reactance: saturated value xd&#39;&#39;sat in p.u.</span>
+<span class="sd">    *  xq: Synchronous Reactances: xq in p.u.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;TypSym&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">synchronous_machine_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TypSym&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">synchronous_machine_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Asynchronous Machine</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypAsm*,TypAsmo*,TypAsm1*</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  i_mot: Generator/Motor</span>
+<span class="sd">    *  ngnum: Number of: parallel Machines</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  pgini: Dispatch: Active Power in MW</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmAsm&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">asynchronous_machine</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmAsm&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">asynchronous_machine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Synchronous Machine Type</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  i_mode: Input Mode</span>
+<span class="sd">    *  aiazn: Consider Transient Parameter: Locked Rotor Current (Ilr/In) in p.u.</span>
+<span class="sd">    *  amazn: Locked Rotor Torque in p.u.</span>
+<span class="sd">    *  amkzn: Torque at Stalling Point in p.u.</span>
+<span class="sd">    *  anend: Nominal Speed in rpm</span>
+<span class="sd">    *  cosn: Rated Power Factor</span>
+<span class="sd">    *  effic: Efficiency at nominal Operation in %</span>
+<span class="sd">    *  frequ: Nominal Frequency in Hz</span>
+<span class="sd">    *  i_cage: Rotor</span>
+<span class="sd">    *  nppol: No of Pole Pairs</span>
+<span class="sd">    *  pgn: Power Rating: Rated Mechanical Power in kW</span>
+<span class="sd">    *  ugn: Rated Voltage in kV</span>
+<span class="sd">    *  xmrtr: Rotor Leakage Reac. Xrm in p.u.</span>
+<span class="sd">    *  xstr: Stator Reactance Xs in p.u.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;TypAsmo&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">asynchronous_machine_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TypAsmo&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">asynchronous_machine_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Shunt/Filter</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  ctech: Technology</span>
+<span class="sd">    *  fres: Design Parameter (per Step): Resonance Frequency in Hz</span>
+<span class="sd">    *  greaf0: Design Parameter (per Step): Quality Factor (at fr)</span>
+<span class="sd">    *  iswitch: Controller: Switchable</span>
+<span class="sd">    *  ncapa: Controller: Act.No. of Step</span>
+<span class="sd">    *  ncapx: Controller: Max. No. of Steps</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  qtotn: Design Parameter (per Step): Rated Reactive Power, L-C in Mvar</span>
+<span class="sd">    *  shtype: Shunt Type</span>
+<span class="sd">    *  ushnm: Nominal Voltage in kV</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmShnt&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">shunts</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmShnt&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">shunts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    *  Breaker/Switch</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypSwitch</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  aUsage: Switch Type</span>
+<span class="sd">    *  nneutral: No. of Neutrals:0:1</span>
+<span class="sd">    *  nphase: No. of Phases:1:2:3</span>
+<span class="sd">    *  on_off: Closed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;ElmCoup&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">switches</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ElmCoup&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">switches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+        <span class="c1">###############################################################################</span>
+        <span class="c1"># Post process the data</span>
+        <span class="c1">###############################################################################</span>
+
+    <span class="c1"># put the tables that connect to a terminal in a list</span>
+    <span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">lines</span><span class="p">,</span> <span class="n">transformers</span><span class="p">,</span> <span class="n">loads</span><span class="p">,</span> <span class="n">external</span><span class="p">,</span> <span class="n">static_generators</span><span class="p">,</span> <span class="n">shunts</span><span class="p">,</span>
+               <span class="n">synchronous_machine</span><span class="p">,</span> <span class="n">asynchronous_machine</span><span class="p">]</span>
+
+    <span class="c1"># construct the terminals dictionary</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    $$StaCubic;ID(a:40);loc_name(a:40);fold_id(p);chr_name(a:20);obj_bus(i);obj_id(p)</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  Cubicle</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  obj_bus: Bus Index</span>
+<span class="sd">    *  obj_id: Connected with in Elm*</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">terminals_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># dictionary to store the terminals ID associated with an object ID</span>
+    <span class="n">cub_obj_idx</span> <span class="o">=</span> <span class="n">cubicles</span><span class="p">[</span><span class="s1">&#39;obj_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">cub_term_idx</span> <span class="o">=</span> <span class="n">cubicles</span><span class="p">[</span><span class="s1">&#39;fold_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">ID_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">cla</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cla</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">cla</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">cla</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">cla</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">cla</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No bus ID, FID could be found...&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">ID</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cubicles</span> <span class="o">==</span> <span class="n">ID</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">cub_term_idx</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="c1">###############################################################################</span>
+    <span class="c1"># Generate VeraGrid data</span>
+    <span class="c1">###############################################################################</span>
+
+    <span class="c1"># general values</span>
+    <span class="n">baseMVA</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="s1">&#39;frnom&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">frequency</span>
+
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">()</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Terminals (nodes)</span>
+    <span class="c1">####################################################################################################################</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  Terminal</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypBar</span>
+<span class="sd">    *  iUsage: Usage:Busbar:Junction Node:Internal Node</span>
+<span class="sd">    *  uknom: Nominal Voltage: Line-Line in kV</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print(&#39;Parsing terminals&#39;)</span>
+    <span class="n">buses_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">buses</span><span class="p">:</span>
+        <span class="n">id_arr</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">buses</span><span class="p">:</span>
+        <span class="n">id_arr</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No bus ID, FID could be found...&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buses</span><span class="p">)):</span>
+        <span class="n">ID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">id_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ID</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos_dict</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">pos_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ID</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+        <span class="n">buses_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">bus_name</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># .decode(codification)  # BUS_Name</span>
+        <span class="n">vnom</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="s1">&#39;uknom&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">bus</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">bus_name</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="n">vnom</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=-</span><span class="n">y</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># External grids (slacks)</span>
+    <span class="c1">####################################################################################################################</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ###############################################################################</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  External Grid</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  snss: Max. Values: Short-Circuit Power Sk&#39;&#39;max in MVA</span>
+<span class="sd">    *  rntxn: Max. Values: R/X Ratio (max.)</span>
+<span class="sd">    *  z2tz1: Max. Values Impedance Ratio: Z2/Z1 max.</span>
+<span class="sd">    *  snssmin: Min. Values: Short-Circuit Power Sk&#39;&#39;min in MVA</span>
+<span class="sd">    *  rntxnmin: Min. Values: R/X Ratio (min.)</span>
+<span class="sd">    *  z2tz1min: Min. Values Impedance Ratio: Z2/Z1 min.</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  bustp: Bus Type:PQ:PV:SL</span>
+<span class="sd">    *  pgini: Operation Point: Active Power in MW</span>
+<span class="sd">    *  qgini: Operation Point: Reactive Power in Mvar</span>
+<span class="sd">    *  phiini: Operation Point: Angle in deg</span>
+<span class="sd">    *  usetp: Operation Point: Voltage Setpoint in p.u.</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">external</span><span class="p">)):</span>
+        <span class="n">ID</span> <span class="o">=</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;phiini&#39;</span> <span class="ow">in</span> <span class="n">external</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">va</span> <span class="o">=</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;phiini&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">vm</span> <span class="o">=</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;usetp&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">va</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">vm</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">buses</span> <span class="o">=</span> <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span>  <span class="c1"># array with the ID of the connection Buses</span>
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># index of the bus</span>
+
+        <span class="n">bus_obj</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus1</span><span class="p">]</span>
+
+        <span class="c1"># apply the slack values to the buses structure if the element is marked as slack</span>
+        <span class="k">if</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;bustp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;SL&#39;</span><span class="p">:</span>
+            <span class="c1"># create the slack entry on buses</span>
+            <span class="n">bus_obj</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;bustp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;PV&#39;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s1">&#39;pgini&#39;</span> <span class="ow">in</span> <span class="n">external</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;pgini&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># add a generator to the bus</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">external</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codification</span><span class="p">),</span>
+                                <span class="n">P</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+                                <span class="n">vset</span><span class="o">=</span><span class="n">vm</span><span class="p">,</span> <span class="n">Qmin</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">Qmax</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mi">9999</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus_obj</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
+
+            <span class="c1"># # mark the bus as pv</span>
+            <span class="c1"># BUSES[bus1, bd.BUS_TYPE] = 2</span>
+            <span class="c1"># BUSES[bus1, bd.VA] = 0.0</span>
+            <span class="c1"># BUSES[bus1, bd.VM] = vm</span>
+            <span class="c1"># # add the PV entry on generators</span>
+            <span class="c1"># gen_ = gen_line.copy()</span>
+            <span class="c1"># gen_[gd.GEN_BUS] = bus1</span>
+            <span class="c1"># gen_[gd.MBASE] = baseMVA</span>
+            <span class="c1"># gen_[gd.VG] = vm</span>
+            <span class="c1"># gen_[gd.GEN_STATUS] = 1</span>
+            <span class="c1"># gen_[gd.PG] += external[&#39;pgini&#39;].values[i]</span>
+            <span class="c1">#</span>
+            <span class="c1"># GEN.append(gen_)</span>
+            <span class="c1"># GEN_NAMES.append(external[&#39;loc_name&#39;][i])</span>
+
+        <span class="k">elif</span> <span class="n">external</span><span class="p">[</span><span class="s1">&#39;bustp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;PQ&#39;</span><span class="p">:</span>
+            <span class="c1"># Add a load to the bus</span>
+            <span class="n">load</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">external</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codification</span><span class="p">),</span>
+                            <span class="n">P</span><span class="o">=</span><span class="n">external</span><span class="p">[</span><span class="s1">&#39;pgini&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                            <span class="n">Q</span><span class="o">=</span><span class="n">external</span><span class="p">[</span><span class="s1">&#39;qgini&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus_obj</span><span class="p">,</span> <span class="n">load</span><span class="p">)</span>
+
+            <span class="c1"># BUSES[bus1, bd.BUS_TYPE] = 1</span>
+            <span class="c1"># BUSES[bus1, bd.VA] = va</span>
+            <span class="c1"># BUSES[bus1, bd.VM] = vm</span>
+            <span class="c1"># BUSES[bus1, bd.PD] += external[&#39;pgini&#39;].values[i]</span>
+            <span class="c1"># BUSES[bus1, bd.QD] += external[&#39;qgini&#39;].values[i]</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Lines (Branches)</span>
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># print(&#39;Parsing lines&#39;)</span>
+
+    <span class="k">if</span> <span class="n">lines_types</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">lines_ID</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">line_types_ID</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">lines_ID</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">line_types_ID</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No line ID, FID could be found...&quot;</span><span class="p">)</span>
+
+        <span class="n">lines_type_id</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="s1">&#39;typ_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">lines_lenght</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="s1">&#39;dline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">if</span> <span class="s1">&#39;outserv&#39;</span> <span class="ow">in</span> <span class="n">lines</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">lines_enables</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="s1">&#39;outserv&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lines_enables</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines_ID</span><span class="p">))</span>
+
+        <span class="n">lines_R</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;rline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">lines_L</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;xline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">lines_C</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">lines_B</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s1">&#39;cline&#39;</span> <span class="ow">in</span> <span class="n">lines_types</span><span class="p">:</span>
+            <span class="n">lines_C</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;cline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">elif</span> <span class="s1">&#39;bline&#39;</span> <span class="ow">in</span> <span class="n">lines_types</span><span class="p">:</span>
+            <span class="n">lines_B</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;bline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">lines_rate</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;sline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">lines_voltage</span> <span class="o">=</span> <span class="n">lines_types</span><span class="p">[</span><span class="s1">&#39;uline&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+            <span class="c1"># line_ = branch_line.copy()</span>
+
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">lines_ID</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">ID_Type</span> <span class="o">=</span> <span class="n">lines_type_id</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">type_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">line_types_ID</span> <span class="o">==</span> <span class="n">ID_Type</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">buses</span> <span class="o">=</span> <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span>  <span class="c1"># array with the ID of the connection Buses</span>
+            <span class="n">bus1</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+            <span class="n">bus2</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+            <span class="n">bus_from</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus1</span><span class="p">]</span>
+            <span class="n">bus_to</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus2</span><span class="p">]</span>
+
+            <span class="n">status</span> <span class="o">=</span> <span class="n">lines_enables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="c1"># impedances</span>
+            <span class="n">lenght</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_lenght</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_R</span><span class="p">[</span><span class="n">type_idx</span><span class="p">])</span> <span class="o">*</span> <span class="n">lenght</span>  <span class="c1"># Ohm</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_L</span><span class="p">[</span><span class="n">type_idx</span><span class="p">])</span> <span class="o">*</span> <span class="n">lenght</span>  <span class="c1"># Ohm</span>
+            <span class="k">if</span> <span class="n">lines_C</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_C</span><span class="p">[</span><span class="n">type_idx</span><span class="p">])</span> <span class="o">*</span> <span class="n">lenght</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="mf">1e-6</span>  <span class="c1"># S (siemens)</span>
+            <span class="k">elif</span> <span class="n">lines_B</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_B</span><span class="p">[</span><span class="n">type_idx</span><span class="p">])</span> <span class="o">*</span> <span class="n">lenght</span> <span class="o">*</span> <span class="mf">1e-6</span>  <span class="c1"># S (siemens)</span>
+
+            <span class="c1"># pass impedance to per unit</span>
+            <span class="n">vbase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_voltage</span><span class="p">[</span><span class="n">type_idx</span><span class="p">])</span>  <span class="c1"># kV</span>
+            <span class="n">zbase</span> <span class="o">=</span> <span class="n">vbase</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">baseMVA</span>  <span class="c1"># Ohm</span>
+            <span class="n">ybase</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">zbase</span>  <span class="c1"># S</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">R</span> <span class="o">/</span> <span class="n">zbase</span>  <span class="c1"># pu</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">L</span> <span class="o">/</span> <span class="n">zbase</span>  <span class="c1"># pu</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">B</span> <span class="o">/</span> <span class="n">ybase</span>  <span class="c1"># pu</span>
+
+            <span class="c1"># rated power</span>
+            <span class="n">Irated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lines_rate</span><span class="p">[</span><span class="n">type_idx</span><span class="p">])</span>  <span class="c1"># kA</span>
+            <span class="n">Smax</span> <span class="o">=</span> <span class="n">Irated</span> <span class="o">*</span> <span class="n">vbase</span>  <span class="c1"># MVA</span>
+
+            <span class="n">line</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">lines</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                            <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">l</span><span class="p">,</span>
+                            <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+                            <span class="n">rate</span><span class="o">=</span><span class="n">Smax</span><span class="p">,</span>
+                            <span class="n">active</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">mttf</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mttr</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+            <span class="c1"># # put all in the correct column</span>
+            <span class="c1"># line_[brd.F_BUS] = bus1</span>
+            <span class="c1"># line_[brd.T_BUS] = bus2</span>
+            <span class="c1"># line_[brd.BR_R] = r</span>
+            <span class="c1"># line_[brd.BR_X] = l</span>
+            <span class="c1"># line_[brd.BR_B] = c</span>
+            <span class="c1"># line_[brd.RATE_A] = Smax</span>
+            <span class="c1"># line_[brd.BR_STATUS] = status</span>
+            <span class="c1"># BRANCHES.append(line_)</span>
+            <span class="c1">#</span>
+            <span class="c1"># name_ = lines[&#39;loc_name&#39;][i]  # line_Name</span>
+            <span class="c1"># BRANCH_NAMES.append(name_)</span>
+            <span class="c1">#</span>
+            <span class="c1"># # add edge to graph</span>
+            <span class="c1"># g.add_edge(bus1, bus2)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Line types are empty&#39;</span><span class="p">)</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Transformers (Branches)</span>
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># print(&#39;Parsing transformers&#39;)</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  2-Winding Transformer</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypTr2</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  nntap: Tap Changer 1: Tap Position</span>
+<span class="sd">    *  sernum: Serial Number</span>
+<span class="sd">    *  constr: Year of Construction</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformers_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ********************************************************************************</span>
+<span class="sd">        *  2-Winding Transformer Type</span>
+<span class="sd">        *</span>
+<span class="sd">        *  ID: Unique identifier for DGS file</span>
+<span class="sd">        *  loc_name: Name</span>
+<span class="sd">        *  fold_id: In Folder</span>
+<span class="sd">        *  strn: Rated Power in MVA</span>
+<span class="sd">        *  frnom: Nominal Frequency in Hz</span>
+<span class="sd">        *  utrn_h: Rated Voltage: HV-Side in kV</span>
+<span class="sd">        *  utrn_l: Rated Voltage: LV-Side in kV</span>
+<span class="sd">        *  uktr: Positive Sequence Impedance: Short-Circuit Voltage uk in %</span>
+<span class="sd">        *  pcutr: Positive Sequence Impedance: Copper Losses in kW</span>
+<span class="sd">        *  uk0tr: Zero Sequence Impedance: Short-Circuit Voltage uk0 in %</span>
+<span class="sd">        *  ur0tr: Zero Sequence Impedance: SHC-Voltage (Re(uk0)) uk0r in %</span>
+<span class="sd">        *  tr2cn_h: Vector Group: HV-Side:Y :YN:Z :ZN:D</span>
+<span class="sd">        *  tr2cn_l: Vector Group: LV-Side:Y :YN:Z :ZN:D</span>
+<span class="sd">        *  nt2ag: Vector Group: Phase Shift in *30deg</span>
+<span class="sd">        *  curmg: Magnetizing Impedance: No Load Current in %</span>
+<span class="sd">        *  pfe: Magnetizing Impedance: No Load Losses in kW</span>
+<span class="sd">        *  zx0hl_n: Zero Sequence Magnetizing Impedance: Mag. Impedance/uk0</span>
+<span class="sd">        *  tap_side: Tap Changer 1: at Side:HV:LV</span>
+<span class="sd">        *  dutap: Tap Changer 1: Additional Voltage per Tap in %</span>
+<span class="sd">        *  phitr: Tap Changer 1: Phase of du in deg</span>
+<span class="sd">        *  nntap0: Tap Changer 1: Neutral Position</span>
+<span class="sd">        *  ntpmn: Tap Changer 1: Minimum Position</span>
+<span class="sd">        *  ntpmx: Tap Changer 1: Maximum Position</span>
+<span class="sd">        *  manuf: Manufacturer</span>
+<span class="sd">        *  chr_name: Characteristic Name</span>
+<span class="sd">        ********************************************************************************</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">transformers</span><span class="p">:</span>
+            <span class="n">type_ID</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">transformers</span><span class="p">:</span>
+            <span class="n">type_ID</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No transformer ID, FID could be found...&quot;</span><span class="p">)</span>
+
+        <span class="n">HV_nominal_voltage</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;utrn_h&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">LV_nominal_voltage</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;utrn_l&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">Nominal_power</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;strn&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">Copper_losses</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;pcutr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">Iron_losses</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;pfe&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">No_load_current</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;curmg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">Short_circuit_voltage</span> <span class="o">=</span> <span class="n">transformers_types</span><span class="p">[</span><span class="s1">&#39;uktr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">transformers</span><span class="p">)):</span>
+
+            <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">transformers</span><span class="p">:</span>
+                <span class="n">ID</span> <span class="o">=</span> <span class="n">transformers</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">transformers</span><span class="p">:</span>
+                <span class="n">ID</span> <span class="o">=</span> <span class="n">transformers</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">ID_Type</span> <span class="o">=</span> <span class="n">transformers</span><span class="p">[</span><span class="s1">&#39;typ_id&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">ID_Type</span> <span class="ow">in</span> <span class="n">type_ID</span><span class="p">:</span>
+                <span class="n">type_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">type_ID</span> <span class="o">==</span> <span class="n">ID_Type</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">buses</span> <span class="o">=</span> <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span>  <span class="c1"># array with the ID of the connection Buses</span>
+                <span class="n">bus1</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+                <span class="n">bus2</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+                <span class="n">bus_from</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus1</span><span class="p">]</span>
+                <span class="n">bus_to</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus2</span><span class="p">]</span>
+
+                <span class="n">Smax</span> <span class="o">=</span> <span class="n">Nominal_power</span><span class="p">[</span><span class="n">type_idx</span><span class="p">]</span>
+
+                <span class="c1"># Uhv, Ulv, Sn, Pcu, Pfe, I0, Usc</span>
+                <span class="n">tpe</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerType</span><span class="p">(</span><span class="n">hv_nominal_voltage</span><span class="o">=</span><span class="n">HV_nominal_voltage</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                          <span class="n">lv_nominal_voltage</span><span class="o">=</span><span class="n">LV_nominal_voltage</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                          <span class="n">nominal_power</span><span class="o">=</span><span class="n">Smax</span><span class="p">,</span>
+                                          <span class="n">copper_losses</span><span class="o">=</span><span class="n">Copper_losses</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                          <span class="n">iron_losses</span><span class="o">=</span><span class="n">Iron_losses</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                          <span class="n">no_load_current</span><span class="o">=</span><span class="n">No_load_current</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                          <span class="n">short_circuit_voltage</span><span class="o">=</span><span class="n">Short_circuit_voltage</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                          <span class="n">gr_hv1</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                          <span class="n">gx_hv1</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+                <span class="n">Zs</span><span class="p">,</span> <span class="n">Zsh</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">get_impedances</span><span class="p">(</span><span class="n">VH</span><span class="o">=</span><span class="n">HV_nominal_voltage</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                             <span class="n">VL</span><span class="o">=</span><span class="n">LV_nominal_voltage</span><span class="p">[</span><span class="n">type_idx</span><span class="p">],</span>
+                                             <span class="n">Sbase</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">Zsh</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">Ysh</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Zsh</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Ysh</span> <span class="o">=</span> <span class="mi">0</span><span class="n">j</span>
+
+                <span class="n">status</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">transformers</span><span class="p">[</span><span class="s1">&#39;outserv&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="n">trafo</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+                                          <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+                                          <span class="n">name</span><span class="o">=</span><span class="n">transformers</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                                          <span class="n">r</span><span class="o">=</span><span class="n">Zs</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                                          <span class="n">x</span><span class="o">=</span><span class="n">Zs</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                                          <span class="n">g</span><span class="o">=</span><span class="n">Ysh</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                                          <span class="n">b</span><span class="o">=</span><span class="n">Ysh</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                                          <span class="n">rate</span><span class="o">=</span><span class="n">Smax</span><span class="p">,</span>
+                                          <span class="n">tap_module</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                                          <span class="n">tap_phase</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                          <span class="n">active</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+                                          <span class="n">mttf</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                          <span class="n">mttr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="p">)</span>
+
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">trafo</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Transformer type not found!&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Transformer types are empty&#39;</span><span class="p">)</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Loads (nodes)</span>
+    <span class="c1">####################################################################################################################</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  General Load</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypLod,TypLodind</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  plini: Operating Point: Active Power in MW</span>
+<span class="sd">    *  qlini: Operating Point: Reactive Power in Mvar</span>
+<span class="sd">    *  scale0: Operating Point: Scaling Factor</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print(&#39;Parsing Loads&#39;)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loads</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">loads_ID</span> <span class="o">=</span> <span class="n">loads</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">loads_ID</span> <span class="o">=</span> <span class="n">loads</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No load ID or FID could be found...&quot;</span><span class="p">)</span>
+
+        <span class="n">loads_P</span> <span class="o">=</span> <span class="n">loads</span><span class="p">[</span><span class="s1">&#39;plini&#39;</span><span class="p">]</span>
+        <span class="n">loads_Q</span> <span class="o">=</span> <span class="n">loads</span><span class="p">[</span><span class="s1">&#39;qlini&#39;</span><span class="p">]</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">loads</span><span class="p">[</span><span class="s1">&#39;scale0&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loads</span><span class="p">)):</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">loads_ID</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">bus_idx</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">][</span><span class="mi">0</span><span class="p">])]</span>
+            <span class="n">bus_obj</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">loads_P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># in MW</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">loads_Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># in MVA</span>
+
+            <span class="n">load</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">loads</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                            <span class="n">P</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+                            <span class="n">Q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus_obj</span><span class="p">,</span> <span class="n">load</span><span class="p">)</span>
+
+            <span class="c1"># BUSES[elm_idx, 2] += p</span>
+            <span class="c1"># BUSES[elm_idx, 3] += q</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;There are no loads&#39;</span><span class="p">)</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Shunts</span>
+    <span class="c1">####################################################################################################################</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  Shunt/Filter</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  shtype: Shunt Type</span>
+<span class="sd">    *  ushnm: Nominal Voltage in kV</span>
+<span class="sd">    *  qcapn: Design Parameter (per Step): Rated Reactive Power, C in Mvar</span>
+<span class="sd">    *  ncapx: Controller: Max. No. of Steps</span>
+<span class="sd">    *  ncapa: Controller: Act.No. of Step</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shunts</span><span class="p">)):</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">shunts</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">shunts</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No shunt ID or FID could be found...&quot;</span><span class="p">)</span>
+
+        <span class="n">buses</span> <span class="o">=</span> <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span>  <span class="c1"># array with the ID of the connection Buses</span>
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="n">bus_obj</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus1</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">shunts</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        if &#39;qcapn&#39; in shunts.columns.values:</span>
+<span class="sd">            b = shunts[&#39;ushnm&#39;][i] / shunts[&#39;qcapn&#39;][i]</span>
+<span class="sd">        elif &#39;qtotn&#39; in shunts.columns.values:</span>
+<span class="sd">            b = shunts[&#39;ushnm&#39;][i] / shunts[&#39;qtotn&#39;][i]</span>
+<span class="sd">        else:</span>
+<span class="sd">            b = 1e-20</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="s1">&#39;qcapn&#39;</span> <span class="ow">in</span> <span class="n">shunts</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">shunts</span><span class="p">[</span><span class="s1">&#39;qcapn&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s1">&#39;qtotn&#39;</span> <span class="ow">in</span> <span class="n">shunts</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">shunts</span><span class="p">[</span><span class="s1">&#39;qtotn&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mf">1e-20</span>
+
+        <span class="n">shunt</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus_obj</span><span class="p">,</span> <span class="n">shunt</span><span class="p">)</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Static generators (Gen)</span>
+    <span class="c1">####################################################################################################################</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  Static Generator</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  bus1: Terminal in StaCubic</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  sgn: Ratings: Nominal Apparent Power in MVA</span>
+<span class="sd">    *  cosn: Ratings: Power Factor</span>
+<span class="sd">    *  ngnum: Number of: parallel Machines</span>
+<span class="sd">    *  pgini: Dispatch: Active Power in MW</span>
+<span class="sd">    *  qgini: Dispatch: Reactive Power in Mvar</span>
+<span class="sd">    *  av_mode: Local Controller</span>
+<span class="sd">    *  ip_ctrl: Reference Machine</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">static_generators</span><span class="p">)):</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No static generator ID or FID could be found...&quot;</span><span class="p">)</span>
+
+        <span class="n">buses</span> <span class="o">=</span> <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span>  <span class="c1"># array with the ID of the connection Buses</span>
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="n">bus_obj</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus1</span><span class="p">]</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;av_mode&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">num_machines</span> <span class="o">=</span> <span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;ngnum&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">options</span> <span class="o">==</span> <span class="s2">&quot;statgen_to_vsc&quot;</span><span class="p">:</span>
+
+            <span class="n">bus_dc</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">bus_obj</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_dc&#39;</span><span class="p">,</span>
+                <span class="n">Vnom</span><span class="o">=</span><span class="n">bus_obj</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span>
+                <span class="n">xpos</span><span class="o">=</span><span class="n">bus_obj</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">ypos</span><span class="o">=</span><span class="n">bus_obj</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">20</span><span class="p">,</span>
+                <span class="n">is_dc</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus_dc</span><span class="p">)</span>
+
+            <span class="n">vsc</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VSC</span><span class="p">(</span>
+                <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_dc</span><span class="p">,</span>
+                <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_obj</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">bus_obj</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">rate</span><span class="o">=</span><span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;sgn&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">control1</span><span class="o">=</span><span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span><span class="p">,</span>
+                <span class="n">control2</span><span class="o">=</span><span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span><span class="p">,</span>
+                <span class="n">control1_val</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">control2_val</span><span class="o">=-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;qgini&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span><span class="p">,</span>
+                <span class="n">alpha1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">alpha2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">alpha3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_vsc</span><span class="p">(</span><span class="n">vsc</span><span class="p">)</span>
+
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">P</span><span class="o">=</span><span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;pgini&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_dc</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">StaticGenerator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                                      <span class="n">P</span><span class="o">=</span><span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;pgini&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span><span class="p">,</span>
+                                      <span class="n">Q</span><span class="o">=</span><span class="n">static_generators</span><span class="p">[</span><span class="s1">&#39;qgini&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_static_generator</span><span class="p">(</span><span class="n">bus_obj</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
+
+    <span class="c1">####################################################################################################################</span>
+    <span class="c1"># Synchronous Machine (Gen)</span>
+    <span class="c1">####################################################################################################################</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    *  Synchronous Machine</span>
+<span class="sd">    *</span>
+<span class="sd">    *  ID: Unique identifier for DGS file</span>
+<span class="sd">    *  loc_name: Name</span>
+<span class="sd">    *  fold_id: In Folder</span>
+<span class="sd">    *  typ_id: Type in TypSym</span>
+<span class="sd">    *  ngnum: Number of: parallel Machines</span>
+<span class="sd">    *  i_mot: Generator/Motor</span>
+<span class="sd">    *  chr_name: Characteristic Name</span>
+<span class="sd">    *  outserv: Out of Service</span>
+<span class="sd">    *  pgini: Dispatch: Active Power in MW</span>
+<span class="sd">    *  qgini: Dispatch: Reactive Power in Mvar</span>
+<span class="sd">    *  usetp: Dispatch: Voltage in p.u.</span>
+<span class="sd">    *  iv_mode: Mode of Local Voltage Controller</span>
+<span class="sd">    *  q_min: Reactive Power Operational Limits: Min. in p.u.</span>
+<span class="sd">    *  q_max: Reactive Power Operational Limits: Max. in p.u.</span>
+<span class="sd">    ********************************************************************************</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">synchronous_machine</span><span class="p">)):</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;FID&quot;</span> <span class="ow">in</span> <span class="n">loads</span><span class="p">:</span>
+            <span class="n">ID</span> <span class="o">=</span> <span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;FID&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No synchronous machine ID or FID could be found...&quot;</span><span class="p">)</span>
+
+        <span class="n">buses</span> <span class="o">=</span> <span class="n">terminals_dict</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span>  <span class="c1"># array with the ID of the connection Buses</span>
+        <span class="n">bus1</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="n">bus_obj</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">bus1</span><span class="p">]</span>
+        <span class="n">num_machines</span> <span class="o">=</span> <span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;ngnum&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Get the type element</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        ********************************************************************************</span>
+<span class="sd">        *  Synchronous Machine Type</span>
+<span class="sd">        *</span>
+<span class="sd">        *  ID: Unique identifier for DGS file</span>
+<span class="sd">        *  loc_name: Name</span>
+<span class="sd">        *  fold_id: In Folder</span>
+<span class="sd">        *  sgn: Nominal Apparent Power in MVA</span>
+<span class="sd">        *  ugn: Nominal Voltage in kV</span>
+<span class="sd">        *  cosn: Power Factor</span>
+<span class="sd">        *  xd: Synchronous Reactances: xd in p.u.</span>
+<span class="sd">        *  xq: Synchronous Reactances: xq in p.u.</span>
+<span class="sd">        *  xdsss: Subtransient Reactance: saturated value xd&#39;&#39;sat in p.u.</span>
+<span class="sd">        *  rstr: Stator Resistance: rstr in p.u.</span>
+<span class="sd">        *  xdsat: For single fed short-circuit: Reciprocal of short-circuit ratio (xdsat) in p.u.</span>
+<span class="sd">        *  satur: For single fed short-circuit: Machine Type IEC909/IEC60909</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        ********************************************************************************</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">typ</span> <span class="o">=</span> <span class="n">synchronous_machine_type</span><span class="p">[</span><span class="n">synchronous_machine_type</span><span class="o">.</span><span class="n">ID</span> <span class="o">==</span> <span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;typ_id&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
+
+        <span class="n">snom</span> <span class="o">=</span> <span class="n">typ</span><span class="p">[</span><span class="s1">&#39;sgn&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">vnom</span> <span class="o">=</span> <span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;usetp&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;loc_name&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">P</span><span class="o">=</span><span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;pgini&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span><span class="p">,</span>
+                            <span class="n">vset</span><span class="o">=</span><span class="n">vnom</span><span class="p">,</span>
+                            <span class="n">Qmin</span><span class="o">=</span><span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;q_min&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span> <span class="o">*</span> <span class="n">snom</span><span class="p">,</span>
+                            <span class="n">Qmax</span><span class="o">=</span><span class="n">synchronous_machine</span><span class="p">[</span><span class="s1">&#39;q_max&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_machines</span> <span class="o">*</span> <span class="n">snom</span><span class="p">,</span>
+                            <span class="n">Snom</span><span class="o">=</span><span class="n">snom</span><span class="p">)</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus_obj</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
+
+        <span class="c1"># if synchronous_machine[&#39;pgini&#39;][i] != 0:</span>
+        <span class="c1">#     # gen = StaticGenerator(name=name, power=complex(0, synchronous_machine[&#39;pgini&#39;][i]))</span>
+        <span class="c1">#     gen = Generator(name=name, active_power=synchronous_machine[&#39;pgini&#39;][i])</span>
+        <span class="c1">#     circuit.add_static_generator(bus_obj, gen)</span>
+
+    <span class="k">return</span> <span class="n">circuit</span></div>
+
+
+
+<div class="viewcode-block" id="dgs_to_circuit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_parser.dgs_to_circuit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dgs_to_circuit</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param filename:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">pos_dict</span> <span class="o">=</span> <span class="n">read_DGS</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data_to_grid_object</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pos_dict</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="s2">&quot;statgen_to_vsc&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

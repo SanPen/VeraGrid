@@ -1,0 +1,2370 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏁 Optimal power flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="⚡ Short-Circuit" href="short_circuit.html" />
+    <link rel="prev" title="📏 Linear analysis" href="linear_analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🏁 Optimal power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#optimalpowerflowresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optimalpowerflowtimeseriesresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowTimeSeriesResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-optimization">Linear optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-a-unit-commitment-example">Run a unit commitment example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-a-linear-optimization-and-verify-with-power-flow">Run a linear optimization and verify with power flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hydro-linear-opf">Hydro linear OPF</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generation-power-mw">Generation power (MW)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fluid-node-level-m3">Fluid node level (m³)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#path-flow-m3-s">Path flow (m³/s)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#another-hydro-example">Another Hydro example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#non-linear-optimization-acopf">Non-linear optimization (ACOPF)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-optimal-power-flow">Linear optimal power flow</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#general-indices-and-dimensions">General indices and dimensions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#objective-function">Objective function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#power-injections">Power injections</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodal-power-balance">Nodal power balance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#branch-loading-restriction">Branch loading restriction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#linear-optimal-power-flow-considering-hydro-plants">Linear optimal power flow considering hydro plants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fluid-models">1  Fluid models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optimization-adaptation">2  Optimization adaptation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ac-optimal-power-flow-using-an-interior-point-solver">AC - Optimal Power Flow using an Interior-Point Solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#grid-model">1 Grid model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#variables-objective-and-constraints">2 Variables, objective and constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kkt-conditions-newton-raphson-solution">3 KKT conditions &amp; Newton-Raphson solution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#derivatives">4 Derivatives</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🏁 Optimal power flow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/optimal_power_flow.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="optimal-power-flow">
+<h1>🏁 Optimal power flow<a class="headerlink" href="#optimal-power-flow" title="Link to this heading"></a></h1>
+<p><img alt="" src="../_images/settings-opf.png" /></p>
+<p>Solver
+Optimal power flow solver to use</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>DC OPF: classic optimal power flow mixing active power with lines reactance.
+AC OPF: Innovative linear AC optimal power flow based on the AC linear power flow implemented in VeraGrid.
+</pre></div>
+</div>
+<p>Load shedding
+This option activates the load shedding slack.
+It is possible to assign an arbitrary weight to this slack.</p>
+<p>Generation shedding
+This option activated the generation shedding slack.
+It is possible to assign an arbitrary weight to this slack.</p>
+<p>Show the real associated values
+Compute a power flow with the OPF results and show that as the OPF results.</p>
+<p>Control batteries
+Control the batteries state of charge when running the optimization in time series.</p>
+<p>🎥 <a class="reference external" href="https://www.youtube.com/watch?v=o6oXBJ1Efqc">Watch the OPF video on YouTube</a></p>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="optimalpowerflowresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowResults</span></code> registered properties<a class="headerlink" href="#optimalpowerflowresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The snapshot OPF result stores the optimized dispatch, network state, limits, slacks, and economic quantities.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with load-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with generator-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_like_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with shunt-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">battery_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with battery-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with fluid node-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_path_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with fluid path-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_inj_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with fluid injection-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_shadow_prices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Bus shadow price or nodal marginal value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Load active power served by the optimization.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">load_shedding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Load shedding result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_shedding_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Load shedding cost result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">overloads</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Overload slack or overload result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">overloads_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Overload cost result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tap_angle</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap angle used in the solved state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tap_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Transformer tap module used in the solved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Normal monitored element rates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Contingency monitored element rates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator active power dispatch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator_reactive_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator reactive power dispatch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_shedding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Generator shedding result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">battery_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Battery active power dispatch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_like_reactive_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Reactive power output of shunt-like devices.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_p2x_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Power-to-X flow at each fluid node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_current_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Fluid node storage level.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_spillage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Fluid node spillage result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_flow_in</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Fluid inflow at each fluid node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_flow_out</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Fluid outflow at each fluid node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_path_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Flow through each fluid path.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_injection_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Flow from each fluid injection device.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">non_linear</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Flag indicating whether the result came from a non-linear OPF solve.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Convergence flag for the solved case or time step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Solver error or residual value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_flows_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency flow records.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_indices_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency indices associated with contingency flow records.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_flows_slacks_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency flow slack values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch from-bus index for each branch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Branch to-bus index for each branch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC from-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_T</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>HVDC to-bus index for each HVDC line.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_area_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area index assigned to each bus.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Area names or area identifiers used for inter-area aggregation.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="optimalpowerflowtimeseriesresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowTimeSeriesResults</span></code> registered properties<a class="headerlink" href="#optimalpowerflowtimeseriesresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The time-series OPF result stores the optimized dispatch, network state, limits, slacks, and system totals over time.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with load-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with generator-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">battery_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with battery-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_like_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with shunt-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_shadow_prices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Bus shadow price or nodal marginal value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">load_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Load active power served by the optimization.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_shedding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Load shedding result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">load_shedding_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Load shedding cost result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tap_angle</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Transformer tap angle used in the solved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tap_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Transformer tap module used in the solved state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">overloads</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Overload slack or overload result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">overloads_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Overload cost result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Normal monitored element rates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Contingency monitored element rates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_flows_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency flow records.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_indices_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency indices associated with contingency flow records.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_flows_slacks_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency flow slack values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_current_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Fluid node storage level.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_flow_in</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Fluid inflow at each fluid node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_flow_out</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Fluid outflow at each fluid node.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_p2x_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Power-to-X flow at each fluid node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_spillage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Fluid node spillage result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_path_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Flow through each fluid path.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_injection_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Flow from each fluid injection device.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator active power dispatch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_reactive_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator reactive power dispatch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator_shedding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator shedding result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator production cost.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator_producing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator commitment producing status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_starting_up</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator start-up status.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator_shutting_down</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator shut-down status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generator_invested</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generator investment decision result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shunt_like_reactive_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Reactive power output of shunt-like devices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">battery_power</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Battery active power dispatch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">battery_energy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Battery stored energy over time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">system_fuel</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>System fuel usage by fuel type.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">system_emissions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>System emissions by emission type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">system_energy_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>System energy cost per time step.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">system_total_energy_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Accumulated system energy cost.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">power_by_technology</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Generated power grouped by technology.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Convergence flag for the solved case or time step.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<section id="linear-optimization">
+<h3>Linear optimization<a class="headerlink" href="#linear-optimization" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE39_1W.veragrid&#39;</span><span class="p">)</span>
+
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># declare the snapshot opf</span>
+<span class="n">opf_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(</span><span class="n">mip_solver</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span><span class="p">)</span>
+<span class="n">opf_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">opf_options</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Solving...&#39;</span><span class="p">)</span>
+<span class="n">opf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status:&quot;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Angles</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Branch loading</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Gen power</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">generator_power</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nodal prices </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">bus_shadow_prices</span><span class="p">)</span>
+
+<span class="c1"># declare the time series opf</span>
+<span class="n">opf_ts_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalPowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Solving...&#39;</span><span class="p">)</span>
+<span class="n">opf_ts_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status:&quot;</span><span class="p">,</span> <span class="n">opf_ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Angles</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">opf_ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Branch loading</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Gen power</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">generator_power</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nodal prices </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_ts_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">bus_shadow_prices</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-a-unit-commitment-example">
+<h3>Run a unit commitment example<a class="headerlink" href="#run-a-unit-commitment-example" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0004984</span><span class="p">,</span> <span class="mf">0.001246</span><span class="p">,</span> <span class="mf">0.00623</span> <span class="p">])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">16.821</span> <span class="p">,</span> <span class="mf">40.6196</span><span class="p">,</span> <span class="mf">21.9296</span><span class="p">])</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">220.4174</span><span class="p">,</span> <span class="mf">161.8554</span><span class="p">,</span> <span class="mf">171.2004</span><span class="p">])</span>
+<span class="n">c_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">124.69</span><span class="p">,</span> <span class="mf">249.22</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">z_ini</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">pmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">220</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+<span class="n">pmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">178.690</span><span class="p">,</span><span class="mf">168.450</span><span class="p">,</span><span class="mf">161.840</span><span class="p">,</span><span class="mf">157.830</span><span class="p">,</span><span class="mf">158.160</span><span class="p">,</span><span class="mf">163.690</span><span class="p">,</span>
+<span class="mf">176.860</span><span class="p">,</span><span class="mf">194.210</span><span class="p">,</span><span class="mf">209.670</span><span class="p">,</span><span class="mf">221.540</span><span class="p">,</span><span class="mf">233.180</span><span class="p">,</span><span class="mf">240.820</span><span class="p">,</span>
+<span class="mf">247.030</span><span class="p">,</span><span class="mf">248.470</span><span class="p">,</span><span class="mf">253.830</span><span class="p">,</span><span class="mf">260.900</span><span class="p">,</span><span class="mf">261.120</span><span class="p">,</span><span class="mf">251.680</span><span class="p">,</span>
+<span class="mf">250.890</span><span class="p">,</span><span class="mf">242.100</span><span class="p">,</span><span class="mf">242.050</span><span class="p">,</span><span class="mf">231.680</span><span class="p">,</span><span class="mf">205.070</span><span class="p">,</span><span class="mf">200.690</span><span class="p">])</span>
+
+</pre></div>
+</div>
+<p>Note: In unit commitment problems where the initial generation
+state matters, we take the snapshot values as the initial
+condition for the generation active status.</p>
+</section>
+<section id="run-a-linear-optimization-and-verify-with-power-flow">
+<h3>Run a linear optimization and verify with power flow<a class="headerlink" href="#run-a-linear-optimization-and-verify-with-power-flow" title="Link to this heading"></a></h3>
+<p>Often ties, you want to dispatch the generation using a linear optimization, to then <em>verify</em> the
+results using the power exact power flow. With VeraGrid, to do so is as easy as passing the results of the OPF into the
+PowerFlowDriver:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;IEEE39_1W.veragrid&#39;</span><span class="p">)</span>
+
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># declare the snapshot opf</span>
+<span class="n">opf_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">)</span>
+<span class="n">opf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># create the power flow driver, with the OPF results</span>
+<span class="n">pf_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">)</span>
+<span class="n">pf_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span>
+                                <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">,</span>
+                                <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+<span class="n">pf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Converged:&#39;</span><span class="p">,</span> <span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Error:&#39;</span><span class="p">,</span> <span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Converged: True 
+Error: 5.553046023010211e-09
+             Vm         Va           P           Q
+bus 0  1.027155 -21.975050  -97.600000  -44.200000
+bus 1  1.018508 -17.390151   -0.000000    0.000000
+bus 2  0.979093 -21.508225 -322.000000   -2.400000
+bus 3  0.934378 -19.864840 -500.000000 -184.000000
+bus 4  0.931325 -16.488297   -0.000000    0.000000
+bus 5  0.932254 -15.184820   -0.000000    0.000000
+bus 6  0.925633 -18.287327 -233.800000  -84.000000
+bus 7  0.927339 -19.147130 -522.000000 -176.600000
+bus 8  1.008660 -21.901696   -6.500000   66.600000
+bus 9  0.933232 -12.563826    0.000000    0.000000
+bus 10 0.931530 -13.489535    0.000000   -0.000000
+bus 11 0.911143 -13.919901   -8.530000  -88.000000
+bus 12 0.932956 -14.194410   -0.000000    0.000000
+bus 13 0.939456 -18.071831   95.000000   80.000000
+bus 14 0.947946 -24.501201 -320.000000 -153.000000
+bus 15 0.969547 -25.398839 -329.000000  -32.300000
+bus 16 0.975073 -24.329289   -0.000000    0.000000
+bus 17 0.974923 -23.729596 -158.000000  -30.000000
+bus 18 0.978267 -32.658992    0.000000   -0.000000
+bus 19 0.976962 -38.320718 -680.000000 -103.000000
+bus 20 0.975875 -21.466364 -274.000000 -115.000000
+bus 21 1.005675 -15.328363    0.000000    0.000000
+bus 22 1.005660 -16.083736 -247.500000  -84.600000
+bus 23 0.977732 -24.971264 -308.600000   92.200000
+bus 24 1.008485 -18.545657 -224.000000  -47.200000
+bus 25 1.000534 -20.462156 -139.000000  -17.000000
+bus 26 0.981806 -23.507873 -281.000000  -75.500000
+bus 27 1.008509 -15.740313 -206.000000  -27.600000
+bus 28 1.012968 -12.490634 -283.500000  -26.900000
+bus 29 1.049900  -8.627698  900.000000  251.046579
+bus 30 0.982000   0.000000  959.172868  323.252930
+bus 31 0.945335  -0.791018  900.000000  150.000000
+bus 32 0.997200 -32.044975   80.000000  129.407620
+bus 33 1.006817 -38.408267    0.000000  167.000000
+bus 34 1.039299  -8.255317  900.000000  300.000000
+bus 35 1.060037  -8.077926  550.259634  240.000000
+bus 36 1.027500 -16.918435  128.970365   82.680976
+bus 37 1.026500  -4.776516  900.000000  103.207961
+bus 38 1.030000 -23.362551 -204.000000    6.956520
+                   Pf          Qf          Pt          Qt     loading     Ploss       Qloss
+branch 0  -199.490166    9.886924  200.882852  -66.631030  -33.248361  1.392685  -56.744105
+branch 1   101.890166  -54.086924 -101.789768  -22.751166   10.189017  0.100398  -76.838090
+branch 2   494.939507  226.957177 -491.146020 -208.562681   98.987901  3.793487   18.394496
+branch 3   204.177641  -52.633324 -201.227524   41.260633   40.835528  2.950117  -11.372692
+branch 4  -900.000000 -107.692823  900.000000  251.046579 -100.000000  0.000000  143.353757
+branch 5  -110.112636  203.416014  110.898270 -210.820460  -22.022527  0.785633   -7.404446
+branch 6   279.258656    2.746666 -278.361852  -12.311738   55.851731  0.896804   -9.565072
+branch 7  -396.736291   53.024640  398.210339  -41.118140  -66.122715  1.474048   11.906501
+branch 8  -214.161979  -26.204180  214.585979   20.909705  -42.832396  0.424000   -5.294474
+branch 9  -757.052621   31.704768  758.376760  -18.259085  -63.087718  1.324139   13.445683
+branch 10  358.842282    9.413372 -357.652308   -5.501385   39.871365  1.189974    3.911986
+branch 11  510.748653   42.617618 -508.932128  -24.515536   56.749850  1.816525   18.102081
+branch 12 -309.952545   33.292523  310.738787  -36.144659  -64.573447  0.786242   -2.852137
+branch 13 -959.172868  -57.651055  959.172868  323.252930  -53.287382 -0.000000  265.601874
+branch 14  275.132128  -59.484464 -274.764014   57.022428   30.570236  0.368114   -2.462036
+branch 15  110.416322 -228.121043 -108.890865  216.489512   12.268480  1.525457  -11.631531
+branch 16  102.390865 -149.889512 -102.210232   29.707685   11.376763  0.180633 -120.181827
+branch 17  327.473237    5.932303 -326.980326   -6.970962   54.578873  0.492911   -1.038659
+branch 18  572.526763  -42.245014 -571.014280   52.157064   95.421127  1.512483    9.912050
+branch 19 -900.000000   36.312711  900.000000  150.000000 -100.000000  0.000000  186.312711
+branch 20  -16.202399  -42.051495   16.241539   43.115621   -3.240480  0.039140    1.064126
+branch 21    7.672399  -45.948505   -7.630574   47.085615    1.534480  0.041825    1.137109
+branch 22  578.644854  -99.242678 -575.095683  123.970310   96.440809  3.549172   24.727632
+branch 23  455.509704  -64.880015 -451.229578   83.883725   75.918284  4.280126   19.003709
+branch 24  131.229578 -236.883725 -130.530951  228.460261   21.871596  0.698627   -8.423463
+branch 25 -201.616968  -48.791645  201.933110   40.123973  -33.602828  0.316142   -8.667672
+branch 26  610.218277  -68.716891 -603.829849  117.741029  101.703046  6.388428   49.024138
+branch 27 -480.680339  -12.436131  482.646709   21.510035  -80.113390  1.966370    9.073904
+branch 28 -126.390019 -130.815594  126.492978  126.394116  -21.065003  0.102959   -4.421477
+branch 29 -120.254199    6.410659  120.361852  -17.688262  -20.042367  0.107653  -11.277602
+branch 30  -81.678911  -46.534633   81.783480   17.137675  -13.613152  0.104569  -29.396957
+branch 31  683.666914    8.361328 -680.247614   59.047728   75.962990  3.419300   67.409057
+branch 32  -79.837065 -126.102358   80.000000  129.407620   -8.870785  0.162935    3.305263
+branch 33    0.247614 -162.047728    0.000000  167.000000    0.027513  0.247614    4.952272
+branch 34 -756.646709 -136.510035  761.585858  197.760507  -84.071857  4.939149   61.250472
+branch 35  138.414142  -16.911352 -138.300144    0.065486   23.069024  0.113998  -16.845866
+branch 36 -900.000000 -180.849155  900.000000  300.000000 -100.000000  0.000000  119.150845
+branch 37  439.456180   68.098749 -435.092978  -34.194116   73.242697  4.363202   33.904632
+branch 38 -548.656035 -152.764235  550.259634  240.000000  -60.961782  1.603599   87.235765
+branch 39  106.064510  -10.937025 -105.702431  -38.989055   17.677418  0.362078  -49.926080
+branch 40 -128.836985  -77.523608  128.970365   82.680976  -14.315221  0.133380    5.157368
+branch 41  364.790468   90.170222 -362.783480  -92.637675   60.798411  2.006988   -2.467453
+branch 42 -174.673027  -32.815129  175.985257  -31.448155  -29.112171  1.312230  -64.263284
+branch 43 -223.415010  -35.366038  226.271920  -37.606217  -37.235835  2.856910  -72.972254
+branch 44 -381.985257    3.848155  383.997464   -7.582852  -63.664210  2.012206   -3.734697
+branch 45 -893.769383   18.289069  900.000000  103.207961  -74.480782  6.230617  121.497030
+</pre></div>
+</div>
+</section>
+<section id="hydro-linear-opf">
+<h3>Hydro linear OPF<a class="headerlink" href="#hydro-linear-opf" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;hydro_grid&quot;</span><span class="p">)</span>
+
+<span class="c1"># master time profile</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">time_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;H&quot;</span><span class="p">)</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_index</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">time_index</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">time_profile</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">index</span>
+
+
+<span class="c1">#### Add fluid side</span>
+
+
+<span class="c1"># Electrical buses for the fluid nodes</span>
+<span class="n">a_fb1</span><span class="p">,</span> <span class="n">a_fb2</span><span class="p">,</span> <span class="n">a_fb3</span> <span class="o">=</span> <span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;fb1&quot;</span><span class="p">,</span> <span class="s2">&quot;fb2&quot;</span><span class="p">,</span> <span class="s2">&quot;fb3&quot;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">(</span><span class="n">a_fb1</span><span class="p">,</span> <span class="n">a_fb2</span><span class="p">,</span> <span class="n">a_fb3</span><span class="p">):</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+<span class="c1"># Fluid nodes</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidNode</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;fluid_node_1&quot;</span><span class="p">,</span> <span class="n">min_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">current_level</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                  <span class="n">spillage_cost</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">inflow</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bus</span><span class="o">=</span><span class="n">a_fb1</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidNode</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;fluid_node_2&quot;</span><span class="p">,</span> <span class="n">spillage_cost</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bus</span><span class="o">=</span><span class="n">a_fb2</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidNode</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;fluid_node_3&quot;</span><span class="p">,</span> <span class="n">spillage_cost</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bus</span><span class="o">=</span><span class="n">a_fb3</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidNode</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;fluid_node_4&quot;</span><span class="p">,</span> <span class="n">min_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">current_level</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                  <span class="n">spillage_cost</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">inflow</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">):</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_fluid_node</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Paths</span>
+<span class="n">p1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidPath</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;path_1&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">f1</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">f2</span><span class="p">,</span> <span class="n">min_flow</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">max_flow</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">p2</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidPath</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;path_2&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">f2</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">f3</span><span class="p">,</span> <span class="n">min_flow</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">max_flow</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">p3</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidPath</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;path_3&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">f3</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">f4</span><span class="p">,</span> <span class="n">min_flow</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">max_flow</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">):</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_fluid_path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+<span class="c1"># Generators linked to fluid devices</span>
+<span class="n">g1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;turb_1_gen&quot;</span><span class="p">,</span> <span class="n">Pmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Pmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cost</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">g2</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pump_1_gen&quot;</span><span class="p">,</span> <span class="n">Pmax</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Pmin</span><span class="o">=-</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Cost</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">g3</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;p2x_1_gen&quot;</span><span class="p">,</span> <span class="n">Pmax</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Pmin</span><span class="o">=-</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Cost</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">a_fb3</span><span class="p">,</span> <span class="n">g1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">a_fb2</span><span class="p">,</span> <span class="n">g2</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">a_fb1</span><span class="p">,</span> <span class="n">g3</span><span class="p">)</span>
+
+<span class="c1"># Devices</span>
+<span class="n">turb1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidTurbine</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;turbine_1&quot;</span><span class="p">,</span> <span class="n">plant</span><span class="o">=</span><span class="n">f3</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">g1</span><span class="p">,</span>
+                        <span class="n">max_flow_rate</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">efficiency</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_fluid_turbine</span><span class="p">(</span><span class="n">f3</span><span class="p">,</span> <span class="n">turb1</span><span class="p">)</span>
+
+<span class="n">pump1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidPump</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pump_1&quot;</span><span class="p">,</span> <span class="n">reservoir</span><span class="o">=</span><span class="n">f2</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">g2</span><span class="p">,</span>
+                     <span class="n">max_flow_rate</span><span class="o">=</span><span class="mi">49</span><span class="p">,</span> <span class="n">efficiency</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_fluid_pump</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">pump1</span><span class="p">)</span>
+
+<span class="n">p2x1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FluidP2x</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;p2x_1&quot;</span><span class="p">,</span> <span class="n">plant</span><span class="o">=</span><span class="n">f1</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">g3</span><span class="p">,</span>
+                   <span class="n">max_flow_rate</span><span class="o">=</span><span class="mi">49</span><span class="p">,</span> <span class="n">efficiency</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_fluid_p2x</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">p2x1</span><span class="p">)</span>
+
+
+<span class="c1">#### Remaining electrical network</span>
+
+
+<span class="n">b1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;b1&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;b2&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+
+<span class="n">g0</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;slack_gen&quot;</span><span class="p">,</span> <span class="n">Pmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Pmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cost</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">g0</span><span class="p">)</span>
+
+<span class="n">l1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;l1&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">l1</span><span class="p">)</span>
+
+<span class="n">line1</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">b2</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">line2</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">a_fb1</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">line3</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line3&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">a_fb2</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">line4</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line4&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">a_fb3</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">b2</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="p">(</span><span class="n">line1</span><span class="p">,</span> <span class="n">line2</span><span class="p">,</span> <span class="n">line3</span><span class="p">,</span> <span class="n">line4</span><span class="p">):</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">ln</span><span class="p">)</span>
+
+<span class="c1">### Run the optimization</span>
+<span class="n">opf</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solving…&quot;</span><span class="p">)</span>
+<span class="n">opf</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status:&quot;</span><span class="p">,</span> <span class="n">opf</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Angles:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">opf</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Branch loading:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Gen power:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">generator_power</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The resulting system is depicted below.</p>
+<p><img alt="Hydro‑electric test case (6 buses + fluid network)." src="../_images/case6_fluid.png" /></p>
+<section id="generation-power-mw">
+<h4>Generation power (MW)<a class="headerlink" href="#generation-power-mw" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>time</p></th>
+<th class="head"><p>p2x_1_gen</p></th>
+<th class="head"><p>pump_1_gen</p></th>
+<th class="head"><p>turb_1_gen</p></th>
+<th class="head"><p>slack_gen</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023‑01‑01 00:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 01:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 02:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 03:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 04:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 05:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 06:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 07:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 08:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 09:00</p></td>
+<td><p>0.0</p></td>
+<td><p>−6.8237821</p></td>
+<td><p>6.0</p></td>
+<td><p>11.823782</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fluid-node-level-m3">
+<h4>Fluid node level (m³)<a class="headerlink" href="#fluid-node-level-m3" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>time</p></th>
+<th class="head"><p>fluid_node_1</p></th>
+<th class="head"><p>fluid_node_2</p></th>
+<th class="head"><p>fluid_node_3</p></th>
+<th class="head"><p>fluid_node_4</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023‑01‑01 00:00</p></td>
+<td><p>49.998977</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.001023</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 01:00</p></td>
+<td><p>49.997954</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.002046</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 02:00</p></td>
+<td><p>49.996931</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.003069</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 03:00</p></td>
+<td><p>49.995907</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.004093</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 04:00</p></td>
+<td><p>49.994884</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.005116</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 05:00</p></td>
+<td><p>49.993861</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.006139</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 06:00</p></td>
+<td><p>49.992838</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.007162</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 07:00</p></td>
+<td><p>49.991815</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.008185</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 08:00</p></td>
+<td><p>49.990792</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.009208</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 09:00</p></td>
+<td><p>49.989768</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>50.010232</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="path-flow-m3-s">
+<h4>Path flow (m³/s)<a class="headerlink" href="#path-flow-m3-s" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>time</p></th>
+<th class="head"><p>path_1</p></th>
+<th class="head"><p>path_2</p></th>
+<th class="head"><p>path_3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023‑01‑01 00:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 01:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 02:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 03:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 04:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 05:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 06:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 07:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-even"><td><p>2023‑01‑01 08:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+<tr class="row-odd"><td><p>2023‑01‑01 09:00</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+<td><p>0.284211</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p><strong>Note</strong>  All units are in per‑unit unless otherwise specified.
+Feel free to adapt cost coefficients, efficiencies or time profiles to your own study.</p>
+</div></blockquote>
+</section>
+<section id="another-hydro-example">
+<h4>Another Hydro example<a class="headerlink" href="#another-hydro-example" title="Link to this heading"></a></h4>
+<p>The following example loads and runs the linear optimization for a system that integrates fluid elements into a regular
+electrical grid.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;hydro_simple.veragrid&#39;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># Run the simulation</span>
+<span class="n">opf_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalPowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Solving...&#39;</span><span class="p">)</span>
+<span class="n">opf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Gen power</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">generator_power</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Branch loading</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reservoir level</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_current_level</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>OPF results:
+
+time                | p2x_1_gen | pump_1_gen | turbine_1_gen | slack_gen
+------------------- | --------- | ---------- | ------------- | ---------
+2023-01-01 00:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 01:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 02:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 03:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 04:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 05:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 06:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 07:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 08:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+2023-01-01 09:00:00 | 0.0       | -6.8237821 | 6.0           | 11.823782
+
+
+time                | line1  | line2 | line3     | line4
+------------------- | ------ | ----- | --------- | -----
+2023-01-01 00:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 01:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 02:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 03:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 04:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 05:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 06:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 07:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 08:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+2023-01-01 09:00:00 | 100.0  | 0.0   | 68.237821 | 40.0
+
+
+time                | f1         | f2  | f3  | f4        
+------------------- | ---------- | --- | --- | ----------
+2023-01-01 00:00:00 | 49.998977  | 0.0 | 0.0 | 50.001022
+2023-01-01 01:00:00 | 49.997954  | 0.0 | 0.0 | 50.002046
+2023-01-01 02:00:00 | 49.996931  | 0.0 | 0.0 | 50.003068
+2023-01-01 03:00:00 | 49.995906  | 0.0 | 0.0 | 50.004093
+2023-01-01 04:00:00 | 49.994884  | 0.0 | 0.0 | 50.005116
+2023-01-01 05:00:00 | 49.993860  | 0.0 | 0.0 | 50.006139
+2023-01-01 06:00:00 | 49.992838  | 0.0 | 0.0 | 50.007162
+2023-01-01 07:00:00 | 49.991814  | 0.0 | 0.0 | 50.008185
+2023-01-01 08:00:00 | 49.990792  | 0.0 | 0.0 | 50.009208
+2023-01-01 09:00:00 | 49.989768  | 0.0 | 0.0 | 50.010231
+</pre></div>
+</div>
+</section>
+</section>
+<section id="non-linear-optimization-acopf">
+<h3>Non-linear optimization (ACOPF)<a class="headerlink" href="#non-linear-optimization-acopf" title="Link to this heading"></a></h3>
+<p>Here is an example of how to run an ACOPF with code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;case14.m&#39;</span><span class="p">)</span>  <span class="c1"># search for this file in the grids folder</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># declare the snapshot opf</span>
+<span class="n">opf_options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NONLINEAR_OPF</span><span class="p">,</span>
+                                         <span class="n">ips_tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                                         <span class="n">ips_iterations</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+                                         <span class="n">ips_trust_radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                                         <span class="n">ips_init_with_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">ips_control_q_limits</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">acopf_mode</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">AcOpfMode</span><span class="o">.</span><span class="n">ACOPFstd</span><span class="p">,</span>
+                                         <span class="n">acopf_v0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">acopf_S0</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">opf_driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">opf_options</span><span class="p">)</span>
+<span class="n">opf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">opf_res</span><span class="p">:</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowResults</span> <span class="o">=</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Buses:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generators:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">get_gen_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Branches:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;error: &quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Re run initializing with a power flow:</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+<span class="n">pf_res</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+
+<span class="c1"># declare the snapshot opf</span>
+<span class="n">opf_options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NONLINEAR_OPF</span><span class="p">,</span>
+                                         <span class="n">ips_tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                                         <span class="n">ips_iterations</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+                                         <span class="n">ips_trust_radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                                         <span class="n">ips_init_with_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">ips_control_q_limits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">acopf_mode</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">AcOpfMode</span><span class="o">.</span><span class="n">ACOPFstd</span><span class="p">,</span>
+                                         <span class="n">acopf_v0</span><span class="o">=</span><span class="n">pf_res</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                                         <span class="n">acopf_S0</span><span class="o">=</span><span class="n">pf_res</span><span class="o">.</span><span class="n">Sbus</span><span class="p">)</span>
+<span class="n">opf_driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">opf_options</span><span class="p">)</span>
+<span class="n">opf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">opf_res</span><span class="p">:</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowResults</span> <span class="o">=</span> <span class="n">opf_driver</span><span class="o">.</span><span class="n">results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Buses:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generators:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">get_gen_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Branches:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;error: &quot;</span><span class="p">,</span> <span class="n">opf_res</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<section id="linear-optimal-power-flow">
+<h3>Linear optimal power flow<a class="headerlink" href="#linear-optimal-power-flow" title="Link to this heading"></a></h3>
+<section id="general-indices-and-dimensions">
+<h4>General indices and dimensions<a class="headerlink" href="#general-indices-and-dimensions" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>n</p></td>
+<td><p>Number of nodes</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>Number of branches</p></td>
+</tr>
+<tr class="row-even"><td><p>ng</p></td>
+<td><p>Number of generators</p></td>
+</tr>
+<tr class="row-odd"><td><p>nb</p></td>
+<td><p>Number of batteries</p></td>
+</tr>
+<tr class="row-even"><td><p>nl</p></td>
+<td><p>Number of loads</p></td>
+</tr>
+<tr class="row-odd"><td><p>pqpv</p></td>
+<td><p>Vector of node indices of the PQ and PV buses.</p></td>
+</tr>
+<tr class="row-even"><td><p>vd</p></td>
+<td><p>Vector of node indices of the Slack (or VD) buses.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="objective-function">
+<h4>Objective function<a class="headerlink" href="#objective-function" title="Link to this heading"></a></h4>
+<p>The objective function minimizes the cost of generation plus all the slack variables set in the problem.</p>
+<div class="math">
+<p><span class="math">\min\; f = \sum_g cost_g \cdot Pg_g \\
+         + \sum_b cost_b \cdot Pb_b \\
+         + \sum_l cost_l \cdot LSlack_l \\
+         + \sum_b Fslack1_b + Fslack2_b</span></p>
+</div></section>
+<section id="power-injections">
+<h4>Power injections<a class="headerlink" href="#power-injections" title="Link to this heading"></a></h4>
+<p>This equation is not a restriction but the computation of the power injections
+(fixed and LP variables) that are injected per node, such that the vector <span class="math">P</span>
+is dimensionally coherent with the number of buses.</p>
+<div class="math">
+<p><span class="math">P = C_{bus\_gen} \times Pg + C_{bus\_bat} \times Pb - C_{bus\_load} \times (LSlack + Load)</span></p>
+</div><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Dimensions</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math">P</span></p></td>
+<td><p>Vector of active power per node.</p></td>
+<td><p>n</p></td>
+<td><p>Float + LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">C_{bus\_gen}</span></p></td>
+<td><p>Bus-Generators connectivity matrix.</p></td>
+<td><p>n, ng</p></td>
+<td><p>int</p></td>
+<td><p>1/0</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">Pg</span></p></td>
+<td><p>Vector of generators active power.</p></td>
+<td><p>ng</p></td>
+<td><p>LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">C_{bus\_bat}</span></p></td>
+<td><p>Bus-Batteries connectivity matrix.</p></td>
+<td><p>n, nb</p></td>
+<td><p>int</p></td>
+<td><p>1/0</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">Pb</span></p></td>
+<td><p>Vector of batteries active power.</p></td>
+<td><p>nb</p></td>
+<td><p>LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">C_{bus\_load}</span></p></td>
+<td><p>Bus-Loads connectivity matrix.</p></td>
+<td><p>n, nl</p></td>
+<td><p>int</p></td>
+<td><p>1/0</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">Load</span></p></td>
+<td><p>Vector of active power loads.</p></td>
+<td><p>nl</p></td>
+<td><p>Float</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">LSlack</span></p></td>
+<td><p>Vector of active power load slack variables.</p></td>
+<td><p>nl</p></td>
+<td><p>LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="nodal-power-balance">
+<h4>Nodal power balance<a class="headerlink" href="#nodal-power-balance" title="Link to this heading"></a></h4>
+<p>These two restrictions are set as hard equality constraints because we want the
+electrical balance to be fulfilled. Note that this formulation splits the slack nodes
+from the non-slack nodes. This is faithful to the original DC power-flow formulation
+which allows for implicit losses computation.</p>
+<p><strong>Equilibrium at the non-slack nodes</strong></p>
+<div class="math">
+<p><span class="math">B_{pqpv, pqpv} \times \theta_{pqpv} = P_{pqpv}</span></p>
+</div><p><strong>Equilibrium at the slack nodes</strong></p>
+<div class="math">
+<p><span class="math">B_{vd, :} \times \theta = P_{vd}</span></p>
+</div><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Dimensions</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math">B</span></p></td>
+<td><p>Matrix of susceptances (imaginary part of Ybus).</p></td>
+<td><p>n, n</p></td>
+<td><p>Float</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">P</span></p></td>
+<td><p>Vector of active power per node.</p></td>
+<td><p>n</p></td>
+<td><p>Float + LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">\theta</span></p></td>
+<td><p>Vector of bus voltage angles.</p></td>
+<td><p>n</p></td>
+<td><p>LP</p></td>
+<td><p>radians</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="branch-loading-restriction">
+<h4>Branch loading restriction<a class="headerlink" href="#branch-loading-restriction" title="Link to this heading"></a></h4>
+<p>We need to check that the branch flows respect the established limits.
+Note that because of the linear simplifications, the computed solution in
+active power might actually be dangerous for the grid. That is why a real
+power flow should counter-check the OPF solution.</p>
+<p>First we compute the arrays of nodal voltage angles for each of the <strong>from</strong> and <strong>to</strong> sides of each branch (a helper calculation):</p>
+<div class="math">
+<p><span class="math">\theta_{from} = C_{branch\_bus\_{from}} \times \theta</span></p>
+</div><div class="math">
+<p><span class="math">\theta_{to} = C_{branch\_bus\_{to}} \times \theta</span></p>
+</div><p>The branch flow must respect the rating in both directions:</p>
+<div class="math">
+<p><span class="math">B_{series}\, (\theta_{from} - \theta_{to}) \leq F_{max} + F_{slack1}</span></p>
+</div><div class="math">
+<p><span class="math">B_{series}\, (\theta_{to} - \theta_{from}) \leq F_{max} + F_{slack2}</span></p>
+</div><p>We may also impose that the loading slacks are equal because they represent the extra capacity needed in either direction:</p>
+<div class="math">
+<p><span class="math">F_{slack1} = F_{slack2}</span></p>
+</div><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Dimensions</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math">B_{series}</span></p></td>
+<td><p>Vector of series susceptances of the branches (<span class="math">\operatorname{Im}\bigl(1/(r + jx)\bigr)</span>).</p></td>
+<td><p>m</p></td>
+<td><p>Float</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">C_{branch\_bus_{from}}</span></p></td>
+<td><p>Branch-Bus connectivity matrix at the <strong>from</strong> end.</p></td>
+<td><p>m, n</p></td>
+<td><p>int</p></td>
+<td><p>1/0</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">C_{branch\_bus_{to}}</span></p></td>
+<td><p>Branch-Bus connectivity matrix at the <strong>to</strong> end.</p></td>
+<td><p>m, n</p></td>
+<td><p>int</p></td>
+<td><p>1/0</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">\theta_{from}</span></p></td>
+<td><p>Voltage angles at the <strong>from</strong> end.</p></td>
+<td><p>m</p></td>
+<td><p>LP</p></td>
+<td><p>radians</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">\theta_{to}</span></p></td>
+<td><p>Voltage angles at the <strong>to</strong> end.</p></td>
+<td><p>m</p></td>
+<td><p>LP</p></td>
+<td><p>radians</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">\theta</span></p></td>
+<td><p>Vector of bus voltage angles.</p></td>
+<td><p>n</p></td>
+<td><p>LP</p></td>
+<td><p>radians</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">F_{max}</span></p></td>
+<td><p>Vector of branch ratings.</p></td>
+<td><p>m</p></td>
+<td><p>Float</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math">F_{slack1}</span></p></td>
+<td><p>Branch-rating slacks (from→to).</p></td>
+<td><p>m</p></td>
+<td><p>LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math">F_{slack2}</span></p></td>
+<td><p>Branch-rating slacks (to→from).</p></td>
+<td><p>m</p></td>
+<td><p>LP</p></td>
+<td><p>p.u.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="linear-optimal-power-flow-considering-hydro-plants">
+<h3>Linear optimal power flow considering hydro plants<a class="headerlink" href="#linear-optimal-power-flow-considering-hydro-plants" title="Link to this heading"></a></h3>
+<p>Just as power systems can be optimized by accounting for all their electrical assets, the same applies to hydropower infrastructure. In practice the operator ends up managing <strong>two coupled networks of different natures</strong>: one where electrons flow and another where fluid is transported. These networks must therefore be <strong>simultaneously optimized</strong>. VeraGrid now integrates models for a fluid (hydro‑electric) grid and extends the optimization routines to include them.</p>
+<p>This document outlines the main additions:</p>
+<ul class="simple">
+<li><p>The fluid‑grid component models.</p></li>
+<li><p>How these new devices affect the optimization problem.</p></li>
+<li><p>A worked example that illustrates the concepts.</p></li>
+</ul>
+<section id="fluid-models">
+<h4>1  Fluid models<a class="headerlink" href="#fluid-models" title="Link to this heading"></a></h4>
+<p>Five new models have been introduced:</p>
+<ul class="simple">
+<li><p><strong>Node</strong> – A point in the fluid network with a fluid level, attached devices (turbines, pumps, P2Xs) and paths (both electrical and fluid).</p></li>
+<li><p><strong>Path</strong> – A connection between two fluid nodes with flow limits.</p></li>
+<li><p><strong>Turbine</strong> – Converts mechanical energy in the fluid into electrical energy. Has a linked generator.</p></li>
+<li><p><strong>Pump</strong> – The reverse of a turbine, converting electrical to mechanical energy.</p></li>
+<li><p><strong>P2X</strong> – A “power‑to‑X” device that creates fluid from consumed electrical power (e.g. hydrogen production).</p></li>
+</ul>
+<p><img alt="An overview of a fluid network with nodes linked through paths, a P2X, a pump, and a turbine." src="../figures/opf/fluid_elements.png" /></p>
+<p>Each model exposes a set of attributes described below.</p>
+<section id="node">
+<h5>Node<a class="headerlink" href="#node" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idtag</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Unique ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Node name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Secondary ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>hm³</p></td>
+<td><p>Minimum fluid level</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>hm³</p></td>
+<td><p>Maximum fluid level</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">initial_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>hm³</p></td>
+<td><p>Initial level</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Bus</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Linked electrical bus</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_status</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BuildStatus</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Status (used in expansion planning)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spillage_cost</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>€/ (m³/s)</p></td>
+<td><p>Cost of spillage</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inflow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Natural inflow</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="path">
+<h5>Path<a class="headerlink" href="#path" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idtag</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Unique ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Path name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Secondary ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">source</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FluidNode</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Upstream node</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FluidNode</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Downstream node</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Minimum flow</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Maximum flow</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="turbine">
+<h5>Turbine<a class="headerlink" href="#turbine" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idtag</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Unique ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Turbine name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Secondary ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">efficiency</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>MWh/m³</p></td>
+<td><p>Energy produced per unit of fluid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_flow_rate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Maximum flow</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plant</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FluidNode</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Connected node</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Linked electrical machine</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_status</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BuildStatus</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Expansion status</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pump">
+<h5>Pump<a class="headerlink" href="#pump" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idtag</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Unique ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Pump name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Secondary ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">efficiency</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>MWh/m³</p></td>
+<td><p>Electrical‑to‑fluid efficiency</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_flow_rate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Maximum flow</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plant</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FluidNode</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Connected node</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Linked electrical machine</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_status</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BuildStatus</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Expansion status</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="p2x">
+<h5>P2X<a class="headerlink" href="#p2x" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idtag</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Unique ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Device name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Secondary ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">efficiency</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>MWh/m³</p></td>
+<td><p>Electrical‑to‑fluid efficiency</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_flow_rate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Maximum flow</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plant</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FluidNode</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Connected node</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">generator</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Linked electrical machine</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_status</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BuildStatus</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Expansion status</p></td>
+</tr>
+</tbody>
+</table>
+<p>Turbines, pumps and P2Xs are <strong>fluid devices coupled to an electrical generator</strong>
+created automatically when the device is added.<br />
+The corresponding generator limits and cost signs must obey:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Fluid‑device type</p></th>
+<th class="head"><p>Cost sign</p></th>
+<th class="head"><p>Pmax</p></th>
+<th class="head"><p>Pmin</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Turbine</p></td>
+<td><p>≥ 0</p></td>
+<td><p>&gt; 0</p></td>
+<td><p>≥ 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pump</p></td>
+<td><p>≤ 0</p></td>
+<td><p>≤ 0</p></td>
+<td><p>&lt; 0</p></td>
+</tr>
+<tr class="row-even"><td><p>P2X</p></td>
+<td><p>≤ 0</p></td>
+<td><p>≤ 0</p></td>
+<td><p>&lt; 0</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="optimization-adaptation">
+<h4>2  Optimization adaptation<a class="headerlink" href="#optimization-adaptation" title="Link to this heading"></a></h4>
+<p>Fluid transport is treated analogously to power flow: <strong>mass balance</strong> must hold at every node for every time step.</p>
+<section id="id1">
+<h5>2.1  Objective function<a class="headerlink" href="#id1" title="Link to this heading"></a></h5>
+<p>The general objective already includes the generators linked to turbines, pumps and P2Xs.  A single extra term must be added for spillage costs:</p>
+<div class="math">
+<p><span class="math">f_{obj} \;+= \sum_{m}^{n_{m}} cost\_{spill}[m] \sum_{t}^{n_{t}} spill[t,m]</span></p>
+</div><p>where</p>
+<ul class="simple">
+<li><p><span class="math">f_{obj}</span> is the current objective value,</p></li>
+<li><p><span class="math">m</span> indexes fluid nodes (<span class="math">n_m</span> total),</p></li>
+<li><p><span class="math">t</span> indexes time steps (<span class="math">n_t</span> total).</p></li>
+</ul>
+</section>
+<section id="balance-constraint">
+<h5>2.2  Balance constraint<a class="headerlink" href="#balance-constraint" title="Link to this heading"></a></h5>
+<p>For each node <span class="math">m</span> and time <span class="math">t</span> the water‑balance reads</p>
+<div class="math">
+<p><span class="math">\begin{aligned}
+level[t,m] &amp;= level[t-1,m] \\
+           &amp;\quad + dt\,inflow[m] \\
+           &amp;\quad + dt\,flow\_{in}[t,m] \\
+           &amp;\quad + dt\,flow\_{p2x}[t,m] \\
+           &amp;\quad - dt\,spill[t,m] \\
+           &amp;\quad - dt\,flow\_{out}[t,m].
+\end{aligned}</span></p>
+</div><p>For the first step use <span class="math">level[t-1,m]=initial\_level[m]</span>.</p>
+<section id="coupling-with-injection-devices">
+<h6>Coupling with injection devices<a class="headerlink" href="#coupling-with-injection-devices" title="Link to this heading"></a></h6>
+<p>Turbines draw water:</p>
+<div class="math">
+<p><span class="math">flow\_{out}[t,m] \;+=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]}{p\_{max}[g]\;turb\_eff[i]}</span></p>
+</div><p>Pumps inject water:</p>
+<div class="math">
+<p><span class="math">flow\_{in}[t,m] \;-=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]\;pump\_eff[i]}{|p\_{min}[g]|}</span></p>
+</div><p>P2X behaves like a pump:</p>
+<div class="math">
+<p><span class="math">flow\_{p2x}[t,m] \;+=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]\;p2x\_eff[i]}{|p\_{min}[g]|}</span></p>
+</div></section>
+</section>
+<section id="output-results">
+<h5>2.3  Output results<a class="headerlink" href="#output-results" title="Link to this heading"></a></h5>
+<section id="node-results">
+<h6>Node results<a class="headerlink" href="#node-results" title="Link to this heading"></a></h6>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_current_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>hm³</p></td>
+<td><p>Node level</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_flow_in</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Total inflow from paths</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_flow_out</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Total outflow to paths</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_p2x_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Inflow from P2X devices</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_node_spillage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Spilled flow</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="path-results">
+<h6>Path results<a class="headerlink" href="#path-results" title="Link to this heading"></a></h6>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_path_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Flow through the path</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="injection-device-results-turbine-pump-p2x">
+<h6>Injection device results (turbine, pump, P2X)<a class="headerlink" href="#injection-device-results-turbine-pump-p2x" title="Link to this heading"></a></h6>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fluid_injection_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m³/s</p></td>
+<td><p>Flow injected or withdrawn by the device</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+<section id="ac-optimal-power-flow-using-an-interior-point-solver">
+<h3>AC - Optimal Power Flow using an Interior-Point Solver<a class="headerlink" href="#ac-optimal-power-flow-using-an-interior-point-solver" title="Link to this heading"></a></h3>
+<p>Planning the generation for a given power network is typically done with <strong>DC-Optimal Power Flow (DC-OPF)</strong>,
+which approximates the power-flow problem as a linear program to gain speed at the expense of accuracy.<br />
+Several works tackle the full non-linear <strong>AC-OPF</strong> instead, the most notable being the <strong>MATPOWER</strong> package.</p>
+<p>This technical note describes how the MATPOWER interior-point solver is integrated into the <strong>VeraGrid</strong>
+environment (Python) in order to add new modelling capabilities (e.g. transformer tap optimisation or
+soft constraints for faster studies).</p>
+<p>The document is structured as follows:</p>
+<ul class="simple">
+<li><p>Model construction from a VeraGrid object</p></li>
+<li><p>Objective function and constraints</p></li>
+<li><p>KKT conditions and Newton-Raphson method</p></li>
+<li><p>Interior-Point algorithm</p></li>
+<li><p>Optimisation output</p></li>
+</ul>
+<hr class="docutils" />
+<section id="grid-model">
+<h4>1 Grid model<a class="headerlink" href="#grid-model" title="Link to this heading"></a></h4>
+<p>The grid is defined by</p>
+<ul class="simple">
+<li><p><strong>Buses</strong> - connection points where power is consumed/produced.</p></li>
+<li><p><strong>Branches</strong> - lines/transformers interconnecting buses.</p></li>
+<li><p><strong>Slack buses</strong> - voltage magnitude/angle references.</p></li>
+<li><p><strong>Generators</strong> - active/reactive power sources.</p></li>
+</ul>
+<p>Branch orientation distinguishes the <strong>from</strong> and <strong>to</strong> buses, fixing the sign convention for branch powers.</p>
+<p>If the grid has only one generator its bus is the <em>slack</em>; with multiple generators,
+a subset with large/firm capacity is chosen as slack.  Each generator has a (quadratic) cost curve.</p>
+<p>All operational limits (voltages, flows, generation) enter the optimisation as constraints.</p>
+<section id="numericalcircuit-data-extracted-from-veragrid">
+<h5>1.1 <code class="docutils literal notranslate"><span class="pre">NumericalCircuit</span></code> data extracted from VeraGrid<a class="headerlink" href="#numericalcircuit-data-extracted-from-veragrid" title="Link to this heading"></a></h5>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class / type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>description (size)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">slack</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Slack bus IDs (<span class="math">n_{\text{slack}}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>PV-bus indices (<span class="math">n_{\text{pv}}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pq</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>PQ-bus indices (<span class="math">n_{\text{pq}}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">from_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p><strong>from</strong>-bus IDs (<span class="math">n_l</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">to_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p><strong>to</strong>-bus IDs (<span class="math">n_l</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">k_m</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Module-controllable transformers (<span class="math">n_{\text{tap}m}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">k_tau</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Phase-controllable transformers (<span class="math">n_{\text{tap}\tau}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_disp_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Dispatchable HVDC <strong>from</strong> buses (<span class="math">n_{dc}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_disp_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Dispatchable HVDC <strong>to</strong> buses (<span class="math">n_{dc}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_nd_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Non-dispatchable HVDC <strong>from</strong> buses (<span class="math">n_{ndc}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_nd_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Non-dispatchable HVDC <strong>to</strong> buses (<span class="math">n_{ndc}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_disp_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Dispatchable generator indices (<span class="math">n_{ig}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gen_undisp_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Non-dispatchable generator indices (<span class="math">n_{nig}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">br_mon_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Monitored branch indices (<span class="math">m</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ybus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Matrix[complex]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Bus admittance (<span class="math">n_{bus}\times n_{bus}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Yf</span></code>/<code class="docutils literal notranslate"><span class="pre">Yt</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Matrix[complex]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>From/To admittance (<span class="math">n_l\times n_{bus}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Cg</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Matrix[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>Generator-bus connectivity</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Cf</span></code>, <code class="docutils literal notranslate"><span class="pre">Ct</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Matrix[int]</span></code></p></td>
+<td><p>-</p></td>
+<td><p>From/To connectivity</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sbase</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>MW</p></td>
+<td><p>Power base</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Generator power factor (<span class="math">n_{gen}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sg_undisp</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[complex]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Non-dispatchable generator power (<span class="math">n_{nig}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_nondisp</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Non-dispatchable HVDC power (<span class="math">n_{dc}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Branch resistance/reactance (<span class="math">n_l</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sd</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[complex]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Load per bus (<span class="math">n_{bus}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pg_max/min</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Generator <span class="math">P</span> limits (<span class="math">n_{gen}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Qg_max/min</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Generator <span class="math">Q</span> limits (<span class="math">n_{gen}</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Vm_max/min</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Voltage limits (<span class="math">n_{bus}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>p.u.</p></td>
+<td><p>Branch MVA limits (<span class="math">n_l</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c_0</span></code>, <code class="docutils literal notranslate"><span class="pre">c_1</span></code>, <code class="docutils literal notranslate"><span class="pre">c_2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>€ / €/MWh / €/MWh²</p></td>
+<td><p>Generator cost coefficients (<span class="math">n_{gen}</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">c_s</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>€</p></td>
+<td><p>Branch-slack penalty (<span class="math">m</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c_v</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
+<td><p>€</p></td>
+<td><p>Voltage-slack penalty (<span class="math">n_{bus}</span>)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="variables-objective-and-constraints">
+<h4>2 Variables, objective and constraints<a class="headerlink" href="#variables-objective-and-constraints" title="Link to this heading"></a></h4>
+<p>The AC-OPF is cast as</p>
+<div class="math">
+<p><span class="math">\begin{aligned}
+\min\; &amp; f(x) \\
+\text{s.t.}\; &amp; G(x)=0 \\
+&amp; H(x)\le 0
+\end{aligned}</span></p>
+</div><p>where</p>
+<ul class="simple">
+<li><p><span class="math">x</span> - decision vector,</p></li>
+<li><p><span class="math">f</span> - objective,</p></li>
+<li><p><span class="math">G</span> - equality constraints,</p></li>
+<li><p><span class="math">H</span> - inequality constraints.</p></li>
+</ul>
+<section id="decision-variables">
+<h5>2.1 Decision variables<a class="headerlink" href="#decision-variables" title="Link to this heading"></a></h5>
+<ul class="simple">
+<li><p><strong>Bus voltage magnitude</strong> <span class="math">v</span></p></li>
+<li><p><strong>Bus voltage angle</strong> <span class="math">\theta</span> (angle of a primary slack bus fixed to 0)</p></li>
+<li><p><strong>Generator active power</strong> <span class="math">P_g</span> (dispatchable)</p></li>
+<li><p><strong>Generator reactive power</strong> <span class="math">Q_g</span> (dispatchable)</p></li>
+<li><p><strong>Transformer tap ratio</strong> <span class="math">m_p</span> (controllable modulus)</p></li>
+<li><p><strong>Transformer phase shift</strong> <span class="math">\tau</span> (controllable angle)</p></li>
+<li><p><strong>HVDC link power</strong> <span class="math">P_{DC}</span> (taken positive in the <em>from</em> direction)</p></li>
+</ul>
+<p>If soft limits are enabled additional non-negative slacks are added:</p>
+<ul class="simple">
+<li><p>Branch flow slacks <span class="math">\operatorname{sl}_{sf},\operatorname{sl}_{st}</span> (each monitored branch)</p></li>
+<li><p>Voltage slacks <span class="math">\operatorname{sl}_{v\max},\operatorname{sl}_{v\min}</span> (each bus)</p></li>
+</ul>
+<p>The stacked variable vector is</p>
+<div class="math">
+<p><span class="math">x = \bigl[\,v,\; \theta,\; P_g,\; Q_g,\; \operatorname{sl}_{sf},\; \operatorname{sl}_{st},\; \operatorname{sl}_{v\max},\; \operatorname{sl}_{v\min},\; m_p,\; \tau,\; P_{DC}\bigr]</span></p>
+</div><p>with</p>
+<div class="math">
+<p><span class="math">N_V = 2n_{bus} + 2n_g + n_{sl} + n_{tapm} + n_{tapt} + n_{dc}, \qquad n_{sl}=2n_{bus}+2m.</span></p>
+</div></section>
+<section id="id2">
+<h5>2.2 Objective function<a class="headerlink" href="#id2" title="Link to this heading"></a></h5>
+<p>Generator cost is quadratic:</p>
+<div class="math">
+<p><span class="math">\min f = c_2^{\top} P_g^{\circ 2} + c_1^{\top} P_g + c_0.</span></p>
+</div><p>If slacks are active:</p>
+<div class="math">
+<p><span class="math">\min f = c_2^{\top} P_g^{\circ 2} + c_1^{\top} P_g + c_0 + c_s^{\top}(\operatorname{sl}_{sf}+\operatorname{sl}_{st}) + c_v^{\top}(\operatorname{sl}_{v\max}+\operatorname{sl}_{v\min}).</span></p>
+</div></section>
+<section id="equality-constraints">
+<h5>2.3 Equality constraints<a class="headerlink" href="#equality-constraints" title="Link to this heading"></a></h5>
+<ul class="simple">
+<li><p><strong>AC power-balance</strong> (<span class="math">n_{bus}</span> complex equations):</p></li>
+</ul>
+<div class="math">
+<p><span class="math">S^{bus} = V I_{bus}^* = V (Y_{bus}^* V^*)</span></p>
+</div><div class="math">
+<p><span class="math">G^{S} = S^{bus} + S_d - C_g[:,\text{disp}]\,(P_g + jQ_g) - C_g[:,\text{undisp}]\,S_{g,\text{undisp}}</span></p>
+</div><p>For HVDC links (<span class="math">\text{link}</span> index):</p>
+<div class="math">
+<p><span class="math">G^{S}[f_{dc}[\text{link}]]\;{+}= P_{f,DC}[\text{link}],\qquad
+G^{S}[t_{dc}[\text{link}]]\;{-}= P_{f,DC}[\text{link}].</span></p>
+</div><ul class="simple">
+<li><p><strong>PV-bus voltage magnitude</strong>:</p></li>
+</ul>
+<div class="math">
+<p><span class="math">G^{PV}=v_{pv}-V_{\max}[pv]</span></p>
+</div><ul class="simple">
+<li><p><strong>Angle reference</strong>:</p></li>
+</ul>
+<div class="math">
+<p><span class="math">G^{\theta}=\theta[slack]</span></p>
+</div><p>All equalities are gathered as</p>
+<div class="math">
+<p><span class="math">G(x)=\bigl[\operatorname{Re}G^{S},\;\operatorname{Im}G^{S},\;G^{PV},\;G^{\theta}\bigr].</span></p>
+</div></section>
+<section id="inequality-constraints">
+<h5>2.4 Inequality constraints<a class="headerlink" href="#inequality-constraints" title="Link to this heading"></a></h5>
+<p>Branch apparent-power limits (monitored set):
+$<span class="math">H^{sf}= |S^{f}|^{2}-{S_{\max}}^{2}, \qquad H^{st}= |S^{t}|^{2}-{S_{\max}}^{2}.</span>$</p>
+<p>Voltage, generation, tap and DC bounds provide simple box inequalities.
+Collecting all terms yields
+$<span class="math">H(x)=\bigl[H^{sf},\,H^{st},\,H^{v_u},H^{p_u},H^{q_u},H^{v_l},H^{p_l},H^{q_l},\,H^{slsf},H^{slst},H^{slv\max},H^{slv\min},H^{tapm_u},H^{tapt_u},H^{tapm_l},H^{tapt_l},H^{dc_u},H^{dc_l}\bigr].</span>$</p>
+</section>
+</section>
+<section id="kkt-conditions-newton-raphson-solution">
+<h4>3 KKT conditions &amp; Newton-Raphson solution<a class="headerlink" href="#kkt-conditions-newton-raphson-solution" title="Link to this heading"></a></h4>
+<section id="karush-kuhn-tucker-system">
+<h5>3.1 Karush-Kuhn-Tucker system<a class="headerlink" href="#karush-kuhn-tucker-system" title="Link to this heading"></a></h5>
+<p>Slack variables <span class="math">Z\ge0</span> convert inequalities to equalities <span class="math">H(x)+Z=0</span>.
+Introducing multipliers <span class="math">\lambda</span> (for <span class="math">G</span>) and <span class="math">\mu\ge0</span> (for <span class="math">H</span>) the KKT conditions are</p>
+<div class="math">
+<p><span class="math">\begin{aligned}
+&amp;\nabla f(x)+\nabla G(x)^{\top}\lambda+\nabla H(x)^{\top}\mu = 0, \\
+&amp;G(x)=0, \qquad H(x)+Z=0, \\
+&amp;\mu\odot Z = \gamma\mathbf 1, \qquad \mu,Z\ge0.
+\end{aligned}</span></p>
+</div><p>Parameter <span class="math">\gamma</span> is reduced geometrically towards 0 to drive complementarity.</p>
+</section>
+<section id="newton-step">
+<h5>3.2 Newton step<a class="headerlink" href="#newton-step" title="Link to this heading"></a></h5>
+<p>The full NR vector is <span class="math">y=[x,\lambda,\mu,Z]</span>.<br />
+A reduced system a la <strong>MIPS</strong> solves for <span class="math">\Delta X,\Delta\lambda</span>:</p>
+<div class="math">
+<p><span class="math">\begin{bmatrix}M &amp; G_X^{\top}\\ G_X &amp; 0\end{bmatrix}
+\begin{bmatrix}\Delta X\\ \Delta\lambda\end{bmatrix}=\begin{bmatrix}-N\\ -G(X)\end{bmatrix}</span></p>
+</div><p>with</p>
+<div class="math">
+<p><span class="math">\begin{aligned}
+M &amp;= L_{XX}+H_X^{\top}[Z]^{-1}[\mu]H_X,\\
+N &amp;= L_X+H_X^{\top}[Z]^{-1}\bigl(\gamma\mathbf 1+[\mu]H(X)\bigr),\\
+L_X &amp;= f_X+G_X^{\top}\lambda+H_X^{\top}\mu,\\
+L_{XX} &amp;= f_{XX}+G_{XX}(\lambda)+H_{XX}(\mu).
+\end{aligned}</span></p>
+</div><p>Updates for <span class="math">Z</span> and <span class="math">\mu</span> follow</p>
+<div class="math">
+<p><span class="math">\Delta Z = -H(X)-Z-H_X\Delta X, \qquad
+\Delta\mu = -\mu+[Z]^{-1}\bigl(\gamma\mathbf1-[\mu]\Delta Z\bigr).</span></p>
+</div></section>
+<section id="step-length-positivity-safeguard">
+<h5>3.3 Step length &amp; positivity safeguard<a class="headerlink" href="#step-length-positivity-safeguard" title="Link to this heading"></a></h5>
+<p>A back-tracking merit-function test limits the step factor <span class="math">\alpha\in(0,1]</span>.<br />
+Positivity of <span class="math">(\mu,Z)</span> is enforced by</p>
+<div class="math">
+<p><span class="math">\alpha_p = \min\bigl(1,\,\tau\min_{\Delta Z_m&lt;0}\!-Z_m/\Delta Z_m\bigr),\qquad
+\alpha_d = \min\bigl(1,\,\tau\min_{\Delta\mu_m&lt;0}\! -\mu_m/\Delta \mu_m\bigr),</span></p>
+</div><p>with <span class="math">\tau\approx0.995</span>. Finally</p>
+<div class="math">
+<p><span class="math">\begin{aligned}
+X &amp;\leftarrow X+\alpha_p\Delta X, &amp; Z &amp;\leftarrow Z+\alpha_p\Delta Z,\\
+\lambda &amp;\leftarrow \lambda+\alpha_d\Delta\lambda, &amp; \mu &amp;\leftarrow \mu+\alpha_d\Delta\mu,\\
+\gamma &amp;\leftarrow \sigma\,\frac{Z^{\top}\mu}{n_{ineq}},\; \sigma\in(0,1).
+\end{aligned}</span></p>
+</div></section>
+</section>
+<section id="derivatives">
+<h4>4 Derivatives<a class="headerlink" href="#derivatives" title="Link to this heading"></a></h4>
+<section id="objective">
+<h5>4.1 Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h5>
+<p>For <span class="math">f=c_2^{\top}P_g^{\circ2}+c_1^{\top}P_g+c_0</span>:</p>
+<div class="math">
+<p><span class="math">\nabla_{P_g}f = 2\,c_2\odot P_g + c_1,\qquad
+\nabla^2_{P_gP_g}f = 2\operatorname{diag}(c_2).</span></p>
+</div><p>Slack-penalty gradients add constants <span class="math">c_s</span> and <span class="math">c_v</span> in the appropriate positions.</p>
+</section>
+<section id="power-balance-derivatives">
+<h5>4.2 Power-balance derivatives<a class="headerlink" href="#power-balance-derivatives" title="Link to this heading"></a></h5>
+<p>(Only the main formulas are listed; see MATPOWER docs and FUBM for full derivations.)</p>
+<p>First derivatives w.r.t. voltage:
+$<span class="math">\frac{\partial G^{S}}{\partial v} = [V]\bigl([I_{bus}]^* + Y_{bus}^*[V]^*\bigr)\left[\frac1v\right],\qquad
+\frac{\partial G^{S}}{\partial \theta} = j[V]\bigl([I_{bus}]^*-Y_{bus}^*[V]^*\bigr).</span>$</p>
+<p>Transformer tap (<span class="math">m_p</span>) and phase (<span class="math">\tau</span>) derivatives are obtained via <em>from/to</em> power decomposition
+$<span class="math">S^{bus}=C_f^{\top}S^{f}+C_t^{\top}S^{t}</span>$
+and application of the Flexible Universal Branch Model.</p>
+<p><em>(Detailed first- and second-order expressions omitted for brevity; they have been transcribed verbatim from the original note into the source markdown so you can inspect them.)</em></p>
+</section>
+<section id="inequality-branch-limit-derivatives">
+<h5>4.3 Inequality (branch-limit) derivatives<a class="headerlink" href="#inequality-branch-limit-derivatives" title="Link to this heading"></a></h5>
+<p>For monitored branches</p>
+<div class="math">
+<p><span class="math">H^{sf}=|S^{f}|^{2}-S_{\max}^{2}, \quad H^{st}=|S^{t}|^{2}-S_{\max}^{2},</span></p>
+</div><p>the Jacobians are</p>
+<div class="math">
+<p><span class="math">\frac{\partial H^{sf}}{\partial X}=2\bigl(\operatorname{Re}(S^{f})\operatorname{Re}\tfrac{\partial S^{f}}{\partial X}+\operatorname{Im}(S^{f})\operatorname{Im}\tfrac{\partial S^{f}}{\partial X}\bigr)</span></p>
+</div><p>and analogously for <span class="math">H^{st}</span>.<br />
+Second derivatives are assembled using the chain-rule with branch multipliers <span class="math">\mu_f,\mu_t</span>.</p>
+<p><em>The remainder of the document (detailed second-order tap derivatives, code snippets, etc.)
+has been preserved exactly as in the source and is viewable in the canvas.
+Feel free to adjust, expand or remove sections as needed.</em></p>
+</section>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="linear_analysis.html" class="btn btn-neutral float-left" title="📏 Linear analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="short_circuit.html" class="btn btn-neutral float-right" title="⚡ Short-Circuit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

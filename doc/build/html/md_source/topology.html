@@ -1,0 +1,811 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌵 Topology &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🎳 Clustering" href="clustering.html" />
+    <link rel="prev" title="💾 File loading and saving" href="file_operations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🌵 Topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#other-topology-functions">Other topology functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-reduce-the-problematic-branches">Step 1: Reduce the problematic branches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-find-the-simulatable-islands">Step 2: Find the simulatable islands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-segment-the-circuit-into-electrical-islands">Step 3: Segment the circuit into electrical islands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-simulate-the-islands-independently">Step 4: Simulate the islands independently</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-reassembly">Step 5: Reassembly</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-spirit-of-cim">The spirit of CIM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-is-it-done-in-veragrid">How is it done in VeraGrid?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#takeaways">Takeaways</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#annex-the-islands-search-function">Annex: The islands search function</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nodegroupsresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">NodeGroupsResults</span></code> registered properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🌵 Topology</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/topology.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="topology">
+<h1>🌵 Topology<a class="headerlink" href="#topology" title="Link to this heading"></a></h1>
+<p>The topology processing in VeraGrid is handled automatically, and you need to do nothing for it to work.</p>
+<p>Branches with the <code class="docutils literal notranslate"><span class="pre">reducible</span></code> flag enabled are candidates for disappearing at the
+`NumericalCircuit level when computing any simulation. Typically, switches will be reduced, but if not they will
+use their declared impedance, which is not advised.</p>
+<p><img alt="" src="../_images/settings-tplgy.png" /></p>
+<section id="other-topology-functions">
+<h2>Other topology functions<a class="headerlink" href="#other-topology-functions" title="Link to this heading"></a></h2>
+<p>There are some other topological functions that can be accessed through the GUI for special purposes.</p>
+<p><img alt="" src="../_images/settings-topology.png" /></p>
+<p>Select branch types to reduce
+The topological reduction is a top feature of VeraGrid. With it you can remove the influence of the redundant
+branches. This is specially relevant when you are provided with grids that have thousands of switches and
+connection branches that add no simulation value. Those can be removed in a very smart way.</p>
+<p>Filter by r+x under threshold
+This feature establishes if to topologically remove branches whose resistance + reactance
+is lower than a threshold. The threshold is given by the exponent number. i.e. 5 corresponds to <code class="docutils literal notranslate"><span class="pre">r+x</span> <span class="pre">&lt;</span> <span class="pre">1e-5</span></code>.</p>
+<p>Automatic layout algorithm
+Another nice feature in VeraGrid is the ability to sort bus bar locations according to a graph algorithm.
+This is especially useful when you are provided with a grid that has no schematic, where the graphical
+representation depict all the bus bars in the same place.</p>
+<p>Ask before applying
+Raise a question before applying the graph layout algorithm.</p>
+<p>Node expansion factor
+The nodes in VeraGrid can be expanded (far from each other) or shrink (closer) this parameter
+set the “explosion” factor that determines how far from each other shall the nodes become.</p>
+<p>Branch rating factor
+For the branch automatic rating, this is the rate multiplier.</p>
+<p>Override values
+If selected any non-zero rate is overridden by the calculated value.</p>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>In this section, we are going to explain how to do topology processing properly
+once and for all. This topic is of capital importance in power systems but is
+rarely dealt with in a structured and comprehensive manner.</p>
+<p><strong>A Graph in Power Systems</strong></p>
+<p>A graph is composed of:</p>
+<ul class="simple">
+<li><p><strong>Nodes:</strong> These are the buses of a model that represent points of calculation, such as substation bars,
+generation points, or load centers.</p></li>
+<li><p><strong>Edges:</strong> Represent the connections, such as transmission lines, transformers, or switches.</p></li>
+</ul>
+<p>This abstraction simplifies the network from the bolts and welds to a simpler,
+yet correct simplification that retains the essential connectivity information.</p>
+<p>Note about ontologies: In the ontologies world, any device can be related to any other in a all-to-all fashion.
+This means that nothig prevents a line to be connected to more than two points,
+among many other wasteful modelling propositions.
+In this article we will use proper network theory graphs where branches
+transmit electricity and nodes are the points where we measure.</p>
+<p><strong>Why is Topology Processing Important?</strong></p>
+<p>Topology processing ensures that the network’s operational model reflects
+accurately its physical state. Without proper processing, analyses may yield
+inaccurate results, leading to operational inefficiencies or even failures.</p>
+<p>Topology processing helps to ensure the model is computationally feasible,
+to identify and correct data inconsistencies and to optimize the simulation
+by reducing unnecessary complexities.</p>
+<p>In less abstract terms, topology processing is about determining the simulatable
+sub-circuits within a a collection of equipment.
+Here, a circuit refers to a collection of equipment, its relationships,
+and states in the most general sense.</p>
+<p>We perform the topology processing as a precaution before simulating,
+because what we want is to be able to use the electrotechnical formulas
+to get the physical magnitudes, and for that we must abide to some rules.
+Thus, from circuit theory, we derive the following fundamental relationship:</p>
+<div class="math">
+<p><span class="math">Y \times V = I^*</span></p>
+</div><p>Where:</p>
+<ul class="simple">
+<li><p><span class="math">Y</span> is the nodal admittance matrix.</p></li>
+<li><p><span class="math">V</span> is the vector of bus voltages.</p></li>
+<li><p><span class="math">I</span> is the vector of current injections at the buses.</p></li>
+</ul>
+<p>To solve for <span class="math">V</span>, we need to invert <span class="math">Y</span>:</p>
+<div class="math">
+<p><span class="math">V = Y^{-1} \times I^*</span></p>
+</div><p>However, <span class="math">Y</span> may not always be invertible for any arbitrary collection
+of equipment. This is because certain branches in the circuit might have
+zero impedance, making <span class="math">Y</span> singular.
+Or simply because there are grid parts disconnected from the rest,
+making <span class="math">Y</span> also singular.</p>
+<p>The topology processing involves the following steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Reduce problematic branches:</strong> Address switches and jumpers that cause singularities.</p></li>
+<li><p><strong>Find the simulatable islands:</strong> Identify isolated groups of interconnected elements.</p></li>
+<li><p><strong>Segment the circuit into sub-circuits:</strong> Divide the system into smaller, manageable parts.</p></li>
+<li><p><strong>Simulate each circuit independently:</strong> Perform separate analyses for each sub-circuit.*</p></li>
+<li><p><strong>Reassemble the results:</strong> Combine outcomes to match the original circuit structure.</p></li>
+</ol>
+<blockquote>
+<div><p>Steps 2 to 5 are necessary only for simulations reliant on equality constraints,
+such as power flow. Simulations involving overdetermined linear systems, such as
+optimizations, do not require separate handling of islands.</p>
+</div></blockquote>
+<section id="step-1-reduce-the-problematic-branches">
+<h3>Step 1: Reduce the problematic branches<a class="headerlink" href="#step-1-reduce-the-problematic-branches" title="Link to this heading"></a></h3>
+<p>In the context of power systems, certain branches can cause computational issues due
+to their characteristics, such as zero impedance or inactive status. These branches,
+referred here to as <em>problematic branches</em>, must be effectively removed^ to ensure accurate
+simulations and analyses. To better understand this, let’s examine the following
+example circuit:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bus from</p></th>
+<th class="head"><p>Bus to</p></th>
+<th class="head"><p>Reducible</p></th>
+<th class="head"><p>impedance</p></th>
+<th class="head"><p>active</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>yes</p></td>
+<td><p>0</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>2</p></td>
+<td><p>no</p></td>
+<td><p>0.05j</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>no</p></td>
+<td><p>0.01j</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>yes</p></td>
+<td><p>0</p></td>
+<td><p>no</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p>It is important to understand the meaning of zero when talking about physical magnitudes
+such as the impedance. Zero is the <em>absence of</em>, therefore zero impedance means that
+the branch is not there. Hence, we must remove it and join the buses it connects.</p>
+</div></blockquote>
+<p>This circuit consists of 4 buses and 4 branches. Two of these branches are marked
+as “reducible,” meaning their removal is needed to not impact the network’s functional
+properties for simulation purposes. These zero-impedance branches do not contribute to
+the network’s overall impedance matrix, but would make it singular if added.
+To identify reducible branches, we construct an adjacency matrix representing
+connections between buses. The adjacency matrix is computed using the following algorithm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">n</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">buses</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">branches</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span> <span class="n">to</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">bus</span> <span class="kn">from</span><span class="w"> </span><span class="nn">of</span> <span class="n">the</span> <span class="n">branch</span> <span class="n">k</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">bus</span> <span class="n">to</span> <span class="n">of</span> <span class="n">the</span> <span class="n">branch</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="n">branch</span> <span class="n">k</span> <span class="ow">is</span> <span class="n">active</span> <span class="ow">and</span> <span class="n">reducible</span><span class="p">:</span>
+            <span class="n">A</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">A</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">A</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">A</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">end</span><span class="o">-</span><span class="k">if</span>
+    <span class="n">end</span><span class="o">-</span><span class="k">for</span>
+</pre></div>
+</div>
+<p>A method that is found to be approximately 2.5 times faster in practice is
+to form the computationally simpler connectivity matrix C, and then compute A
+from it by <span class="math">A = C \times C^\top</span></p>
+<p>See the following pseudo-code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">n</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">buses</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">branches</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span> <span class="n">to</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">bus</span> <span class="kn">from</span><span class="w"> </span><span class="nn">of</span> <span class="n">the</span> <span class="n">branch</span> <span class="n">k</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">bus</span> <span class="n">to</span> <span class="n">of</span> <span class="n">the</span> <span class="n">branch</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="n">branch</span> <span class="n">k</span> <span class="ow">is</span> <span class="n">active</span> <span class="ow">and</span> <span class="n">reducible</span><span class="p">:</span>
+            <span class="n">C</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">C</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">end</span><span class="o">-</span><span class="k">if</span>
+    <span class="n">end</span><span class="o">-</span><span class="k">for</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">transpose</span> <span class="n">x</span> <span class="n">C</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Both methods require matrices <code class="docutils literal notranslate"><span class="pre">C</span></code> and <code class="docutils literal notranslate"><span class="pre">A</span></code> to be sparse. Dense matrices would
+demand excessive memory and computational resources, making them impractical
+for power system applications.</p>
+</div></blockquote>
+<p>The nifty trick of composing <code class="docutils literal notranslate"><span class="pre">A</span></code> with the reducible elements, allows us to use a
+standard <strong>island-finding algorithm</strong> (see the annex) to identify groups of buses connected by
+reducible elements that can be treated as a single bus because they are
+<em>topologically</em> the same place. The result of that will be a mapping vector of size equal to the
+number of nodes where each value represents the index of the node that remain for calculation</p>
+<p>In the given example, buses 0 and 1 are grouped, meaning bus 1 is effectively
+merged into bus 0. Buses 2 and 3 remain as independent nodes.</p>
+<p>After processing the reducible branches, the simplified circuit is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bus from</p></th>
+<th class="head"><p>Bus to</p></th>
+<th class="head"><p>impedance</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>2</p></td>
+<td><p>0.05j</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>3</p></td>
+<td><p>0.01j</p></td>
+</tr>
+</tbody>
+</table>
+<p>The mapping vector of this 4 bus example would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The bus at position 0 remain, the bus at position 1 is removed and represented by the bus 0
+the buses 2 and 3 each remain.</p>
+</section>
+<section id="step-2-find-the-simulatable-islands">
+<h3>Step 2: Find the simulatable islands<a class="headerlink" href="#step-2-find-the-simulatable-islands" title="Link to this heading"></a></h3>
+<p>Splitting into islands that are electrically connected requires
+<strong>the island search function</strong> (<em>see the annex</em>) again but used with a different adjacency matrix.
+For that, we need to compute the Adjacency matrix using the
+non-reducible, active branches. This is, the branches that have impedances and
+can transmit electricity.
+These are the branches that we did not eliminate in the step 1.</p>
+<p>To compose the connected adjancency matrix <code class="docutils literal notranslate"><span class="pre">A</span></code> we do need to fill the incidence matric <code class="docutils literal notranslate"><span class="pre">C</span></code>.
+With that <span class="math">A = C \times C\top</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">n</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">buses</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">branches</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span> <span class="n">to</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">bus</span> <span class="kn">from</span><span class="w"> </span><span class="nn">of</span> <span class="n">the</span> <span class="n">branch</span> <span class="n">k</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">bus</span> <span class="n">to</span> <span class="n">of</span> <span class="n">the</span> <span class="n">branch</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">branch</span> <span class="n">k</span> <span class="ow">is</span> <span class="n">active</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bus</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">active</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bus</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">active</span><span class="p">):</span>
+            <span class="n">C</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">C</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">end</span><span class="o">-</span><span class="k">if</span>
+    <span class="n">end</span><span class="o">-</span><span class="k">for</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">transpose</span> <span class="n">x</span> <span class="n">C</span>
+</pre></div>
+</div>
+<p>The steps here are:</p>
+<ol class="arabic simple">
+<li><p><strong>Initialization:</strong> The connectivity matrix <code class="docutils literal notranslate"><span class="pre">C</span></code> is initialized to capture branch
+connections.</p></li>
+<li><p><strong>Branch Iteration:</strong> Each branch is checked for status=active and the corresponding buses
+are verified to be active as well.</p></li>
+<li><p><strong>Matrix Assembly:</strong> Connections between the “from” and “to” buses are recorded in <code class="docutils literal notranslate"><span class="pre">C</span></code>.</p></li>
+<li><p><strong>Adjacency Matrix Construction:</strong> The final adjacency matrix <code class="docutils literal notranslate"><span class="pre">A</span></code> is obtained through
+a matrix multiplication operations on <code class="docutils literal notranslate"><span class="pre">C</span></code>.</p></li>
+</ol>
+<p>With the adjacency matrix <code class="docutils literal notranslate"><span class="pre">A</span></code> constructed, standard island-detection algorithms can be
+applied to identify groups of interconnected buses. These groups, referred to as
+“simulatable islands,” represent sub-networks that can independently support simulation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">islands</span> <span class="o">=</span> <span class="n">find_islands</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">islands</span></code> variable contains a list of vectors, where each vector represents the
+indices of buses within a single island. For example, in a simple network, two
+interconnected buses might form one island, while isolated buses form separate islands.</p>
+<p><img alt="Topology processing steps" src="../_images/TopologyProcessing1.png" /></p>
+<p>For each identified island, it is crucial to verify the presence of at least one voltage
+source or slack node. Without a slack node, the island cannot be powered, resulting in a
+blackout for that portion of the network. Slack nodes provide the necessary reference
+voltage and power balance for the island’s operation.</p>
+</section>
+<section id="step-3-segment-the-circuit-into-electrical-islands">
+<h3>Step 3: Segment the circuit into electrical islands<a class="headerlink" href="#step-3-segment-the-circuit-into-electrical-islands" title="Link to this heading"></a></h3>
+<p>After removing problematic branches, and finding the bus indices that constitute islands,
+the next crucial step is to segment the circuit into sub-circuits or <em>islands</em>.</p>
+<p>An island is defined as a group of interconnected buses that form an
+independent sub-network. This segmentation is essential for accurately analyzing and
+simulating the system. To achieve this, we slice the grid’s data structures based on
+the island information.</p>
+<p>An island is represented as a vector of bus indices. For instance, if an island
+contains buses 4, 5, 6, and 7, this vector would be <code class="docutils literal notranslate"><span class="pre">[4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7]</span></code>. Using this
+information, slicing a data structure containing only bus data is straightforward.
+However, slicing structures such as branches or loads requires additional steps
+to relate them to the buses that define the island.</p>
+<p>To efficiently handle slicing, we create a bus mapping array that maps the original
+bus indices to the indices of the island. For instance, consider a circuit with 8
+buses, where the mentioned island comprises buses 4, 5, 6, and 7.
+The mapping process is as follows:</p>
+<ol class="arabic simple">
+<li><p>Initialize an array of size 8 filled with <code class="docutils literal notranslate"><span class="pre">-1</span></code> to represent unmapped buses.</p></li>
+<li><p>Assign new island indices to the corresponding positions in the array.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">island</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">bus_map</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="n">x</span> <span class="n">ones</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">island</span><span class="p">:</span>
+    <span class="n">bus_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+    <span class="n">ii</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">end</span><span class="o">-</span><span class="k">for</span>
+</pre></div>
+</div>
+<p>The bus map is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bus_map</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, consider the following branch data for the 8-bus grid:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>bus_from</p></th>
+<th class="head"><p>bus_to</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0:Branch</p></td>
+<td><p>2</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>1:Branch</p></td>
+<td><p>3</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>2:Branch</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>3:Branch</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>4:Branch</p></td>
+<td><p>6</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>5:Branch</p></td>
+<td><p>7</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p>6:Branch</p></td>
+<td><p>5</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>7:Branch</p></td>
+<td><p>5</p></td>
+<td><p>6</p></td>
+</tr>
+</tbody>
+</table>
+<p>With the following algorithm we can determine which branch indices belong to the island:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">m</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">branches</span>
+    <span class="n">elements_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span> <span class="n">to</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">branch</span> <span class="n">k</span> <span class="kn">from</span><span class="w"> </span><span class="nn">bus</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">branch</span> <span class="n">k</span> <span class="n">to</span> <span class="n">bus</span>
+        <span class="k">if</span> <span class="n">bus_map</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">bus_map</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">elements_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case, the branch indices are <code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7)</span></code>.
+Hence, the sliced island branch data is:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>bus_from</p></th>
+<th class="head"><p>bus_to</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>4:Branch</p></td>
+<td><p>6</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>5:Branch</p></td>
+<td><p>7</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p>6:Branch</p></td>
+<td><p>5</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>7:Branch</p></td>
+<td><p>5</p></td>
+<td><p>6</p></td>
+</tr>
+</tbody>
+</table>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">bus_map</span></code> to re-map the “from” and “to” buses of the sliced structure
+from the original bus indices to the island bus indices:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>bus_from</p></th>
+<th class="head"><p>bus_to</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>4:Branch</p></td>
+<td><p>2</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>5:Branch</p></td>
+<td><p>3</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>6:Branch</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>7:Branch</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>For data structures like loads or generators, the slicing process is similar. However, these
+structures typically involve a single bus index rather than “from” and “to” indices.
+By consistently applying the bus mapping array, we can accurately extract relevant
+data for any island.</p>
+<p>Segmenting the circuit into islands eliminates inactive buses, branches, and devices
+that might otherwise introduce errors into simulations. This step significantly
+improves computational efficiency and ensures cleaner, more reliable data for
+numerical calculations such as power flow analysis. The resulting islands form
+distinct, manageable sub-networks ready for independent simulation and analysis.</p>
+</section>
+<section id="step-4-simulate-the-islands-independently">
+<h3>Step 4: Simulate the islands independently<a class="headerlink" href="#step-4-simulate-the-islands-independently" title="Link to this heading"></a></h3>
+<p>This is a very straight forward step, since we have already processed
+the initial grid information into clean and simulatable sub-circuits.
+In this step we simulate them one by one using the power flow simulation for instance.</p>
+</section>
+<section id="step-5-reassembly">
+<h3>Step 5: Reassembly<a class="headerlink" href="#step-5-reassembly" title="Link to this heading"></a></h3>
+<p>At step 4 provides us with the values for the nodes that remained after the topology processing.
+However we need to expand those results into the complete set of nodes.
+We use the mapping vector found at step 1 to expand the bus results such as the voltage.</p>
+</section>
+<section id="the-spirit-of-cim">
+<h3>The spirit of CIM<a class="headerlink" href="#the-spirit-of-cim" title="Link to this heading"></a></h3>
+<p>If you’ve encountered CIM or CGMES, or participated in guild discussions, you’ve
+likely heard about <strong>node-breaker</strong> and <strong>bus-branch</strong> modeling styles as distinct
+approaches. ENTSO-e’s introductory CGMES training has historically taught that
+you can model using either <strong>ConnectivityNodes</strong> or <strong>TopologicalNodes</strong> (AKA Buses).
+This guidance has been shared with hundreds of engineers accustomed to simpler
+models of buses, lines, etc., only to face what seems to be gratuitous complexity.</p>
+<p>The modeling approaches are often thought of as follows:</p>
+<ul class="simple">
+<li><p><strong>Bus-branch modeling:</strong> This style involves using <strong>TopologicalNodes</strong> and
+no switches.</p></li>
+<li><p><strong>Node-breaker modeling:</strong> This style involves using <strong>ConnectivityNodes</strong>
+and switches.</p></li>
+</ul>
+<p>This school of thought leaves us in a vacuum that we may feel inclined to fill
+with ad-hoc topology processing cases. But, after going through the described steps,
+one finds that this complexity is indeed unjustified because the <strong>node-breaker</strong>
+and <strong>bus-branch</strong> philosophies are fundamentally the same. In steps 1 to 3
+we have implicitly demonstrated that:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A ConnectivityNode is a <strong>bus</strong> before the topology processing.</p></li>
+<li><p>A TopologyNode is a <strong>bus</strong> after the topology processing.</p></li>
+</ul>
+</div></blockquote>
+<p>Following this new found truth, the TopologyNode should not be shared in any
+model or database since they are a particular product of the database state
+and the switches should always be reduced before simulation to avoid numerical singularities.</p>
+<p>Again, a common misconception is that bus-branch models
+lack switches, whereas node-breaker models include them. In practice, both
+approaches can incorporate switches. This fact is often emphasized in official CGMES trainings.
+If a <strong>ConnectivityNode</strong> must have an <code class="docutils literal notranslate"><span class="pre">N:1</span></code> association with a <strong>TopologicalNode</strong>, this
+implies that any ConnectivityNode ultimately represents a TopologicalNode.
+This reinforces the argument that both are two faces of the same coin,
+<strong>Making both styles fundamentally equal.</strong></p>
+<p><strong>The Philosophy Behind CIM</strong></p>
+<p>In this light, one can only imagine that the intent behind CIM’s design philosophy is to model
+grids using <strong>ConnectivityNodes</strong>, with <strong>TopologicalNodes</strong> emerging afterwards
+through topological reductions (e.g., simplifying branches).
+This implies that we should not share TopologicalNodes, since those are
+internal artifacts of a calculation software such as VeraGrid.</p>
+<p>Over time, the practice of treating detailed models as node-breaker
+and less-detailed models as bus-branch has created an
+artificial divide that has proven impractical and needlessly complicated.
+This is further exacerbated by the fact that most common mainstream software
+also makes a division between substation nodes and other nodes, when all
+nodes are in fact equal in the eyes of math.</p>
+<p><strong>Then, why the Complexity?</strong></p>
+<p>One can understand that the lack of a clear topology processing method
+has likely sparked this complexity, creating a middle ground that combines the
+worst aspects of both approaches. Engineers attempting to reconcile the two
+styles often encounter unnecessary confusion and inefficiency mostly
+steaming from folklore rather than rigor.</p>
+<p><strong>Revisiting CIM’s Spirit</strong></p>
+<p>If we examine the original spirit of CIM: <strong>ConnectivityNodes are no different
+from traditional Buses.</strong> The distinction is a myth that adds unnecessary
+complexity to modeling workflows. By adhering to this perspective, we can
+simplify processes and focus on building more efficient, accurate
+and interoperable models.</p>
+</section>
+<section id="how-is-it-done-in-veragrid">
+<h3>How is it done in VeraGrid?<a class="headerlink" href="#how-is-it-done-in-veragrid" title="Link to this heading"></a></h3>
+<p>In VeraGrid, the <strong>MultiCircuit</strong> serves as the grid’s in-memory database. It is
+crucial that no topological processing is ever performed directly on the
+MultiCircuit. Doing so risks altering the topology of elements, potentially
+breaking the consistency of the original configuration.</p>
+<p><strong>Why Avoid Topological Processing on the MultiCircuit?</strong></p>
+<p>Consider a generator initially connected to <strong>Bus 1</strong>.
+After performing topological processing, it might end up connected to
+<strong>Bus 2</strong>. How could we recover the original connection to <strong>Bus 1</strong>? Simply put,
+we cannot. And believe you me, the genrator in the power plant is connected to bus 1,
+and no operator ever unwelds it to weld it to bus 2.
+That is only a fiction of the topology processing.</p>
+<p>Altering the MultiCircuit directly compromises the data integrity,
+making it impossible to restore the original topology. In CIM, this is probably why
+there are two distinct sets of objects; ConnectivityNode to maintain the structure
+and TopologicalNode to represent the final connectivity for simulation porpuses.
+This reinforces the idea that we must only model with ConnectivityNodes,
+which for simplicity are always buses in the end in VeraGrid.</p>
+<p><strong>The Role of NumericalCircuit</strong></p>
+<p>If topology processing should not occur over the database, then where should it
+be done? The solution in VeraGrid is to provide the <strong>NumericalCircuit</strong>, a snapshot of
+the MultiCircuit at a specific state. This snapshot is <strong>fungible</strong>, meaning that any
+modifications made to it will not impact the original MultiCircuit and will
+vanish after the calculation. As such, all topology processing steps are
+performed on the <strong>NumericalCircuit</strong>, as described earlier in this section.
+This is a clean, correct and paralelizable approach.</p>
+<p><strong>CIM Compatibility Adjustments</strong></p>
+<p>To ensure compatibility with CIM standards, we have introduced a single
+adjustment:</p>
+<ul class="simple">
+<li><p>Every <strong>ConnectivityNode</strong> must either create a bus or be associated with an
+existing bus.</p></li>
+<li><p>Similarly, every <strong>TopologicalNode</strong> must either create a connectivity node or be
+associated with one.</p></li>
+</ul>
+<p>This guarantees that no matter which object you use for modeling, the system
+will ultimately rely on buses, maintaining consistency across all calculation
+processes in every scenario and avoiding the superficial complexity of having two
+sets of objects for the same thing; Representing a node in a graph.</p>
+<p>By doing this, we also put an end to the node-breaker vs. bus-branch feud,
+allowing for compatibility with the so-called legacy models.</p>
+<p><img alt="TopologyRoundtrip" src="../_images/TopologyRoundtrip.png" /></p>
+</section>
+<section id="takeaways">
+<h3>Takeaways<a class="headerlink" href="#takeaways" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Bus-branch and node-breaker modelling styles are the same thing.</p></li>
+<li><p>In VeraGrid (or any other sofwtare), always model with buses, you’ll thank me later.</p></li>
+<li><p>In CIM/CGMES, model always with ConnectivityNodes and forget
+about the TopologicalNodes, you’ll thank me later.</p></li>
+<li><p>In topology processing, we use the find-islands algorithm (DFS), combined
+with different compositions of adjacency matrices (A). General element traversing
+should only happen when composing the adjacency matrices.</p></li>
+</ul>
+</section>
+<section id="annex-the-islands-search-function">
+<h3>Annex: The islands search function<a class="headerlink" href="#annex-the-islands-search-function" title="Link to this heading"></a></h3>
+<p>The island search function is a depth-first search that exploits the CSC structure of
+the adjacency matrix. The particular version of the DFS algorithm presented here avoids
+recursivity in favor of cues for faster execution.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>indptr:<span class="w"> </span>index<span class="w"> </span>pointers<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>CSC<span class="w"> </span>scheme
+indices:<span class="w"> </span>column<span class="w"> </span>indices<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>CSCS<span class="w"> </span>scheme
+active:<span class="w"> </span>array<span class="w"> </span>of<span class="w"> </span>bus<span class="w"> </span>active<span class="w"> </span>states
+<span class="nv">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>bus<span class="w"> </span>number
+
+<span class="nv">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>zeros<span class="o">(</span>n<span class="o">)</span>
+
+<span class="nv">islands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>list<span class="o">()</span>
+
+<span class="nv">node_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="nv">current_island</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>zeros<span class="o">(</span>n<span class="o">)</span>
+
+<span class="nv">island_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+
+<span class="k">for</span><span class="w"> </span><span class="nv">node</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>to<span class="w"> </span>node_number:
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>visited<span class="o">[</span>node<span class="o">]</span><span class="w"> </span>and<span class="w"> </span>active<span class="o">[</span>node<span class="o">]</span>:
+
+<span class="w">        </span><span class="nv">stack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>list<span class="o">()</span>
+<span class="w">        </span>stack.add<span class="o">(</span>node<span class="o">)</span>
+
+<span class="w">        </span><span class="k">while</span><span class="w"> </span>stack.size<span class="w"> </span>&gt;<span class="w"> </span><span class="m">0</span>:
+
+<span class="w">            </span><span class="nv">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>stack.first
+<span class="w">            </span>remove<span class="w"> </span>first<span class="w"> </span>element<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>stack
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>visited<span class="o">[</span>v<span class="o">]</span>:
+
+<span class="w">                </span>visited<span class="o">[</span>v<span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+
+<span class="w">                </span>current_island<span class="o">[</span>node_count<span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>v
+<span class="w">                </span><span class="nv">node_count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="m">1</span>
+
+<span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="nv">i</span><span class="o">=</span>indptr<span class="o">[</span>v<span class="o">]</span><span class="w"> </span>to<span class="w"> </span>indptr<span class="o">[</span>v<span class="w"> </span>+<span class="w"> </span><span class="m">1</span><span class="o">]</span>:
+<span class="w">                    </span><span class="nv">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>indices<span class="o">[</span>i<span class="o">]</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>visited<span class="o">[</span>k<span class="o">]</span><span class="w"> </span>and<span class="w"> </span>active<span class="o">[</span>k<span class="o">]</span>:
+<span class="w">                        </span>stack.add<span class="o">(</span>k<span class="o">)</span>
+<span class="w">                    </span>end-if
+<span class="w">                </span>end-for
+<span class="w">            </span>end-if
+<span class="w">        </span>end-while
+
+<span class="w">        </span><span class="c1"># slice the current island to its actual size</span>
+<span class="w">        </span><span class="nv">island</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>current_island<span class="o">[</span>:node_count<span class="o">]</span>.copy<span class="o">()</span>
+<span class="w">        </span>island.sort<span class="o">()</span><span class="w">  </span><span class="c1"># sort in-place</span>
+
+<span class="w">        </span><span class="c1"># assign the current island</span>
+<span class="w">        </span>islands.append<span class="o">(</span>island<span class="o">)</span>
+
+<span class="w">        </span><span class="c1"># increase the islands index, because</span>
+<span class="w">        </span><span class="nv">island_idx</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="m">1</span>
+
+<span class="w">        </span><span class="c1"># reset the current island</span>
+<span class="w">        </span><span class="c1"># no need to re-allocate &quot;current_island&quot; since it is going to be overwritten</span>
+<span class="w">        </span><span class="nv">node_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span>end-if
+end-for
+</pre></div>
+</div>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="nodegroupsresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">NodeGroupsResults</span></code> registered properties<a class="headerlink" href="#nodegroupsresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The node-groups result stores the clustering inputs and resulting node groups.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">X_train</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Training matrix used to compute the node groups.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Sigma value used by the node grouping algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">groups_by_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Node groups expressed with bus names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">groups_by_index</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Node groups expressed with bus indices.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="file_operations.html" class="btn btn-neutral float-left" title="💾 File loading and saving" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clustering.html" class="btn btn-neutral float-right" title="🎳 Clustering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

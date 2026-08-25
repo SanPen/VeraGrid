@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">la</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitOptions</span>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiModeLoewnerSeed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loewner-based order and pole seed for one scalar JMARTI modal target.</span>
+
+<span class="sd">    The class stores the reduced-order information that later feeds the Vector</span>
+<span class="sd">    Fitting stage. The seed is intentionally scalar per mode because the first</span>
+<span class="sd">    JMARTI implementation in VeraGrid fits each modal channel independently.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_mode_index&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_target_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_left_frequencies_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_right_frequencies_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_singular_values&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_estimated_order&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_initial_poles_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_truncation_ratio&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">left_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">right_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">singular_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">estimated_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">initial_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">truncation_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one Loewner seed bundle for a scalar modal target.</span>
+
+<span class="sd">        :param mode_index: Modal channel index.</span>
+<span class="sd">        :param target_name: Modal target name, for example ``Yc`` or ``Hres``.</span>
+<span class="sd">        :param left_frequencies_hz: Left sample subset in Hz.</span>
+<span class="sd">        :param right_frequencies_hz: Right sample subset in Hz.</span>
+<span class="sd">        :param singular_values: Singular values of the Loewner matrix.</span>
+<span class="sd">        :param estimated_order: Estimated reduced rational order.</span>
+<span class="sd">        :param initial_poles_s: Initial poles in the continuous-time s-plane.</span>
+<span class="sd">        :param truncation_ratio: First discarded-to-leading singular-value ratio.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mode_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_left_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">left_frequencies_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_right_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">right_frequencies_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_singular_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">singular_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimated_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">estimated_order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_poles_s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truncation_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">truncation_ratio</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_mode_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_mode_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal channel index.</span>
+
+<span class="sd">        :return: Modal channel index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_target_name">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_target_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the scalar target name.</span>
+
+<span class="sd">        :return: Target name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_name</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_left_frequencies_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_left_frequencies_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_left_frequencies_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the left frequency subset.</span>
+
+<span class="sd">        :return: Left sample frequencies in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left_frequencies_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_right_frequencies_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_right_frequencies_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_right_frequencies_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the right frequency subset.</span>
+
+<span class="sd">        :return: Right sample frequencies in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right_frequencies_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_singular_values">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_singular_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_singular_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the singular values of the Loewner matrix.</span>
+
+<span class="sd">        :return: Singular-value vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular_values</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_estimated_order">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_estimated_order">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_estimated_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the estimated reduced order.</span>
+
+<span class="sd">        :return: Reduced order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimated_order</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_initial_poles_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_initial_poles_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_initial_poles_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the initial continuous-time poles.</span>
+
+<span class="sd">        :return: Complex pole vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_poles_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiModeLoewnerSeed.get_truncation_ratio">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.JMartiModeLoewnerSeed.get_truncation_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_truncation_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the first discarded-to-leading singular-value ratio.</span>
+
+<span class="sd">        :return: Truncation ratio.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation_ratio</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_loewner_left_right_partition">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.build_jmarti_loewner_left_right_partition">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_loewner_left_right_partition</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                              <span class="n">response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                              <span class="n">minimum_frequency_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split one scalar frequency response into interleaved left and right subsets.</span>
+
+<span class="sd">    The Loewner framework requires two disjoint sampling sets. Interleaving the</span>
+<span class="sd">    original frequency grid preserves broad-band coverage on both sides without</span>
+<span class="sd">    introducing user-tuned partition heuristics in the first implementation.</span>
+
+<span class="sd">    :param frequency_hz: Strictly increasing frequency samples in Hz.</span>
+<span class="sd">    :param response_values: Complex scalar response samples on the same grid.</span>
+<span class="sd">    :param minimum_frequency_samples: Minimum number of total samples required by the user options.</span>
+<span class="sd">    :return: Tuple ``(left_f_hz, right_f_hz, left_resp, right_resp)``.</span>
+<span class="sd">    :raises ValueError: If the sample vectors are too short or inconsistent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sample_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frequency_hz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="c1"># Stage 1: validate that a non-trivial left/right partition is possible.</span>
+    <span class="k">if</span> <span class="n">response_values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">sample_count</span><span class="p">,):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Loewner seed expects a one-dimensional scalar response vector&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sample_count</span> <span class="o">&gt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">minimum_frequency_samples</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Loewner seed requires at least &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">minimum_frequency_samples</span><span class="p">)</span><span class="si">}</span><span class="s2"> scalar frequency samples&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Stage 2: interleave samples so both subsets span the whole frequency band.</span>
+    <span class="n">left_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">right_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">left_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">response_values</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">right_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">response_values</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">left_frequencies_hz</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">right_frequencies_hz</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Loewner seed requires at least two samples in both left and right subsets&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">left_frequencies_hz</span><span class="p">,</span> <span class="n">right_frequencies_hz</span><span class="p">,</span> <span class="n">left_response</span><span class="p">,</span> <span class="n">right_response</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_loewner_matrices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.build_jmarti_loewner_matrices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_loewner_matrices</span><span class="p">(</span><span class="n">left_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">right_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">left_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">right_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the Loewner and shifted-Loewner matrices for one scalar response.</span>
+
+<span class="sd">    :param left_frequencies_hz: Left frequency subset in Hz.</span>
+<span class="sd">    :param right_frequencies_hz: Right frequency subset in Hz.</span>
+<span class="sd">    :param left_response: Complex response samples on the left subset.</span>
+<span class="sd">    :param right_response: Complex response samples on the right subset.</span>
+<span class="sd">    :return: Tuple ``(L, Ls)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Stage 1: lift the frequency samples onto the continuous-time imaginary axis.</span>
+    <span class="n">left_s_plane</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">left_frequencies_hz</span>
+    <span class="n">right_s_plane</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">right_frequencies_hz</span>
+    <span class="n">denominator</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">left_s_plane</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">right_s_plane</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="c1"># Stage 2: build the classical scalar Loewner pair through broadcasting.</span>
+    <span class="n">loewner_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span><span class="n">left_response</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">right_response</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="o">/</span> <span class="n">denominator</span>
+    <span class="n">shifted_loewner_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">left_s_plane</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">left_response</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="o">-</span> <span class="n">right_s_plane</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">right_response</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="n">denominator</span>
+    <span class="k">return</span> <span class="n">loewner_matrix</span><span class="p">,</span> <span class="n">shifted_loewner_matrix</span></div>
+
+
+
+<div class="viewcode-block" id="estimate_jmarti_loewner_order">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.estimate_jmarti_loewner_order">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">estimate_jmarti_loewner_order</span><span class="p">(</span><span class="n">singular_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">relative_tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                  <span class="n">maximum_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                  <span class="n">forced_model_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimate one reduced order from Loewner singular values.</span>
+
+<span class="sd">    :param singular_values: Singular-value vector in descending order.</span>
+<span class="sd">    :param relative_tolerance: Relative truncation tolerance.</span>
+<span class="sd">    :param maximum_order: Optional maximum order clamp.</span>
+<span class="sd">    :param forced_model_order: Fixed user order. ``0`` means automatic.</span>
+<span class="sd">    :return: Tuple ``(estimated_order, truncation_ratio)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">singular_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">singular_values</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">leading_value</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">order_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">estimated_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">truncation_ratio</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="k">if</span> <span class="n">singular_count</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Loewner order estimation requires at least one singular value&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">forced_model_order</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">estimated_order</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">forced_model_order</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">maximum_order</span><span class="p">),</span> <span class="n">singular_count</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">leading_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">singular_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">leading_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">leading_value</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="k">while</span> <span class="n">order_index</span> <span class="o">&lt;</span> <span class="n">singular_count</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">singular_values</span><span class="p">[</span><span class="n">order_index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">relative_tolerance</span> <span class="o">*</span> <span class="n">leading_value</span><span class="p">:</span>
+                <span class="n">estimated_order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">order_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">estimated_order</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">estimated_order</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">maximum_order</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">estimated_order</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">estimated_order</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">estimated_order</span> <span class="o">&lt;</span> <span class="n">singular_count</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">singular_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">truncation_ratio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">singular_values</span><span class="p">[</span><span class="n">estimated_order</span><span class="p">]</span> <span class="o">/</span> <span class="n">singular_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">truncation_ratio</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">truncation_ratio</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">estimated_order</span><span class="p">,</span> <span class="n">truncation_ratio</span></div>
+
+
+
+<div class="viewcode-block" id="extract_jmarti_loewner_initial_poles">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.extract_jmarti_loewner_initial_poles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_jmarti_loewner_initial_poles</span><span class="p">(</span><span class="n">loewner_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                         <span class="n">shifted_loewner_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                         <span class="n">estimated_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract one set of continuous-time poles from the reduced Loewner pencil.</span>
+
+<span class="sd">    :param loewner_matrix: Loewner matrix.</span>
+<span class="sd">    :param shifted_loewner_matrix: Shifted Loewner matrix.</span>
+<span class="sd">    :param estimated_order: Reduced order used for projection.</span>
+<span class="sd">    :return: Complex initial pole vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">u_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">singular_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">vh_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">reduced_u</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">reduced_v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">reduced_loewner</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">reduced_shifted_loewner</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+    <span class="c1"># Stage 1: build the projection basis from the Loewner matrix itself.</span>
+    <span class="n">u_matrix</span><span class="p">,</span> <span class="n">singular_values</span><span class="p">,</span> <span class="n">vh_matrix</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">loewner_matrix</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">reduced_u</span> <span class="o">=</span> <span class="n">u_matrix</span><span class="p">[:,</span> <span class="p">:</span><span class="n">estimated_order</span><span class="p">]</span>
+    <span class="n">reduced_v</span> <span class="o">=</span> <span class="n">vh_matrix</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="n">estimated_order</span><span class="p">]</span>
+    <span class="n">reduced_loewner</span> <span class="o">=</span> <span class="n">reduced_u</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">loewner_matrix</span> <span class="o">@</span> <span class="n">reduced_v</span>
+    <span class="n">reduced_shifted_loewner</span> <span class="o">=</span> <span class="n">reduced_u</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">shifted_loewner_matrix</span> <span class="o">@</span> <span class="n">reduced_v</span>
+
+    <span class="c1"># Stage 2: solve the reduced generalized eigenproblem. The signs cancel on</span>
+    <span class="c1"># both matrices, so the standard pair directly yields the continuous-time poles.</span>
+    <span class="n">poles_s</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">reduced_shifted_loewner</span><span class="p">,</span> <span class="n">reduced_loewner</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">poles_s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_mode_loewner_seed">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed.build_jmarti_mode_loewner_seed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_mode_loewner_seed</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                                   <span class="n">response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                   <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                   <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                   <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiModeLoewnerSeed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one Loewner seed bundle for a scalar JMARTI modal target.</span>
+
+<span class="sd">    :param frequency_hz: Strictly increasing frequency grid in Hz.</span>
+<span class="sd">    :param response_values: Complex scalar response samples on that grid.</span>
+<span class="sd">    :param target_name: Modal target name, for example ``Yc`` or ``Hres``.</span>
+<span class="sd">    :param mode_index: Modal channel index.</span>
+<span class="sd">    :param options: Optional user-configurable JMARTI fitting options.</span>
+<span class="sd">    :return: Loewner seed bundle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">=</span> <span class="n">JMartiFitOptions</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">options</span>
+    <span class="n">frequency_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">response_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">response_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">left_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">right_frequencies_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">left_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">right_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">loewner_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">shifted_loewner_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">singular_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">estimated_order</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">truncation_ratio</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">initial_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+    <span class="n">left_frequencies_hz</span><span class="p">,</span> <span class="n">right_frequencies_hz</span><span class="p">,</span> <span class="n">left_response</span><span class="p">,</span> <span class="n">right_response</span> <span class="o">=</span> <span class="n">build_jmarti_loewner_left_right_partition</span><span class="p">(</span>
+        <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_array</span><span class="p">,</span>
+        <span class="n">response_values</span><span class="o">=</span><span class="n">response_array</span><span class="p">,</span>
+        <span class="n">minimum_frequency_samples</span><span class="o">=</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_minimum_frequency_samples</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">loewner_matrix</span><span class="p">,</span> <span class="n">shifted_loewner_matrix</span> <span class="o">=</span> <span class="n">build_jmarti_loewner_matrices</span><span class="p">(</span>
+        <span class="n">left_frequencies_hz</span><span class="o">=</span><span class="n">left_frequencies_hz</span><span class="p">,</span>
+        <span class="n">right_frequencies_hz</span><span class="o">=</span><span class="n">right_frequencies_hz</span><span class="p">,</span>
+        <span class="n">left_response</span><span class="o">=</span><span class="n">left_response</span><span class="p">,</span>
+        <span class="n">right_response</span><span class="o">=</span><span class="n">right_response</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Stage 1: use the Loewner singular spectrum to estimate a reduced order.</span>
+    <span class="n">singular_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">loewner_matrix</span><span class="p">,</span> <span class="n">compute_uv</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">estimated_order</span><span class="p">,</span> <span class="n">truncation_ratio</span> <span class="o">=</span> <span class="n">estimate_jmarti_loewner_order</span><span class="p">(</span>
+        <span class="n">singular_values</span><span class="o">=</span><span class="n">singular_values</span><span class="p">,</span>
+        <span class="n">relative_tolerance</span><span class="o">=</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_loewner_relative_tolerance</span><span class="p">(),</span>
+        <span class="n">maximum_order</span><span class="o">=</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_maximum_model_order</span><span class="p">(),</span>
+        <span class="n">forced_model_order</span><span class="o">=</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_forced_model_order</span><span class="p">(),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Stage 2: extract a first set of poles for the later VF refinement.</span>
+    <span class="n">initial_poles_s</span> <span class="o">=</span> <span class="n">extract_jmarti_loewner_initial_poles</span><span class="p">(</span>
+        <span class="n">loewner_matrix</span><span class="o">=</span><span class="n">loewner_matrix</span><span class="p">,</span>
+        <span class="n">shifted_loewner_matrix</span><span class="o">=</span><span class="n">shifted_loewner_matrix</span><span class="p">,</span>
+        <span class="n">estimated_order</span><span class="o">=</span><span class="n">estimated_order</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JMartiModeLoewnerSeed</span><span class="p">(</span>
+        <span class="n">mode_index</span><span class="o">=</span><span class="n">mode_index</span><span class="p">,</span>
+        <span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span>
+        <span class="n">left_frequencies_hz</span><span class="o">=</span><span class="n">left_frequencies_hz</span><span class="p">,</span>
+        <span class="n">right_frequencies_hz</span><span class="o">=</span><span class="n">right_frequencies_hz</span><span class="p">,</span>
+        <span class="n">singular_values</span><span class="o">=</span><span class="n">singular_values</span><span class="p">,</span>
+        <span class="n">estimated_order</span><span class="o">=</span><span class="n">estimated_order</span><span class="p">,</span>
+        <span class="n">initial_poles_s</span><span class="o">=</span><span class="n">initial_poles_s</span><span class="p">,</span>
+        <span class="n">truncation_ratio</span><span class="o">=</span><span class="n">truncation_ratio</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

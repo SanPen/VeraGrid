@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.Symbolic.compiled_functions &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.Symbolic.compiled_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.Symbolic.compiled_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">concurrent.futures</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">heaviside_num</span><span class="p">,</span> <span class="n">expression2numba</span><span class="p">,</span>
+                                                    <span class="n">get_expression_vars</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span>
+
+
+<div class="viewcode-block" id="compile_jac_block">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.compile_jac_block">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compile_jac_block</span><span class="p">(</span><span class="n">block_id</span><span class="p">,</span>
+                      <span class="n">block_eqs</span><span class="p">,</span>
+                      <span class="n">block_offsets</span><span class="p">,</span>
+                      <span class="n">used_vars_count</span><span class="p">,</span>
+                      <span class="n">compiler_names_dict</span><span class="p">,</span>
+                      <span class="n">alias_names_dict</span><span class="p">,</span>
+                      <span class="n">namespace</span><span class="p">,</span>
+                      <span class="n">VARS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">DIFF_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">use_jit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    function that builds the compiled functions</span>
+
+<span class="sd">    :param block_id:</span>
+<span class="sd">    :param block_eqs:</span>
+<span class="sd">    :param block_offsets:</span>
+<span class="sd">    :param used_vars_count:</span>
+<span class="sd">    :param compiler_names_dict:</span>
+<span class="sd">    :param alias_names_dict:</span>
+<span class="sd">    :param namespace:</span>
+<span class="sd">    :param VARS_NAME:</span>
+<span class="sd">    :param DIFF_NAME:</span>
+<span class="sd">    :param EVENT_PARAMS_NAME:</span>
+<span class="sd">    :param PARAMS_NAME:</span>
+<span class="sd">    :param use_jit:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;jac_block_</span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">VARS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">DIFF_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">EVENT_PARAMS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">PARAMS_NAME</span><span class="si">}</span><span class="s2">, h, out):</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">final_names_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">used_vars_count</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">final_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+            <span class="n">src</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">compiler_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">final_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">compiler_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">block_offsets</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">block_eqs</span><span class="p">):</span>
+        <span class="n">src</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    out[</span><span class="si">{</span><span class="n">offset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">expression2numba</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">simplify</span><span class="p">(),</span><span class="w"> </span><span class="n">final_names_dict</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="n">exec</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_jit</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span>
+            <span class="n">nb</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
+            <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)(</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">block_id</span><span class="p">,</span> <span class="n">func</span></div>
+
+
+
+<div class="viewcode-block" id="SymbolicJacobian">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.SymbolicJacobian">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymbolicJacobian</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Class to store and evaluate a symbolic jacobian</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;nvar&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;J&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;block_offsets&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;funcs&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">eqs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                 <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                 <span class="n">compiler_names_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                 <span class="n">alias_names_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                 <span class="n">VARS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">DIFF_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">use_jit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                 <span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># número de threads para compilación paralela</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                JIT‑compile a sparse Jacobian evaluator for *equations* w.r.t *variables*.</span>
+<span class="sd">                :param eqs: Array of equations</span>
+<span class="sd">                :param variables: Array of variables to differentiate against</span>
+<span class="sd">                :param uid2sym_vars: dictionary relating the uid of a var with its array name (i.e. var[0])</span>
+<span class="sd">                :param uid2sym_params:</span>
+<span class="sd">                :param use_jit: if true, the function is compiled by numba</span>
+<span class="sd">                :return:</span>
+<span class="sd">                        jac_fn : callable(values: np.ndarray, params: np.ndarray) -&gt; scipy.sparse.csc_matrix</span>
+<span class="sd">                            Fast evaluator in which *values* is a 1‑D NumPy vector of length</span>
+<span class="sd">                            ``len(variables)``and *params* is a 1‑D NumPy vector of length</span>
+<span class="sd">                            ``len(parameters)``</span>
+<span class="sd">                        sparsity_pattern : tuple(np.ndarray, np.ndarray)</span>
+<span class="sd">                            Row/col indices of structurally non‑zero entries.</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">)</span>
+        <span class="n">alias_names_dict</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
+        <span class="n">compiler_names_dict</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
+        <span class="k">if</span> <span class="n">static</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># --- Build triplets and count variable usage ---------------------------------</span>
+        <span class="n">used_vars_count</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">triplets</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eqs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">variables</span><span class="p">):</span>
+                <span class="n">d_expression</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d_expression</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">d_expression</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">triplets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">d_expression</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">get_expression_vars</span><span class="p">(</span><span class="n">d_expression</span><span class="p">):</span>
+                    <span class="n">used_vars_count</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">triplets</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">cols_sorted</span><span class="p">,</span> <span class="n">rows_sorted</span><span class="p">,</span> <span class="n">equations_sorted</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">triplets</span><span class="p">)</span> <span class="k">if</span> <span class="n">triplets</span> <span class="k">else</span> <span class="p">([],</span> <span class="p">[],</span> <span class="p">[])</span>
+
+        <span class="c1"># --- Assemble sparse CSC Jacobian structure ---------------------------------</span>
+        <span class="n">nnz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols_sorted</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">rows_sorted</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">nnz</span><span class="p">)</span>
+        <span class="n">indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols_sorted</span><span class="p">:</span>
+            <span class="n">indptr</span><span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">indptr</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">indptr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvar</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+        <span class="n">neq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nnz</span><span class="p">),</span> <span class="n">indices</span><span class="p">,</span> <span class="n">indptr</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">neq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvar</span><span class="p">))</span>
+
+        <span class="c1"># --- Batch compilation ------------------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;math&quot;</span><span class="p">:</span> <span class="n">math</span><span class="p">,</span>
+            <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+            <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="n">nb</span><span class="p">,</span>
+            <span class="s2">&quot;_heaviside&quot;</span><span class="p">:</span> <span class="n">heaviside_num</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">equations_sorted</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">equations_sorted</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_offsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">equations_sorted</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+
+        <span class="c1"># --- Compile blocks sequentially -------------------------------------------</span>
+        <span class="c1"># --- Compile blocks in parallel ---------------------------------------------</span>
+        <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                    <span class="n">compile_jac_block</span><span class="p">,</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_offsets</span><span class="p">,</span> <span class="n">used_vars_count</span><span class="p">,</span>
+                    <span class="n">compiler_names_dict</span><span class="p">,</span> <span class="n">alias_names_dict</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="n">VARS_NAME</span><span class="p">,</span> <span class="n">DIFF_NAME</span><span class="p">,</span> <span class="n">EVENT_PARAMS_NAME</span><span class="p">,</span> <span class="n">PARAMS_NAME</span><span class="p">,</span> <span class="n">use_jit</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+                <span class="n">block_id</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">dx</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">variable_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">constant_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                 <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param x:</span>
+<span class="sd">        :param dx:</span>
+<span class="sd">        :param variable_params:</span>
+<span class="sd">        :param constant_params:</span>
+<span class="sd">        :param h:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">variable_params</span><span class="p">,</span> <span class="n">constant_params</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span></div>
+
+
+
+<div class="viewcode-block" id="SymbolicVector">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.SymbolicVector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymbolicVector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SymbolicFunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;func&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">],</span>
+                 <span class="n">compiler_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">alias_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">VARS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">DIFF_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">use_jit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the array of expressions to a function that returns an array of values for those expressions</span>
+<span class="sd">        :param eqs: Iterable of expressions (Expr)</span>
+<span class="sd">        :param uid2sym_vars: dictionary relating the uid of a var with its array name (i.e. var[0])</span>
+<span class="sd">        :param uid2sym_params:</span>
+<span class="sd">        :return: Function pointer that returns an array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">used_vars_count</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">eqs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">get_expression_vars</span><span class="p">(</span><span class="n">eq</span><span class="p">):</span>
+                <span class="n">used_vars_count</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compiler_names_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">alias_names_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;math&quot;</span><span class="p">:</span> <span class="n">math</span><span class="p">,</span>
+                <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+                <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="n">nb</span><span class="p">,</span>
+                <span class="s2">&quot;_heaviside&quot;</span><span class="p">:</span> <span class="n">heaviside_num</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;func&quot;</span>  <span class="c1"># since we compile into a namespace, there won&#39;t be repeated names</span>
+
+            <span class="c1"># Build source</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">VARS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">DIFF_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">EVENT_PARAMS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">PARAMS_NAME</span><span class="si">}</span><span class="s2">, out):</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">final_names_dict</span> <span class="o">=</span> <span class="n">compiler_names_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">used_vars_count</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">final_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+                    <span class="n">src</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">compiler_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">src</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;    out[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">expression2numba</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">simplify</span><span class="p">(),</span><span class="w"> </span><span class="n">final_names_dict</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span>
+                 <span class="nb">enumerate</span><span class="p">(</span><span class="n">eqs</span><span class="p">)])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="c1"># compile in python namespace</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">)</span>
+
+            <span class="c1"># compile in numba</span>
+            <span class="k">if</span> <span class="n">use_jit</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span>
+                    <span class="n">nb</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
+                    <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">diff_values</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">event_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the compiled function</span>
+<span class="sd">        :param values:</span>
+<span class="sd">        :param diff_values:</span>
+<span class="sd">        :param event_params:</span>
+<span class="sd">        :param params:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">diff_values</span><span class="p">,</span> <span class="n">event_params</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="get_compiled_functions_cache_stats">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.get_compiled_functions_cache_stats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_compiled_functions_cache_stats</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return cache statistics for compiled symbolic helper functions.</span>
+
+<span class="sd">    The legacy compiled-function module does not yet expose a persistent cache,</span>
+<span class="sd">    so the reported cache entry count is zero. The function exists so EMT build</span>
+<span class="sd">    reports can depend on a stable interface while the cache work remains staged.</span>
+
+<span class="sd">    :return: Cache statistics.</span>
+<span class="sd">    :rtype: Dict[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">entry_count</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SymbolicParamsVector">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.SymbolicParamsVector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymbolicParamsVector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SymbolicFunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;func&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Expr</span><span class="p">],</span>
+                 <span class="n">compiler_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">alias_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">TIME_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">use_jit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the array of expressions to a function that returns an array of values for those expressions</span>
+<span class="sd">        :param eqs: Iterable of expressions (Expr)</span>
+<span class="sd">        :param uid2sym_t: dictionary relating the uid of a var with its array name (i.e. var[0])</span>
+<span class="sd">        :return: Function pointer that returns an array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">used_vars_count</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">eqs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">get_expression_vars</span><span class="p">(</span><span class="n">eq</span><span class="p">):</span>
+                <span class="n">used_vars_count</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;math&quot;</span><span class="p">:</span> <span class="n">math</span><span class="p">,</span>
+                <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+                <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="n">nb</span><span class="p">,</span>
+                <span class="s2">&quot;_heaviside&quot;</span><span class="p">:</span> <span class="n">heaviside_num</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;func&quot;</span>  <span class="c1"># since we compile into a namespace, there won&#39;t be repeated names</span>
+
+            <span class="c1"># Build source</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">EVENT_PARAMS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">TIME_NAME</span><span class="si">}</span><span class="s2">, out):</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">final_names_dict</span> <span class="o">=</span> <span class="n">compiler_names_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">used_vars_count</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">final_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+                    <span class="n">src</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">compiler_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">src</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;    out[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">expression2numba</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">compiler_names_dict</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eqs</span><span class="p">)])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="c1"># compile in python namespace</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">)</span>
+
+            <span class="c1"># compile in numba</span>
+            <span class="k">if</span> <span class="n">use_jit</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
+                                    <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">glob_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the compiled function</span>
+<span class="sd">        :param glob_time:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">event_params</span><span class="p">,</span> <span class="n">glob_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="SymbolicDerivative">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.SymbolicDerivative">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymbolicDerivative</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SymbolicFunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;func&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;index_map&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="nb">vars</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span>
+                 <span class="n">uid2idx_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                 <span class="n">diff_vars</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span>
+                 <span class="n">compiler_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">use_jit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">diff_vars</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_map</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">diff_vars</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;math&quot;</span><span class="p">:</span> <span class="n">math</span><span class="p">,</span>
+            <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+            <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="n">nb</span><span class="p">,</span>
+            <span class="s2">&quot;_heaviside&quot;</span><span class="p">:</span> <span class="n">heaviside_num</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;func&quot;</span>  <span class="c1"># since we compile into a namespace, there won&#39;t be repeated names</span>
+        <span class="c1"># Build source</span>
+        <span class="n">uid2dx_expression</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># TODO: order diff vars by order</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">(vars, lagvars, lagdx, h, out):</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">diff_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">diff_vars</span><span class="p">):</span>
+            <span class="n">base_var_uid</span> <span class="o">=</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span><span class="o">.</span><span class="n">uid</span>
+            <span class="n">uid</span> <span class="o">=</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">uid</span>
+            <span class="k">if</span> <span class="n">diff_var</span><span class="o">.</span><span class="n">diff_order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">uid2idx_vars</span><span class="p">[</span><span class="n">base_var_uid</span><span class="p">]</span>
+                <span class="n">rhs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (vars[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">] - lagvars[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]) / h</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dx_expression</span> <span class="o">=</span> <span class="n">uid2dx_expression</span><span class="p">[</span><span class="n">diff_var</span><span class="o">.</span><span class="n">base_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
+                <span class="n">rhs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (</span><span class="si">{</span><span class="n">dx_expression</span><span class="si">}</span><span class="s2">- lagdx[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]) / h</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">to_src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;    out[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">rhs</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">uid2dx_expression</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhs</span>
+
+            <span class="n">src</span> <span class="o">+=</span> <span class="n">to_src</span>
+        <span class="n">src</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    return out&quot;</span>
+        <span class="n">exec</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">)</span>
+
+        <span class="c1"># compile in python namespace</span>
+        <span class="c1"># compile in numba</span>
+        <span class="k">if</span> <span class="n">use_jit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:](</span><span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
+                                <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">xn</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the compiled function</span>
+<span class="sd">        :param x:</span>
+<span class="sd">        :param xn:</span>
+<span class="sd">        :param dx:</span>
+<span class="sd">        :param h:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="SymbolicParamsVectorInit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.compiled_functions.SymbolicParamsVectorInit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SymbolicParamsVectorInit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SymbolicFunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;func&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Expr</span><span class="p">],</span>
+                 <span class="n">compiler_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">alias_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">VARS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">TIME_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">use_jit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the array of expressions to a function that returns an array of values for those expressions</span>
+<span class="sd">        :param eqs: Iterable of expressions (Expr)</span>
+<span class="sd">        :param uid2sym_t: dictionary relating the uid of a var with its array name (i.e. var[0])</span>
+<span class="sd">        :return: Function pointer that returns an array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">used_vars_count</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">eqs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">get_expression_vars</span><span class="p">(</span><span class="n">eq</span><span class="p">):</span>
+                <span class="n">used_vars_count</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;math&quot;</span><span class="p">:</span> <span class="n">math</span><span class="p">,</span>
+                <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+                <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="n">nb</span><span class="p">,</span>
+                <span class="s2">&quot;_heaviside&quot;</span><span class="p">:</span> <span class="n">heaviside_num</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;func&quot;</span>  <span class="c1"># since we compile into a namespace, there won&#39;t be repeated names</span>
+
+            <span class="c1"># Build source</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">VARS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">EVENT_PARAMS_NAME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">TIME_NAME</span><span class="si">}</span><span class="s2">, out):</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">final_names_dict</span> <span class="o">=</span> <span class="n">compiler_names_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">used_vars_count</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">final_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+                    <span class="n">src</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">alias_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">compiler_names_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">src</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;    out[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">expression2numba</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">compiler_names_dict</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eqs</span><span class="p">)])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="c1"># compile in python namespace</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">)</span>
+
+            <span class="c1"># compile in numba</span>
+            <span class="k">if</span> <span class="n">use_jit</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
+                                    <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">event_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">glob_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the compiled function</span>
+<span class="sd">        :param glob_time:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">event_params</span><span class="p">,</span> <span class="n">glob_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

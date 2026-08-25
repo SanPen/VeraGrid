@@ -1,0 +1,62 @@
+# (A0+sA1+ssA2)/(B0+sB1+ssB2) (bypass)
+
+This is Basic Block Catalog type `197` (`(A0+sA1+ssA2)/(B0+sB1+ssB2) _bypass`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**(A0+sA1+ssA2)/(B0+sB1+ssB2) (bypass)** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Transfer Functions and Filters`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 2.
+- Configurable parameters: 6.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x1}{dt} = (A0+sA1+ssA2)/(B0+sB1+ssB2) _{bypass\_dx1}
+$$
+
+$$
+\frac{d x2}{dt} = (A0+sA1+ssA2)/(B0+sB1+ssB2) _{bypass\_dx2}
+$$
+
+$$
+0 = ((A0+sA1+ssA2)/(B0+sB1+ssB2) _{bypass\_dx1} - (proc_{selfix\_0} \cdot x2 + (1 - proc_{selfix\_0}) \cdot \frac{yi - B0 \cdot x1}{B1}))
+$$
+
+$$
+0 = ((A0+sA1+ssA2)/(B0+sB1+ssB2) _{bypass\_dx2} - (proc_{selfix\_1} \cdot \frac{yi - B0 \cdot x1 - B1 \cdot x2}{B2} + (1 - proc_{selfix\_1}) \cdot 0))
+$$
+
+$$
+0 = (yo - (A0 \cdot x1 + A1 \cdot (A0+sA1+ssA2)/(B0+sB1+ssB2) _{bypass\_dx1} + A2 \cdot (A0+sA1+ssA2)/(B0+sB1+ssB2) _{bypass\_dx2}))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `(A0+sA1+ssA2)/(B0+sB1+ssB2) _bypass__x1` | Internal dynamic state | model-dependent |
+| State | `(A0+sA1+ssA2)/(B0+sB1+ssB2) _bypass__x2` | Internal dynamic state | model-dependent |
+| Parameter | `B0` | Configurable model parameter | model-dependent |
+| Parameter | `B1` | Configurable model parameter | model-dependent |
+| Parameter | `B2` | Configurable model parameter | model-dependent |
+| Parameter | `A0` | Configurable model parameter | model-dependent |
+| Parameter | `A1` | Configurable model parameter | model-dependent |
+| Parameter | `A2` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

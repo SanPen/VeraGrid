@@ -1,0 +1,638 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Main package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.Main.SubClasses package" href="VeraGrid.Gui.Main.SubClasses.html" />
+    <link rel="prev" title="VeraGrid.Gui.Icons package" href="VeraGrid.Gui.Icons.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Main package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.Main.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-main-package">
+<h1>VeraGrid.Gui.Main package<a class="headerlink" href="#veragrid-gui-main-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html">VeraGrid.Gui.Main.SubClasses package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html">VeraGrid.Gui.Main.SubClasses.Model package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays">VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model">VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model.data_base">VeraGrid.Gui.Main.SubClasses.Model.data_base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model.diagrams">VeraGrid.Gui.Main.SubClasses.Model.diagrams module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model.scenarios">VeraGrid.Gui.Main.SubClasses.Model.scenarios module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model.time_events">VeraGrid.Gui.Main.SubClasses.Model.time_events module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Model.html#module-VeraGrid.Gui.Main.SubClasses.Model">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Results.html">VeraGrid.Gui.Main.SubClasses.Results package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Results.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Results.html#module-VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler">VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Results.html#module-VeraGrid.Gui.Main.SubClasses.Results.results">VeraGrid.Gui.Main.SubClasses.Results.results module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Results.html#module-VeraGrid.Gui.Main.SubClasses.Results">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Scripting.html">VeraGrid.Gui.Main.SubClasses.Scripting package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Scripting.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Scripting.html#module-VeraGrid.Gui.Main.SubClasses.Scripting.scripting">VeraGrid.Gui.Main.SubClasses.Scripting.scripting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Scripting.html#module-VeraGrid.Gui.Main.SubClasses.Scripting">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Server.html">VeraGrid.Gui.Main.SubClasses.Server package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Server.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Server.html#module-VeraGrid.Gui.Main.SubClasses.Server.server">VeraGrid.Gui.Main.SubClasses.Server.server module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Server.html#module-VeraGrid.Gui.Main.SubClasses.Server">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Settings.html">VeraGrid.Gui.Main.SubClasses.Settings package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Settings.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Settings.html#module-VeraGrid.Gui.Main.SubClasses.Settings.configuration">VeraGrid.Gui.Main.SubClasses.Settings.configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Settings.html#module-VeraGrid.Gui.Main.SubClasses.Settings">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#module-VeraGrid.Gui.Main.SubClasses.base_gui">VeraGrid.Gui.Main.SubClasses.base_gui module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui"><code class="docutils literal notranslate"><span class="pre">BaseMainGui</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.LOCK"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.LOCK()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.UNLOCK"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.UNLOCK()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.about_box"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.about_box()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.about_msg_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.about_msg_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.ai_backend_state"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.ai_backend_state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.ai_chat_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.ai_chat_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.ai_config_file_path"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.ai_config_file_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.ai_restore_visible"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.ai_restore_visible</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.analysis_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.analysis_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.any_thread_running"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.any_thread_running()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.apply_ai_config_data"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.apply_ai_config_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.auto_rate_branches"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.auto_rate_branches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.build_ai_config_data"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.build_ai_config_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.build_default_ai_backend_state"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.build_default_ai_backend_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.catalogue_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.catalogue_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.cgmes_selector"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.cgmes_selector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.change_circuit_base"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.change_circuit_base()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.change_circuit_name"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.change_circuit_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.circuit"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.circuit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.clear_stuff_running"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.clear_stuff_running()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.collect_memory"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.collect_memory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.contingency_checks_diag"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.contingency_checks_diag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.contingency_planner_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.contingency_planner_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.coordinates_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.coordinates_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.current_boundary_set"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.current_boundary_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.detect_transformers"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.detect_transformers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.display_grid_analysis"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.display_grid_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.ensure_ai_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.ensure_ai_dialogue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.expand_object_tree_nodes"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.expand_object_tree_nodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.file_name"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.file_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.file_selector"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.file_selector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.file_sync_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.file_sync_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.find_first_gguf_file"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.find_first_gguf_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.find_node_groups_driver"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.find_node_groups_driver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.fix_generators_active_based_on_the_power"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.fix_generators_active_based_on_the_power()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.fix_loads_active_based_on_the_power"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.fix_loads_active_based_on_the_power()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_all_objects_in_memory"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_all_objects_in_memory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_all_threads"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_all_threads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_clustering_results"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_clustering_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_db_slider_index"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_db_slider_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_diagram_slider_index"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_diagram_slider_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_preferred_engine"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_preferred_engine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_process_threads"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_process_threads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_simulation_end"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_simulation_end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_simulation_start"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_simulation_start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_simulation_threads"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_simulation_threads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.get_snapshot_circuit"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.get_snapshot_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.grid_generator_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.grid_generator_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.grid_reduction_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.grid_reduction_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.handle_ai_dialogue_visibility_changed"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.handle_ai_dialogue_visibility_changed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.initialize_contingencies"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.initialize_contingencies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.investment_checks_diag"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.investment_checks_diag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.islands"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.islands</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.load_ai_config"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.load_ai_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.models_input_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.models_input_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.multiverse"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.multiverse</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.new_se_dlg"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.new_se_dlg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.numerical_circuit"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.numerical_circuit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.object_select_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.object_select_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.open_ai_chat_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.open_ai_chat_dialogue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.procedural_grid_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.procedural_grid_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.profile_input_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.profile_input_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.psse_import_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.psse_import_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.ra_checks_diag"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.ra_checks_diag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.refresh_ai_context_if_available"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.refresh_ai_context_if_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.report_a_bug"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.report_a_bug()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.rms_model_Editor_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.rms_model_Editor_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.save_ai_config"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.save_ai_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.scenario_tree_model"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.scenario_tree_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.select_bus_dlg"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.select_bus_dlg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.session"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.set_ai_dialogue_visible"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.set_ai_dialogue_visible()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.set_cancel_state"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.set_cancel_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.setup_sim_indices"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.setup_sim_indices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.setup_time_sliders"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.setup_time_sliders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.show_error_toast"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.show_error_toast()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.show_info_toast"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.show_info_toast()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.show_logs"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.show_logs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.show_online_docs"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.show_online_docs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.show_toast"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.show_toast()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.show_warning_toast"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.show_warning_toast()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.shutdown_ai_dialogue_if_available"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.shutdown_ai_dialogue_if_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.sigma_dialogue"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.sigma_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.simulation_end_index"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.simulation_end_index</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.simulation_start_index"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.simulation_start_index</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.start_end_dialogue_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.start_end_dialogue_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.stop_all_threads"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.stop_all_threads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.stuff_running_now"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.stuff_running_now</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.sync_ai_dialogue_action_state"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.sync_ai_dialogue_action_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.tower_builder_window"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.tower_builder_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.update_date_dependent_combos"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.update_date_dependent_combos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.BaseMainGui.update_from_to_list_views"><code class="docutils literal notranslate"><span class="pre">BaseMainGui.update_from_to_list_views()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.terminate_thread"><code class="docutils literal notranslate"><span class="pre">terminate_thread()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.base_gui.traverse_objects"><code class="docutils literal notranslate"><span class="pre">traverse_objects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#module-VeraGrid.Gui.Main.SubClasses.io">VeraGrid.Gui.Main.SubClasses.io module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain"><code class="docutils literal notranslate"><span class="pre">IoMain</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.add_default_catalogue"><code class="docutils literal notranslate"><span class="pre">IoMain.add_default_catalogue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.cgmes_dialogue"><code class="docutils literal notranslate"><span class="pre">IoMain.cgmes_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.check_extension"><code class="docutils literal notranslate"><span class="pre">IoMain.check_extension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.dgs_export_dialogue"><code class="docutils literal notranslate"><span class="pre">IoMain.dgs_export_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">IoMain.dragEnterEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">IoMain.dragMoveEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.dropEvent"><code class="docutils literal notranslate"><span class="pre">IoMain.dropEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_all"><code class="docutils literal notranslate"><span class="pre">IoMain.export_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_cgmes"><code class="docutils literal notranslate"><span class="pre">IoMain.export_cgmes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_cim"><code class="docutils literal notranslate"><span class="pre">IoMain.export_cim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_circuit_differential"><code class="docutils literal notranslate"><span class="pre">IoMain.export_circuit_differential()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_contingencies"><code class="docutils literal notranslate"><span class="pre">IoMain.export_contingencies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_excel"><code class="docutils literal notranslate"><span class="pre">IoMain.export_excel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_h5"><code class="docutils literal notranslate"><span class="pre">IoMain.export_h5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_json"><code class="docutils literal notranslate"><span class="pre">IoMain.export_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_matpower"><code class="docutils literal notranslate"><span class="pre">IoMain.export_matpower()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_object_profiles"><code class="docutils literal notranslate"><span class="pre">IoMain.export_object_profiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_power_factory"><code class="docutils literal notranslate"><span class="pre">IoMain.export_power_factory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_power_grid_models"><code class="docutils literal notranslate"><span class="pre">IoMain.export_power_grid_models()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_psse"><code class="docutils literal notranslate"><span class="pre">IoMain.export_psse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_simulation_data"><code class="docutils literal notranslate"><span class="pre">IoMain.export_simulation_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_sqlite"><code class="docutils literal notranslate"><span class="pre">IoMain.export_sqlite()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.export_ucte"><code class="docutils literal notranslate"><span class="pre">IoMain.export_ucte()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.get_file_save_options"><code class="docutils literal notranslate"><span class="pre">IoMain.get_file_save_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.grid_generator"><code class="docutils literal notranslate"><span class="pre">IoMain.grid_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.import_bus_coordinates"><code class="docutils literal notranslate"><span class="pre">IoMain.import_bus_coordinates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.import_circuit"><code class="docutils literal notranslate"><span class="pre">IoMain.import_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.import_contingencies"><code class="docutils literal notranslate"><span class="pre">IoMain.import_contingencies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.install_plugin_now"><code class="docutils literal notranslate"><span class="pre">IoMain.install_plugin_now()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.load_custom_catalogue"><code class="docutils literal notranslate"><span class="pre">IoMain.load_custom_catalogue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.load_results_driver"><code class="docutils literal notranslate"><span class="pre">IoMain.load_results_driver()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.matpower_export_dialogue"><code class="docutils literal notranslate"><span class="pre">IoMain.matpower_export_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.new_project"><code class="docutils literal notranslate"><span class="pre">IoMain.new_project()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.new_project_now"><code class="docutils literal notranslate"><span class="pre">IoMain.new_project_now()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.open_file"><code class="docutils literal notranslate"><span class="pre">IoMain.open_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.open_file_now"><code class="docutils literal notranslate"><span class="pre">IoMain.open_file_now()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.open_file_threaded"><code class="docutils literal notranslate"><span class="pre">IoMain.open_file_threaded()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.post_export_all"><code class="docutils literal notranslate"><span class="pre">IoMain.post_export_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.post_file_save"><code class="docutils literal notranslate"><span class="pre">IoMain.post_file_save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.post_import_circuit"><code class="docutils literal notranslate"><span class="pre">IoMain.post_import_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.post_open_file"><code class="docutils literal notranslate"><span class="pre">IoMain.post_open_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.psse_export_dialogue"><code class="docutils literal notranslate"><span class="pre">IoMain.psse_export_dialogue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.refresh_catalogue_dependent_views"><code class="docutils literal notranslate"><span class="pre">IoMain.refresh_catalogue_dependent_views()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.rosetta_gui"><code class="docutils literal notranslate"><span class="pre">IoMain.rosetta_gui</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.save_custom_catalogue"><code class="docutils literal notranslate"><span class="pre">IoMain.save_custom_catalogue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.save_file"><code class="docutils literal notranslate"><span class="pre">IoMain.save_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.save_file_as"><code class="docutils literal notranslate"><span class="pre">IoMain.save_file_as()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.save_file_now"><code class="docutils literal notranslate"><span class="pre">IoMain.save_file_now()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.select_csv_file"><code class="docutils literal notranslate"><span class="pre">IoMain.select_csv_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.set_circuit"><code class="docutils literal notranslate"><span class="pre">IoMain.set_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">IoMain.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.io.IoMain.ucte_export_dialogue"><code class="docutils literal notranslate"><span class="pre">IoMain.ucte_export_dialogue</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#module-VeraGrid.Gui.Main.SubClasses.simulations">VeraGrid.Gui.Main.SubClasses.simulations module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain"><code class="docutils literal notranslate"><span class="pre">SimulationsMain</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.activate_clustering"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.activate_clustering()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.add_simulation"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.add_simulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.atc_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.atc_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.automatic_pf_precision"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.automatic_pf_precision()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.available_results_dict"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.available_results_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.buses_for_storage"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.buses_for_storage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.catalogue_element_optimization"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.catalogue_element_optimization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.changed_study"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.changed_study()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.clear_results"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.clear_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.contingencies_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.contingencies_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.emt_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.emt_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.emt_small_signal_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.emt_small_signal_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.fill_combinations_tree"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.fill_combinations_tree()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.fuse_devices"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.fuse_devices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_available_drivers"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_available_drivers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_catalogue_combination_tree_model"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_catalogue_combination_tree_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_compatible_from_to_buses_and_inter_branches"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_compatible_from_to_buses_and_inter_branches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_contingency_groups_matching_the_filter"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_contingency_groups_matching_the_filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_contingency_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_contingency_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_investments_combination_tree_model"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_investments_combination_tree_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_linear_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_linear_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_nodal_capacity_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_nodal_capacity_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_opf_ntc_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_opf_ntc_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_opf_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_opf_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_opf_results"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_opf_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_opf_ts_results"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_opf_ts_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_se_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_se_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_selected_emt_simulation_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_selected_emt_simulation_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_selected_emt_small_signal_stability_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_selected_emt_small_signal_stability_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_selected_power_flow_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_selected_power_flow_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_selected_rms_simulation_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_selected_rms_simulation_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_selected_rms_small_signal_stability_options"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_selected_rms_small_signal_stability_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_short_circuits_combination_tree_model"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_short_circuits_combination_tree_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_simulations"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_simulations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.get_time_indices"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.get_time_indices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.linear_pf_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.linear_pf_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.modify_contingency_filter_mode"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.modify_contingency_filter_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.modify_ui_options_according_to_the_engine"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.modify_ui_options_according_to_the_engine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.optimal_ntc_opf_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.optimal_ntc_opf_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.optimal_power_flow_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.optimal_power_flow_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_available_transfer_capacity"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_available_transfer_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_available_transfer_capacity_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_available_transfer_capacity_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_cascade"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_cascade()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_catalogue_element_optimization"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_catalogue_element_optimization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_clustering"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_clustering()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_contingency_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_contingency_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_contingency_analysis_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_contingency_analysis_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_continuation_power_flow"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_continuation_power_flow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_emt"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_emt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_emt_small_signal_stability"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_emt_small_signal_stability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_inputs_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_inputs_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_investments_evaluation"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_investments_evaluation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_linear_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_linear_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_linear_analysis_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_linear_analysis_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_nodal_capacity"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_nodal_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_opf"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_opf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_opf_ntc"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_opf_ntc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_opf_ntc_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_opf_ntc_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_opf_time_series"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_opf_time_series()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_power_flow"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_power_flow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_power_flow3ph"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_power_flow3ph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_power_flow_time_series"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_power_flow_time_series()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_reliability"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_reliability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_rms"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_rms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_rms_small_signal_stability"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_rms_small_signal_stability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_run_find_node_groups"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_run_find_node_groups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_run_remote"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_run_remote()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_short_circuit"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_short_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_state_estimation"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_state_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.post_stochastic"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.post_stochastic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.power_flow_3ph_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.power_flow_3ph_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.power_flow_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.power_flow_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.procedural_grid_expansion"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.procedural_grid_expansion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.reliability_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.reliability_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.remove_simulation"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.remove_simulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.rms_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.rms_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.rms_small_signal_dispatcher"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.rms_small_signal_dispatcher()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_available_transfer_capacity"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_available_transfer_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_available_transfer_capacity_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_available_transfer_capacity_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_clustering"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_clustering()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_contingency_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_contingency_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_contingency_analysis_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_contingency_analysis_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_continuation_power_flow"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_continuation_power_flow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_emt"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_emt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_emt_small_signal_stability"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_emt_small_signal_stability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_find_node_groups"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_find_node_groups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_inputs_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_inputs_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_investments_evaluation"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_investments_evaluation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_linear_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_linear_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_linear_analysis_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_linear_analysis_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_nodal_capacity"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_nodal_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_opf"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_opf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_opf_ntc"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_opf_ntc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_opf_ntc_ts"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_opf_ntc_ts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_opf_time_series"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_opf_time_series()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_power_flow"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_power_flow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_power_flow3ph"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_power_flow3ph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_power_flow_3ph"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_power_flow_3ph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_power_flow_time_series"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_power_flow_time_series()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_reliability"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_reliability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_remote"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_remote()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_rms"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_rms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_rms_small_signal_stability"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_rms_small_signal_stability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_short_circuit"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_short_circuit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_sigma_analysis"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_sigma_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_state_estimation"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_state_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.run_stochastic"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.run_stochastic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.storage_location"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.storage_location()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.ts_flag"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.ts_flag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.update_available_mip_solvers"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.update_available_mip_solvers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.update_available_results"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.update_available_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#VeraGrid.Gui.Main.SubClasses.simulations.SimulationsMain.valid_time_series"><code class="docutils literal notranslate"><span class="pre">SimulationsMain.valid_time_series()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.html#module-VeraGrid.Gui.Main.SubClasses">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.Main.MainWindow">
+<span id="veragrid-gui-main-mainwindow-module"></span><h2>VeraGrid.Gui.Main.MainWindow module<a class="headerlink" href="#module-VeraGrid.Gui.Main.MainWindow" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.MainWindow.Ui_mainWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.MainWindow.</span></span><span class="sig-name descname"><span class="pre">Ui_mainWindow</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/MainWindow.html#Ui_mainWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.MainWindow.Ui_mainWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.MainWindow.Ui_mainWindow.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mainWindow</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/MainWindow.html#Ui_mainWindow.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.MainWindow.Ui_mainWindow.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.MainWindow.Ui_mainWindow.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mainWindow</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/MainWindow.html#Ui_mainWindow.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.MainWindow.Ui_mainWindow.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Main.VeraGridMain">
+<span id="veragrid-gui-main-veragridmain-module"></span><h2>VeraGrid.Gui.Main.VeraGridMain module<a class="headerlink" href="#module-VeraGrid.Gui.Main.VeraGridMain" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.VeraGridMain.</span></span><span class="sig-name descname"><span class="pre">VeraGridMainGUI</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#VeraGridMainGUI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Main.SubClasses.Scripting.html#VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain" title="VeraGrid.Gui.Main.SubClasses.Scripting.scripting.ScriptingMain"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScriptingMain</span></code></a></p>
+<p>MainGUI</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QCloseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#VeraGridMainGUI.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Close event
+:param event:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.global_delete">
+<span class="sig-name descname"><span class="pre">global_delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#VeraGridMainGUI.global_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.global_delete" title="Link to this definition"></a></dt>
+<dd><p>Function to dispatch what to do when [supr] is pressed
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.load_all_config">
+<span class="sig-name descname"><span class="pre">load_all_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#VeraGridMainGUI.load_all_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.load_all_config" title="Link to this definition"></a></dt>
+<dd><p>Load all configuration files needed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.save_all_config">
+<span class="sig-name descname"><span class="pre">save_all_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#VeraGridMainGUI.save_all_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.save_all_config" title="Link to this definition"></a></dt>
+<dd><p>Save all configuration files needed</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;VeraGridMainGUI&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;ScriptingMain&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.VeraGridMainGUI.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.check_all_svgs">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.VeraGridMain.</span></span><span class="sig-name descname"><span class="pre">check_all_svgs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#check_all_svgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.check_all_svgs" title="Link to this definition"></a></dt>
+<dd><p>Iterate through all resources registered by icons_rc and check SVG validity.
+:returns: if any icon has errors</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.create_linux_desktop_entry">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.VeraGridMain.</span></span><span class="sig-name descname"><span class="pre">create_linux_desktop_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qrc_icon_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#create_linux_desktop_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.create_linux_desktop_entry" title="Link to this definition"></a></dt>
+<dd><p>Create a .desktop entry for a PySide app using a resource icon (“:/path/to/icon.svg”).</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>app_name<span class="classifier">str</span></dt><dd><p>Name of the application (also used for StartupWMClass).</p>
+</dd>
+<dt>qrc_icon_path<span class="classifier">str</span></dt><dd><p>Path to the icon inside the .qrc (e.g. ‘:/icons/app_icon.svg’)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.VeraGridMain.runVeraGrid">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.VeraGridMain.</span></span><span class="sig-name descname"><span class="pre">runVeraGrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/VeraGridMain.html#runVeraGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.VeraGridMain.runVeraGrid" title="Link to this definition"></a></dt>
+<dd><p>Main function to run the GUI
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Main.object_select_window">
+<span id="veragrid-gui-main-object-select-window-module"></span><h2>VeraGrid.Gui.Main.object_select_window module<a class="headerlink" href="#module-VeraGrid.Gui.Main.object_select_window" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.ListSelectWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.object_select_window.</span></span><span class="sig-name descname"><span class="pre">ListSelectWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/object_select_window.html#ListSelectWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.ListSelectWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.ListSelectWindow.dbl_clicked">
+<span class="sig-name descname"><span class="pre">dbl_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qmodelindex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/object_select_window.html#ListSelectWindow.dbl_clicked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.ListSelectWindow.dbl_clicked" title="Link to this definition"></a></dt>
+<dd><p>Double clicked selection
+:param qmodelindex:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.ListSelectWindow.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ListSelectWindow&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.ListSelectWindow.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.ObjectSelectWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.object_select_window.</span></span><span class="sig-name descname"><span class="pre">ObjectSelectWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/object_select_window.html#ObjectSelectWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.ObjectSelectWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.ObjectSelectWindow.dbl_clicked">
+<span class="sig-name descname"><span class="pre">dbl_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qmodelindex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/object_select_window.html#ObjectSelectWindow.dbl_clicked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.ObjectSelectWindow.dbl_clicked" title="Link to this definition"></a></dt>
+<dd><p>Double clicked selection
+:param qmodelindex:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.ObjectSelectWindow.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ObjectSelectWindow&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.ObjectSelectWindow.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Main.object_select_window.SampleObject">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Main.object_select_window.</span></span><span class="sig-name descname"><span class="pre">SampleObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Main/object_select_window.html#SampleObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Main.object_select_window.SampleObject" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Main.update_gui_file">
+<span id="veragrid-gui-main-update-gui-file-module"></span><h2>VeraGrid.Gui.Main.update_gui_file module<a class="headerlink" href="#module-VeraGrid.Gui.Main.update_gui_file" title="Link to this heading"></a></h2>
+<p>Script to update correctly the main GUI (.py) file from the Qt design (.ui) file</p>
+</section>
+<section id="module-VeraGrid.Gui.Main">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.Main" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.Icons.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.Icons package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.Main.SubClasses.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.Main.SubClasses package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

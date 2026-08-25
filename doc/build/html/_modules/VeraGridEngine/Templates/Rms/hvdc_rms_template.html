@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Rms.hvdc_rms_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Rms.hvdc_rms_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Rms.hvdc_rms_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">tf_to_block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.hvdc_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">HvdcLine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">HvdcControlType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+
+<div class="viewcode-block" id="HvdcRmsTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.hvdc_rms_template.HvdcRmsTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HvdcRmsTemplate</span><span class="p">(</span><span class="n">RmsModelTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RMS Template for HVDC Line with fixed power setpoint control.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;tpe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_block&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span> <span class="n">hvdc</span><span class="p">:</span> <span class="n">HvdcLine</span><span class="p">,</span> <span class="n">hvdc_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hvdc_rms_template&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the RMS Template of an HVDC Line</span>
+<span class="sd">        </span>
+<span class="sd">        :param nc: NumericalCircuit with compiled data</span>
+<span class="sd">        :param hvdc: HVDC Line device</span>
+<span class="sd">        :param hvdc_idx: Index of the HVDC in nc.hvdc_data</span>
+<span class="sd">        :param vf: VarFactory for creating symbolic variables</span>
+<span class="sd">        :param name: Name of the RMS Model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">HVDCLineDevice</span> 
+
+        <span class="k">if</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+            <span class="c1"># Create algebraic variables for power flow</span>
+            <span class="n">Pf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pf&quot;</span><span class="p">)</span>
+            <span class="n">Pt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pt&quot;</span><span class="p">)</span>
+            <span class="n">Qf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Qf&quot;</span><span class="p">)</span>
+            <span class="n">Qt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Qt&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Get voltage magnitude references from connected buses</span>
+            <span class="c1"># These are symbolic variables linked to bus voltages via .E()</span>
+            <span class="n">Vmf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vmf&quot;</span><span class="p">)</span>
+            <span class="n">Vaf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vaf&quot;</span><span class="p">)</span>
+            <span class="n">Vmt</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vmt&quot;</span><span class="p">)</span>
+            <span class="n">Vat</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vat&quot;</span><span class="p">)</span>
+            
+            <span class="c1">#Parameters</span>
+            <span class="n">Ti</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ti&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+            <span class="n">Tr</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Tr&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+            <span class="n">Ki</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ki&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+            <span class="n">Kp</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Kp&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+            <span class="n">vdc_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;vdc_ref&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+            <span class="n">vac_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;vac_ref&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+            <span class="n">gamma_ref</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;gamma_ref&#39;</span><span class="p">)</span>  <span class="c1"># Time constant for control dynamics</span>
+
+            <span class="c1">#We initialize parameters</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+                <span class="n">vac_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">hvdc</span><span class="o">.</span><span class="n">Vset_f</span><span class="p">),</span>
+                <span class="n">vdc_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">hvdc</span><span class="o">.</span><span class="n">dc_link_voltage</span><span class="p">),</span>
+                <span class="n">gamma_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+                <span class="n">Ti</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>    <span class="c1"># Time constant for DC voltage control (s)</span>
+                <span class="n">Tr</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>    <span class="c1"># Time constant for AC voltage control (s)</span>
+                <span class="n">Ki</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>     <span class="c1"># Integral gain for PI controller</span>
+                <span class="n">Kp</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>     <span class="c1"># Proportional gain for PI controller</span>
+            <span class="p">}</span>
+            <span class="c1">#Internal HVDC states</span>
+            <span class="n">pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+            <span class="n">phi_f</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;phi_h&quot;</span><span class="p">)</span>  <span class="c1">#Phase for reactive power control</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;alpha&quot;</span><span class="p">)</span>  <span class="c1"># Firing angle for reactive power control</span>
+            <span class="n">gamma</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gamma&quot;</span><span class="p">)</span>  <span class="c1"># Firing angle for reactive power control</span>
+            <span class="n">phi_t</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;phi_t&quot;</span><span class="p">)</span>  <span class="c1">#Phase for reactive power control</span>
+            <span class="n">ir_dc</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ir_dc&quot;</span><span class="p">)</span>  <span class="c1"># DC current variable</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.9995</span><span class="o">*</span><span class="mi">3</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">K_droop</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># Droop gain for frequency control</span>
+            
+            <span class="n">x_r</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m_f&quot;</span><span class="p">)</span>  <span class="c1"># Tap for from side (rectifier control)</span>
+            <span class="n">x_i</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m_t&quot;</span><span class="p">)</span>  <span class="c1"># Tap for to side (inverter control)</span>
+            <span class="n">ii_dc</span> <span class="o">=</span> <span class="n">ir_dc</span>
+            <span class="n">m_f</span> <span class="o">=</span> <span class="n">x_r</span>  
+            <span class="n">m_t</span> <span class="o">=</span> <span class="n">x_i</span> 
+
+            <span class="n">r</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="n">hvdc_idx</span><span class="p">])</span>  
+            <span class="n">vr_dc</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">m_f</span><span class="o">*</span><span class="n">Vmf</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_f</span><span class="p">)</span>
+            <span class="n">vi_dc</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">m_t</span><span class="o">*</span><span class="n">Vmt</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_t</span><span class="p">)</span>
+            <span class="n">P_loss</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="p">(</span><span class="n">Pf</span><span class="o">/</span><span class="n">Vmf</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+            <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+                <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">Qf</span><span class="p">,</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">phi_f</span><span class="p">,</span> <span class="n">phi_t</span><span class="p">,</span> <span class="n">ir_dc</span><span class="p">],</span>
+                <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+                    <span class="n">Pf</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">vr_dc</span><span class="o">*</span><span class="n">ir_dc</span><span class="p">),</span>
+                    <span class="n">Qf</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">m_f</span><span class="o">*</span><span class="n">Vmf</span><span class="o">*</span><span class="n">ir_dc</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_f</span><span class="p">)),</span>
+                    <span class="n">k</span><span class="o">*</span><span class="n">m_f</span><span class="o">*</span><span class="n">Vmt</span><span class="o">*</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">phi_f</span><span class="p">))</span> <span class="o">-</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">x_r</span><span class="o">*</span><span class="n">ir_dc</span><span class="p">,</span>
+                    <span class="n">Pt</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">vi_dc</span><span class="o">*</span><span class="n">ii_dc</span><span class="p">),</span>
+                    <span class="n">Qt</span> <span class="o">-</span> <span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">m_t</span><span class="o">*</span><span class="n">Vmt</span><span class="o">*</span><span class="n">ii_dc</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_t</span><span class="p">)),</span>
+                    <span class="n">k</span><span class="o">*</span><span class="n">m_t</span><span class="o">*</span><span class="n">Vmt</span><span class="o">*</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="n">gamma</span><span class="p">)</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">phi_t</span><span class="p">))</span> <span class="o">-</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">x_i</span><span class="o">*</span><span class="n">ii_dc</span><span class="p">,</span>
+                    <span class="n">gamma</span> <span class="o">-</span> <span class="n">gamma_ref</span><span class="p">,</span>
+                    <span class="n">Pf</span> <span class="o">+</span> <span class="n">P_loss</span> <span class="o">-</span> <span class="n">Pt</span><span class="p">,</span>
+
+                <span class="p">],</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+                <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="n">phi_f</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># Initial phase for reactive power control</span>
+                    <span class="n">phi_t</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># Initial phase for reactive power control</span>
+                    <span class="n">alpha</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># Initial firing angle</span>
+                    <span class="n">gamma</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># Initial firing angle</span>
+                    <span class="n">ir_dc</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">hvdc</span><span class="o">.</span><span class="n">Pset</span><span class="o">/</span><span class="n">hvdc</span><span class="o">.</span><span class="n">dc_link_voltage</span><span class="p">),</span>  <span class="c1"># Initial DC current based on power setpoint and voltage</span>
+                    <span class="n">gamma_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Initial reference for gamma (can be adjusted based on control mode)</span>
+                <span class="p">},</span>
+                <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Vmf</span><span class="p">,</span> <span class="n">Vaf</span><span class="p">,</span> <span class="n">Vmt</span><span class="p">,</span> <span class="n">Vat</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_0_free</span><span class="p">:</span>
+                <span class="n">Pdc_ref</span> <span class="o">=</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">Pset</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">+</span> <span class="n">K_droop</span><span class="o">*</span><span class="p">(</span><span class="n">Vaf</span> <span class="o">-</span> <span class="n">Vat</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">HvdcControlType</span><span class="o">.</span><span class="n">type_1_Pset</span><span class="p">:</span>
+                <span class="n">Pdc_ref</span> <span class="o">=</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">Pset</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Default to Pset mode</span>
+                <span class="n">Pdc_ref</span> <span class="o">=</span> <span class="n">hvdc</span><span class="o">.</span><span class="n">Pset</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="n">idc_ref</span> <span class="o">=</span> <span class="n">Pdc_ref</span><span class="o">/</span><span class="n">vdc_ref</span>
+
+            <span class="n">control_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+                <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">x_i</span><span class="p">,</span> <span class="n">x_r</span><span class="p">],</span>
+                <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="n">vdc_ref</span> <span class="o">-</span> <span class="n">vi_dc</span><span class="p">)</span><span class="o">/</span><span class="n">Ti</span><span class="p">,</span>      <span class="c1"># dx_i/dt: DC voltage control (inverter side)</span>
+                    <span class="p">(</span><span class="n">Vmf</span> <span class="o">-</span> <span class="n">vac_ref</span><span class="p">)</span><span class="o">/</span><span class="n">Tr</span><span class="p">,</span>        <span class="c1"># dx_r/dt: AC voltage control (rectifier side)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">PI_block</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tf_to_block</span><span class="p">(</span>
+                <span class="n">var_factory</span> <span class="o">=</span> <span class="n">vf</span><span class="p">,</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">idc_ref</span> <span class="o">-</span> <span class="n">ir_dc</span><span class="p">,</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">,</span>
+                <span class="n">num</span><span class="o">=</span><span class="p">[</span><span class="n">Ki</span><span class="p">,</span> <span class="n">Kp</span><span class="p">],</span>
+                <span class="n">den</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">control_block</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PI_block</span><span class="p">)</span>
+
+            <span class="c1"># External mapping for power flow references</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">:</span> <span class="n">Pf</span><span class="p">,</span>
+                <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">:</span> <span class="n">Pt</span><span class="p">,</span>
+                <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qf</span><span class="p">:</span> <span class="n">Qf</span><span class="p">,</span>
+                <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">:</span> <span class="n">Qt</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">unify_blocks</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_block</span> <span class="o">=</span> <span class="n">block</span></div>
+
+
+
+<div class="viewcode-block" id="initialize_hvdc_rms">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.hvdc_rms_template.initialize_hvdc_rms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_hvdc_rms</span><span class="p">(</span><span class="n">hvdc</span><span class="p">:</span> <span class="n">HvdcLine</span><span class="p">,</span> <span class="n">hvdc_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the RMS model for an HVDC Line</span>
+<span class="sd">    </span>
+<span class="sd">    :param hvdc: HVDC Line device</span>
+<span class="sd">    :param hvdc_idx: Index of the HVDC in nc.hvdc_data</span>
+<span class="sd">    :param vf: VarFactory</span>
+<span class="sd">    :param nc: NumericalCircuit with compiled data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hvdc</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">HvdcRmsTemplate</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">hvdc</span><span class="o">=</span><span class="n">hvdc</span><span class="p">,</span> <span class="n">hvdc_idx</span><span class="o">=</span><span class="n">hvdc_idx</span><span class="p">,</span> <span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">)</span><span class="o">.</span><span class="n">block</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

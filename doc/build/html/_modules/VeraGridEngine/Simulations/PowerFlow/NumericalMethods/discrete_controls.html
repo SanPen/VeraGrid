@@ -1,0 +1,799 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.admittance_matrices</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdmittanceMatrices</span><span class="p">,</span> <span class="n">AdmittanceMatricesFast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BusMode</span><span class="p">,</span> <span class="n">ShuntControlMode</span><span class="p">,</span> <span class="n">GeneratorControlMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">CxVec</span>
+
+
+<div class="viewcode-block" id="get_q_increment">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.get_q_increment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_q_increment</span><span class="p">(</span><span class="n">V1</span><span class="p">,</span> <span class="n">V2</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logistic function to get the Q increment gain using the difference</span>
+<span class="sd">    between the current voltage (V1) and the target voltage (V2).</span>
+
+<span class="sd">    The gain varies between 0 (at V1 = V2) and inf (at V2 - V1 = inf).</span>
+
+<span class="sd">    The default steepness factor k was set through trial an error. Other values may</span>
+<span class="sd">    be specified as a :ref:`PowerFlowOptions&lt;pf_options&gt;`.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">        **V1** (float): Current voltage</span>
+
+<span class="sd">        **V2** (float): Target voltage</span>
+
+<span class="sd">        **k** (float, 30): Steepness factor</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        Q increment gain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V2</span> <span class="o">-</span> <span class="n">V1</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="control_q_direct">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.control_q_direct">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">control_q_direct</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">Vset</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">original_types</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change the buses type in order to control the generators reactive power.</span>
+<span class="sd">    :param V: Array of complex voltages</span>
+<span class="sd">    :param Vm: Array of voltage modules (for speed)</span>
+<span class="sd">    :param Vset: array of voltage Set points</span>
+<span class="sd">    :param Q: Array of reactive power values per bus</span>
+<span class="sd">    :param Qmax: Array of Qmax per bus</span>
+<span class="sd">    :param Qmin: Array of Qmin per bus</span>
+<span class="sd">    :param types: Array of bus types</span>
+<span class="sd">    :param original_types: Array of original bus types</span>
+<span class="sd">    :param verbose: More info?</span>
+<span class="sd">    :return:</span>
+<span class="sd">            **Vnew** (list): New voltage values</span>
+
+<span class="sd">            **Qnew** (list): New reactive power values</span>
+
+<span class="sd">            **types_new** (list): Modified types array</span>
+
+<span class="sd">            **any_control_issue** (bool): Was there any control issue?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logic:</span>
+
+<span class="sd">    ON PV-PQ BUS TYPE SWITCHING LOGIC IN POWER FLOW COMPUTATION</span>
+<span class="sd">    Jinquan Zhao</span>
+
+<span class="sd">    1) Bus i is a PQ bus in the previous iteration and its</span>
+<span class="sd">       reactive power was fixed at its lower limit:</span>
+
+<span class="sd">        If its voltage magnitude Vi ≥ Viset, then</span>
+
+<span class="sd">            it is still a PQ bus at current iteration and set Qi = Qimin .</span>
+
+<span class="sd">            If Vi &lt; Viset , then</span>
+
+<span class="sd">                compare Qi with the upper and lower limits.</span>
+
+<span class="sd">                If Qi ≥ Qimax , then</span>
+<span class="sd">                    it is still a PQ bus but set Qi = Qimax .</span>
+<span class="sd">                If Qi ≤ Qimin , then</span>
+<span class="sd">                    it is still a PQ bus and set Qi = Qimin .</span>
+<span class="sd">                If Qimin &lt; Qi &lt; Qi max , then</span>
+<span class="sd">                    it is switched to PV bus, set Vinew = Viset.</span>
+
+<span class="sd">    2) Bus i is a PQ bus in the previous iteration and</span>
+<span class="sd">       its reactive power was fixed at its upper limit:</span>
+
+<span class="sd">        If its voltage magnitude Vi ≤ Viset , then:</span>
+<span class="sd">            bus i still a PQ bus and set Q i = Q i max.</span>
+
+<span class="sd">            If Vi &gt; Viset , then</span>
+
+<span class="sd">                Compare between Qi and its upper/lower limits</span>
+
+<span class="sd">                If Qi ≥ Qimax , then</span>
+<span class="sd">                    it is still a PQ bus and set Q i = Qimax .</span>
+<span class="sd">                If Qi ≤ Qimin , then</span>
+<span class="sd">                    it is still a PQ bus but let Qi = Qimin in current iteration.</span>
+<span class="sd">                If Qimin &lt; Qi &lt; Qimax , then</span>
+<span class="sd">                    it is switched to PV bus and set Vinew = Viset</span>
+
+<span class="sd">    3) Bus i is a PV bus in the previous iteration.</span>
+
+<span class="sd">        Compare Q i with its upper and lower limits.</span>
+
+<span class="sd">        If Qi ≥ Qimax , then</span>
+<span class="sd">            it is switched to PQ and set Qi = Qimax .</span>
+<span class="sd">        If Qi ≤ Qimin , then</span>
+<span class="sd">            it is switched to PQ and set Qi = Qimin .</span>
+<span class="sd">        If Qi min &lt; Qi &lt; Qimax , then</span>
+<span class="sd">            it is still a PV bus.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Q control logic (fast)&#39;</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">Qnew</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Vnew</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">types_new</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">any_control_issue</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">elif</span> <span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="n">original_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PV_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">Vm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">Vset</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+
+                <span class="k">if</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>  <span class="c1"># it is still a PQ bus but set Q = Qmax .</span>
+                    <span class="n">Qnew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="k">elif</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>  <span class="c1"># it is still a PQ bus and set Q = Qmin .</span>
+                    <span class="n">Qnew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># switch back to PV, set Vnew = Vset.</span>
+
+                    <span class="n">types_new</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PV_tpe</span><span class="o">.</span><span class="n">value</span>
+                    <span class="n">Vnew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">Vset</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Bus&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;switched back to PV&#39;</span><span class="p">)</span>
+
+                <span class="n">any_control_issue</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># The voltages are equal</span>
+
+        <span class="k">elif</span> <span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PV_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>  <span class="c1"># it is switched to PQ and set Q = Qmax .</span>
+
+                <span class="n">types_new</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">Qnew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">any_control_issue</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Bus&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;switched to PQ: Q&#39;</span><span class="p">,</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; Qmax:&#39;</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>  <span class="c1"># it is switched to PQ and set Q = Qmin .</span>
+
+                <span class="n">types_new</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">Qnew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">any_control_issue</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Bus&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;switched to PQ: Q&#39;</span><span class="p">,</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; Qmin:&#39;</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># it is still a PV bus.</span>
+                <span class="k">pass</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">Vnew</span><span class="p">,</span> <span class="n">Qnew</span><span class="p">,</span> <span class="n">types_new</span><span class="p">,</span> <span class="n">any_control_issue</span></div>
+
+
+
+<div class="viewcode-block" id="control_q_inside_method">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.control_q_inside_method">[docs]</a>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">control_q_inside_method</span><span class="p">(</span><span class="n">Scalc</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                            <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pqv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">Qmin</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">:</span> <span class="n">Vec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Control of reactive power within the numerical method</span>
+<span class="sd">    :param Scalc: Calculated power array (changed inside)</span>
+<span class="sd">    :param S0: Specified power array (changed inside)</span>
+<span class="sd">    :param pv: array of pv bus indices (changed inside)</span>
+<span class="sd">    :param pq: array of pq bus indices (changed inside)</span>
+<span class="sd">    :param pqv: array of pqv bus indices (changed inside)</span>
+<span class="sd">    :param p: array of p bus indices (changed inside)</span>
+<span class="sd">    :param Qmin: Array of lower reactive power limits per bus in p.u.</span>
+<span class="sd">    :param Qmax: Array of upper reactive power limits per bus in p.u.</span>
+<span class="sd">    :return: any change?, Scalc, Sbus, pv, pq, pqv, p</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pv_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pv</span><span class="p">):</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">Scalc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+        <span class="k">if</span> <span class="n">Q</span> <span class="o">&gt;</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">changed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">pv_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Q</span> <span class="o">&lt;</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">changed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">pv_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># convert PV nodes to PQ</span>
+        <span class="n">pq_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span>
+        <span class="n">pq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pq</span><span class="p">,</span> <span class="n">pq_new</span><span class="p">))</span>
+        <span class="n">pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span> <span class="n">pv_indices</span><span class="p">)</span>
+        <span class="n">pq</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">changed</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">,</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="control_discrete_shunts">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.control_discrete_shunts">[docs]</a>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">control_discrete_shunts</span><span class="p">(</span><span class="n">Vm</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                            <span class="n">shunt_discrete_ctrl_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">shunt_discrete_bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">shunt_discrete_vmax</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                            <span class="n">shunt_discrete_vmin</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                            <span class="n">shunt_step</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">shunt_g_steps</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                            <span class="n">shunt_b_steps</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                            <span class="n">shunt_n_steps</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                            <span class="n">sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Control discrete shunts within the numerical method.</span>
+<span class="sd">    The sparse Ybus diagonal update is returned to the caller and applied outside numba.</span>
+<span class="sd">    :param Vm: Voltage module array.</span>
+<span class="sd">    :param shunt_discrete_ctrl_idx: Array of controlled shunt indices in the full shunt arrays.</span>
+<span class="sd">    :param shunt_discrete_bus_idx: Array of bus indices for the controlled shunts.</span>
+<span class="sd">    :param shunt_discrete_vmax: Array of upper voltage bounds for the controlled shunts.</span>
+<span class="sd">    :param shunt_discrete_vmin: Array of lower voltage bounds for the controlled shunts.</span>
+<span class="sd">    :param shunt_step: Array of current shunt steps in the full shunt arrays (changed inside).</span>
+<span class="sd">    :param shunt_g_steps: Packed cumulative G steps for the controlled shunts.</span>
+<span class="sd">    :param shunt_b_steps: Packed cumulative B steps for the controlled shunts.</span>
+<span class="sd">    :param shunt_n_steps: Number of valid steps for each controlled shunt.</span>
+<span class="sd">    :param sbase: Base power.</span>
+<span class="sd">    :return: changed bus indices, Ybus diagonal increments, number of changed shunts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_ctrl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shunt_discrete_ctrl_idx</span><span class="p">)</span>
+    <span class="n">changed_bus_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_ctrl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">changed_delta_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_ctrl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">n_changed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">ctrl_k</span><span class="p">,</span> <span class="n">sh_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shunt_discrete_ctrl_idx</span><span class="p">):</span>
+        <span class="n">bus_i</span> <span class="o">=</span> <span class="n">shunt_discrete_bus_idx</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">]</span>
+        <span class="n">step_i</span> <span class="o">=</span> <span class="n">shunt_step</span><span class="p">[</span><span class="n">sh_i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">Vm</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">shunt_discrete_vmax</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">]:</span>
+            <span class="c1"># decrease B</span>
+            <span class="k">if</span> <span class="n">step_i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">prev_g</span> <span class="o">=</span> <span class="n">shunt_g_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">prev_b</span> <span class="o">=</span> <span class="n">shunt_b_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">step_i</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">shunt_step</span><span class="p">[</span><span class="n">sh_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_i</span>
+                <span class="n">g</span> <span class="o">=</span> <span class="n">prev_g</span> <span class="o">-</span> <span class="n">shunt_g_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">prev_b</span> <span class="o">-</span> <span class="n">shunt_b_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">changed_bus_idx</span><span class="p">[</span><span class="n">n_changed</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus_i</span>
+                <span class="n">changed_delta_y</span><span class="p">[</span><span class="n">n_changed</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="nb">complex</span><span class="p">(</span><span class="n">prev_g</span><span class="p">,</span> <span class="n">prev_b</span><span class="p">))</span>
+                <span class="n">n_changed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">elif</span> <span class="n">Vm</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">shunt_discrete_vmin</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">]:</span>
+            <span class="c1"># increase B</span>
+            <span class="k">if</span> <span class="n">step_i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">shunt_n_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">prev_g</span> <span class="o">=</span> <span class="n">shunt_g_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">prev_b</span> <span class="o">=</span> <span class="n">shunt_b_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">step_i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">shunt_step</span><span class="p">[</span><span class="n">sh_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_i</span>
+                <span class="n">g</span> <span class="o">=</span> <span class="n">prev_g</span> <span class="o">+</span> <span class="n">shunt_g_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">prev_b</span> <span class="o">+</span> <span class="n">shunt_b_steps</span><span class="p">[</span><span class="n">ctrl_k</span><span class="p">,</span> <span class="n">step_i</span><span class="p">]</span> <span class="o">/</span> <span class="n">sbase</span>
+                <span class="n">changed_bus_idx</span><span class="p">[</span><span class="n">n_changed</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus_i</span>
+                <span class="n">changed_delta_y</span><span class="p">[</span><span class="n">n_changed</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="nb">complex</span><span class="p">(</span><span class="n">prev_g</span><span class="p">,</span> <span class="n">prev_b</span><span class="p">))</span>
+                <span class="n">n_changed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># within boundaries</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">changed_bus_idx</span><span class="p">,</span> <span class="n">changed_delta_y</span><span class="p">,</span> <span class="n">n_changed</span></div>
+
+
+
+<div class="viewcode-block" id="control_q_for_generalized_method">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.control_q_for_generalized_method">[docs]</a>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">control_q_for_generalized_method</span><span class="p">(</span><span class="n">Scalc</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                                     <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">i_u_vm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">i_k_q</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                                     <span class="n">Qmin</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">:</span> <span class="n">Vec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Control of reactive power within the numerical method</span>
+<span class="sd">    Assume we only want to change regular PV buses to PQ buses (as in the conventional method)</span>
+<span class="sd">    :param Scalc: Calculated power array (changed inside)</span>
+<span class="sd">    :param S0: Specified power array (changed inside)</span>
+<span class="sd">    :param pv: array of pv bus indices (changed inside)</span>
+<span class="sd">    :param i_u_vm: array of buses with unknown Vm (changed inside)</span>
+<span class="sd">    :param i_k_q: array of buses with known Q (changed inside)</span>
+<span class="sd">    :param Qmin: Array of lower bus reactive power limits per bus in p.u.</span>
+<span class="sd">    :param Qmax: Array of upper bus reactive power limits per bus in p.u.</span>
+<span class="sd">    :return: list of changed buses, i_u_vm, i_k_q</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pv</span><span class="p">):</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">Scalc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+        <span class="k">if</span> <span class="n">Q</span> <span class="o">&gt;</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">Qmax</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">changed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Q</span> <span class="o">&lt;</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">S0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">Qmin</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">changed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># convert PV nodes to PQ</span>
+        <span class="c1"># we are able to avoid deletions</span>
+        <span class="n">vm_to_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span>
+        <span class="n">i_k_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">i_k_q</span><span class="p">,</span> <span class="n">vm_to_q</span><span class="p">))</span>
+        <span class="n">i_u_vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">i_u_vm</span><span class="p">,</span> <span class="n">vm_to_q</span><span class="p">))</span>
+        <span class="n">i_k_q</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">i_u_vm</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">changed</span><span class="p">,</span> <span class="n">i_u_vm</span><span class="p">,</span> <span class="n">i_k_q</span></div>
+
+
+
+<div class="viewcode-block" id="update_qv_droop_generators">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.update_qv_droop_generators">[docs]</a>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_qv_droop_generators</span><span class="p">(</span><span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                               <span class="n">Q0</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">generator_q</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">qv_droop_bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                               <span class="n">qv_droop_gen_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                               <span class="n">generator_bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                               <span class="n">generator_k_droop</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">generator_dead_band</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">generator_v</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">generator_qmin</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">generator_qmax</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                               <span class="n">Vm</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update generators with QV droop control within the numerical method.</span>
+<span class="sd">    :param S0: Specified power array (changed inside).</span>
+<span class="sd">    :param Q0: Initial specified reactive power per bus.</span>
+<span class="sd">    :param generator_q: Reactive power per generator (changed inside).</span>
+<span class="sd">    :param qv_droop_bus_idx: Buses hosting QV droop generators.</span>
+<span class="sd">    :param qv_droop_gen_idx: Generator indices with QV droop control.</span>
+<span class="sd">    :param generator_bus_idx: Generator-to-bus map.</span>
+<span class="sd">    :param generator_k_droop: Generator droop gain.</span>
+<span class="sd">    :param generator_dead_band: Generator dead-band.</span>
+<span class="sd">    :param generator_v: Generator voltage set point.</span>
+<span class="sd">    :param generator_qmax: Generator reactive power upper limit (p.u.).</span>
+<span class="sd">    :param generator_qmin: Generator reactive power lower limit (p.u.).</span>
+<span class="sd">    :param Vm: Voltage module array.</span>
+<span class="sd">    :return: Was there any change?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">any_change</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># initialize</span>
+    <span class="n">S0</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">qv_droop_bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q0</span><span class="p">[</span><span class="n">qv_droop_bus_idx</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">qv_droop_gen_idx</span><span class="p">:</span>
+        <span class="n">bus_i</span> <span class="o">=</span> <span class="n">generator_bus_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">k_droop</span> <span class="o">=</span> <span class="n">generator_k_droop</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">generator_dead_band</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">dV</span> <span class="o">=</span> <span class="n">generator_v</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">Vm</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dV</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">db</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dV</span> <span class="o">&gt;</span> <span class="n">db</span><span class="p">:</span>
+                <span class="n">any_change</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dV</span> <span class="o">-</span> <span class="n">db</span><span class="p">)</span> <span class="o">*</span> <span class="n">k_droop</span> <span class="o">*</span> <span class="n">generator_qmax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">generator_qmax</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator_qmax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">generator_qmin</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator_qmin</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="n">S0</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">dV</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">db</span><span class="p">:</span>
+                <span class="n">any_change</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dV</span> <span class="o">+</span> <span class="n">db</span><span class="p">)</span> <span class="o">*</span> <span class="n">k_droop</span> <span class="o">*</span> <span class="n">generator_qmax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">generator_qmax</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator_qmax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">generator_qmin</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator_qmin</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                <span class="n">S0</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">generator_q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">any_change</span></div>
+
+
+
+<div class="viewcode-block" id="DiscreteShuntControlState">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.DiscreteShuntControlState">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscreteShuntControlState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Python-side state holder for discrete shunt controls.</span>
+
+<span class="sd">    The packed arrays owned by this class are consumed by the Numba kernel so</span>
+<span class="sd">    the formulations only need to keep a lightweight wrapper object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_sbase&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_discrete_ctrl_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_step&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_discrete_bus_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_discrete_vmax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_discrete_vmin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_g_steps&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_b_steps&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_shunt_n_steps&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the discrete shunt control state.</span>
+
+<span class="sd">        :param nc: Numerical circuit hosting the shunt control data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_shunt_steps</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">n_discrete_shunts</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">sh_i</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">g_steps</span><span class="p">:</span> <span class="n">IntVec</span>
+        <span class="n">b_steps</span><span class="p">:</span> <span class="n">IntVec</span>
+        <span class="n">n_steps</span><span class="p">:</span> <span class="nb">int</span>
+
+        <span class="c1"># Store the base power once because all shunt increments are normalized by it.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sbase</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+
+        <span class="c1"># Select only the shunts that participate in discrete control.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">control_mode_int</span> <span class="o">==</span> <span class="n">ShuntControlMode</span><span class="o">.</span><span class="n">Discrete</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Copy the mutable step vector so the solver state remains local to the formulation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_step</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">step</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_bus_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_vmax</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_vmin</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">vmin</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Pack the ragged cumulative shunt step arrays into a dense layout once</span>
+        <span class="c1"># so the compiled kernel never touches Python objects during the solve.</span>
+        <span class="n">max_shunt_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">sh_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">:</span>
+            <span class="n">max_shunt_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_shunt_steps</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">b_steps</span><span class="p">[</span><span class="n">sh_i</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">n_discrete_shunts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_g_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_discrete_shunts</span><span class="p">,</span> <span class="n">max_shunt_steps</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_b_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_discrete_shunts</span><span class="p">,</span> <span class="n">max_shunt_steps</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_n_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_discrete_shunts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">sh_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">):</span>
+            <span class="n">g_steps</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">g_steps</span><span class="p">[</span><span class="n">sh_i</span><span class="p">]</span>
+            <span class="n">b_steps</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">b_steps</span><span class="p">[</span><span class="n">sh_i</span><span class="p">]</span>
+            <span class="n">n_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_steps</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_g_steps</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:</span><span class="n">n_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_steps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_b_steps</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:</span><span class="n">n_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_steps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_n_steps</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_steps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+<div class="viewcode-block" id="DiscreteShuntControlState.get_shunt_step">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.DiscreteShuntControlState.get_shunt_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_shunt_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the mutable shunt step vector.</span>
+
+<span class="sd">        :return: Current discrete shunt step vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shunt_step</span></div>
+
+
+<div class="viewcode-block" id="DiscreteShuntControlState.apply">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.DiscreteShuntControlState.apply">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">Vm</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+              <span class="n">adm</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AdmittanceMatrices</span><span class="p">,</span> <span class="n">AdmittanceMatricesFast</span><span class="p">],</span>
+              <span class="n">yshunt_bus</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CxVec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply one discrete shunt control step.</span>
+
+<span class="sd">        :param Vm: Voltage magnitude vector.</span>
+<span class="sd">        :param adm: Admittance container updated in place.</span>
+<span class="sd">        :param yshunt_bus: Optional external shunt-bus vector that must remain</span>
+<span class="sd">                           synchronized with ``adm.Yshunt_bus``.</span>
+<span class="sd">        :return: ``True`` if any discrete shunt changed state, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">changed_bus_idx</span><span class="p">:</span> <span class="n">IntVec</span>
+        <span class="n">changed_delta_y</span><span class="p">:</span> <span class="n">CxVec</span>
+        <span class="n">n_changed</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">bus_i</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">delta_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span>
+
+        <span class="c1"># Evaluate the compiled control law on the packed control arrays.</span>
+        <span class="n">changed_bus_idx</span><span class="p">,</span> <span class="n">changed_delta_y</span><span class="p">,</span> <span class="n">n_changed</span> <span class="o">=</span> <span class="n">control_discrete_shunts</span><span class="p">(</span>
+            <span class="n">Vm</span><span class="o">=</span><span class="n">Vm</span><span class="p">,</span>
+            <span class="n">shunt_discrete_ctrl_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_ctrl_idx</span><span class="p">,</span>
+            <span class="n">shunt_discrete_bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_bus_idx</span><span class="p">,</span>
+            <span class="n">shunt_discrete_vmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_vmax</span><span class="p">,</span>
+            <span class="n">shunt_discrete_vmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_discrete_vmin</span><span class="p">,</span>
+            <span class="n">shunt_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_step</span><span class="p">,</span>
+            <span class="n">shunt_g_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_g_steps</span><span class="p">,</span>
+            <span class="n">shunt_b_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_b_steps</span><span class="p">,</span>
+            <span class="n">shunt_n_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shunt_n_steps</span><span class="p">,</span>
+            <span class="n">sbase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbase</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">yshunt_bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">yshunt_bus</span> <span class="o">=</span> <span class="n">adm</span><span class="o">.</span><span class="n">Yshunt_bus</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Propagate every shunt increment to all admittance storages that must</span>
+        <span class="c1"># stay synchronized across later fast updates or full rebuilds.</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_changed</span><span class="p">):</span>
+            <span class="n">bus_i</span> <span class="o">=</span> <span class="n">changed_bus_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">delta_y</span> <span class="o">=</span> <span class="n">changed_delta_y</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">yshunt_bus</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta_y</span>
+            <span class="k">if</span> <span class="n">yshunt_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">adm</span><span class="o">.</span><span class="n">Yshunt_bus</span><span class="p">:</span>
+                <span class="n">adm</span><span class="o">.</span><span class="n">Yshunt_bus</span><span class="p">[</span><span class="n">bus_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta_y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">[</span><span class="n">bus_i</span><span class="p">,</span> <span class="n">bus_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta_y</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">n_changed</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="QvDroopControlState">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.QvDroopControlState">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QvDroopControlState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Python-side state holder for generator QV droop controls.</span>
+
+<span class="sd">    The arrays are allocated once and the numerical update remains delegated to</span>
+<span class="sd">    the Numba kernel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_Q0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_q&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_qv_droop_gen_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_qv_droop_bus_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_bus_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_k_droop&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_dead_band&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_v&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_qmax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_generator_qmin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_sbase&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the QV droop control state.</span>
+
+<span class="sd">        :param S0: Initial specified bus power.</span>
+<span class="sd">        :param nc: Numerical circuit hosting the generator control data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Copy the initial reactive schedules because the droop update resets</span>
+        <span class="c1"># the controlled buses to that baseline on every control pass.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Q0</span> <span class="o">=</span> <span class="n">S0</span><span class="o">.</span><span class="n">imag</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_q</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qv_droop_gen_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qv_droop_bus_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_qv_droop_gen_idx</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_bus_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_k_droop</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">k_droop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_dead_band</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">dead_band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_v</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_qmin</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">qmin</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator_qmax</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">qmax</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sbase</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+
+<div class="viewcode-block" id="QvDroopControlState.get_generator_q">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.QvDroopControlState.get_generator_q">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_generator_q</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the per-generator reactive power buffer.</span>
+
+<span class="sd">        :return: Generator reactive power vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator_q</span></div>
+
+
+<div class="viewcode-block" id="QvDroopControlState.apply">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.QvDroopControlState.apply">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Vm</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply one QV droop control step.</span>
+
+<span class="sd">        :param S0: Specified bus power updated in place.</span>
+<span class="sd">        :param Vm: Voltage magnitude vector.</span>
+<span class="sd">        :return: ``True`` if any droop generator changed, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">update_qv_droop_generators</span><span class="p">(</span>
+            <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+            <span class="n">Q0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_Q0</span><span class="p">,</span>
+            <span class="n">generator_q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_q</span><span class="p">,</span>
+            <span class="n">qv_droop_bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_qv_droop_bus_idx</span><span class="p">,</span>
+            <span class="n">qv_droop_gen_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_qv_droop_gen_idx</span><span class="p">,</span>
+            <span class="n">generator_bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_bus_idx</span><span class="p">,</span>
+            <span class="n">generator_k_droop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_k_droop</span><span class="p">,</span>
+            <span class="n">generator_dead_band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_dead_band</span><span class="p">,</span>
+            <span class="n">generator_v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_v</span><span class="p">,</span>
+            <span class="n">generator_qmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_qmin</span><span class="p">,</span>
+            <span class="n">generator_qmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator_qmax</span><span class="p">,</span>
+            <span class="n">Vm</span><span class="o">=</span><span class="n">Vm</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="compute_slack_distribution">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls.compute_slack_distribution">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_slack_distribution</span><span class="p">(</span><span class="n">Scalc</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">bus_installed_power</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Vec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Slack distribution logic</span>
+<span class="sd">    :param Scalc: Computed power array</span>
+<span class="sd">    :param vd: slack indices</span>
+<span class="sd">    :param bus_installed_power: Amount of installed power</span>
+<span class="sd">    :return: is slack division possible?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Distribute the slack power</span>
+    <span class="n">slack_power</span> <span class="o">=</span> <span class="n">Scalc</span><span class="p">[</span><span class="n">vd</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">total_installed_power</span> <span class="o">=</span> <span class="n">bus_installed_power</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">total_installed_power</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">slack_power</span> <span class="o">*</span> <span class="n">bus_installed_power</span> <span class="o">/</span> <span class="n">total_installed_power</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Scalc</span><span class="p">))</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">ok</span><span class="p">,</span> <span class="n">delta</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1568 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.cgmes_create_instances &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.cgmes_create_instances</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cgmes.cgmes_create_instances</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Collection of functions to create new CGMES instances for CGMES export.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_new_rdfid</span><span class="p">,</span> <span class="n">form_rdfid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cgmes24</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cgmes30</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">is_term</span><span class="p">,</span>
+                                                      <span class="n">CGMES_CONDUCTING_EQUIPMENT</span><span class="p">,</span>
+                                                      <span class="n">CGMES_EQUIPMENT_CONTAINER</span><span class="p">,</span>
+                                                      <span class="n">CGMES_DC_CONDUCTING_EQUIPMENT</span><span class="p">,</span>
+                                                      <span class="n">CGMES_OPERATIONAL_LIMIT_TYPE</span><span class="p">,</span>
+                                                      <span class="n">CGMES_DC_TOPOLOGICAL_NODE</span><span class="p">,</span>
+                                                      <span class="n">CGMES_CONNECTIVITY_NODE</span><span class="p">,</span>
+                                                      <span class="n">CGMES_VS_CONVERTER</span><span class="p">,</span>
+                                                      <span class="n">CGMES_DC_CONVERTER_UNIT</span><span class="p">,</span>
+                                                      <span class="n">CGMES_LINE</span><span class="p">,</span>
+                                                      <span class="n">CGMES_DC_LINE</span><span class="p">,</span>
+                                                      <span class="n">CGMES_DC_LINE_SEGMENT</span><span class="p">,</span>
+                                                      <span class="n">CGMES_TERMINAL</span><span class="p">,</span>
+                                                      <span class="n">CGMES_DC_TERMINAL</span><span class="p">,</span>
+                                                      <span class="n">CGMES_LOCATION</span><span class="p">,</span>
+                                                      <span class="n">CGMES_NON_LINEAR_SHUNT_COMPENSATOR</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_enums</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CgmesProfileType</span><span class="p">,</span>
+                                                     <span class="n">WindGenUnitKind</span><span class="p">,</span>
+                                                     <span class="n">RegulatingControlModeKind</span><span class="p">,</span>
+                                                     <span class="n">UnitMultiplier</span><span class="p">,</span>
+                                                     <span class="n">DCPolarityKind</span><span class="p">,</span>
+                                                     <span class="n">DCConverterOperatingModeKind</span><span class="p">,</span>
+                                                     <span class="n">VsPpccControlKind</span><span class="p">,</span>
+                                                     <span class="n">VsQpccControlKind</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_voltage_terminal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.full_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">FullModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gcdev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CGMESVersions</span><span class="p">,</span> <span class="n">ConverterControlType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+
+
+<div class="viewcode-block" id="find_topological_node_for_bus">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.find_topological_node_for_bus">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_topological_node_for_bus</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                  <span class="n">mc_bus</span><span class="p">:</span> <span class="n">Bus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">cgmes24</span><span class="o">.</span><span class="n">TopologicalNode</span><span class="p">,</span>
+                                                         <span class="n">cgmes30</span><span class="o">.</span><span class="n">TopologicalNode</span><span class="p">,</span>
+                                                         <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve the TopologicalNode for a bus.</span>
+
+<span class="sd">    Primary key is bus UUID. If UUID lookup fails (for example after UUID</span>
+<span class="sd">    collision remapping during export), fallback to unique bus name.</span>
+
+<span class="sd">    :param cgmes_model: CgmesCircuit</span>
+<span class="sd">    :param mc_bus: MultiCircuit bus</span>
+<span class="sd">    :return: TopologicalNode or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">topo_node</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">TopologicalNode_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">topo_node</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">mc_bus</span><span class="o">.</span><span class="n">idtag</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">topo_node</span>
+
+    <span class="k">for</span> <span class="n">topo_node</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">TopologicalNode_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">topo_node</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">mc_bus</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">topo_node</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_headers">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_headers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_headers</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                         <span class="n">mas_names</span><span class="p">:</span> <span class="n">StrVec</span><span class="p">,</span>
+                         <span class="n">profiles_to_export</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CgmesProfileType</span><span class="p">],</span>
+                         <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span>
+                         <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                         <span class="n">scenario_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                         <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                         <span class="n">modeller_url</span><span class="o">=</span><span class="s2">&quot;http://www.ree.es/OperationalPlanning&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param mas_names:</span>
+<span class="sd">    :param profiles_to_export:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :param desc:</span>
+<span class="sd">    :param scenario_time:</span>
+<span class="sd">    :param version:</span>
+<span class="sd">    :param modeller_url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">fm_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">fm_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">),</span>
+                   <span class="n">FullModel</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;FullModel&quot;</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;CGMES format not supported </span><span class="si">{</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">fm</span> <span class="ow">in</span> <span class="n">fm_list</span><span class="p">:</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">scenarioTime</span> <span class="o">=</span> <span class="n">scenario_time</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">modelingAuthoritySet</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mas_names</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">mas_name</span> <span class="ow">in</span> <span class="n">mas_names</span><span class="p">:</span>
+                <span class="n">fm</span><span class="o">.</span><span class="n">modelingAuthoritySet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mas_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fm</span><span class="o">.</span><span class="n">modelingAuthoritySet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modeller_url</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Missing Modeling Authority! (set to default)&quot;</span><span class="p">,</span>
+                               <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Default value used. (</span><span class="si">{</span><span class="n">modeller_url</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">formatted_time</span> <span class="o">=</span> <span class="n">current_time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">Z&quot;</span><span class="p">)</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">created</span> <span class="o">=</span> <span class="n">formatted_time</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">desc</span>
+
+    <span class="k">if</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">profile_uris</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;EQ&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://entsoe.eu/CIM/EquipmentCore/3/1&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;http://entsoe.eu/CIM/EquipmentOperation/3/1&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;http://entsoe.eu/CIM/EquipmentShortCircuit/3/1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;SSH&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://entsoe.eu/CIM/SteadyStateHypothesis/1/1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;TP&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://entsoe.eu/CIM/Topology/4/1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;SV&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://entsoe.eu/CIM/StateVariables/4/1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;GL&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://entsoe.eu/CIM/GeographicalLocation/2/1&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="k">elif</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">profile_uris</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;EQ&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;OP&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/Operation-EU/3.0&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;SC&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/3.0&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;SSH&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;TP&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/Topology-EU/3.0&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;SV&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;GL&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;CGMES format not supported </span><span class="si">{</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">prof</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EQ&quot;</span><span class="p">)</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="p">[</span><span class="n">prof</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">OP</span> <span class="ow">in</span> <span class="n">profiles_to_export</span><span class="p">:</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prof</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SC</span> <span class="ow">in</span> <span class="n">profiles_to_export</span><span class="p">:</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prof</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EQ&quot;</span><span class="p">)</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OP&quot;</span><span class="p">)</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SC&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;CGMES format not supported </span><span class="si">{</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">fm_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SSH&quot;</span><span class="p">)</span>
+    <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TP&quot;</span><span class="p">)</span>
+    <span class="n">fm_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SV&quot;</span><span class="p">)</span>
+    <span class="n">fm_list</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile_uris</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GL&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mas_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># if 2.4 than no need in SV in 3.0 we need all</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">modelingAuthoritySet</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># DependentOn</span>
+    <span class="n">eqbd_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">tpbd_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bd</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">elements_by_type_boundary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FullModel&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;http://entsoe.eu/CIM/EquipmentBoundary/3/1&quot;</span> <span class="ow">in</span> <span class="n">bd</span><span class="o">.</span><span class="n">profile</span> <span class="ow">or</span>
+                    <span class="s2">&quot;http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU&quot;</span> <span class="ow">in</span> <span class="n">bd</span><span class="o">.</span><span class="n">profile</span><span class="p">):</span>
+                <span class="n">eqbd_id</span> <span class="o">=</span> <span class="n">bd</span><span class="o">.</span><span class="n">rdfid</span>
+            <span class="k">if</span> <span class="s2">&quot;http://entsoe.eu/CIM/TopologyBoundary/3/1&quot;</span> <span class="ow">in</span> <span class="n">bd</span><span class="o">.</span><span class="n">profile</span><span class="p">:</span>  <span class="c1"># no TPBD in 3.0</span>
+                <span class="n">tpbd_id</span> <span class="o">=</span> <span class="n">bd</span><span class="o">.</span><span class="n">rdfid</span>
+
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">eqbd_id</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tpbd_id</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">tpbd_id</span><span class="p">,</span> <span class="n">fm_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                                      <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">eqbd_id</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Missing default boundary files&quot;</span><span class="p">)</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span> <span class="n">fm_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                                  <span class="n">fm_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="n">fm_list</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+            <span class="n">fm_list</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">DependentOn</span> <span class="o">=</span> <span class="p">[</span><span class="n">fm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rdfid</span><span class="p">]</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">FullModel_list</span> <span class="o">=</span> <span class="n">fm_list</span>
+    <span class="k">return</span> <span class="n">cgmes_model</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_terminal">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_terminal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_terminal</span><span class="p">(</span><span class="n">mc_bus</span><span class="p">:</span> <span class="n">Bus</span><span class="p">,</span>
+                          <span class="n">seq_num</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                          <span class="n">cond_eq</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">CGMES_CONDUCTING_EQUIPMENT</span><span class="p">],</span>
+                          <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                          <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                          <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CGMES_TERMINAL</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new Terminal in CGMES model,</span>
+<span class="sd">    and connects it the relating Topological Node</span>
+<span class="sd">    :param mc_bus:</span>
+<span class="sd">    :param seq_num:</span>
+<span class="sd">    :param cond_eq:</span>
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return: CGMES_TERMINAL</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">new_rdf_id</span> <span class="o">=</span> <span class="n">get_new_rdfid</span><span class="p">()</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cond_eq</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> - T</span><span class="si">{</span><span class="n">seq_num</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">cond_eq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">tn</span> <span class="o">=</span> <span class="n">find_topological_node_for_bus</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">,</span>
+        <span class="n">mc_bus</span><span class="o">=</span><span class="n">mc_bus</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Terminal</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">new_rdf_id</span><span class="p">)</span>
+        <span class="n">term</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="k">if</span> <span class="n">cond_eq</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cond_eq</span><span class="p">,</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">ConductingEquipment</span><span class="p">):</span>
+            <span class="n">term</span><span class="o">.</span><span class="n">ConductingEquipment</span> <span class="o">=</span> <span class="n">cond_eq</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tn</span><span class="p">,</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">TopologicalNode</span><span class="p">):</span>
+            <span class="n">term</span><span class="o">.</span><span class="n">TopologicalNode</span> <span class="o">=</span> <span class="n">tn</span>
+            <span class="n">term</span><span class="o">.</span><span class="n">ConnectivityNode</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">ConnectivityNodes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;No found TopologicalNode&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">mc_bus</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="n">gcdev</span><span class="o">.</span><span class="n">Bus</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Terminal</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">new_rdf_id</span><span class="p">)</span>
+        <span class="n">term</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="k">if</span> <span class="n">cond_eq</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cond_eq</span><span class="p">,</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConductingEquipment</span><span class="p">):</span>
+            <span class="n">term</span><span class="o">.</span><span class="n">ConductingEquipment</span> <span class="o">=</span> <span class="n">cond_eq</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tn</span><span class="p">,</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TopologicalNode</span><span class="p">):</span>
+            <span class="n">term</span><span class="o">.</span><span class="n">TopologicalNode</span> <span class="o">=</span> <span class="n">tn</span>
+            <span class="n">term</span><span class="o">.</span><span class="n">ConnectivityNode</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">ConnectivityNodes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;No found TopologicalNode&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">mc_bus</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="n">gcdev</span><span class="o">.</span><span class="n">Bus</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">seq_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">term</span><span class="o">.</span><span class="n">sequenceNumber</span> <span class="o">=</span> <span class="n">seq_num</span>
+
+    <span class="n">term</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">term</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_load_response_char">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_load_response_char">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_load_response_char</span><span class="p">(</span><span class="n">load</span><span class="p">:</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">Load</span><span class="p">,</span>
+                                    <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                    <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param load:</span>
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">lrc</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LoadResponseCharacteristic</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">lrc</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LoadResponseCharacteristic</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">lrc</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;LoadRespChar_</span><span class="si">{</span><span class="n">load</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">lrc</span><span class="o">.</span><span class="n">exponentModel</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">total_active</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">P</span> <span class="o">+</span> <span class="n">load</span><span class="o">.</span><span class="n">Ir</span> <span class="o">+</span> <span class="n">load</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+    <span class="n">total_reactive</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">Q</span> <span class="o">+</span> <span class="n">load</span><span class="o">.</span><span class="n">Ii</span> <span class="o">+</span> <span class="n">load</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">total_active</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">pConstantPower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">P</span> <span class="o">/</span> <span class="n">total_active</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">pConstantCurrent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">Ir</span> <span class="o">/</span> <span class="n">total_active</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">pConstantImpedance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">G</span> <span class="o">/</span> <span class="n">total_active</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">pConstantPower</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">pConstantCurrent</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">pConstantImpedance</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">total_reactive</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">qConstantPower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">Q</span> <span class="o">/</span> <span class="n">total_reactive</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">qConstantCurrent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">Ii</span> <span class="o">/</span> <span class="n">total_reactive</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">qConstantImpedance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="n">B</span> <span class="o">/</span> <span class="n">total_reactive</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">qConstantPower</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">qConstantCurrent</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">lrc</span><span class="o">.</span><span class="n">qConstantImpedance</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Legacy</span>
+    <span class="c1"># lrc.pConstantCurrent = load.Ir / load.P if load.P != 0.0 else 0</span>
+    <span class="c1"># lrc.qConstantCurrent = load.Ii / load.Q if load.Q != 0.0 else 0</span>
+    <span class="c1"># lrc.pConstantImpedance = load.G / load.P if load.P != 0.0 else 0</span>
+    <span class="c1"># lrc.qConstantImpedance = load.B / load.Q if load.Q != 0.0 else 0</span>
+    <span class="c1"># lrc.pConstantPower = 1 - lrc.pConstantCurrent - lrc.pConstantImpedance</span>
+    <span class="c1"># lrc.qConstantPower = 1 - lrc.qConstantCurrent - lrc.qConstantImpedance</span>
+    <span class="c1"># if lrc.pConstantPower &lt; 0 or lrc.qConstantPower &lt; 0:</span>
+    <span class="c1">#     logger.add_error(msg=&#39;Constant Impedance/Current parameters are not correct&#39;,</span>
+    <span class="c1">#                      device=load,</span>
+    <span class="c1">#                      device_class=gcdev.Load)</span>
+    <span class="c1"># sum for 3 for p = 1</span>
+    <span class="c1"># if it not supports voltage dependent load, lf wont be the same</span>
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lrc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lrc</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_generating_unit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_generating_unit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_generating_unit</span><span class="p">(</span><span class="n">gen</span><span class="p">:</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">Generator</span><span class="p">,</span>
+                                 <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                 <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates the appropriate CGMES GeneratingUnit object</span>
+<span class="sd">    from a MultiCircuit Generator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">technologies</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+            <span class="n">sm</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">GeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+            <span class="n">sm</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">GeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+        <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sm</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tech_association</span> <span class="ow">in</span> <span class="n">gen</span><span class="o">.</span><span class="n">technologies</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;General&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">sm</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">GeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">sm</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">GeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sm</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">sm</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Thermal&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">tgu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ThermalGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">tgu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ThermalGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tgu</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">tgu</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Hydro&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">hgu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">HydroGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">hgu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">HydroGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hgu</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">hgu</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Solar&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">sgu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SolarGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">sgu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SolarGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sgu</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">sgu</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Wind Onshore&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">wgu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">WindGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">wgu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">WindGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">wgu</span><span class="o">.</span><span class="n">windGenUnitType</span> <span class="o">=</span> <span class="n">WindGenUnitKind</span><span class="o">.</span><span class="n">onshore</span>
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">wgu</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">wgu</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Wind Offshore&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">wgu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">WindGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">wgu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">WindGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">wgu</span><span class="o">.</span><span class="n">windGenUnitType</span> <span class="o">=</span> <span class="n">WindGenUnitKind</span><span class="o">.</span><span class="n">offshore</span>
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">wgu</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">wgu</span>
+
+            <span class="k">if</span> <span class="n">tech_association</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Nuclear&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+                    <span class="n">ngu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NuclearGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+                    <span class="n">ngu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NuclearGeneratingUnit</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+                <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ngu</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">ngu</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_regulating_control">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_regulating_control">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_regulating_control</span><span class="p">(</span><span class="n">cgmes_elm</span><span class="p">,</span>
+                                    <span class="n">mc_gen</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gcdev</span><span class="o">.</span><span class="n">Generator</span><span class="p">,</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">ControllableShunt</span><span class="p">],</span>
+                                    <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                    <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create Regulating Control for a CGMES device</span>
+
+<span class="sd">    :param cgmes_elm: Cgmes Synchronous Machine or Shunt (Nonlin or Lin)</span>
+<span class="sd">    :param mc_gen: MultiCircuit element: Generator or Controllable Shunt</span>
+<span class="sd">    :param cgmes_model: CgmesCircuit</span>
+<span class="sd">    :param ver: Version</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mc_gen</span><span class="p">,</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">Generator</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mc_gen</span><span class="p">,</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">ControllableShunt</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;create_cgmes_regulating_control() only supports Generator or ControllableShunt; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">mc_gen</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">new_rdf_id</span> <span class="o">=</span> <span class="n">get_new_rdfid</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">RegulatingControl</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">new_rdf_id</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">RegulatingControl</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">new_rdf_id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="c1"># RC for EQ</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_RC_</span><span class="si">{</span><span class="n">mc_gen</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">shortName</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">RegulatingControlModeKind</span><span class="o">.</span><span class="n">voltage</span>
+    <span class="c1"># Export the concrete terminal object instead of the generic list/scalar</span>
+    <span class="c1"># field so later import has an unambiguous control attachment point.</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">Terminal</span> <span class="o">=</span> <span class="n">cgmes_elm</span><span class="o">.</span><span class="n">Terminals</span>
+
+    <span class="n">rc</span><span class="o">.</span><span class="n">RegulatingCondEq</span> <span class="o">=</span> <span class="n">cgmes_elm</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">discrete</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">targetDeadband</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">targetValueUnitMultiplier</span> <span class="o">=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">targetValue</span> <span class="o">=</span> <span class="n">mc_gen</span><span class="o">.</span><span class="n">Vset</span> <span class="o">*</span> <span class="n">mc_gen</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span>
+    <span class="c1"># TODO control_cn.Vnom</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rc</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_tap_changer_control">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_tap_changer_control">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_tap_changer_control</span><span class="p">(</span>
+        <span class="n">tap_changer</span><span class="p">,</span>
+        <span class="n">tcc_mode</span><span class="p">,</span>
+        <span class="n">tcc_enabled</span><span class="p">,</span>
+        <span class="n">mc_trafo</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gcdev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">,</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">Transformer3W</span><span class="p">],</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create Tap Changer Control for Tap changers.</span>
+
+<span class="sd">    :param tap_changer: Cgmes tap Changer</span>
+<span class="sd">    :param tcc_mode: TapChangerContol mode attr (RegulatingControlModeKind.voltage)</span>
+<span class="sd">    :param tcc_enabled: TapChangerContol enabled</span>
+<span class="sd">    :param mc_trafo: MultiCircuit Transformer</span>
+<span class="sd">    :param cgmes_model: CgmesCircuit</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger: DataLogger</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">tcc</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">TapChangerControl</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">tcc</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">TapChangerControl</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="c1"># EQ</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_tcc_</span><span class="si">{</span><span class="n">mc_trafo</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">shortName</span> <span class="o">=</span> <span class="n">tcc</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">tcc_mode</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">Terminal</span> <span class="o">=</span> <span class="n">tap_changer</span><span class="o">.</span><span class="n">TransformerEnd</span><span class="o">.</span><span class="n">Terminal</span>
+    <span class="c1"># SSH</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">discrete</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">targetDeadband</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">tcc</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">tcc_enabled</span>
+
+    <span class="k">if</span> <span class="n">tcc_mode</span> <span class="o">==</span> <span class="n">RegulatingControlModeKind</span><span class="o">.</span><span class="n">voltage</span><span class="p">:</span>
+        <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_voltage_terminal</span><span class="p">(</span><span class="n">tcc</span><span class="o">.</span><span class="n">Terminal</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">voltage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tcc</span>
+        <span class="n">tcc</span><span class="o">.</span><span class="n">targetValueUnitMultiplier</span> <span class="o">=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span>
+        <span class="n">tcc</span><span class="o">.</span><span class="n">targetValue</span> <span class="o">=</span> <span class="n">mc_trafo</span><span class="o">.</span><span class="n">vset</span> <span class="o">*</span> <span class="n">voltage</span>
+    <span class="k">elif</span> <span class="n">tcc_mode</span> <span class="o">==</span> <span class="n">RegulatingControlModeKind</span><span class="o">.</span><span class="n">activePower</span><span class="p">:</span>
+        <span class="n">tcc</span><span class="o">.</span><span class="n">targetValueUnitMultiplier</span> <span class="o">=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">M</span>
+        <span class="n">tcc</span><span class="o">.</span><span class="n">targetValue</span> <span class="o">=</span> <span class="n">mc_trafo</span><span class="o">.</span><span class="n">Pset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Remaining RegulatingControlModeKind values are not supported by VeraGrid</span>
+        <span class="c1"># tap changers; fall back to voltage mode with a neutral target.</span>
+        <span class="n">voltage</span> <span class="o">=</span> <span class="n">get_voltage_terminal</span><span class="p">(</span><span class="n">tcc</span><span class="o">.</span><span class="n">Terminal</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="n">tcc</span><span class="o">.</span><span class="n">targetValueUnitMultiplier</span> <span class="o">=</span> <span class="n">UnitMultiplier</span><span class="o">.</span><span class="n">k</span>
+        <span class="n">tcc</span><span class="o">.</span><span class="n">targetValue</span> <span class="o">=</span> <span class="n">voltage</span> <span class="k">if</span> <span class="n">voltage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tcc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tcc</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_current_limit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_current_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_current_limit</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span>
+                               <span class="n">rate_mw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">op_limit_type</span><span class="p">:</span> <span class="n">CGMES_OPERATIONAL_LIMIT_TYPE</span><span class="p">,</span>
+                               <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                               <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                               <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param terminal: Cgmes Terminal</span>
+<span class="sd">    :param rate_mw: rating in VeraGrid in MW/MVA</span>
+<span class="sd">    :param op_limit_type: Operational Limit Type</span>
+<span class="sd">    :param cgmes_model: CgmesModel</span>
+<span class="sd">    :param ver: CGMESVersions</span>
+<span class="sd">    :param logger: DataLogger</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">curr_lim</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">CurrentLimit</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">curr_lim</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">CurrentLimit</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">curr_lim</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">terminal</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> - CL-1&#39;</span>
+    <span class="n">curr_lim</span><span class="o">.</span><span class="n">shortName</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CL-1&#39;</span>
+    <span class="n">curr_lim</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Ratings for element </span><span class="si">{</span><span class="n">terminal</span><span class="o">.</span><span class="n">ConductingEquipment</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> - Limit&#39;</span>
+
+    <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_voltage_terminal</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">voltage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">voltage</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">sqrt_3</span> <span class="o">=</span> <span class="mf">1.73205080756888</span>
+        <span class="n">current_rate</span> <span class="o">=</span> <span class="n">rate_mw</span> <span class="o">*</span> <span class="mf">1e3</span> <span class="o">/</span> <span class="p">(</span><span class="n">voltage</span> <span class="o">*</span> <span class="n">sqrt_3</span><span class="p">)</span>
+        <span class="n">current_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">current_rate</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">curr_lim</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">current_rate</span>  <span class="c1"># Current rate in Amps</span>
+
+        <span class="n">op_lim_set_1</span> <span class="o">=</span> <span class="n">create_operational_limit_set</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">cgmes_model</span><span class="p">,</span> <span class="n">ver</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">op_lim_set_1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">curr_lim</span><span class="o">.</span><span class="n">OperationalLimitSet</span> <span class="o">=</span> <span class="n">op_lim_set_1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;No operational limit created&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">op_lim_set_1</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;create_cgmes_current_limit&quot;</span><span class="p">)</span>
+
+        <span class="n">curr_lim</span><span class="o">.</span><span class="n">OperationalLimitType</span> <span class="o">=</span> <span class="n">op_limit_type</span>
+
+        <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">curr_lim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;CurrentLimit skipped due invalid terminal voltage&#39;</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">terminal</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+            <span class="n">device_class</span><span class="o">=</span><span class="n">terminal</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">voltage</span><span class="p">,</span>
+            <span class="n">expected_value</span><span class="o">=</span><span class="s1">&#39;&gt; 0.0&#39;</span>
+        <span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="create_operational_limit_set">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_operational_limit_set">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_operational_limit_set</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span>
+                                 <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                 <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                                 <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param terminal:</span>
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">op_lim_set</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">OperationalLimitSet</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">op_lim_set</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">OperationalLimitSet</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">term_num</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">sequenceNumber</span> <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">sequenceNumber</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">op_lim_set</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;OperationalLimit at Term-</span><span class="si">{</span><span class="n">term_num</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">op_lim_set</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;OperationalLimit at Port1&#39;</span>
+
+    <span class="k">if</span> <span class="n">is_term</span><span class="p">(</span><span class="n">terminal</span><span class="p">):</span>
+        <span class="n">op_lim_set</span><span class="o">.</span><span class="n">Terminal</span> <span class="o">=</span> <span class="n">terminal</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">op_lim_set</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">op_lim_set</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_operational_limit_type">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_operational_limit_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_operational_limit_type</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span> <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model: CgmesModel</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">op_lim_type</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">OperationalLimitType</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">op_lim_type</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">OperationalLimitType</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">op_lim_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">op_lim_type</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_dc_tp_node">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_dc_tp_node">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_dc_tp_node</span><span class="p">(</span><span class="n">tp_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">tp_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                            <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                            <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a DCTopologicalNode from a gcdev Bus</span>
+<span class="sd">    :param tp_name:</span>
+<span class="sd">    :param tp_description:</span>
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">dc_tp</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCTopologicalNode</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">dc_tp</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCTopologicalNode</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">dc_tp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">tp_name</span>
+    <span class="n">dc_tp</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">tp_description</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dc_tp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dc_tp</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_dc_node">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_dc_node">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_dc_node</span><span class="p">(</span><span class="n">cn_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">cn_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                         <span class="n">dc_tp</span><span class="p">:</span> <span class="n">CGMES_DC_TOPOLOGICAL_NODE</span><span class="p">,</span>
+                         <span class="n">dc_ec</span><span class="p">:</span> <span class="n">CGMES_EQUIPMENT_CONTAINER</span><span class="p">,</span>
+                         <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a DCTopologicalNode from a gcdev Bus</span>
+
+<span class="sd">    :param cn_name:</span>
+<span class="sd">    :param cn_description:</span>
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param dc_tp: DC TopologicalNode</span>
+<span class="sd">    :param dc_ec: DC EquipmentContainer (DCConverterUnit)</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">dc_node</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCNode</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">dc_node</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCNode</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">dc_node</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">cn_name</span>
+    <span class="n">dc_node</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">cn_description</span>
+    <span class="n">dc_node</span><span class="o">.</span><span class="n">DCTopologicalNode</span> <span class="o">=</span> <span class="n">dc_tp</span>
+    <span class="n">dc_node</span><span class="o">.</span><span class="n">DCEquipmentContainer</span> <span class="o">=</span> <span class="n">dc_ec</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dc_node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dc_node</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_vsc_converter">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_vsc_converter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_vsc_converter</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                               <span class="n">gc_vsc</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gcdev</span><span class="o">.</span><span class="n">VSC</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                               <span class="n">p_set</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">v_set</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                               <span class="n">target_upcc_base_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                               <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CGMES_VS_CONVERTER</span><span class="p">,</span> <span class="n">CGMES_DC_CONVERTER_UNIT</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new Voltage-source converter</span>
+<span class="sd">    with a DCConverterUnit as a container</span>
+
+<span class="sd">    :param cgmes_model: CgmesCircuit</span>
+<span class="sd">    :param gc_vsc: optional input: VSC from VeraGrid</span>
+<span class="sd">    :param p_set: power set point</span>
+<span class="sd">    :param v_set: voltage set point, only used if gc_vsc is None,</span>
+<span class="sd">                  otherwise the set point is from gc_vsc.vset</span>
+<span class="sd">    :param target_upcc_base_voltage: AC-side base voltage in kV used to export</span>
+<span class="sd">                                     targetUpcc in CGMES engineering units.</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger: DataLogger</span>
+<span class="sd">    :return: VsConverter and DCConverterUnit objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">gc_vsc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rdf_id</span> <span class="o">=</span> <span class="n">get_new_rdfid</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rdf_id</span> <span class="o">=</span> <span class="n">form_rdfid</span><span class="p">(</span><span class="n">gc_vsc</span><span class="o">.</span><span class="n">idtag</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">vs_converter</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">VsConverter</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">rdf_id</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">vs_converter</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">VsConverter</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">rdf_id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">gc_vsc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vs_converter</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">gc_vsc</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">vs_converter</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">gc_vsc</span><span class="o">.</span><span class="n">code</span>
+        <span class="k">if</span> <span class="n">gc_vsc</span><span class="o">.</span><span class="n">control1</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_ac</span><span class="p">,</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span><span class="p">):</span>
+            <span class="n">targetUpcc</span> <span class="o">=</span> <span class="n">gc_vsc</span><span class="o">.</span><span class="n">control1_val</span>
+        <span class="k">elif</span> <span class="n">gc_vsc</span><span class="o">.</span><span class="n">control2</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_ac</span><span class="p">,</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span><span class="p">):</span>
+            <span class="n">targetUpcc</span> <span class="o">=</span> <span class="n">gc_vsc</span><span class="o">.</span><span class="n">control2_val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">targetUpcc</span> <span class="o">=</span> <span class="n">v_set</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">VsConverter_list</span><span class="p">)</span>
+        <span class="n">vs_converter</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;VSC_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">vs_converter</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;VSC_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">targetUpcc</span> <span class="o">=</span> <span class="n">v_set</span>
+
+    <span class="k">if</span> <span class="n">target_upcc_base_voltage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target_upcc_base_voltage</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">targetUpcc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">targetUpcc</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_upcc_base_voltage</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">targetUpcc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">targetUpcc</span><span class="p">)</span>
+
+    <span class="c1"># EQ</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">baseS</span> <span class="o">=</span> <span class="mi">9999</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">idleLoss</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="c1"># &lt;cim:ACDCConverter.maxUdc&gt;180.000000&lt;/cim:ACDCConverter.maxUdc&gt;</span>
+    <span class="c1"># &lt;cim:ACDCConverter.minUdc&gt;0e+000&lt;/cim:ACDCConverter.minUdc&gt;</span>
+    <span class="c1"># &lt;cim:ACDCConverter.ratedUdc&gt;160.000000&lt;/cim:ACDCConverter.ratedUdc&gt;</span>
+    <span class="c1"># &lt;cim:ACDCConverter.resistiveLoss&gt;2.000000&lt;/cim:ACDCConverter.resistiveLoss&gt;</span>
+    <span class="c1"># &lt;cim:ACDCConverter.switchingLoss&gt;0.000500&lt;/cim:ACDCConverter.switchingLoss&gt;</span>
+    <span class="c1"># &lt;cim:ACDCConverter.valveU0&gt;0e+000&lt;/cim:ACDCConverter.valveU0&gt;</span>
+    <span class="c1"># &lt;cim:ACDCConverter.numberOfValves&gt;1&lt;/cim:ACDCConverter.numberOfValves&gt;</span>
+    <span class="c1"># &lt;cim:VsConverter.maxModulationIndex&gt;1.000000&lt;/cim:VsConverter.maxModulationIndex&gt;</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">numberOfValves</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">switchingLoss</span> <span class="o">=</span> <span class="mf">0.00308</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">maxValveCurrent</span> <span class="o">=</span> <span class="mi">99999</span>
+
+    <span class="c1"># SSH</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p_set</span>  <span class="c1"># hvdc_line.Pset or VSC.Pset</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">targetPpcc</span> <span class="o">=</span> <span class="n">p_set</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">targetUdc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">droop</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">droopCompensation</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">pPccControl</span> <span class="o">=</span> <span class="n">VsPpccControlKind</span><span class="o">.</span><span class="n">pPcc</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">qPccControl</span> <span class="o">=</span> <span class="n">VsQpccControlKind</span><span class="o">.</span><span class="n">voltagePcc</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">qShare</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Reactive power-sharing factor among parallel converters on Uac control.</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">targetQpcc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">targetUpcc</span> <span class="o">=</span> <span class="n">targetUpcc</span>
+
+    <span class="c1"># SV</span>
+    <span class="c1">#     &lt;cim:VsConverter.delta&gt;0&lt;/cim:VsConverter.delta&gt;</span>
+    <span class="c1">#     &lt;cim:VsConverter.uf&gt;124.427328&lt;/cim:VsConverter.uf&gt;</span>
+    <span class="c1">#     &lt;cim:ACDCConverter.uc&gt;124.427328&lt;/cim:ACDCConverter.uc&gt;</span>
+    <span class="c1">#     &lt;cim:ACDCConverter.udc&gt;152.405856&lt;/cim:ACDCConverter.udc&gt;</span>
+    <span class="c1">#     &lt;cim:ACDCConverter.poleLossP&gt;3.333380&lt;/cim:ACDCConverter.poleLossP&gt;</span>
+    <span class="c1">#     &lt;cim:ACDCConverter.idc&gt;962.342430&lt;/cim:ACDCConverter.idc&gt;</span>
+
+    <span class="c1"># DCConverterUnit for containment</span>
+    <span class="n">dc_conv_unit_1</span> <span class="o">=</span> <span class="n">create_cgmes_dc_converter_unit</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">,</span> <span class="n">ver</span><span class="o">=</span><span class="n">ver</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">dc_conv_unit_1</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DC_Converter_Unit_for_</span><span class="si">{</span><span class="n">vs_converter</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">vs_converter</span><span class="o">.</span><span class="n">EquipmentContainer</span> <span class="o">=</span> <span class="n">dc_conv_unit_1</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">vs_converter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vs_converter</span><span class="p">,</span> <span class="n">dc_conv_unit_1</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_acdc_converter_terminal">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_acdc_converter_terminal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_acdc_converter_terminal</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                         <span class="n">mc_dc_bus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Bus</span><span class="p">],</span>
+                                         <span class="n">seq_num</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                                         <span class="n">dc_node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">CGMES_DC_TOPOLOGICAL_NODE</span><span class="p">],</span>
+                                         <span class="n">dc_cond_eq</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">CGMES_DC_CONDUCTING_EQUIPMENT</span><span class="p">],</span>
+                                         <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                                         <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new ACDCConverterDCTerminal in CGMES model,</span>
+<span class="sd">    and connects it the relating DCNode</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param mc_dc_bus: optional input, if there is a DC bus in MultiCircuit</span>
+<span class="sd">    :param seq_num:</span>
+<span class="sd">    :param dc_node:</span>
+<span class="sd">    :param dc_cond_eq:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mc_dc_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mc_dc_bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bus must be a DC bus&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">mc_dc_bus</span><span class="p">,</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="n">mc_dc_bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                             <span class="n">expected_value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">mc_dc_bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;create_cgmes_acdc_converter_terminal&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">acdc_term</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ACDCConverterDCTerminal</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">acdc_term</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ACDCConverterDCTerminal</span><span class="p">(</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">acdc_term</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dc_cond_eq</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> - T</span><span class="si">{</span><span class="n">seq_num</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">dc_cond_eq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;ACDCTerm&quot;</span>
+    <span class="n">acdc_term</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dc_cond_eq</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_converter_DC_term&#39;</span>
+    <span class="n">acdc_term</span><span class="o">.</span><span class="n">sequenceNumber</span> <span class="o">=</span> <span class="n">seq_num</span> <span class="k">if</span> <span class="n">seq_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dc_cond_eq</span><span class="p">,</span> <span class="p">(</span><span class="n">cgmes24</span><span class="o">.</span><span class="n">ACDCConverter</span><span class="p">,</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ACDCConverter</span><span class="p">)):</span>
+        <span class="n">acdc_term</span><span class="o">.</span><span class="n">DCConductingEquipment</span> <span class="o">=</span> <span class="n">dc_cond_eq</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;DCConductingEquipment must be an ACDCConverter&#39;</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">dc_cond_eq</span><span class="p">,</span>
+                         <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">dc_cond_eq</span><span class="p">),</span>
+                         <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;ACDCConverter&quot;</span><span class="p">,</span>
+                         <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;create_cgmes_acdc_converter_terminal&quot;</span><span class="p">)</span>
+    <span class="n">acdc_term</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">acdc_term</span><span class="o">.</span><span class="n">polarity</span> <span class="o">=</span> <span class="n">DCPolarityKind</span><span class="o">.</span><span class="n">positive</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dc_node</span><span class="p">,</span> <span class="p">(</span><span class="n">cgmes24</span><span class="o">.</span><span class="n">DCNode</span><span class="p">,</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCNode</span><span class="p">)):</span>
+        <span class="n">acdc_term</span><span class="o">.</span><span class="n">DCNode</span> <span class="o">=</span> <span class="n">dc_node</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">acdc_term</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">acdc_term</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_dc_line">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_dc_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_dc_line</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                         <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CGMES_DC_LINE</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new CGMES DCLine</span>
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">dc_line</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCLine</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">dc_line</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCLine</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dc_line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dc_line</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_dc_line_segment">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_dc_line_segment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_dc_line_segment</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                 <span class="n">mc_elm</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gcdev</span><span class="o">.</span><span class="n">HvdcLine</span><span class="p">,</span> <span class="n">gcdev</span><span class="o">.</span><span class="n">DcLine</span><span class="p">],</span>
+                                 <span class="n">dc_tp_1</span><span class="p">:</span> <span class="n">CGMES_DC_TOPOLOGICAL_NODE</span><span class="p">,</span>
+                                 <span class="n">dc_node_1</span><span class="p">:</span> <span class="n">CGMES_CONNECTIVITY_NODE</span><span class="p">,</span>
+                                 <span class="n">dc_tp_2</span><span class="p">:</span> <span class="n">CGMES_DC_TOPOLOGICAL_NODE</span><span class="p">,</span>
+                                 <span class="n">dc_node_2</span><span class="p">:</span> <span class="n">CGMES_CONNECTIVITY_NODE</span><span class="p">,</span>
+                                 <span class="n">eq_cont</span><span class="p">:</span> <span class="n">CGMES_EQUIPMENT_CONTAINER</span><span class="p">,</span>
+                                 <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                                 <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CGMES_DC_LINE_SEGMENT</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new CGMES DCLineSegment</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param mc_elm:</span>
+<span class="sd">    :param dc_tp_1:</span>
+<span class="sd">    :param dc_node_1:</span>
+<span class="sd">    :param dc_tp_2:</span>
+<span class="sd">    :param dc_node_2:</span>
+<span class="sd">    :param eq_cont: EquipmentContainer (DCLine)</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">dc_line_segment</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCLineSegment</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">form_rdfid</span><span class="p">(</span><span class="n">mc_elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">dc_line_segment</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCLineSegment</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">form_rdfid</span><span class="p">(</span><span class="n">mc_elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">mc_elm</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">mc_elm</span><span class="o">.</span><span class="n">code</span>
+
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">mc_elm</span><span class="o">.</span><span class="n">length</span> <span class="k">if</span> <span class="n">mc_elm</span><span class="o">.</span><span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">resistance</span> <span class="o">=</span> <span class="n">mc_elm</span><span class="o">.</span><span class="n">r</span>
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">inductance</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">capacitance</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">aggregate</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">dc_line_segment</span><span class="o">.</span><span class="n">EquipmentContainer</span> <span class="o">=</span> <span class="n">eq_cont</span>
+
+    <span class="c1"># Terminals</span>
+    <span class="n">create_cgmes_dc_terminal</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">,</span>
+                             <span class="n">dc_tp</span><span class="o">=</span><span class="n">dc_tp_1</span><span class="p">,</span>
+                             <span class="n">dc_node</span><span class="o">=</span><span class="n">dc_node_1</span><span class="p">,</span>
+                             <span class="n">dc_cond_eq</span><span class="o">=</span><span class="n">dc_line_segment</span><span class="p">,</span>
+                             <span class="n">seq_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                             <span class="n">ver</span><span class="o">=</span><span class="n">ver</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">create_cgmes_dc_terminal</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">,</span>
+                             <span class="n">dc_tp</span><span class="o">=</span><span class="n">dc_tp_2</span><span class="p">,</span>
+                             <span class="n">dc_node</span><span class="o">=</span><span class="n">dc_node_2</span><span class="p">,</span>
+                             <span class="n">dc_cond_eq</span><span class="o">=</span><span class="n">dc_line_segment</span><span class="p">,</span>
+                             <span class="n">seq_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">ver</span><span class="o">=</span><span class="n">ver</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dc_line_segment</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dc_line_segment</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_dc_terminal">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_dc_terminal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_dc_terminal</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                             <span class="n">dc_tp</span><span class="p">:</span> <span class="n">CGMES_DC_TOPOLOGICAL_NODE</span><span class="p">,</span>
+                             <span class="n">dc_node</span><span class="p">:</span> <span class="n">CGMES_CONNECTIVITY_NODE</span><span class="p">,</span>
+                             <span class="n">dc_cond_eq</span><span class="p">:</span> <span class="n">CGMES_DC_CONDUCTING_EQUIPMENT</span><span class="p">,</span>
+                             <span class="n">seq_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                             <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CGMES_DC_TERMINAL</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new CGMES DCTerminal</span>
+
+<span class="sd">    :param cgmes_model: CgmesCircuit</span>
+<span class="sd">    :param dc_tp: DC TopologicalNode where the Terminal is connected</span>
+<span class="sd">    :param dc_node: DC Node where the Terminal should be placed in</span>
+<span class="sd">    :param dc_cond_eq: DC Conducting Equipment</span>
+<span class="sd">    :param seq_num: sequence number</span>
+<span class="sd">    :param logger: DataLogger</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">dc_term</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCTerminal</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">dc_term</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCTerminal</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="c1"># EQ</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">DCTerminal_list</span><span class="p">)</span>
+    <span class="n">dc_term</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DC_term_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dc_node</span><span class="p">,</span> <span class="p">(</span><span class="n">cgmes24</span><span class="o">.</span><span class="n">DCNode</span><span class="p">,</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCNode</span><span class="p">)):</span>
+        <span class="n">dc_term</span><span class="o">.</span><span class="n">DCNode</span> <span class="o">=</span> <span class="n">dc_node</span>
+
+    <span class="n">dc_term</span><span class="o">.</span><span class="n">DCConductingEquipment</span> <span class="o">=</span> <span class="n">dc_cond_eq</span>
+    <span class="n">dc_term</span><span class="o">.</span><span class="n">sequenceNumber</span> <span class="o">=</span> <span class="n">seq_num</span>
+
+    <span class="c1"># TP</span>
+    <span class="n">dc_term</span><span class="o">.</span><span class="n">DCTopologicalNode</span> <span class="o">=</span> <span class="n">dc_tp</span>
+
+    <span class="c1"># SSH</span>
+    <span class="n">dc_term</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dc_term</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dc_term</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_dc_converter_unit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_dc_converter_unit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_dc_converter_unit</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                   <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                                   <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CGMES_DC_CONVERTER_UNIT</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new CGMES DCConverterUnit</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">dc_cu</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">DCConverterUnit</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">dc_cu</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">DCConverterUnit</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">dc_cu</span><span class="o">.</span><span class="n">operationMode</span> <span class="o">=</span> <span class="n">DCConverterOperatingModeKind</span><span class="o">.</span><span class="n">monopolarGroundReturn</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dc_cu</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dc_cu</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_location">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_location">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_location</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                          <span class="n">device</span><span class="p">:</span> <span class="n">CGMES_LINE</span><span class="p">,</span>
+                          <span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+                          <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CGMES_LOCATION</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param device:</span>
+<span class="sd">    :param longitude:</span>
+<span class="sd">    :param latitude:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">coordinate_system</span> <span class="o">=</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">CoordinateSystem_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">location</span><span class="o">.</span><span class="n">CoordinateSystem</span> <span class="o">=</span> <span class="n">coordinate_system</span>
+    <span class="k">if</span> <span class="s2">&quot;PowerSystemResources&quot;</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">declared_properties</span><span class="p">:</span>
+        <span class="n">location</span><span class="o">.</span><span class="n">PowerSystemResources</span> <span class="o">=</span> <span class="n">device</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">location</span><span class="o">.</span><span class="n">PowerSystemResource</span> <span class="o">=</span> <span class="n">device</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">pos_point</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">PositionPoint</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">pos_point</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">PositionPoint</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">pos_point</span><span class="o">.</span><span class="n">Location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="n">pos_point</span><span class="o">.</span><span class="n">sequenceNumber</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">pos_point</span><span class="o">.</span><span class="n">xPosition</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+    <span class="n">pos_point</span><span class="o">.</span><span class="n">yPosition</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;PositionPoints&quot;</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">declared_properties</span><span class="p">:</span>
+        <span class="n">location</span><span class="o">.</span><span class="n">PositionPoints</span> <span class="o">=</span> <span class="n">pos_point</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">location</span><span class="o">.</span><span class="n">PositionPoint</span> <span class="o">=</span> <span class="n">pos_point</span>
+
+    <span class="k">if</span> <span class="s2">&quot;Locations&quot;</span> <span class="ow">in</span> <span class="n">coordinate_system</span><span class="o">.</span><span class="n">declared_properties</span><span class="p">:</span>
+        <span class="n">current_locations</span> <span class="o">=</span> <span class="n">coordinate_system</span><span class="o">.</span><span class="n">Locations</span>
+        <span class="k">if</span> <span class="n">current_locations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coordinate_system</span><span class="o">.</span><span class="n">Locations</span> <span class="o">=</span> <span class="p">[</span><span class="n">location</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_locations</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">current_locations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coordinate_system</span><span class="o">.</span><span class="n">Locations</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_locations</span><span class="p">,</span> <span class="n">location</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">current_location</span> <span class="o">=</span> <span class="n">coordinate_system</span><span class="o">.</span><span class="n">Location</span>
+        <span class="k">if</span> <span class="n">current_location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coordinate_system</span><span class="o">.</span><span class="n">Location</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_location</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">current_location</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coordinate_system</span><span class="o">.</span><span class="n">Location</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_location</span><span class="p">,</span> <span class="n">location</span><span class="p">]</span>
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pos_point</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;Location&quot;</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">declared_properties</span><span class="p">:</span>
+        <span class="n">device</span><span class="o">.</span><span class="n">Location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Skipping location back-reference for CGMES class without Location property&#39;</span><span class="p">,</span>
+                        <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                        <span class="n">device_class</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                        <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Location&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">location</span></div>
+
+
+
+<div class="viewcode-block" id="create_sv_power_flow">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_sv_power_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_sv_power_flow</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                         <span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">q</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">terminal</span><span class="p">:</span> <span class="n">CGMES_TERMINAL</span><span class="p">,</span>
+                         <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a SvPowerFlow instance</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param p: The active power flow. Load sign convention is used,</span>
+<span class="sd">                i.e. positive sign means flow out</span>
+<span class="sd">                from a TopologicalNode (bus) into the conducting equipment.</span>
+<span class="sd">    :param q:</span>
+<span class="sd">    :param terminal:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">sv_pf</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvPowerFlow</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">sv_pf</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvPowerFlow</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">sv_pf</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+    <span class="n">sv_pf</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span>
+    <span class="n">sv_pf</span><span class="o">.</span><span class="n">Terminal</span> <span class="o">=</span> <span class="n">terminal</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sv_pf</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_sv_shunt_compensator_sections">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_sv_shunt_compensator_sections">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_sv_shunt_compensator_sections</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                         <span class="n">sections</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                         <span class="n">cgmes_shunt_compensator</span><span class="p">,</span>
+                                         <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a SvShuntCompensatorSections instance</span>
+
+<span class="sd">    :param cgmes_model: Cgmes Circuit</span>
+<span class="sd">    :param sections: sections active</span>
+<span class="sd">    :param cgmes_shunt_compensator: Linear or Non-linear ShuntCompensator instance from cgmes model</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">sv_scs</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvShuntCompensatorSections</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;SvShuntCompensatorSections&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">sv_scs</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvShuntCompensatorSections</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">(),</span> <span class="n">tpe</span><span class="o">=</span><span class="s2">&quot;SvShuntCompensatorSections&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="c1"># sections: The number of sections in service as a continous variable.</span>
+    <span class="c1"># To get integer value scale with ShuntCompensator.bPerSection.</span>
+    <span class="n">sv_scs</span><span class="o">.</span><span class="n">sections</span> <span class="o">=</span> <span class="n">sections</span>
+    <span class="n">sv_scs</span><span class="o">.</span><span class="n">ShuntCompensator</span> <span class="o">=</span> <span class="n">cgmes_shunt_compensator</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sv_scs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_sv_status">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_sv_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_sv_status</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                     <span class="n">in_service</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                     <span class="n">cgmes_conducting_equipment</span><span class="p">,</span>
+                     <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a SvStatus instance</span>
+
+<span class="sd">    :param cgmes_model: Cgmes Circuit</span>
+<span class="sd">    :param in_service: is active parameter</span>
+<span class="sd">    :param cgmes_conducting_equipment: cgmes CondEq</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">sv_status</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SvStatus</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">sv_status</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SvStatus</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">sv_status</span><span class="o">.</span><span class="n">inService</span> <span class="o">=</span> <span class="n">in_service</span>
+    <span class="n">sv_status</span><span class="o">.</span><span class="n">ConductingEquipment</span> <span class="o">=</span> <span class="n">cgmes_conducting_equipment</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sv_status</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_conform_load_group">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_conform_load_group">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_conform_load_group</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">c_load_group</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">ConformLoadGroup</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">c_load_group</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">ConformLoadGroup</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">c_load_group</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;_CLG_&quot;</span>
+    <span class="n">c_load_group</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;_CLG_&quot;</span>
+    <span class="n">c_load_group</span><span class="o">.</span><span class="n">EnergyConsumers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">c_load_group</span><span class="o">.</span><span class="n">SubLoadArea</span> <span class="o">=</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">SubLoadArea_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c_load_group</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c_load_group</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_non_conform_load_group">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_non_conform_load_group">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_non_conform_load_group</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">nc_load_group</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NonConformLoadGroup</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">nc_load_group</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NonConformLoadGroup</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">nc_load_group</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;_NCLG_&quot;</span>
+    <span class="n">nc_load_group</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;_NCLG_&quot;</span>
+    <span class="n">nc_load_group</span><span class="o">.</span><span class="n">EnergyConsumers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nc_load_group</span><span class="o">.</span><span class="n">SubLoadArea</span> <span class="o">=</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">SubLoadArea_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nc_load_group</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nc_load_group</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_sub_load_area">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_sub_load_area">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_sub_load_area</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">sub_load_area</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">SubLoadArea</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">sub_load_area</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">SubLoadArea</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">sub_load_area</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;_SLA_&quot;</span>
+    <span class="n">sub_load_area</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;_SLA_&quot;</span>
+    <span class="n">sub_load_area</span><span class="o">.</span><span class="n">LoadArea</span> <span class="o">=</span> <span class="n">create_cgmes_load_area</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">,</span> <span class="n">ver</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub_load_area</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sub_load_area</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_load_area">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_load_area">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_load_area</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param cgmes_model:</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">sub_load_area</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">LoadArea</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">sub_load_area</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">LoadArea</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">sub_load_area</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;_LA_&quot;</span>
+    <span class="n">sub_load_area</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;_LA_&quot;</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub_load_area</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sub_load_area</span></div>
+
+
+
+<div class="viewcode-block" id="create_cgmes_nonlinear_sc_point">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_create_instances.create_cgmes_nonlinear_sc_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_cgmes_nonlinear_sc_point</span><span class="p">(</span>
+        <span class="n">section_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">nl_sc</span><span class="p">:</span> <span class="n">CGMES_NON_LINEAR_SHUNT_COMPENSATOR</span><span class="p">,</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">ver</span><span class="p">:</span> <span class="n">CGMESVersions</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    :param section_num: </span>
+<span class="sd">    :param b: b in Siemens</span>
+<span class="sd">    :param g: g in </span>
+<span class="sd">    :param nl_sc: NonlinearShuntCompensator object</span>
+<span class="sd">    :param cgmes_model: CgmesModel</span>
+<span class="sd">    :param ver:</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span><span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">:</span>
+        <span class="n">nl_sc_p</span> <span class="o">=</span> <span class="n">cgmes24</span><span class="o">.</span><span class="n">NonlinearShuntCompensatorPoint</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">ver</span> <span class="o">==</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">:</span>
+        <span class="n">nl_sc_p</span> <span class="o">=</span> <span class="n">cgmes30</span><span class="o">.</span><span class="n">NonlinearShuntCompensatorPoint</span><span class="p">(</span><span class="n">rdfid</span><span class="o">=</span><span class="n">get_new_rdfid</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">()</span>
+
+    <span class="n">nl_sc_p</span><span class="o">.</span><span class="n">sectionNumber</span> <span class="o">=</span> <span class="n">section_num</span>
+    <span class="n">nl_sc_p</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
+    <span class="n">nl_sc_p</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span>
+    <span class="n">nl_sc_p</span><span class="o">.</span><span class="n">b0</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">nl_sc_p</span><span class="o">.</span><span class="n">g0</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">nl_sc_p</span><span class="o">.</span><span class="n">NonlinearShuntCompensator</span> <span class="o">=</span> <span class="n">nl_sc</span>
+
+    <span class="n">cgmes_model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nl_sc_p</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

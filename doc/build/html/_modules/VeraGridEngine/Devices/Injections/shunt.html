@@ -1,0 +1,205 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Injections.shunt &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Injections.shunt</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Injections.shunt</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.shunt_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShuntParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
+
+
+<div class="viewcode-block" id="Shunt">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Shunt</span><span class="p">(</span><span class="n">ShuntParent</span><span class="p">):</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;shunt&#39;</span><span class="p">,</span> <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">G</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">G1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">G2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">G3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">B1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">B2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">B3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mttf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mttr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">G0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">capex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">build_status</span><span class="p">:</span> <span class="n">BuildStatus</span> <span class="o">=</span> <span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fixed shunt, not controllable</span>
+
+<span class="sd">        :param name: Name of the device</span>
+<span class="sd">        :param idtag: unique id of the device (if None or &quot;&quot; a new one is generated)</span>
+<span class="sd">        :param code: secondary code for compatibility</span>
+<span class="sd">        :param active:active state</span>
+<span class="sd">        :param G: positive conductance (MW @ v=1 p.u.)</span>
+<span class="sd">        :param G1: phase 1 conductance (MW @ v=1 p.u.)</span>
+<span class="sd">        :param G2: phase 2 conductance (MW @ v=1 p.u.)</span>
+<span class="sd">        :param G3: phase 3 conductance (MW @ v=1 p.u.)</span>
+<span class="sd">        :param B: positive conductance (MVAr @ v=1 p.u.)</span>
+<span class="sd">        :param B1: phase 1 conductance (MVAr @ v=1 p.u.)</span>
+<span class="sd">        :param B2: phase 2 conductance (MVAr @ v=1 p.u.)</span>
+<span class="sd">        :param B3: phase 3 conductance (MVAr @ v=1 p.u.)</span>
+<span class="sd">        :param G0: zero-sequence conductance (MW @ v=1 p.u.)</span>
+<span class="sd">        :param B0: zero-sequence conductance (MVAr @ v=1 p.u.)</span>
+<span class="sd">        :param mttf: mean time to failure (h)</span>
+<span class="sd">        :param mttr: mean time to recovery (h)</span>
+<span class="sd">        :param capex: capital expenditures (investment cost)</span>
+<span class="sd">        :param opex: operational expenditures (maintenance cost)</span>
+<span class="sd">        :param build_status: BuildStatus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ShuntParent</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                             <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                             <span class="n">bus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+                             <span class="n">G</span><span class="o">=</span><span class="n">G</span><span class="p">,</span>
+                             <span class="n">G1</span><span class="o">=</span><span class="n">G1</span><span class="p">,</span>
+                             <span class="n">G2</span><span class="o">=</span><span class="n">G2</span><span class="p">,</span>
+                             <span class="n">G3</span><span class="o">=</span><span class="n">G3</span><span class="p">,</span>
+                             <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+                             <span class="n">B1</span><span class="o">=</span><span class="n">B1</span><span class="p">,</span>
+                             <span class="n">B2</span><span class="o">=</span><span class="n">B2</span><span class="p">,</span>
+                             <span class="n">B3</span><span class="o">=</span><span class="n">B3</span><span class="p">,</span>
+                             <span class="n">G0</span><span class="o">=</span><span class="n">G0</span><span class="p">,</span>
+                             <span class="n">B0</span><span class="o">=</span><span class="n">B0</span><span class="p">,</span>
+                             <span class="n">Cost</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                             <span class="n">mttf</span><span class="o">=</span><span class="n">mttf</span><span class="p">,</span>
+                             <span class="n">mttr</span><span class="o">=</span><span class="n">mttr</span><span class="p">,</span>
+                             <span class="n">capex</span><span class="o">=</span><span class="n">capex</span><span class="p">,</span>
+                             <span class="n">opex</span><span class="o">=</span><span class="n">opex</span><span class="p">,</span>
+                             <span class="n">build_status</span><span class="o">=</span><span class="n">build_status</span><span class="p">,</span>
+                             <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">ShuntDevice</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

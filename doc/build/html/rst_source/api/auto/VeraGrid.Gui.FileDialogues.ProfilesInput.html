@@ -1,0 +1,1037 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.FileDialogues.ProfilesInput package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.FileDialogues.PsseDialogue package" href="VeraGrid.Gui.FileDialogues.PsseDialogue.html" />
+    <link rel="prev" title="VeraGrid.Gui.FileDialogues.MatpowerDialogue package" href="VeraGrid.Gui.FileDialogues.MatpowerDialogue.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.FileDialogues.html">VeraGrid.Gui.FileDialogues package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.FileDialogues.ProfilesInput package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.FileDialogues.ProfilesInput.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-filedialogues-profilesinput-package">
+<h1>VeraGrid.Gui.FileDialogues.ProfilesInput package<a class="headerlink" href="#veragrid-gui-filedialogues-profilesinput-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog">
+<span id="veragrid-gui-filedialogues-profilesinput-excel-dialog-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.</span></span><span class="sig-name descname"><span class="pre">ExcelDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excel_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/excel_dialog.html#ExcelDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog.accepted_action">
+<span class="sig-name descname"><span class="pre">accepted_action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/excel_dialog.html#ExcelDialog.accepted_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog.accepted_action" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog.rejected_action">
+<span class="sig-name descname"><span class="pre">rejected_action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/excel_dialog.html#ExcelDialog.rejected_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog.rejected_action" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ExcelDialog&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection">
+<span id="veragrid-gui-filedialogues-profilesinput-excel-sheet-selection-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.Ui_ExcelSelectionDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.</span></span><span class="sig-name descname"><span class="pre">Ui_ExcelSelectionDialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/excel_sheet_selection.html#Ui_ExcelSelectionDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.Ui_ExcelSelectionDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.Ui_ExcelSelectionDialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ExcelSelectionDialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/excel_sheet_selection.html#Ui_ExcelSelectionDialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.Ui_ExcelSelectionDialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.Ui_ExcelSelectionDialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ExcelSelectionDialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/excel_sheet_selection.html#Ui_ExcelSelectionDialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_sheet_selection.Ui_ExcelSelectionDialog.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue">
+<span id="veragrid-gui-filedialogues-profilesinput-models-dialogue-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.</span></span><span class="sig-name descname"><span class="pre">GridsModel</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem" title="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem"><span class="pre">GridsModelItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.append" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.clear" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.columnCount" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.dropMimeData">
+<span class="sig-name descname"><span class="pre">dropMimeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QMimeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DropAction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QPersistentModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.dropMimeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.dropMimeData" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong></p></li>
+<li><p><strong>action</strong></p></li>
+<li><p><strong>row</strong></p></li>
+<li><p><strong>column</strong></p></li>
+<li><p><strong>parent</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ItemFlag</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.flags" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.headerData" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong></p></li>
+<li><p><strong>orientation</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem" title="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem"><span class="pre">GridsModelItem</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.items" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.remove" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.rowCount" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.set_path_at">
+<span class="sig-name descname"><span class="pre">set_path_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.set_path_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.set_path_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong></p></li>
+<li><p><strong>path</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GridsModel&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QAbstractTableModel&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.supportedDropActions">
+<span class="sig-name descname"><span class="pre">supportedDropActions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.supportedDropActions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.supportedDropActions" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModel.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel.update" title="Link to this definition"></a></dt>
+<dd><p>update table</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.</span></span><span class="sig-name descname"><span class="pre">GridsModelItem</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModelItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem.get_at">
+<span class="sig-name descname"><span class="pre">get_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Timestamp</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#GridsModelItem.get_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem.get_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem.path">
+<span class="sig-name descname"><span class="pre">path</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModelItem.path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.</span></span><span class="sig-name descname"><span class="pre">ModelsInputGUI</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#ModelsInputGUI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#ModelsInputGUI.accept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.accept" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.add_models">
+<span class="sig-name descname"><span class="pre">add_models</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#ModelsInputGUI.add_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.add_models" title="Link to this definition"></a></dt>
+<dd><p>Add the selected models</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.clear_model">
+<span class="sig-name descname"><span class="pre">clear_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#ModelsInputGUI.clear_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.clear_model" title="Link to this definition"></a></dt>
+<dd><p>Delete the import data
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.generate_time_array">
+<span class="sig-name descname"><span class="pre">generate_time_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#ModelsInputGUI.generate_time_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.generate_time_array" title="Link to this definition"></a></dt>
+<dd><p>Generate time profile from model
+:param main_grid:
+:param logger:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.grids_model">
+<span class="sig-name descname"><span class="pre">grids_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel" title="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.GridsModel"><span class="pre">GridsModel</span></a></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.grids_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#ModelsInputGUI.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.process" title="Link to this definition"></a></dt>
+<dd><p>Process the imported data
+:param main_grid: Grid to apply the values to, it has to have declared profiles already
+:param logger: Logger
+:return: None</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ModelsInputGUI&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.ModelsInputGUI.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.assign_grid">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.</span></span><span class="sig-name descname"><span class="pre">assign_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_to_add</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_secondary_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#assign_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.assign_grid" title="Link to this definition"></a></dt>
+<dd><p>Assign all the values of the loaded grid to the profiles of the main grid at the time step t
+:param t: time step index
+:param grid_to_add: grid to add to the main cirucuit
+:param main_grid: main grid
+:param use_secondary_key: Use the secondary key (“code”) to match
+:param logger: Logger</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.extract_and_convert_to_datetime">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.</span></span><span class="sig-name descname"><span class="pre">extract_and_convert_to_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DatetimeIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/models_dialogue.html#extract_and_convert_to_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue.extract_and_convert_to_datetime" title="Link to this definition"></a></dt>
+<dd><p>Try to extract date from file name
+:param filename: file name
+:param logger: Logger
+:return: pd.DateTimeIndex or None</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue">
+<span id="veragrid-gui-filedialogues-profilesinput-profile-dialogue-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.GeneratorsProfileOptionsDialogue">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">GeneratorsProfileOptionsDialogue</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#GeneratorsProfileOptionsDialogue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.GeneratorsProfileOptionsDialogue" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Dialogue to show after profile import</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.GeneratorsProfileOptionsDialogue.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;GeneratorsProfileOptionsDialogue&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.GeneratorsProfileOptionsDialogue.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.MultiplierType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">MultiplierType</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#MultiplierType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.MultiplierType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.MultiplierType.Mult">
+<span class="sig-name descname"><span class="pre">Mult</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.MultiplierType.Mult" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">ProfileAssociation</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.code">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.code" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.elm">
+<span class="sig-name descname"><span class="pre">elm</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine" title="VeraGridEngine.Devices.Branches.dc_line.DcLine"><span class="pre">DcLine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine" title="VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine"><span class="pre">HvdcLine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.vsc.VSC" title="VeraGridEngine.Devices.Branches.vsc.VSC"><span class="pre">VSC</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.upfc.UPFC" title="VeraGridEngine.Devices.Branches.upfc.UPFC"><span class="pre">UPFC</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.winding.Winding" title="VeraGridEngine.Devices.Branches.winding.Winding"><span class="pre">Winding</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.switch.Switch" title="VeraGridEngine.Devices.Branches.switch.Switch"><span class="pre">Switch</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.series_reactance.SeriesReactance" title="VeraGridEngine.Devices.Branches.series_reactance.SeriesReactance"><span class="pre">SeriesReactance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath"><span class="pre">FluidPath</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x" title="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x"><span class="pre">FluidP2x</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine" title="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine"><span class="pre">FluidTurbine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump" title="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump"><span class="pre">FluidPump</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.busbar.BusBar" title="VeraGridEngine.Devices.Substation.busbar.BusBar"><span class="pre">BusBar</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.community.Community" title="VeraGridEngine.Devices.Aggregation.community.Community"><span class="pre">Community</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer3w.Transformer3W" title="VeraGridEngine.Devices.Branches.transformer3w.Transformer3W"><span class="pre">Transformer3W</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformerNw.TransformerNW" title="VeraGridEngine.Devices.Branches.transformerNw.TransformerNW"><span class="pre">TransformerNW</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.wire.Wire" title="VeraGridEngine.Devices.Branches.wire.Wire"><span class="pre">Wire</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer_type.TransformerType" title="VeraGridEngine.Devices.Branches.transformer_type.TransformerType"><span class="pre">TransformerType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.emission_gas.EmissionGas" title="VeraGridEngine.Devices.Associations.emission_gas.EmissionGas"><span class="pre">EmissionGas</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup" title="VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup"><span class="pre">BranchGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocations" title="VeraGridEngine.Devices.Branches.line_locations.LineLocations"><span class="pre">LineLocations</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocation" title="VeraGridEngine.Devices.Branches.line_locations.LineLocation"><span class="pre">LineLocation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority" title="VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority"><span class="pre">ModellingAuthority</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.fuel.Fuel" title="VeraGridEngine.Devices.Associations.fuel.Fuel"><span class="pre">Fuel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investment.Investment" title="VeraGridEngine.Devices.Aggregation.investment.Investment"><span class="pre">Investment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup" title="VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup"><span class="pre">InvestmentsGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency.Contingency" title="VeraGridEngine.Devices.Events.contingency.Contingency"><span class="pre">Contingency</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup" title="VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup"><span class="pre">ContingencyGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.remedial_action.RemedialAction" title="VeraGridEngine.Devices.Events.remedial_action.RemedialAction"><span class="pre">RemedialAction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.remedial_action_group.RemedialActionGroup" title="VeraGridEngine.Devices.Events.remedial_action_group.RemedialActionGroup"><span class="pre">RemedialActionGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.owner.Owner" title="VeraGridEngine.Devices.Associations.owner.Owner"><span class="pre">Owner</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate" title="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate"><span class="pre">RmsModelTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate" title="VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate"><span class="pre">EmtModelTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.fmu_template.FmuTemplate" title="VeraGridEngine.Devices.Dynamic.fmu_template.FmuTemplate"><span class="pre">FmuTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.rms_event.RmsEvent" title="VeraGridEngine.Devices.Events.rms_event.RmsEvent"><span class="pre">RmsEvent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.rms_events_group.RmsEventsGroup" title="VeraGridEngine.Devices.Events.rms_events_group.RmsEventsGroup"><span class="pre">RmsEventsGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.short_cirtcuit_event.ShortCircuitEvent" title="VeraGridEngine.Devices.Events.short_cirtcuit_event.ShortCircuitEvent"><span class="pre">ShortCircuitEvent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.IfMeasurement" title="VeraGridEngine.Devices.measurement.IfMeasurement"><span class="pre">IfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.ItMeasurement" title="VeraGridEngine.Devices.measurement.ItMeasurement"><span class="pre">ItMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QfMeasurement" title="VeraGridEngine.Devices.measurement.QfMeasurement"><span class="pre">QfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PfMeasurement" title="VeraGridEngine.Devices.measurement.PfMeasurement"><span class="pre">PfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QtMeasurement" title="VeraGridEngine.Devices.measurement.QtMeasurement"><span class="pre">QtMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PtMeasurement" title="VeraGridEngine.Devices.measurement.PtMeasurement"><span class="pre">PtMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QiMeasurement" title="VeraGridEngine.Devices.measurement.QiMeasurement"><span class="pre">QiMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PiMeasurement" title="VeraGridEngine.Devices.measurement.PiMeasurement"><span class="pre">PiMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VmMeasurement" title="VeraGridEngine.Devices.measurement.VmMeasurement"><span class="pre">VmMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VaMeasurement" title="VeraGridEngine.Devices.measurement.VaMeasurement"><span class="pre">VaMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PgMeasurement" title="VeraGridEngine.Devices.measurement.PgMeasurement"><span class="pre">PgMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QgMeasurement" title="VeraGridEngine.Devices.measurement.QgMeasurement"><span class="pre">QgMeasurement</span></a></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.elm" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.get_at">
+<span class="sig-name descname"><span class="pre">get_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociation.get_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.get_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.idtag">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">idtag</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.idtag" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.multiplier">
+<span class="sig-name descname"><span class="pre">multiplier</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.multiplier" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.name" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.profile_name">
+<span class="sig-name descname"><span class="pre">profile_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.profile_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation.scale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">ProfileAssociations</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation" title="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociation"><span class="pre">ProfileAssociation</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.append" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.clear_at">
+<span class="sig-name descname"><span class="pre">clear_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.clear_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.clear_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.columnCount" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.get_multiplier_at">
+<span class="sig-name descname"><span class="pre">get_multiplier_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.get_multiplier_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.get_multiplier_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.get_profile_at">
+<span class="sig-name descname"><span class="pre">get_profile_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.get_profile_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.get_profile_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.get_scale_at">
+<span class="sig-name descname"><span class="pre">get_scale_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.get_scale_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.get_scale_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.headerData" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong></p></li>
+<li><p><strong>orientation</strong></p></li>
+<li><p><strong>role</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.rowCount" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.set_multiplier_at">
+<span class="sig-name descname"><span class="pre">set_multiplier_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.set_multiplier_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.set_multiplier_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong></p></li>
+<li><p><strong>value</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.set_profile_at">
+<span class="sig-name descname"><span class="pre">set_profile_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.set_profile_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.set_profile_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong></p></li>
+<li><p><strong>profile_name</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.set_scale_at">
+<span class="sig-name descname"><span class="pre">set_scale_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.set_scale_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.set_scale_at" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong></p></li>
+<li><p><strong>value</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ProfileAssociations&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QAbstractTableModel&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileAssociations.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileAssociations.update" title="Link to this definition"></a></dt>
+<dd><p>update table</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">ProfileInputGUI</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.assign_origin_df">
+<span class="sig-name descname"><span class="pre">assign_origin_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.assign_origin_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.assign_origin_df" title="Link to this definition"></a></dt>
+<dd><p>Try to assign the loaded data
+:param df: DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.assignation_table_double_click">
+<span class="sig-name descname"><span class="pre">assignation_table_double_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.assignation_table_double_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.assignation_table_double_click" title="Link to this definition"></a></dt>
+<dd><p>Set the selected profile into the clicked slot</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.auto_link">
+<span class="sig-name descname"><span class="pre">auto_link</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.auto_link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.auto_link" title="Link to this definition"></a></dt>
+<dd><p>Performs an automatic link between the sources and the objectives based on the names</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.clear_selection">
+<span class="sig-name descname"><span class="pre">clear_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.clear_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.clear_selection" title="Link to this definition"></a></dt>
+<dd><p>Clear the selected associations</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.display_associations">
+<span class="sig-name descname"><span class="pre">display_associations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.display_associations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.display_associations" title="Link to this definition"></a></dt>
+<dd><p>&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.do_it">
+<span class="sig-name descname"><span class="pre">do_it</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.do_it"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.do_it" title="Link to this definition"></a></dt>
+<dd><p>Close. The data has to be queried later to the object by the parent by calling get_association_data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.excel_dialogue">
+<span class="sig-name descname"><span class="pre">excel_dialogue</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog" title="VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog.ExcelDialog"><span class="pre">ExcelDialog</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.excel_dialogue" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.get_multiplier">
+<span class="sig-name descname"><span class="pre">get_multiplier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.get_multiplier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.get_multiplier" title="Link to this definition"></a></dt>
+<dd><p>Gets the necessary multiplier to pass the profile units to Mega
+Remember that the power units in VeraGrid are the MVA</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.get_profiles_data">
+<span class="sig-name descname"><span class="pre">get_profiles_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.get_profiles_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.get_profiles_data" title="Link to this definition"></a></dt>
+<dd><p>Return ths assigned profiles
+&#64;return:</p>
+<blockquote>
+<div><p>Array of profiles assigned to the input objectives
+Array specifying which objectives are not assigned</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.has_profile">
+<span class="sig-name descname"><span class="pre">has_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.has_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.has_profile" title="Link to this definition"></a></dt>
+<dd><p>Return if an object index has an associated profile
+:param i:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.import_profile">
+<span class="sig-name descname"><span class="pre">import_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.import_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.import_profile" title="Link to this definition"></a></dt>
+<dd><p>Select a file to be loaded</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.link_to_all">
+<span class="sig-name descname"><span class="pre">link_to_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.link_to_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.link_to_all" title="Link to this definition"></a></dt>
+<dd><p>Links the selected origin with all the destinations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.link_to_selection">
+<span class="sig-name descname"><span class="pre">link_to_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.link_to_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.link_to_selection" title="Link to this definition"></a></dt>
+<dd><p>Links the selected origin with the selected destinations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.make_association">
+<span class="sig-name descname"><span class="pre">make_association</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mult</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.make_association"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.make_association" title="Link to this definition"></a></dt>
+<dd><p>Makes an association in the associations table</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.normalize_string">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">normalize_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.normalize_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.normalize_string" title="Link to this definition"></a></dt>
+<dd><p>Normalizes a string</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line" title="VeraGridEngine.Devices.Branches.line.Line"><span class="pre">Line</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine" title="VeraGridEngine.Devices.Branches.dc_line.DcLine"><span class="pre">DcLine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer.Transformer2W" title="VeraGridEngine.Devices.Branches.transformer.Transformer2W"><span class="pre">Transformer2W</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine" title="VeraGridEngine.Devices.Branches.hvdc_line.HvdcLine"><span class="pre">HvdcLine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.vsc.VSC" title="VeraGridEngine.Devices.Branches.vsc.VSC"><span class="pre">VSC</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.upfc.UPFC" title="VeraGridEngine.Devices.Branches.upfc.UPFC"><span class="pre">UPFC</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.winding.Winding" title="VeraGridEngine.Devices.Branches.winding.Winding"><span class="pre">Winding</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.switch.Switch" title="VeraGridEngine.Devices.Branches.switch.Switch"><span class="pre">Switch</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.series_reactance.SeriesReactance" title="VeraGridEngine.Devices.Branches.series_reactance.SeriesReactance"><span class="pre">SeriesReactance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_node.FluidNode" title="VeraGridEngine.Devices.Fluid.fluid_node.FluidNode"><span class="pre">FluidNode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_path.FluidPath" title="VeraGridEngine.Devices.Fluid.fluid_path.FluidPath"><span class="pre">FluidPath</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x" title="VeraGridEngine.Devices.Fluid.fluid_p2x.FluidP2x"><span class="pre">FluidP2x</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine" title="VeraGridEngine.Devices.Fluid.fluid_turbine.FluidTurbine"><span class="pre">FluidTurbine</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Fluid.html#VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump" title="VeraGridEngine.Devices.Fluid.fluid_pump.FluidPump"><span class="pre">FluidPump</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.busbar.BusBar" title="VeraGridEngine.Devices.Substation.busbar.BusBar"><span class="pre">BusBar</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.community.Community" title="VeraGridEngine.Devices.Aggregation.community.Community"><span class="pre">Community</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer3w.Transformer3W" title="VeraGridEngine.Devices.Branches.transformer3w.Transformer3W"><span class="pre">Transformer3W</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformerNw.TransformerNW" title="VeraGridEngine.Devices.Branches.transformerNw.TransformerNW"><span class="pre">TransformerNW</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType" title="VeraGridEngine.Devices.Branches.overhead_line_type.OverheadLineType"><span class="pre">OverheadLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.wire.Wire" title="VeraGridEngine.Devices.Branches.wire.Wire"><span class="pre">Wire</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.transformer_type.TransformerType" title="VeraGridEngine.Devices.Branches.transformer_type.TransformerType"><span class="pre">TransformerType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.emission_gas.EmissionGas" title="VeraGridEngine.Devices.Associations.emission_gas.EmissionGas"><span class="pre">EmissionGas</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup" title="VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup"><span class="pre">BranchGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocations" title="VeraGridEngine.Devices.Branches.line_locations.LineLocations"><span class="pre">LineLocations</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line_locations.LineLocation" title="VeraGridEngine.Devices.Branches.line_locations.LineLocation"><span class="pre">LineLocation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority" title="VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority"><span class="pre">ModellingAuthority</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.fuel.Fuel" title="VeraGridEngine.Devices.Associations.fuel.Fuel"><span class="pre">Fuel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investment.Investment" title="VeraGridEngine.Devices.Aggregation.investment.Investment"><span class="pre">Investment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup" title="VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup"><span class="pre">InvestmentsGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency.Contingency" title="VeraGridEngine.Devices.Events.contingency.Contingency"><span class="pre">Contingency</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup" title="VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup"><span class="pre">ContingencyGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.remedial_action.RemedialAction" title="VeraGridEngine.Devices.Events.remedial_action.RemedialAction"><span class="pre">RemedialAction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.remedial_action_group.RemedialActionGroup" title="VeraGridEngine.Devices.Events.remedial_action_group.RemedialActionGroup"><span class="pre">RemedialActionGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.owner.Owner" title="VeraGridEngine.Devices.Associations.owner.Owner"><span class="pre">Owner</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType" title="VeraGridEngine.Devices.Branches.underground_line_type.UndergroundLineType"><span class="pre">UndergroundLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType" title="VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType"><span class="pre">SequenceLineType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate" title="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate"><span class="pre">RmsModelTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate" title="VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate"><span class="pre">EmtModelTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.fmu_template.FmuTemplate" title="VeraGridEngine.Devices.Dynamic.fmu_template.FmuTemplate"><span class="pre">FmuTemplate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.rms_event.RmsEvent" title="VeraGridEngine.Devices.Events.rms_event.RmsEvent"><span class="pre">RmsEvent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.rms_events_group.RmsEventsGroup" title="VeraGridEngine.Devices.Events.rms_events_group.RmsEventsGroup"><span class="pre">RmsEventsGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.short_cirtcuit_event.ShortCircuitEvent" title="VeraGridEngine.Devices.Events.short_cirtcuit_event.ShortCircuitEvent"><span class="pre">ShortCircuitEvent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.IfMeasurement" title="VeraGridEngine.Devices.measurement.IfMeasurement"><span class="pre">IfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.ItMeasurement" title="VeraGridEngine.Devices.measurement.ItMeasurement"><span class="pre">ItMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QfMeasurement" title="VeraGridEngine.Devices.measurement.QfMeasurement"><span class="pre">QfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PfMeasurement" title="VeraGridEngine.Devices.measurement.PfMeasurement"><span class="pre">PfMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QtMeasurement" title="VeraGridEngine.Devices.measurement.QtMeasurement"><span class="pre">QtMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PtMeasurement" title="VeraGridEngine.Devices.measurement.PtMeasurement"><span class="pre">PtMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QiMeasurement" title="VeraGridEngine.Devices.measurement.QiMeasurement"><span class="pre">QiMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PiMeasurement" title="VeraGridEngine.Devices.measurement.PiMeasurement"><span class="pre">PiMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VmMeasurement" title="VeraGridEngine.Devices.measurement.VmMeasurement"><span class="pre">VmMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.VaMeasurement" title="VeraGridEngine.Devices.measurement.VaMeasurement"><span class="pre">VaMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.PgMeasurement" title="VeraGridEngine.Devices.measurement.PgMeasurement"><span class="pre">PgMeasurement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.measurement.QgMeasurement" title="VeraGridEngine.Devices.measurement.QgMeasurement"><span class="pre">QgMeasurement</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.objects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.original_data_frame">
+<span class="sig-name descname"><span class="pre">original_data_frame</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.original_data_frame" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.plot_selected">
+<span class="sig-name descname"><span class="pre">plot_selected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.plot_selected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.plot_selected" title="Link to this definition"></a></dt>
+<dd><p>Plot the selected profile</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.project_directory">
+<span class="sig-name descname"><span class="pre">project_directory</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.project_directory" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.prop">
+<span class="sig-name descname"><span class="pre">prop</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.prop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.rnd_link">
+<span class="sig-name descname"><span class="pre">rnd_link</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.rnd_link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.rnd_link" title="Link to this definition"></a></dt>
+<dd><p>Random link</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.set_multiplier">
+<span class="sig-name descname"><span class="pre">set_multiplier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tpe</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.set_multiplier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.set_multiplier" title="Link to this definition"></a></dt>
+<dd><p>Set the table multipliers</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ProfileInputGUI&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.time">
+<span class="sig-name descname"><span class="pre">time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DatetimeIndex</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.time" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.transform_names">
+<span class="sig-name descname"><span class="pre">transform_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.transform_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.transform_names" title="Link to this definition"></a></dt>
+<dd><p>Transform the names of the inputs
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.try_format_the_source_data">
+<span class="sig-name descname"><span class="pre">try_format_the_source_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#ProfileInputGUI.try_format_the_source_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.ProfileInputGUI.try_format_the_source_data" title="Link to this definition"></a></dt>
+<dd><p>This function heavily checks the data imported for invalid stuff
+:return: corrected DataFrame if possible, all_ok?, logger</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">StringSubstitutions</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#StringSubstitutions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions.PSSeBranchName">
+<span class="sig-name descname"><span class="pre">PSSeBranchName</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'N1_NME1_V1_N2_NME2_V2_CKT</span> <span class="pre">-&gt;</span> <span class="pre">N1_N2_CKT'</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions.PSSeBranchName" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions.PSSeBusGenerator">
+<span class="sig-name descname"><span class="pre">PSSeBusGenerator</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'N1_NME1_V1</span> <span class="pre">-&gt;</span> <span class="pre">N1_1'</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions.PSSeBusGenerator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions.PSSeBusLoad">
+<span class="sig-name descname"><span class="pre">PSSeBusLoad</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'N</span> <span class="pre">-&gt;</span> <span class="pre">N_1'</span></span><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.StringSubstitutions.PSSeBusLoad" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.check_similarity">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">check_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_to_search</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_to_search</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idtag_to_search</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#check_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.check_similarity" title="Link to this definition"></a></dt>
+<dd><p>Search a value in the array of input names
+:param name_to_search: name of the VeraGrid object
+:param code_to_search: code (secondary id) of the VeraGrid object
+:param idtag_to_search: idtag to search
+:param names_array: array of names coming from the profile
+:param threshold: similarity threshold
+:return: index of the profile entry match or None if no match was found</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.try_parse_dates">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.</span></span><span class="sig-name descname"><span class="pre">try_parse_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profile_dialogue.html#try_parse_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue.try_parse_dates" title="Link to this definition"></a></dt>
+<dd><p>Tries to parse a pandas Series of strings into datetime using a list of common formats.</p>
+<p>Parameters:
+- date_series (pd.Series): The input series of date strings.
+- formats (List[str], optional): List of datetime formats to try. If None, defaults to common ones.</p>
+<p>Returns:
+- pd.Series: A pandas Series of parsed datetime objects (or original strings if none matched).</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui">
+<span id="veragrid-gui-filedialogues-profilesinput-profiles-from-data-gui-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.Ui_Dialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.</span></span><span class="sig-name descname"><span class="pre">Ui_Dialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profiles_from_data_gui.html#Ui_Dialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.Ui_Dialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.Ui_Dialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profiles_from_data_gui.html#Ui_Dialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.Ui_Dialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.Ui_Dialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profiles_from_data_gui.html#Ui_Dialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui.Ui_Dialog.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui">
+<span id="veragrid-gui-filedialogues-profilesinput-profiles-from-models-gui-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.Ui_Dialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.</span></span><span class="sig-name descname"><span class="pre">Ui_Dialog</span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profiles_from_models_gui.html#Ui_Dialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.Ui_Dialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.Ui_Dialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profiles_from_models_gui.html#Ui_Dialog.retranslateUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.Ui_Dialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.Ui_Dialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dialog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/FileDialogues/ProfilesInput/profiles_from_models_gui.html#Ui_Dialog.setupUi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui.Ui_Dialog.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput.update_gui_file">
+<span id="veragrid-gui-filedialogues-profilesinput-update-gui-file-module"></span><h2>VeraGrid.Gui.FileDialogues.ProfilesInput.update_gui_file module<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput.update_gui_file" title="Link to this heading"></a></h2>
+<p>Script to update correctly the main GUI (.py) file from the Qt design (.ui) file</p>
+</section>
+<section id="module-VeraGrid.Gui.FileDialogues.ProfilesInput">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.FileDialogues.ProfilesInput" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.FileDialogues.MatpowerDialogue.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.FileDialogues.MatpowerDialogue package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.FileDialogues.PsseDialogue.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.FileDialogues.PsseDialogue package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

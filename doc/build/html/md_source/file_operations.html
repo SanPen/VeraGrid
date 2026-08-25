@@ -1,0 +1,953 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💾 File loading and saving &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🌵 Topology" href="topology.html" />
+    <link rel="prev" title="🪲 Model debugging" href="model_debugging.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">💾 File loading and saving</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loading-a-grid">Loading a grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#save-a-grid">Save a grid</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conversion-assumptions">Conversion assumptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pss-e-raw-and-rawx">PSS/e RAW and RAWX</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#import-assumptions">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-assumptions">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dgs">DGS</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ucte">UCTE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#matpower">Matpower</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cgmes">CGMES</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#supported-profiles">Supported profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#export-the-results">Export the results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#client-server-operation">Client - Server operation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">💾 File loading and saving</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/file_operations.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="file-loading-and-saving">
+<h1>💾 File loading and saving<a class="headerlink" href="#file-loading-and-saving" title="Link to this heading"></a></h1>
+<p>To load a grid, just drag &amp; drop the file (or files) into the user interface.
+Alternatively, use the open dialogue and select the file or files.
+You may be presented with a logs dialogue, and in the case of CGMES a
+new window showing the CGMES information.
+Regardless of the file format, whenever you load a file into VeraGrid it gets converted to the
+native internal object structures (MultiCircuit).
+From there you may further edit or export in any of the supported formats.</p>
+<p>VeraGrid supports a great deal of file formats.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>read</p></th>
+<th class="head"><p>write</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>VeraGrid</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>Json</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>CIM 16</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>CGMES 2.4.15</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>CGMES 3.0</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>raw/rawx (PSS/e)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>dgs (PowerFactory)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>ucte (UCTE)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>m (Matpower)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>p (PandaPower)*</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>nc (PyPSA)*</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>epc (PSLF)</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Power grid models</p></td>
+<td><p></p></td>
+<td><p>✅</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Compatibility caveat</strong></p>
+<ul class="simple">
+<li><p>Install the PandaPower package to load the <code class="docutils literal notranslate"><span class="pre">.p</span></code> format since it is an optional dependency. <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pandapower</span></code></p></li>
+<li><p>Install the PyPSA package to load the <code class="docutils literal notranslate"><span class="pre">.nc</span></code> format since it is an optional dependency. <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pypsa</span></code></p></li>
+</ul>
+<p>The other supported formats are handled natively.</p>
+<p>Some additional file settings are found at the Settings&gt;File tab:</p>
+<p><img alt="img" src="../_images/settings-file.png" /></p>
+<p>These are specially relevant for CGMES and raw/rawx formats.</p>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<section id="loading-a-grid">
+<h3>Loading a grid<a class="headerlink" href="#loading-a-grid" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="c1"># load a grid (.veragrid, .m (Matpower), .raw (PSS/e) .rawx (PSS/e), .epc (PSLF), .dgs (PowerFactory)</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_file.veragrid&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the case of CIM/CGMES, you may need to pass a list of files or a single zip file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="c1"># load a grid from many xml files</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">([</span><span class="s2">&quot;grid_EQ.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_TP.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_SV.xml&quot;</span><span class="p">,</span> <span class="p">])</span>
+
+<span class="c1"># or from a single zip assumed to contain CGMES files</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_cgmes_set_of_files.zip&quot;</span><span class="p">)</span>
+
+<span class="c1"># or load a grid from a combination of xml and zip files assumed to be CGMES</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">([</span><span class="s2">&quot;grid_EQ.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_TP.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_SV.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;boundary.zip&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>If you need to explore the CGMEs assets before conversion, you’ll need to dive deeper in the API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;tests/data/grids/CGMES_2_4_15/IEEE 118 Bus v2.zip&quot;</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+<span class="n">data_parser</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">CgmesDataParser</span><span class="p">()</span>
+<span class="n">data_parser</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
+<span class="n">cgmes_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">CgmesCircuit</span><span class="p">(</span><span class="n">cgmes_version</span><span class="o">=</span><span class="n">data_parser</span><span class="o">.</span><span class="n">cgmes_version</span><span class="p">,</span>
+                                 <span class="n">cgmes_map_areas_like_raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+<span class="n">cgmes_circuit</span><span class="o">.</span><span class="n">parse_files</span><span class="p">(</span><span class="n">data_parser</span><span class="o">=</span><span class="n">data_parser</span><span class="p">)</span>
+
+<span class="c1"># print all the ac line segment names</span>
+<span class="k">for</span> <span class="n">ac_line_segment</span> <span class="ow">in</span> <span class="n">cgmes_circuit</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">ACLineSegment_list</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ac_line_segment</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># print the logs</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>VeraGrid supports many file formats:</p>
+<ul class="simple">
+<li><p>CIM 16 (.zip and .xml)</p></li>
+<li><p>UCTE.</p></li>
+<li><p>CGMES 2.4.15 and 3.0 (.zip and .xml)</p></li>
+<li><p>PSS/e raw and rawx versions 29 to 35, including USA market exchange RAW-30 specifics.</p></li>
+<li><p>Matpower .m files directly.</p></li>
+<li><p>DigSilent .DGS (not fully compatible)</p></li>
+<li><p>PSLF .EPC (not fully compatible, supports substation coordinates)</p></li>
+</ul>
+<p>Similarly to CGMES you may be able to use the conversion objects to explore the original formats.</p>
+</section>
+<section id="save-a-grid">
+<h3>Save a grid<a class="headerlink" href="#save-a-grid" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="c1"># load a grid</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_file.veragrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># save</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">save_file</span><span class="p">(</span><span class="n">my_grid</span><span class="p">,</span> <span class="s2">&quot;my_file_2.veragrid&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the case of saving a model in CGMES mode, we need to specify some extra parameters.
+To simplify we can use the API function <code class="docutils literal notranslate"><span class="pre">save_cgmes_file</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="c1"># load a grid</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_file.veragrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># run power flow (this is optional and it is used to generate the SV profile)</span>
+<span class="n">pf_results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">my_grid</span><span class="p">)</span>
+
+<span class="c1"># save the grid in CGMES mode</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">save_cgmes_file</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">my_grid</span><span class="p">,</span>
+                    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;My_cgmes_model.zip&quot;</span><span class="p">,</span>
+                    <span class="n">cgmes_boundary_set_path</span><span class="o">=</span><span class="s2">&quot;path_to_the_boundary_set.zip&quot;</span><span class="p">,</span>
+                    <span class="n">cgmes_version</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">,</span>
+                    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</section>
+</section>
+<section id="conversion-assumptions">
+<h2>Conversion assumptions<a class="headerlink" href="#conversion-assumptions" title="Link to this heading"></a></h2>
+<p>All non-native formats are converted through VeraGrid’s internal <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> model.
+This means that every import and export carries some format assumptions.</p>
+<p>For the formats that support profile-aware export, the same rule is used everywhere:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">t_idx=None</span></code> exports the snapshot values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">t_idx=0</span></code>, <code class="docutils literal notranslate"><span class="pre">t_idx=1</span></code>, … export one specific profile point.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BatchZip</span></code> exports one independent file per time step inside a zip package.</p></li>
+</ul>
+<p>The most important consequence of the conversion architecture is this:</p>
+<ul class="simple">
+<li><p>when you load a foreign file, you do not keep a live foreign-format object as your working model;</p></li>
+<li><p>when you save to another foreign format, VeraGrid exports from <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>, not from the original file text;</p></li>
+<li><p>therefore, a roundtrip is usually electrical and structural, not textual.</p></li>
+</ul>
+<section id="pss-e-raw-and-rawx">
+<h3>PSS/e RAW and RAWX<a class="headerlink" href="#pss-e-raw-and-rawx" title="Link to this heading"></a></h3>
+<section id="import-assumptions">
+<h4>Import assumptions<a class="headerlink" href="#import-assumptions" title="Link to this heading"></a></h4>
+<p>PSS/e RAW and RAWX are the least lossy steady-state exchange formats currently supported by VeraGrid.
+Still, the imported model is normalized into VeraGrid concepts:</p>
+<ul class="simple">
+<li><p>buses, loads, fixed shunts, switched shunts, generators, transformers, branches, switching devices and supported DC devices are mapped into <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>;</p></li>
+<li><p>PSS/e numbering becomes the VeraGrid <code class="docutils literal notranslate"><span class="pre">bus.code</span></code> when possible;</p></li>
+<li><p>PSS/e versions are normalized to the subset supported by VeraGrid;</p></li>
+<li><p>RAW and RAWX are interpreted as snapshot models, not as native time-series models.</p></li>
+</ul>
+<p>In practice, this means that loading a RAW file is appropriate when the source data is already a classical
+bus-branch steady-state case and you want to preserve most of the transmission-model semantics.</p>
+</section>
+<section id="export-assumptions">
+<h4>Export assumptions<a class="headerlink" href="#export-assumptions" title="Link to this heading"></a></h4>
+<p>RAW and RAWX export is the closest format to the VeraGrid steady-state model:</p>
+<ul class="simple">
+<li><p>the export is steady-state only;</p></li>
+<li><p>time-dependent export is represented as many independent RAW or RAWX files, one per selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
+<li><p>bus numbering is taken from <code class="docutils literal notranslate"><span class="pre">bus.code</span></code> when it is a valid unique PSS/e integer;</p></li>
+<li><p>repeated or invalid PSS/e bus numbers are replaced with temporary export-time numbers and logged;</p></li>
+<li><p>branch, transformer, generator, load, shunt, switch and supported DC data are exported from the selected profile point;</p></li>
+<li><p>switched shunt step information is rebuilt from the VeraGrid shunt state when possible;</p></li>
+<li><p>PSSE 34+ node-breaker data depends on the selected topology export mode and on the availability of the corresponding substation/node structures in the VeraGrid model.</p></li>
+</ul>
+<p>The main loss mechanism is not usually electrical, but semantic:</p>
+<ul class="simple">
+<li><p>if the VeraGrid model contains information that has no direct RAW/RAWX representation, the exporter must flatten it;</p></li>
+<li><p>if the model is profile-based, PSS/e still receives one snapshot file at a time;</p></li>
+<li><p>if the model contains invalid or duplicated PSS/e numbers, VeraGrid will export a usable file, but those temporary numbers are not written back into the model.</p></li>
+</ul>
+</section>
+<section id="example">
+<h4>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h4>
+<p>Loading:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.raw&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Saving one selected time point:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_raw</span><span class="p">,</span>
+    <span class="n">raw_version</span><span class="o">=</span><span class="s2">&quot;35&quot;</span><span class="p">,</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_t3.raw&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Saving the full profile as a zip package:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">batch_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_rawx</span><span class="p">,</span>
+    <span class="n">raw_version</span><span class="o">=</span><span class="s2">&quot;35&quot;</span><span class="p">,</span>
+    <span class="n">psse_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">PsseExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_profiles.zip&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">batch_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="dgs">
+<h3>DGS<a class="headerlink" href="#dgs" title="Link to this heading"></a></h3>
+<section id="id1">
+<h4>Import assumptions<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<p>DGS import maps a PowerFactory-oriented database exchange into VeraGrid steady-state objects.
+This is useful, but it is not a lossless import of the full PowerFactory project semantics.</p>
+<p>Typical assumptions are:</p>
+<ul class="simple">
+<li><p>the imported network is interpreted as a steady-state network, not as a complete dynamic project;</p></li>
+<li><p>equipment is mapped into VeraGrid buses, lines, transformers, loads, generators, shunts, switches and converter-like devices when supported;</p></li>
+<li><p>object classes that exist in PowerFactory but do not have a direct VeraGrid counterpart must be simplified or ignored;</p></li>
+<li><p>the imported result is a <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>, not a preserved DGS relational model.</p></li>
+</ul>
+<p>So DGS import is best understood as “bring the electrical model into VeraGrid”, not “reproduce the full
+PowerFactory project database exactly”.</p>
+</section>
+<section id="id2">
+<h4>Export assumptions<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<p>The DGS exporter maps VeraGrid devices into a PowerFactory-oriented steady-state network:</p>
+<ul class="simple">
+<li><p>the export is static and evaluated at the selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
+<li><p>batch mode writes one <code class="docutils literal notranslate"><span class="pre">.dgs</span></code> file per time point into a zip package;</p></li>
+<li><p>loads are exported with active/reactive power and an internally consistent <code class="docutils literal notranslate"><span class="pre">S</span></code> and <code class="docutils literal notranslate"><span class="pre">cos(phi)</span></code> derived from <code class="docutils literal notranslate"><span class="pre">P/Q</span></code>;</p></li>
+<li><p>shunts and controllable shunts are exported as steady-state reactive elements;</p></li>
+<li><p>external grids, lines, transformers, switches and converters are exported from their current steady-state state;</p></li>
+<li><p>generator technology may affect the target DGS element;</p></li>
+<li><p>in practice, inverter-like technologies such as PV, battery or wind may be exported as static generators instead of synchronous machines;</p></li>
+<li><p>tap positions and on/off states are exported from the selected profile point, but the file is still not a dynamic RMS or EMT study definition.</p></li>
+</ul>
+<p>The main loss mechanisms are:</p>
+<ul class="simple">
+<li><p>control-system and dynamic-model details outside the steady-state representation;</p></li>
+<li><p>database-level project structure that VeraGrid does not preserve;</p></li>
+<li><p>technology-specific PowerFactory constructs that must be flattened into standard electrical elements.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h4>Example<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<p>Loading:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.dgs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Saving one selected time point:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">single_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">DGS</span><span class="p">,</span>
+    <span class="n">dgs_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">DgsExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_t0.dgs&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">single_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Saving the full profile:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">batch_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">DGS</span><span class="p">,</span>
+    <span class="n">dgs_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">DgsExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_profiles.zip&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">batch_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="ucte">
+<h3>UCTE<a class="headerlink" href="#ucte" title="Link to this heading"></a></h3>
+<section id="id4">
+<h4>Import assumptions<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<p>UCTE import is more heuristic than RAW import because UCTE files are more aggregated and more tolerant of
+non-canonical real-world variants.</p>
+<p>The main import assumptions are:</p>
+<ul class="simple">
+<li><p>the importer reconstructs a VeraGrid network from UCTE nodes, lines, couplers, transformers and regulation records;</p></li>
+<li><p>fictitious shunt conventions are converted back into actual VeraGrid shunts;</p></li>
+<li><p>some malformed or non-canonical UCTE variants are repaired heuristically, especially around nominal-voltage inference;</p></li>
+<li><p>cross-voltage lines in non-canonical datasets may be imported as transformers when that is the only electrically sensible interpretation;</p></li>
+<li><p>unsupported X-node topologies or inconsistent endpoint references are logged and may be rejected.</p></li>
+</ul>
+<p>This means that UCTE import aims to recover a working electrical model, not to preserve every textual oddity of the source file.</p>
+</section>
+<section id="id5">
+<h4>Export assumptions<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<p>UCTE is more aggregated than VeraGrid, so the export makes stronger assumptions:</p>
+<ul class="simple">
+<li><p>the export is node-oriented rather than device-oriented at the injection level;</p></li>
+<li><p>bus injections are aggregated into the UCTE node record;</p></li>
+<li><p>fixed shunts are exported as fictitious shunt branches connected to fictitious shunt nodes, because that is the convention expected by the VeraGrid importer;</p></li>
+<li><p>generator and external-grid steady-state values are exported with the UCTE sign conventions used by the importer;</p></li>
+<li><p>load-like devices contribute <code class="docutils literal notranslate"><span class="pre">P/Q</span></code> at the node level, while admittance terms on those load-like devices are ignored because the UCTE node record does not carry them in the same way;</p></li>
+<li><p>shunt susceptance is exported, while shunt conductance is ignored and logged;</p></li>
+<li><p>unsupported injection devices are skipped and logged;</p></li>
+<li><p>lines and switches are exported only when the endpoints are AC and at the same nominal voltage;</p></li>
+<li><p>cross-voltage connections must be represented as transformers, not as lines;</p></li>
+<li><p>transformer tap state is exported as the current fixed state;</p></li>
+<li><p>UCTE regulation rows are not emitted yet, so transformer tap control and phase-shifting control are flattened to the selected steady-state snapshot;</p></li>
+<li><p>batch export creates one <code class="docutils literal notranslate"><span class="pre">.uct</span></code> file per time step in a zip package.</p></li>
+</ul>
+<p>The main loss mechanisms are:</p>
+<ul class="simple">
+<li><p>loss of non-steady-state semantics;</p></li>
+<li><p>aggregation of multiple bus injections into one node record;</p></li>
+<li><p>flattening of transformer control into a fixed operating state;</p></li>
+<li><p>omission of unsupported device categories that have no UCTE counterpart.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h4>Example<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<p>Loading:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.uct&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Saving one snapshot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">single_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">UCTE</span><span class="p">,</span>
+    <span class="n">ucte_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">UcteExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_snapshot.uct&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">single_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Saving the whole profile:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">batch_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">UCTE</span><span class="p">,</span>
+    <span class="n">ucte_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">UcteExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_profiles.zip&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">batch_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="matpower">
+<h3>Matpower<a class="headerlink" href="#matpower" title="Link to this heading"></a></h3>
+<section id="id7">
+<h4>Import assumptions<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<p>MATPOWER import maps the classical MATPOWER case tables into VeraGrid devices:</p>
+<ul class="simple">
+<li><p>bus, generator and branch tables are converted into buses, controllable injections and branch elements;</p></li>
+<li><p>MATPOWER bus-level loads and shunts become VeraGrid bus-connected demand and shunt objects;</p></li>
+<li><p>the imported case is interpreted as one steady-state AC case;</p></li>
+<li><p>the imported result is not a MATPOWER OPF script environment, only the electrical network represented by the case tables.</p></li>
+</ul>
+<p>So MATPOWER import is a very good fit for conventional AC transmission cases, but not for preserving every
+MATLAB-side modeling pattern surrounding them.</p>
+</section>
+<section id="id8">
+<h4>Export assumptions<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<p>MATPOWER uses a bus/generator/branch table model, so VeraGrid has to collapse some device detail:</p>
+<ul class="simple">
+<li><p>the export is one steady-state MATPOWER case for the selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
+<li><p>batch mode writes one case per time point in a zip package;</p></li>
+<li><p>bus loads and bus shunts are aggregated because MATPOWER stores them at bus level;</p></li>
+<li><p>static generators are exported as negative demand at the bus;</p></li>
+<li><p>controllable generators, batteries and suitable external-grid controls are exported into the <code class="docutils literal notranslate"><span class="pre">gen</span></code> table;</p></li>
+<li><p>bus type is inferred from slack flags, external-grid modes and controlled generation;</p></li>
+<li><p>bus names are preserved in <code class="docutils literal notranslate"><span class="pre">mpc.bus_name</span></code> when possible;</p></li>
+<li><p>the exporter targets the standard MATPOWER case format, not a native multi-period optimization model;</p></li>
+<li><p>HVDC lines and VSC devices are currently skipped and logged because the basic MATPOWER exporter targets the classical AC case structure.</p></li>
+</ul>
+<p>The main loss mechanisms are:</p>
+<ul class="simple">
+<li><p>aggregation of bus-connected injections;</p></li>
+<li><p>loss of VeraGrid device distinctions that MATPOWER does not carry explicitly;</p></li>
+<li><p>omission of unsupported non-AC or converter-specific devices from the standard AC case export path.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h4>Example<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<p>Loading:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;case14.matpower&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Saving one selected time point:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">single_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">Matpower</span><span class="p">,</span>
+    <span class="n">matpower_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">MatpowerExportMode</span><span class="o">.</span><span class="n">SingleFile</span><span class="p">,</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_t5.m&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">single_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Saving the whole profile:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">batch_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">Matpower</span><span class="p">,</span>
+    <span class="n">matpower_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">MatpowerExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_profiles.zip&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">batch_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cgmes">
+<h3>CGMES<a class="headerlink" href="#cgmes" title="Link to this heading"></a></h3>
+<section id="id10">
+<h4>Import assumptions<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<p>CGMES is the richest exchange format supported by VeraGrid, but it is also the most model-driven.
+Import therefore depends not only on the XML content, but also on the selected interpretation strategy.</p>
+<p>Important assumptions are:</p>
+<ul class="simple">
+<li><p>CGMES files are parsed into CGMES objects first and then converted into <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>;</p></li>
+<li><p>topology interpretation depends on the chosen topology mode or on automatic topology detection;</p></li>
+<li><p>boundary-set data is part of the expected CGMES context;</p></li>
+<li><p>the conversion maps CGMES assets into VeraGrid electrical objects, not into a preserved CIM object graph for everyday editing;</p></li>
+<li><p>some CGMES constructs may exist in the source files even when VeraGrid does not expose them one-to-one in the working model.</p></li>
+</ul>
+<p>When you need direct access to the raw CGMES asset model, use <code class="docutils literal notranslate"><span class="pre">CgmesDataParser</span></code> and <code class="docutils literal notranslate"><span class="pre">CgmesCircuit</span></code> explicitly before conversion.</p>
+</section>
+<section id="id11">
+<h4>Export assumptions<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<p>CGMES export is the richest VeraGrid exporter, but it still requires explicit assumptions:</p>
+<ul class="simple">
+<li><p>export is built from the selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
+<li><p>in single-file mode this means one steady-state package;</p></li>
+<li><p>in batch mode VeraGrid exports one CGMES package per time point inside an outer zip package;</p></li>
+<li><p>a boundary set zip is required for normal CGMES export workflows;</p></li>
+<li><p>the selected profile list controls which CGMES profiles are emitted;</p></li>
+<li><p>if <code class="docutils literal notranslate"><span class="pre">PowerFlowResults</span></code> are provided, SV can be exported from actual solved results;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cgmes_one_file_per_profile=True</span></code> changes packaging only, not the electrical assumptions;</p></li>
+<li><p>tap changers, branch statuses, load values, shunt values, generator values, converter targets and other equipment states are exported from the selected time point;</p></li>
+<li><p>newer NCP profile types can be exposed in the export registry, but the default time-series export strategy is still mainly repeated steady-state packages unless the model already contains the corresponding schedule objects;</p></li>
+<li><p>missing terminals, missing base voltages, missing regions or missing power-flow results for requested SV export are logged as export problems.</p></li>
+</ul>
+</section>
+<section id="supported-profiles">
+<h4>Supported profiles<a class="headerlink" href="#supported-profiles" title="Link to this heading"></a></h4>
+<p>VeraGrid does not expose every possible CGMES profile for every version.
+The exporter exposes the following profile registries today.</p>
+<p>CGMES 2.4.15 exportable profiles:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Profile</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EQ</span></code></p></td>
+<td><p>Equipment model. Core network assets such as buses, lines, transformers, generators and shunts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SSH</span></code></p></td>
+<td><p>Steady-state hypothesis. Operating-state values and settings applied to the equipment model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TP</span></code></p></td>
+<td><p>Topology. Connectivity and topological-node structure used for the exported network state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SV</span></code></p></td>
+<td><p>State variables. Solved operating-point results, typically produced from power-flow results.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GL</span></code></p></td>
+<td><p>Geographical location. Substation, line and asset location metadata when available.</p></td>
+</tr>
+</tbody>
+</table>
+<p>CGMES 3.0.0 exportable profiles:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Profile</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EQ</span></code></p></td>
+<td><p>Equipment. The core electrical asset model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EQ_BD</span></code></p></td>
+<td><p>Equipment boundary. Boundary equipment references used to define the external modeling boundary.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OP</span></code></p></td>
+<td><p>Operation. Operational metadata associated with the network model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SC</span></code></p></td>
+<td><p>Short circuit. Short-circuit-oriented equipment data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SSH</span></code></p></td>
+<td><p>Steady-state hypothesis. The operating-state values applied to the equipment model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TP</span></code></p></td>
+<td><p>Topology. Network connectivity and topological-node structure.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TP_BD</span></code></p></td>
+<td><p>Topology boundary. Boundary topology references associated with the external perimeter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SV</span></code></p></td>
+<td><p>State variables. Solved state values such as bus voltages and branch flows.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GL</span></code></p></td>
+<td><p>Geographical location. Asset location metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CO</span></code></p></td>
+<td><p>Contingency. Contingency definitions used in security-oriented studies.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AE</span></code></p></td>
+<td><p>Assessed element. Elements referenced by assessment or security-analysis processes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SSI</span></code></p></td>
+<td><p>Steady-state instruction. Baseline operational instructions for a steady-state context.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PS</span></code></p></td>
+<td><p>Power schedule. Time-varying active and reactive setpoint scheduling semantics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AVS</span></code></p></td>
+<td><p>Availability schedule. Time-varying equipment availability.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RA</span></code></p></td>
+<td><p>Remedial action. Remedial-action definitions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RAS</span></code></p></td>
+<td><p>Remedial action schedule. Scheduled activation or timing for remedial actions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ER</span></code></p></td>
+<td><p>Equipment reliability. Reliability-oriented equipment information.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SHS</span></code></p></td>
+<td><p>Steady-state hypothesis schedule. Time-varying steady-state hypothesis values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SIS</span></code></p></td>
+<td><p>State instruction schedule. Scheduled state instructions over time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OR</span></code></p></td>
+<td><p>Object registry. Registry-style cross-reference information for identified objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SAR</span></code></p></td>
+<td><p>Security analysis result. Result-oriented profile for security-analysis outputs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IAM</span></code></p></td>
+<td><p>Impact assessment matrix. Impact relationships used by advanced security/remedial-action workflows.</p></td>
+</tr>
+</tbody>
+</table>
+<p>In practical VeraGrid usage, these profiles fall into three broad groups:</p>
+<ul class="simple">
+<li><p>core network exchange profiles: <code class="docutils literal notranslate"><span class="pre">EQ</span></code>, <code class="docutils literal notranslate"><span class="pre">EQ_BD</span></code>, <code class="docutils literal notranslate"><span class="pre">TP</span></code>, <code class="docutils literal notranslate"><span class="pre">TP_BD</span></code>, <code class="docutils literal notranslate"><span class="pre">SSH</span></code>, <code class="docutils literal notranslate"><span class="pre">SV</span></code>, <code class="docutils literal notranslate"><span class="pre">GL</span></code>, <code class="docutils literal notranslate"><span class="pre">OP</span></code>, <code class="docutils literal notranslate"><span class="pre">SC</span></code>;</p></li>
+<li><p>classic steady-state export profiles: usually <code class="docutils literal notranslate"><span class="pre">EQ</span> <span class="pre">+</span> <span class="pre">TP</span> <span class="pre">+</span> <span class="pre">SSH</span></code>, with <code class="docutils literal notranslate"><span class="pre">SV</span></code> added when solved results are available;</p></li>
+<li><p>newer NCP and schedule-oriented profiles: <code class="docutils literal notranslate"><span class="pre">SSI</span></code>, <code class="docutils literal notranslate"><span class="pre">PS</span></code>, <code class="docutils literal notranslate"><span class="pre">AVS</span></code>, <code class="docutils literal notranslate"><span class="pre">RA</span></code>, <code class="docutils literal notranslate"><span class="pre">RAS</span></code>, <code class="docutils literal notranslate"><span class="pre">ER</span></code>, <code class="docutils literal notranslate"><span class="pre">SHS</span></code>, <code class="docutils literal notranslate"><span class="pre">SIS</span></code>, <code class="docutils literal notranslate"><span class="pre">CO</span></code>, <code class="docutils literal notranslate"><span class="pre">AE</span></code>, <code class="docutils literal notranslate"><span class="pre">SAR</span></code>, <code class="docutils literal notranslate"><span class="pre">IAM</span></code>, <code class="docutils literal notranslate"><span class="pre">OR</span></code>.</p></li>
+</ul>
+<p>There is one important modeling caveat:</p>
+<ul class="simple">
+<li><p>a profile being selectable does not automatically mean VeraGrid synthesizes rich content for it from any arbitrary grid;</p></li>
+<li><p>the classic steady-state profiles are the most mature for general-purpose export;</p></li>
+<li><p>many of the newer NCP-style profiles are most useful when the model already contains the corresponding schedule, instruction or assessment semantics.</p></li>
+</ul>
+<p>The main loss mechanisms are usually not in the core steady-state network itself, but in the boundary between:</p>
+<ul class="simple">
+<li><p>what exists in VeraGrid as a working electrical model;</p></li>
+<li><p>what exists in CGMES as a richer semantic information model;</p></li>
+<li><p>and what schedule or NCP objects are actually available in the model at export time.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h4>Example<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<p>Loading a CGMES package:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;cgmes_model.zip&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Saving one selected time point with SV:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+<span class="n">pf_results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+
+<span class="n">single_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">CGMES</span><span class="p">,</span>
+    <span class="n">cgmes_boundary_set</span><span class="o">=</span><span class="s2">&quot;boundary_set.zip&quot;</span><span class="p">,</span>
+    <span class="n">cgmes_version</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">,</span>
+    <span class="n">cgmes_profiles</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">TP</span><span class="p">,</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SSH</span><span class="p">,</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SV</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">sessions_data</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">DriverToSave</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;powerflow results&quot;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SimulationTypes</span><span class="o">.</span><span class="n">PowerFlow_run</span><span class="p">,</span>
+            <span class="n">results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_t2.zip&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">single_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Saving the full profile as repeated CGMES packages:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.veragrid&quot;</span><span class="p">)</span>
+
+<span class="n">batch_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">CGMES</span><span class="p">,</span>
+    <span class="n">cgmes_boundary_set</span><span class="o">=</span><span class="s2">&quot;boundary_set.zip&quot;</span><span class="p">,</span>
+    <span class="n">cgmes_version</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v3_0_0</span><span class="p">,</span>
+    <span class="n">cgmes_profiles</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">TP</span><span class="p">,</span>
+        <span class="n">gce</span><span class="o">.</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SSH</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">cgmes_export_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CgmesExportMode</span><span class="o">.</span><span class="n">BatchZip</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gce</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_profiles.zip&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">batch_options</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-the-results">
+<h3>Export the results<a class="headerlink" href="#export-the-results" title="Link to this heading"></a></h3>
+<p>A simple function is available to export the results of a driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;grids&quot;</span><span class="p">,</span> <span class="s2">&quot;IEEE39_1W.veragrid&quot;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># create the driver</span>
+<span class="n">pf_driver</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                          <span class="n">options</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+                                          <span class="n">time_indices</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">())</span>
+<span class="c1"># run</span>
+<span class="n">pf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># Save the driver results in a zip file with CSV files inside</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">export_drivers</span><span class="p">(</span><span class="n">drivers_list</span><span class="o">=</span><span class="p">[</span><span class="n">pf_driver</span><span class="p">],</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;IEEE39_1W_results.zip&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You could save many drivers in the same zip file passing then into the list <code class="docutils literal notranslate"><span class="pre">drivers_list</span></code>.</p>
+<p>Also there is a function to save from the results objects themselves:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;grids&quot;</span><span class="p">,</span> <span class="s2">&quot;IEEE39_1W.veragrid&quot;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># run with the API shortcut functions</span>
+<span class="n">pf_results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="n">pf_ts_results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">power_flow_ts</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+
+<span class="c1"># Save the driver results in a zip file with CSV files inside</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">export_results</span><span class="p">(</span><span class="n">results_list</span><span class="o">=</span><span class="p">[</span><span class="n">pf_results</span><span class="p">,</span> <span class="n">pf_ts_results</span><span class="p">],</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;IEEE39_1W_results.zip&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="client-server-operation">
+<h3>Client - Server operation<a class="headerlink" href="#client-server-operation" title="Link to this heading"></a></h3>
+<p>To use the VeraGrid server, you need to install the <code class="docutils literal notranslate"><span class="pre">VeraGridServer</span></code> python package. Once this is done,
+the <code class="docutils literal notranslate"><span class="pre">veragridserver</span></code>command will be available on the system.
+To launch the server, simply type <code class="docutils literal notranslate"><span class="pre">veragridserver</span></code>. This will launch a VeraGrid server on the machine,
+on port 8000. This is <code class="docutils literal notranslate"><span class="pre">https://localhost:8000</span></code></p>
+<p>An example on how to send a grid from a script to the server:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="c1"># path to your file</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">,</span> <span class="s2">&quot;IEEE57.veragrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># read veragrid file</span>
+<span class="n">grid_</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># define instruction for the server</span>
+<span class="n">instruction</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">RemoteInstruction</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SimulationTypes</span><span class="o">.</span><span class="n">NoSim</span><span class="p">)</span>
+
+<span class="c1"># generate json to send</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">gather_model_as_jsons_for_communication</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid_</span><span class="p">,</span> <span class="n">instruction</span><span class="o">=</span><span class="n">instruction</span><span class="p">)</span>
+
+<span class="c1"># get the sever certificate</span>
+<span class="n">gce</span><span class="o">.</span><span class="n">get_certificate</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://localhost:8000&quot;</span><span class="p">,</span>
+                    <span class="n">certificate_path</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">get_certificate_path</span><span class="p">(),</span>
+                    <span class="n">pwd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># send json</span>
+<span class="n">reply_from_server</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span>
+    <span class="n">gce</span><span class="o">.</span><span class="n">send_json_data</span><span class="p">(</span><span class="n">json_data</span><span class="o">=</span><span class="n">model_data</span><span class="p">,</span>
+                       <span class="n">endpoint_url</span><span class="o">=</span><span class="s2">&quot;https://localhost:8000/upload&quot;</span><span class="p">,</span>
+                       <span class="n">certificate</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">get_certificate_path</span><span class="p">())</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">reply_from_server</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model_debugging.html" class="btn btn-neutral float-left" title="🪲 Model debugging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="topology.html" class="btn btn-neutral float-right" title="🌵 Topology" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

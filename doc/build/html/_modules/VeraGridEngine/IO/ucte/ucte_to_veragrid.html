@@ -1,0 +1,1094 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.ucte.ucte_to_veragrid &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.ucte.ucte_to_veragrid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.ucte.ucte_to_veragrid</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.sequence_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_line_impedances_with_b</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">coalesce_number</span><span class="p">,</span> <span class="n">is_defined_number</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">TapChangerTypes</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span>
+
+
+<div class="viewcode-block" id="is_xnode_code">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_xnode_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_xnode_code</span><span class="p">(</span><span class="n">node_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_code</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">node_code</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="is_fictitious_shunt_code">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">node_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">node_code</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_fictitious_shunt_node">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_node">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_fictitious_shunt_node</span><span class="p">(</span><span class="n">ucte_node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">geo_name</span> <span class="o">=</span> <span class="p">(</span><span class="n">ucte_node</span><span class="o">.</span><span class="n">geo_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">geo_name</span> <span class="o">==</span> <span class="s2">&quot;fict. shunt&quot;</span> <span class="ow">or</span> <span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_node</span><span class="o">.</span><span class="n">node_code</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_canonical_ucte_node_code">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_canonical_ucte_node_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_canonical_ucte_node_code</span><span class="p">(</span><span class="n">node_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">node_code</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">ch</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">code</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="is_standard_ucte_country_code">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_standard_ucte_country_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">country_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="p">(</span><span class="n">country_code</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">code</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="n">code</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">code</span> <span class="ow">and</span> <span class="n">code</span> <span class="o">!=</span> <span class="s2">&quot;XX&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="get_default_power_limit">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.get_default_power_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_default_power_limit</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mf">9999.0</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_limit_a">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.get_current_limit_a">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_current_limit_a</span><span class="p">(</span><span class="n">current_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">current_limit</span><span class="p">,</span> <span class="mf">9999.0</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_limit_ka">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.get_current_limit_ka">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_current_limit_ka</span><span class="p">(</span><span class="n">current_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">get_current_limit_a</span><span class="p">(</span><span class="n">current_limit</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span></div>
+
+
+
+<div class="viewcode-block" id="same_nominal_voltage">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.same_nominal_voltage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">same_nominal_voltage</span><span class="p">(</span><span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">-</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span></div>
+
+
+
+<div class="viewcode-block" id="compute_switch_rate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.compute_switch_rate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_switch_rate</span><span class="p">(</span><span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">current_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span> <span class="o">*</span> <span class="n">get_current_limit_ka</span><span class="p">(</span><span class="n">current_limit</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_xnode_active_line_counts">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_xnode_active_line_counts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_xnode_active_line_counts</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ucte_line</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+        <span class="n">active</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ucte_line</span><span class="o">.</span><span class="n">is_active_and_reducible</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">active</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_line</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_line</span><span class="o">.</span><span class="n">node2</span><span class="p">):</span>
+            <span class="n">counts</span><span class="p">[</span><span class="n">ucte_line</span><span class="o">.</span><span class="n">node1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_line</span><span class="o">.</span><span class="n">node2</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_line</span><span class="o">.</span><span class="n">node1</span><span class="p">):</span>
+            <span class="n">counts</span><span class="p">[</span><span class="n">ucte_line</span><span class="o">.</span><span class="n">node2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">counts</span></div>
+
+
+
+<div class="viewcode-block" id="build_technologies">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_technologies">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_technologies</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">]:</span>
+    <span class="n">tech_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Hydro&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Nuclear&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;L&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;lignite&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;hard coal&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gas&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;O&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Oil&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Wind&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Technology</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;further&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">tech_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_technology</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tech_dict</span></div>
+
+
+
+<div class="viewcode-block" id="discover_nominal_voltages">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.discover_nominal_voltages">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">discover_nominal_voltages</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attempt to discover the nominal voltage for each level character.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node_vref_by_level</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">trafo_rated_by_level</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_fictitious_shunt_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">node_vref_by_level</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">trafo</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">transformers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trafo</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">trafo</span><span class="o">.</span><span class="n">rated_voltage1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">trafo_rated_by_level</span><span class="p">[</span><span class="n">trafo</span><span class="o">.</span><span class="n">node1</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">trafo</span><span class="o">.</span><span class="n">rated_voltage1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trafo</span><span class="o">.</span><span class="n">node2</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">trafo</span><span class="o">.</span><span class="n">rated_voltage2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">trafo_rated_by_level</span><span class="p">[</span><span class="n">trafo</span><span class="o">.</span><span class="n">node2</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">trafo</span><span class="o">.</span><span class="n">rated_voltage2</span><span class="p">))</span>
+
+    <span class="n">candidate_nominal_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="mf">27.0</span><span class="p">,</span> <span class="mf">33.0</span><span class="p">,</span> <span class="mf">66.0</span><span class="p">,</span> <span class="mf">70.0</span><span class="p">,</span> <span class="mf">110.0</span><span class="p">,</span> <span class="mf">120.0</span><span class="p">,</span> <span class="mf">132.0</span><span class="p">,</span>
+         <span class="mf">138.0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">,</span> <span class="mf">220.0</span><span class="p">,</span> <span class="mf">330.0</span><span class="p">,</span> <span class="mf">380.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">750.0</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">vnom_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">vrefs</span> <span class="ow">in</span> <span class="n">node_vref_by_level</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">vrefs_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vrefs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">rated_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">trafo_rated_by_level</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">best_score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="n">best_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">nominal</span> <span class="ow">in</span> <span class="n">candidate_nominal_levels</span><span class="p">:</span>
+            <span class="c1"># Keep operating voltages around 1.0 p.u.</span>
+            <span class="n">vm_penalty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vrefs_arr</span> <span class="o">/</span> <span class="n">nominal</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)))</span>
+
+            <span class="c1"># Prefer nominal levels that keep transformer fixed taps in a plausible range.</span>
+            <span class="n">tap_penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="n">rated_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tap</span> <span class="o">=</span> <span class="n">rated_arr</span> <span class="o">/</span> <span class="n">nominal</span>
+                <span class="n">tap_penalty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.9</span> <span class="o">-</span> <span class="n">tap</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tap</span> <span class="o">-</span> <span class="mf">1.1</span><span class="p">))</span>
+                <span class="p">)</span>
+
+            <span class="n">score</span> <span class="o">=</span> <span class="n">vm_penalty</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">tap_penalty</span>
+            <span class="k">if</span> <span class="n">score</span> <span class="o">&lt;</span> <span class="n">best_score</span><span class="p">:</span>
+                <span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+                <span class="n">best_level</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nominal</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">best_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vnom_map</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_level</span>
+
+    <span class="k">return</span> <span class="n">vnom_map</span></div>
+
+
+
+<div class="viewcode-block" id="snap_nominal_voltage_from_reference">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.snap_nominal_voltage_from_reference">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">snap_nominal_voltage_from_reference</span><span class="p">(</span><span class="n">voltage_reference</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># Conservative set of practical nominal levels used in UCTE/ENTSO-E style grids.</span>
+    <span class="n">nominal_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="mf">33.0</span><span class="p">,</span> <span class="mf">66.0</span><span class="p">,</span> <span class="mf">70.0</span><span class="p">,</span> <span class="mf">110.0</span><span class="p">,</span> <span class="mf">120.0</span><span class="p">,</span>
+                               <span class="mf">132.0</span><span class="p">,</span> <span class="mf">138.0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">,</span> <span class="mf">220.0</span><span class="p">,</span> <span class="mf">330.0</span><span class="p">,</span> <span class="mf">380.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">750.0</span><span class="p">])</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">nominal_levels</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">voltage_reference</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">nominal_levels</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="repair_nominal_voltages_from_references">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.repair_nominal_voltages_from_references">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">repair_nominal_voltages_from_references</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fix clearly inconsistent nominal voltages in non-canonical UCTE variants.</span>
+
+<span class="sd">    If Vref/Vnom is outside a realistic range for steady-state operation,</span>
+<span class="sd">    infer Vnom from Vref directly using a conservative nominal-level palette.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="c1"># Keep strict semantics for canonical UCTE IDs in standard country blocks.</span>
+        <span class="c1"># Rescue malformed/non-canonical variants (e.g., synthetic IEEE fixtures).</span>
+        <span class="k">if</span> <span class="n">is_canonical_ucte_node_code</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">current_country</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">is_defined_number</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">voltage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="n">vm0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mf">0.8</span> <span class="o">&lt;=</span> <span class="n">vm0</span> <span class="o">&lt;=</span> <span class="mf">1.2</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">snapped_vnom</span> <span class="o">=</span> <span class="n">snap_nominal_voltage_from_reference</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span>
+        <span class="n">snapped_vm0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">snapped_vnom</span><span class="p">)</span>
+
+        <span class="c1"># Apply only when the repaired value becomes plausible.</span>
+        <span class="k">if</span> <span class="mf">0.8</span> <span class="o">&lt;=</span> <span class="n">snapped_vm0</span> <span class="o">&lt;=</span> <span class="mf">1.2</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Adjusted UCTE node nominal voltage from voltage reference&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">voltage</span><span class="si">}</span><span class="s2"> kV -&gt; </span><span class="si">{</span><span class="n">snapped_vnom</span><span class="si">}</span><span class="s2"> kV (Vref=</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">voltage_reference</span><span class="si">}</span><span class="s2"> kV)&quot;</span><span class="p">)</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">snapped_vnom</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_nodes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_nodes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_nodes</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create buses and their injections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">tech_dict</span> <span class="o">=</span> <span class="n">build_technologies</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">country_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">ucte_elm</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_fictitious_shunt_node</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_country</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;XX&quot;</span><span class="p">):</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="n">country_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_country</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">country</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Country</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_country</span><span class="p">)</span>
+                <span class="n">country_dict</span><span class="p">[</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_country</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_country</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">geo_name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">node_code</span>
+
+        <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bus nominal voltage is invalid&quot;</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Bus&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                             <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;&gt;0&quot;</span><span class="p">)</span>
+
+        <span class="n">vm0</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage_reference</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">vm0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node_code</span><span class="p">,</span>
+            <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">is_slack</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="n">is_internal</span><span class="o">=</span><span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node_code</span><span class="p">),</span>
+            <span class="n">Vnom</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+            <span class="n">Vm0</span><span class="o">=</span><span class="n">vm0</span><span class="p">,</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">bus_role</span> <span class="o">=</span> <span class="s2">&quot;equivalent&quot;</span> <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;real&quot;</span>
+        <span class="k">if</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node_code</span><span class="p">):</span>
+            <span class="n">bus_role</span> <span class="o">+=</span> <span class="s2">&quot; xnode&quot;</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">bus_role</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span>
+        <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
+
+        <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">has_load</span><span class="p">():</span>
+            <span class="n">ld</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="n">P</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">active_load</span><span class="p">,</span>
+                <span class="n">Q</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactive_load</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">ld</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">has_gen</span><span class="p">():</span>
+            <span class="n">is_controlled</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">is_regulating_voltage</span><span class="p">()</span> <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span>
+
+            <span class="n">pmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">max_gen_mw</span><span class="p">,</span> <span class="n">get_default_power_limit</span><span class="p">())</span>
+            <span class="n">pmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">min_gen_mw</span><span class="p">,</span> <span class="o">-</span><span class="n">get_default_power_limit</span><span class="p">())</span>
+
+            <span class="n">qmin_ucte</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">min_gen_mvar</span>
+            <span class="n">qmax_ucte</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">max_gen_mvar</span>
+
+            <span class="c1"># Handle potentially missing reactive limits in non-standard UCTE files</span>
+            <span class="k">if</span> <span class="n">is_controlled</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">qmin_ucte</span><span class="p">)</span> <span class="ow">or</span> <span class="n">qmin_ucte</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)</span> \
+                           <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">qmax_ucte</span><span class="p">)</span> <span class="ow">or</span> <span class="n">qmax_ucte</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="n">qmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">get_default_power_limit</span><span class="p">()</span>
+                <span class="n">qmax</span> <span class="o">=</span> <span class="n">get_default_power_limit</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">qmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">max_gen_mvar</span><span class="p">,</span> <span class="n">get_default_power_limit</span><span class="p">())</span>
+                <span class="n">qmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">min_gen_mvar</span><span class="p">,</span> <span class="o">-</span><span class="n">get_default_power_limit</span><span class="p">())</span>
+
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="n">code</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="n">P</span><span class="o">=-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">active_gen</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">Q</span><span class="o">=-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactive_gen</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">Pmin</span><span class="o">=</span><span class="n">pmin</span><span class="p">,</span>
+                <span class="n">Pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span>
+                <span class="n">Qmin</span><span class="o">=</span><span class="n">qmin</span><span class="p">,</span>
+                <span class="n">Qmax</span><span class="o">=</span><span class="n">qmax</span><span class="p">,</span>
+                <span class="n">vset</span><span class="o">=</span><span class="n">vm0</span> <span class="k">if</span> <span class="n">is_controlled</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">is_controlled</span><span class="o">=</span><span class="n">is_controlled</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">tech</span> <span class="o">=</span> <span class="n">tech_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">plant_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tech</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gen</span><span class="o">.</span><span class="n">associate_technology</span><span class="p">(</span><span class="n">tech</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">bus_dict</span></div>
+
+
+<div class="viewcode-block" id="add_switch">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_switch</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+               <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+               <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+               <span class="n">current_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+               <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+               <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+               <span class="n">reducible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">switch</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span>
+        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+        <span class="n">retained</span><span class="o">=</span><span class="ow">not</span> <span class="n">reducible</span><span class="p">,</span>
+        <span class="n">normal_open</span><span class="o">=</span><span class="ow">not</span> <span class="n">active</span><span class="p">,</span>
+        <span class="n">rated_current</span><span class="o">=</span><span class="n">get_current_limit_ka</span><span class="p">(</span><span class="n">current_limit</span><span class="p">),</span>
+        <span class="n">rate</span><span class="o">=</span><span class="n">compute_switch_rate</span><span class="p">(</span><span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">,</span> <span class="n">current_limit</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_switch</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">switch</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_switch_from_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch_from_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_switch_from_line</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">reducible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">add_switch</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">order_code</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">current_limit</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_limit</span><span class="p">,</span>
+        <span class="n">bus_f</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+        <span class="n">bus_t</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+        <span class="n">reducible</span><span class="o">=</span><span class="n">reducible</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_switch_from_transformer">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_switch_from_transformer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_switch_from_transformer</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                                <span class="n">ucte_elm</span><span class="p">,</span>
+                                <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+                                <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+                                <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                <span class="n">reducible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">add_switch</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">order_code</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">current_limit</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_limit</span><span class="p">,</span>
+        <span class="n">bus_f</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+        <span class="n">bus_t</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+        <span class="n">reducible</span><span class="o">=</span><span class="n">reducible</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_standard_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_standard_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_standard_line</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">reducible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                      <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span>
+        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">order_code</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">elm</span><span class="o">.</span><span class="n">reducible</span> <span class="o">=</span> <span class="n">reducible</span>
+
+    <span class="n">b_siemens_total</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span> <span class="o">*</span> <span class="mf">1e-6</span>  <span class="c1"># uS to S</span>
+    <span class="n">c_nf</span> <span class="o">=</span> <span class="n">b_siemens_total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span> <span class="o">*</span> <span class="mf">1e-9</span><span class="p">)</span>
+
+    <span class="n">elm</span><span class="o">.</span><span class="n">fill_design_properties</span><span class="p">(</span>
+        <span class="n">r_ohm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">,</span>
+        <span class="n">x_ohm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">,</span>
+        <span class="n">c_nf</span><span class="o">=</span><span class="n">c_nf</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">Imax</span><span class="o">=</span><span class="n">get_current_limit_ka</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_limit</span><span class="p">),</span>
+        <span class="n">freq</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">,</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+    <span class="p">)</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_fictitious_shunt_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_fictitious_shunt_line</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-6</span>
+        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_fixed_shunt_from_ucte_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_fixed_shunt_from_ucte_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_fixed_shunt_from_ucte_line</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">):</span>
+    <span class="c1"># UCTE branch susceptance is in uS; convert to MVAr at V=1.0 p.u.</span>
+    <span class="n">b_mvar</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">shunt</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Shunt</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">_shunt&quot;</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">order_code</span><span class="p">,</span>
+        <span class="n">G</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">B</span><span class="o">=</span><span class="n">b_mvar</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_shunt</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">shunt</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="should_import_mismatch_line_as_transformer">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.should_import_mismatch_line_as_transformer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">should_import_mismatch_line_as_transformer</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">node1_is_canonical</span> <span class="o">=</span> <span class="n">is_canonical_ucte_node_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span>
+    <span class="n">node2_is_canonical</span> <span class="o">=</span> <span class="n">is_canonical_ucte_node_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">)</span>
+    <span class="n">country_f</span> <span class="o">=</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">country_t</span> <span class="o">=</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">countries_are_standard</span> <span class="o">=</span> <span class="n">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">country_f</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">country_t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">node1_is_canonical</span> <span class="ow">and</span> <span class="n">node2_is_canonical</span> <span class="ow">and</span> <span class="n">countries_are_standard</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="use_legacy_ucte_transformer_orientation">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.use_legacy_ucte_transformer_orientation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">use_legacy_ucte_transformer_orientation</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_node1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_node2</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">country_1</span> <span class="o">=</span> <span class="n">bus_node1</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">bus_node1</span><span class="o">.</span><span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">country_2</span> <span class="o">=</span> <span class="n">bus_node2</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">bus_node2</span><span class="o">.</span><span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">countries_are_standard</span> <span class="o">=</span> <span class="n">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">country_1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">country_2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">countries_are_standard</span></div>
+
+
+
+<div class="viewcode-block" id="add_transformer_from_mismatch_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.add_transformer_from_mismatch_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_transformer_from_mismatch_line</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">):</span>
+    <span class="n">vbase</span> <span class="o">=</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="k">if</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">get_line_impedances_with_b</span><span class="p">(</span>
+        <span class="n">r_ohm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">,</span>
+        <span class="n">x_ohm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">,</span>
+        <span class="n">b_us</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">Imax</span><span class="o">=</span><span class="n">get_current_limit_a</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_limit</span><span class="p">),</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+        <span class="n">Vnom</span><span class="o">=</span><span class="n">vbase</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">tr</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span>
+        <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+        <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">order_code</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">HV</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">),</span>
+        <span class="n">LV</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">),</span>
+        <span class="n">nominal_power</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+        <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">tr</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_lines">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_lines</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse UCTE lines and couplers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xnode_active_line_counts</span> <span class="o">=</span> <span class="n">build_xnode_active_line_counts</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+    <span class="n">unsupported_xnodes</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">ucte_elm</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_fictitious_shunt_line</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">bus_f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">):</span>
+                <span class="n">add_fixed_shunt_from_ucte_line</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus</span><span class="o">=</span><span class="n">bus_f</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">bus_t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">):</span>
+                <span class="n">add_fixed_shunt_from_ucte_line</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus</span><span class="o">=</span><span class="n">bus_t</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">bus_f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">bus_t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bus_f</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Line from bus not found&quot;</span><span class="p">,</span>
+                                 <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                 <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;node1&quot;</span><span class="p">,</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bus_t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Line to bus not found&quot;</span><span class="p">,</span>
+                                 <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                 <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;node2&quot;</span><span class="p">,</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">active</span><span class="p">,</span> <span class="n">reducible</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">is_active_and_reducible</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+        <span class="n">node1_is_xnode</span> <span class="o">=</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span>
+        <span class="n">node2_is_xnode</span> <span class="o">=</span> <span class="n">is_xnode_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node1_is_xnode</span> <span class="ow">and</span> <span class="n">node2_is_xnode</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Line between 2 X-nodes is not supported&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">xnode_code</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span> <span class="k">if</span> <span class="n">node1_is_xnode</span> <span class="k">else</span> <span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span> <span class="k">if</span> <span class="n">node2_is_xnode</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xnode_code</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">xnode_active_line_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xnode_code</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">xnode_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unsupported_xnodes</span><span class="p">:</span>
+                <span class="n">unsupported_xnodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">xnode_code</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;X-node connected to more than two active lines is not supported&quot;</span><span class="p">,</span>
+                                 <span class="n">device</span><span class="o">=</span><span class="n">xnode_code</span><span class="p">,</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="n">xnode_active_line_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xnode_code</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                 <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;&lt;=2&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Ignoring self-connected UCTE line/coupler&quot;</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                               <span class="n">value</span><span class="o">=</span><span class="n">bus_f</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">same_nominal_voltage</span><span class="p">(</span><span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">should_import_mismatch_line_as_transformer</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="o">=</span><span class="n">bus_t</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Importing cross-voltage UCTE line as transformer in non-canonical data&quot;</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                   <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">add_transformer_from_mismatch_line</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="o">=</span><span class="n">bus_t</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;UCTE line/coupler endpoints have different nominal voltages&quot;</span><span class="p">,</span>
+                                 <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="n">is_switch</span> <span class="o">=</span> <span class="n">reducible</span>
+
+        <span class="k">if</span> <span class="n">is_switch</span><span class="p">:</span>
+            <span class="n">add_switch_from_line</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">reducible</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">add_standard_line</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">reducible</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="has_zero_transformer_impedance">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.has_zero_transformer_impedance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">has_zero_transformer_impedance</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">conductance</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">conductance</span> <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">conductance</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">conductance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_tap_span">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.compute_tap_span">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_tap_span</span><span class="p">(</span><span class="n">regulator</span><span class="p">,</span> <span class="n">tap_tables</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">tap_positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tap_positions</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="o">-</span><span class="n">regulator</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1_prime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tap_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n1_prime</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tap_positions</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="o">-</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n2</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n2_prime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tap_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2_prime</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">tap_table</span> <span class="ow">in</span> <span class="n">tap_tables</span><span class="p">:</span>
+        <span class="n">tap_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tap_table</span><span class="o">.</span><span class="n">tap_position</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">tap_positions</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">tap_positions</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="choose_tap_number">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.choose_tap_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">choose_tap_number</span><span class="p">(</span><span class="n">regulator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_angle_regulation</span><span class="p">()</span> <span class="ow">and</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n2_prime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n2_prime</span>
+
+    <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_phase_regulation</span><span class="p">()</span> <span class="ow">and</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1_prime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1_prime</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="build_tap_changer_type">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_tap_changer_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_tap_changer_type</span><span class="p">(</span><span class="n">regulator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TapChangerTypes</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span>
+
+    <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_angle_regulation</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">regulation_type</span> <span class="o">==</span> <span class="s2">&quot;SYMM&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Symmetrical</span>
+        <span class="k">return</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span>
+
+    <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_phase_regulation</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span>
+
+    <span class="k">return</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">NoRegulation</span></div>
+
+
+
+<div class="viewcode-block" id="build_current_tap_state">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_current_tap_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_current_tap_state</span><span class="p">(</span><span class="n">regulator</span><span class="p">,</span> <span class="n">tap_type</span><span class="p">:</span> <span class="n">TapChangerTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="n">tap_module</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">tap_phase</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_phase_regulation</span><span class="p">()</span> <span class="ow">and</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1_prime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tap_module</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">regulator</span><span class="o">.</span><span class="n">n1_prime</span> <span class="o">*</span> <span class="n">regulator</span><span class="o">.</span><span class="n">delta_u1</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_angle_regulation</span><span class="p">():</span>
+        <span class="n">tmp_tap_changer</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">TapChanger</span><span class="p">(</span>
+            <span class="n">total_positions</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">neutral_position</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">normal_position</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2_prime</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">dV</span><span class="o">=</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">delta_u2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span>
+            <span class="n">asymmetry_angle</span><span class="o">=</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
+            <span class="n">tc_type</span><span class="o">=</span><span class="n">tap_type</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">tmp_tap_changer</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">n2_prime</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">tap_phase</span> <span class="o">=</span> <span class="n">tmp_tap_changer</span><span class="o">.</span><span class="n">get_tap_phase</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_phase_regulation</span><span class="p">():</span>
+            <span class="n">tap_module</span> <span class="o">=</span> <span class="n">tmp_tap_changer</span><span class="o">.</span><span class="n">get_tap_module</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">tap_module</span><span class="p">,</span> <span class="n">tap_phase</span></div>
+
+
+
+<div class="viewcode-block" id="apply_tap_table">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.apply_tap_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_tap_table</span><span class="p">(</span><span class="n">elm</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">,</span>
+                    <span class="n">ucte_elm</span><span class="p">,</span>
+                    <span class="n">tap_tables</span><span class="p">,</span>
+                    <span class="n">low_tap_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">current_tap_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tap_tables</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">tap_data</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">re_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+    <span class="n">im_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">tap_table</span> <span class="ow">in</span> <span class="n">tap_tables</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">tap_table</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">-</span> <span class="n">low_tap_position</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="n">re_corr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tap_table</span><span class="o">.</span><span class="n">resistance</span> <span class="o">/</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="n">im_corr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tap_table</span><span class="o">.</span><span class="n">reactance</span> <span class="o">/</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span>
+
+    <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;impedance_correction_real&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">re_corr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;impedance_correction_imag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">im_corr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_tap_number</span> <span class="o">-</span> <span class="n">low_tap_position</span>
+    <span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">tap_data</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">current_row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tap_tables</span> <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">==</span> <span class="n">current_tap_number</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">current_row</span><span class="o">.</span><span class="n">delta_u</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">tap_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">current_row</span><span class="o">.</span><span class="n">phase_shift</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_transformer_tap_data">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.build_transformer_tap_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_transformer_tap_data</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span>
+                               <span class="n">regulator</span><span class="p">,</span>
+                               <span class="n">tap_tables</span><span class="p">,</span>
+                               <span class="n">bus_f</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+                               <span class="n">bus_t</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+                               <span class="n">invert_fixed_tap</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                               <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+    <span class="n">low_tap_position</span><span class="p">,</span> <span class="n">high_tap_position</span> <span class="o">=</span> <span class="n">compute_tap_span</span><span class="p">(</span><span class="n">regulator</span><span class="p">,</span> <span class="n">tap_tables</span><span class="p">)</span>
+    <span class="n">total_positions</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">high_tap_position</span> <span class="o">-</span> <span class="n">low_tap_position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">neutral_position</span> <span class="o">=</span> <span class="o">-</span><span class="n">low_tap_position</span>
+    <span class="n">current_tap_number</span> <span class="o">=</span> <span class="n">choose_tap_number</span><span class="p">(</span><span class="n">regulator</span><span class="p">)</span>
+    <span class="n">current_tap_index</span> <span class="o">=</span> <span class="n">current_tap_number</span> <span class="o">-</span> <span class="n">low_tap_position</span>
+    <span class="n">tap_type</span> <span class="o">=</span> <span class="n">build_tap_changer_type</span><span class="p">(</span><span class="n">regulator</span><span class="p">)</span>
+
+    <span class="n">tc_dv</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">tc_asymmetry_angle</span> <span class="o">=</span> <span class="mf">90.0</span>
+    <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">fixed</span>
+    <span class="n">tap_phase_control_mode</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">fixed</span>
+    <span class="n">vset</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">pset</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_angle_regulation</span><span class="p">():</span>
+            <span class="n">tc_dv</span> <span class="o">=</span> <span class="n">coalesce_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">delta_u2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+            <span class="n">tc_asymmetry_angle</span> <span class="o">=</span> <span class="n">coalesce_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+                <span class="n">tap_phase_control_mode</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">Pf</span>
+                <span class="n">pset</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_phase_regulation</span><span class="p">():</span>
+            <span class="n">tc_dv</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">delta_u1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+
+        <span class="k">if</span> <span class="n">regulator</span><span class="o">.</span><span class="n">has_phase_regulation</span><span class="p">()</span> <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">u1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span>
+            <span class="n">vset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">regulator</span><span class="o">.</span><span class="n">u1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+    <span class="n">tap_module</span><span class="p">,</span> <span class="n">tap_phase</span> <span class="o">=</span> <span class="n">build_current_tap_state</span><span class="p">(</span><span class="n">regulator</span><span class="p">,</span> <span class="n">tap_type</span><span class="p">)</span>
+
+    <span class="c1"># In many practical UCTE files, fixed off-nominal taps are represented only via rated_voltage1.</span>
+    <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">tap_tables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">invert_fixed_tap</span> <span class="ow">and</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Legacy orientation places node2 as branch &quot;from&quot; side.</span>
+            <span class="c1"># Fixed UCTE taps are encoded from node1 rated voltage, so use the inverse ratio.</span>
+            <span class="n">tap_module</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">invert_fixed_tap</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Non-canonical IEEE-like datasets map node1-&gt;node2 and fixed taps directly.</span>
+            <span class="n">tap_module</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;tc_total_positions&quot;</span><span class="p">:</span> <span class="n">total_positions</span><span class="p">,</span>
+        <span class="s2">&quot;tc_neutral_position&quot;</span><span class="p">:</span> <span class="n">neutral_position</span><span class="p">,</span>
+        <span class="s2">&quot;tc_normal_position&quot;</span><span class="p">:</span> <span class="n">current_tap_index</span><span class="p">,</span>
+        <span class="s2">&quot;tc_dV&quot;</span><span class="p">:</span> <span class="n">tc_dv</span><span class="p">,</span>
+        <span class="s2">&quot;tc_asymmetry_angle&quot;</span><span class="p">:</span> <span class="n">tc_asymmetry_angle</span><span class="p">,</span>
+        <span class="s2">&quot;tc_type&quot;</span><span class="p">:</span> <span class="n">tap_type</span><span class="p">,</span>
+        <span class="s2">&quot;tap_position_index&quot;</span><span class="p">:</span> <span class="n">current_tap_index</span><span class="p">,</span>
+        <span class="s2">&quot;tap_number&quot;</span><span class="p">:</span> <span class="n">current_tap_number</span><span class="p">,</span>
+        <span class="s2">&quot;low_tap_position&quot;</span><span class="p">:</span> <span class="n">low_tap_position</span><span class="p">,</span>
+        <span class="s2">&quot;tap_module&quot;</span><span class="p">:</span> <span class="n">tap_module</span><span class="p">,</span>
+        <span class="s2">&quot;tap_phase&quot;</span><span class="p">:</span> <span class="n">tap_phase</span><span class="p">,</span>
+        <span class="s2">&quot;tap_module_control_mode&quot;</span><span class="p">:</span> <span class="n">tap_module_control_mode</span><span class="p">,</span>
+        <span class="s2">&quot;tap_phase_control_mode&quot;</span><span class="p">:</span> <span class="n">tap_phase_control_mode</span><span class="p">,</span>
+        <span class="s2">&quot;vset&quot;</span><span class="p">:</span> <span class="n">vset</span><span class="p">,</span>
+        <span class="s2">&quot;Pset&quot;</span><span class="p">:</span> <span class="n">pset</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="parse_transformer">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_transformer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_transformer</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse UCTE transformers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ucte_elm</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">transformers</span><span class="p">:</span>
+        <span class="n">bus_node1</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">bus_node2</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bus_node1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">bus_node2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Disconnected transformer&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">legacy_orientation</span> <span class="o">=</span> <span class="n">use_legacy_ucte_transformer_orientation</span><span class="p">(</span>
+            <span class="n">ucte_elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">,</span>
+            <span class="n">bus_node1</span><span class="o">=</span><span class="n">bus_node1</span><span class="p">,</span>
+            <span class="n">bus_node2</span><span class="o">=</span><span class="n">bus_node2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">legacy_orientation</span><span class="p">:</span>
+            <span class="n">bus_f</span> <span class="o">=</span> <span class="n">bus_node2</span>  <span class="c1"># regulated winding</span>
+            <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_node1</span>  <span class="c1"># non-regulated winding</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bus_f</span> <span class="o">=</span> <span class="n">bus_node1</span>
+            <span class="n">bus_t</span> <span class="o">=</span> <span class="n">bus_node2</span>
+
+        <span class="n">active</span><span class="p">,</span> <span class="n">reducible</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">is_active_and_reducible</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">reducible</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">bus_t</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Ignoring self-connected UCTE transformer coupler&quot;</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                   <span class="n">value</span><span class="o">=</span><span class="n">bus_f</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">same_nominal_voltage</span><span class="p">(</span><span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;UCTE transformer coupler endpoints have different nominal voltages&quot;</span><span class="p">,</span>
+                                 <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">(),</span>
+                                 <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">bus_t</span><span class="o">.</span><span class="n">Vnom</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">regulator</span> <span class="o">=</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">get_transformer_regulation</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">)</span>
+            <span class="n">tap_tables</span> <span class="o">=</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">get_transformers_tap_table</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">regulator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tap_tables</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Ignoring tap data on UCTE transformer coupler&quot;</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_zero_transformer_impedance</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch&quot;</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">())</span>
+
+            <span class="n">add_switch_from_transformer</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">reducible</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">get_line_impedances_with_b</span><span class="p">(</span>
+            <span class="n">r_ohm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">,</span>
+            <span class="n">x_ohm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">,</span>
+            <span class="n">b_us</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">,</span>
+            <span class="n">length</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">Imax</span><span class="o">=</span><span class="n">get_current_limit_a</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">current_limit</span><span class="p">),</span>
+            <span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+            <span class="n">Vnom</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage1</span>
+        <span class="p">)</span>
+
+        <span class="n">regulator</span> <span class="o">=</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">get_transformer_regulation</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">)</span>
+        <span class="n">tap_tables</span> <span class="o">=</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">get_transformers_tap_table</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">)</span>
+        <span class="n">tap_data</span> <span class="o">=</span> <span class="n">build_transformer_tap_data</span><span class="p">(</span>
+            <span class="n">ucte_elm</span><span class="o">=</span><span class="n">ucte_elm</span><span class="p">,</span>
+            <span class="n">regulator</span><span class="o">=</span><span class="n">regulator</span><span class="p">,</span>
+            <span class="n">tap_tables</span><span class="o">=</span><span class="n">tap_tables</span><span class="p">,</span>
+            <span class="n">bus_f</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+            <span class="n">bus_t</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+            <span class="n">invert_fixed_tap</span><span class="o">=</span><span class="n">legacy_orientation</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span>
+            <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+            <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+            <span class="n">code</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">order_code</span><span class="p">,</span>
+            <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">HV</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage1</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage2</span><span class="p">),</span>
+            <span class="n">LV</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage1</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">rated_voltage2</span><span class="p">),</span>
+            <span class="n">nominal_power</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">nominal_power</span><span class="p">,</span>
+            <span class="n">r</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+            <span class="n">b</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+            <span class="n">vset</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;vset&quot;</span><span class="p">],</span>
+            <span class="n">Pset</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;Pset&quot;</span><span class="p">],</span>
+            <span class="n">tap_module_control_mode</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_module_control_mode&quot;</span><span class="p">],</span>
+            <span class="n">tap_phase_control_mode</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_phase_control_mode&quot;</span><span class="p">],</span>
+            <span class="n">tc_total_positions</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tc_total_positions&quot;</span><span class="p">],</span>
+            <span class="n">tc_neutral_position</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tc_neutral_position&quot;</span><span class="p">],</span>
+            <span class="n">tc_normal_position</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tc_normal_position&quot;</span><span class="p">],</span>
+            <span class="n">tc_dV</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tc_dV&quot;</span><span class="p">],</span>
+            <span class="n">tc_asymmetry_angle</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tc_asymmetry_angle&quot;</span><span class="p">],</span>
+            <span class="n">tc_type</span><span class="o">=</span><span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tc_type&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">reducible</span> <span class="o">=</span> <span class="n">reducible</span>
+
+        <span class="n">elm</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_position_index&quot;</span><span class="p">]</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span> <span class="o">=</span> <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_module&quot;</span><span class="p">]</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">tap_phase</span> <span class="o">=</span> <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_phase&quot;</span><span class="p">]</span>
+
+        <span class="n">apply_tap_table</span><span class="p">(</span><span class="n">elm</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">tap_tables</span><span class="p">,</span> <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;low_tap_position&quot;</span><span class="p">],</span> <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_number&quot;</span><span class="p">],</span> <span class="n">logger</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer2w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_exchange_power">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.parse_exchange_power">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_exchange_power</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exchange powers are currently ignored by the VeraGrid UCTE importer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="convert_ucte_to_veragrid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.convert_ucte_to_veragrid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_ucte_to_veragrid</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">:</span> <span class="n">UcteCircuit</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert UCTE grid to VeraGrid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Attempt to discover more accurate nominal voltages for level characters</span>
+    <span class="n">vnom_map</span> <span class="o">=</span> <span class="n">discover_nominal_voltages</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vnom_map</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_standard_ucte_country_code</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">current_country</span><span class="p">)):</span>
+                <span class="n">level</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">node_code</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">vnom_map</span><span class="p">:</span>
+                    <span class="n">node</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">vnom_map</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+                    <span class="n">node</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="c1"># Guard against malformed/non-canonical IDs that break the level-character heuristic.</span>
+    <span class="n">repair_nominal_voltages_from_references</span><span class="p">(</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">()</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">fBase</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="n">ucte_grid</span><span class="o">.</span><span class="n">fuse_comments</span><span class="p">()</span>
+
+    <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_nodes</span><span class="p">(</span><span class="n">ucte_grid</span><span class="o">=</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">parse_lines</span><span class="p">(</span><span class="n">ucte_grid</span><span class="o">=</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">parse_transformer</span><span class="p">(</span><span class="n">ucte_grid</span><span class="o">=</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">parse_exchange_power</span><span class="p">(</span><span class="n">ucte_grid</span><span class="o">=</span><span class="n">ucte_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

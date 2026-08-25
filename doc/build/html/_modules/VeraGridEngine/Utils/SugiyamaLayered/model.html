@@ -1,0 +1,1467 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.model &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.SugiyamaLayered.model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;Core graph model for the Sugiyama layered layout pipeline.</span>
+
+<span class="sd">This module stores the graph primitives manipulated by the layout phases.</span>
+<span class="sd">The classes are intentionally light and explicit so the pipeline can inspect</span>
+<span class="sd">and mutate coordinates without hidden behavior.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<span class="n">PrimitiveId</span> <span class="o">=</span> <span class="nb">str</span>
+
+
+<div class="viewcode-block" id="SugiyamaPrimitive">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPrimitive">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaPrimitive</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base graph primitive shared by all Sugiyama model elements.</span>
+
+<span class="sd">    :param identifier: Stable primitive identifier.</span>
+<span class="sd">    :type identifier: PrimitiveId</span>
+<span class="sd">    :param layout_options: Layout options attached to this primitive.</span>
+<span class="sd">    :type layout_options: dict[str, Any] | None</span>
+<span class="sd">    :param properties: Additional user-defined properties.</span>
+<span class="sd">    :type properties: dict[str, Any] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;_layout_options&quot;</span><span class="p">,</span> <span class="s2">&quot;_properties&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">layout_options_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="n">properties_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">layout_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">layout_options_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layout_options_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">layout_options</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">properties_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">properties_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">layout_options_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PrimitiveId</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the primitive identifier.</span>
+
+<span class="sd">        :return: Primitive identifier.</span>
+<span class="sd">        :rtype: PrimitiveId</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout_options</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the layout options dictionary.</span>
+
+<span class="sd">        The layout engine reads the dictionary directly during the pipeline, so</span>
+<span class="sd">        the object keeps ownership of the storage and exposes it explicitly.</span>
+
+<span class="sd">        :return: Layout options storage.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_options</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the additional properties dictionary.</span>
+
+<span class="sd">        :return: Additional properties storage.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span>
+
+<div class="viewcode-block" id="SugiyamaPrimitive.get_layout_option">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPrimitive.get_layout_option">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_layout_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return one layout option value.</span>
+
+<span class="sd">        :param option_id: Layout option identifier.</span>
+<span class="sd">        :type option_id: str</span>
+<span class="sd">        :param default: Fallback value when the option does not exist.</span>
+<span class="sd">        :type default: Any</span>
+<span class="sd">        :return: Stored value or fallback.</span>
+<span class="sd">        :rtype: Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">option_id</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaPrimitive.set_layout_option">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPrimitive.set_layout_option">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_layout_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store one layout option value.</span>
+
+<span class="sd">        :param option_id: Layout option identifier.</span>
+<span class="sd">        :type option_id: str</span>
+<span class="sd">        :param value: Value to store.</span>
+<span class="sd">        :type value: Any</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_options</span><span class="p">[</span><span class="n">option_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaPrimitive.get_property">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPrimitive.get_property">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return one custom property value.</span>
+
+<span class="sd">        :param property_id: Property identifier.</span>
+<span class="sd">        :type property_id: str</span>
+<span class="sd">        :param default: Fallback value when the property does not exist.</span>
+<span class="sd">        :type default: Any</span>
+<span class="sd">        :return: Stored value or fallback.</span>
+<span class="sd">        :rtype: Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">property_id</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaPrimitive.set_property">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPrimitive.set_property">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store one custom property value.</span>
+
+<span class="sd">        :param property_id: Property identifier.</span>
+<span class="sd">        :type property_id: str</span>
+<span class="sd">        :param value: Value to store.</span>
+<span class="sd">        :type value: Any</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">[</span><span class="n">property_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SugiyamaLabel">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaLabel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaLabel</span><span class="p">(</span><span class="n">SugiyamaPrimitive</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Text label attached to one graph primitive.</span>
+
+<span class="sd">    :param identifier: Label identifier.</span>
+<span class="sd">    :type identifier: PrimitiveId</span>
+<span class="sd">    :param text: Label text.</span>
+<span class="sd">    :type text: str</span>
+<span class="sd">    :param width: Label width.</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param height: Label height.</span>
+<span class="sd">    :type height: float</span>
+<span class="sd">    :param x: Optional x coordinate.</span>
+<span class="sd">    :type x: float | None</span>
+<span class="sd">    :param y: Optional y coordinate.</span>
+<span class="sd">    :type y: float | None</span>
+<span class="sd">    :param layout_options: Layout options attached to the label.</span>
+<span class="sd">    :type layout_options: dict[str, Any] | None</span>
+<span class="sd">    :param properties: Additional label properties.</span>
+<span class="sd">    :type properties: dict[str, Any] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_text&quot;</span><span class="p">,</span> <span class="s2">&quot;_width&quot;</span><span class="p">,</span> <span class="s2">&quot;_height&quot;</span><span class="p">,</span> <span class="s2">&quot;_x&quot;</span><span class="p">,</span> <span class="s2">&quot;_y&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span><span class="p">,</span>
+            <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">layout_options</span><span class="o">=</span><span class="n">layout_options</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the label text.</span>
+
+<span class="sd">        :return: Label text.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span>
+
+    <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the label text.</span>
+
+<span class="sd">        :param value: New label text.</span>
+<span class="sd">        :type value: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the label width.</span>
+
+<span class="sd">        :return: Label width.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the label width.</span>
+
+<span class="sd">        :param value: New width.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the label height.</span>
+
+<span class="sd">        :return: Label height.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="nd">@height</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the label height.</span>
+
+<span class="sd">        :param value: New height.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the x coordinate.</span>
+
+<span class="sd">        :return: X coordinate.</span>
+<span class="sd">        :rtype: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+
+    <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the x coordinate.</span>
+
+<span class="sd">        :param value: New x coordinate.</span>
+<span class="sd">        :type value: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the y coordinate.</span>
+
+<span class="sd">        :return: Y coordinate.</span>
+<span class="sd">        :rtype: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+
+    <span class="nd">@y</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the y coordinate.</span>
+
+<span class="sd">        :param value: New y coordinate.</span>
+<span class="sd">        :type value: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="SugiyamaPort">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPort">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaPort</span><span class="p">(</span><span class="n">SugiyamaPrimitive</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Port attached to one node.</span>
+
+<span class="sd">    :param identifier: Port identifier.</span>
+<span class="sd">    :type identifier: PrimitiveId</span>
+<span class="sd">    :param width: Port width.</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param height: Port height.</span>
+<span class="sd">    :type height: float</span>
+<span class="sd">    :param x: Optional x coordinate.</span>
+<span class="sd">    :type x: float | None</span>
+<span class="sd">    :param y: Optional y coordinate.</span>
+<span class="sd">    :type y: float | None</span>
+<span class="sd">    :param labels: Labels attached to the port.</span>
+<span class="sd">    :type labels: list[SugiyamaLabel] | None</span>
+<span class="sd">    :param layout_options: Layout options attached to the port.</span>
+<span class="sd">    :type layout_options: dict[str, Any] | None</span>
+<span class="sd">    :param properties: Additional port properties.</span>
+<span class="sd">    :type properties: dict[str, Any] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_width&quot;</span><span class="p">,</span> <span class="s2">&quot;_height&quot;</span><span class="p">,</span> <span class="s2">&quot;_x&quot;</span><span class="p">,</span> <span class="s2">&quot;_y&quot;</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">labels_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">layout_options</span><span class="o">=</span><span class="n">layout_options</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the port width.</span>
+
+<span class="sd">        :return: Port width.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the port width.</span>
+
+<span class="sd">        :param value: New width.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the port height.</span>
+
+<span class="sd">        :return: Port height.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="nd">@height</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the port height.</span>
+
+<span class="sd">        :param value: New height.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the x coordinate.</span>
+
+<span class="sd">        :return: X coordinate.</span>
+<span class="sd">        :rtype: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+
+    <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the x coordinate.</span>
+
+<span class="sd">        :param value: New x coordinate.</span>
+<span class="sd">        :type value: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the y coordinate.</span>
+
+<span class="sd">        :return: Y coordinate.</span>
+<span class="sd">        :rtype: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+
+    <span class="nd">@y</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the y coordinate.</span>
+
+<span class="sd">        :param value: New y coordinate.</span>
+<span class="sd">        :type value: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the labels attached to the port.</span>
+
+<span class="sd">        :return: Port labels.</span>
+<span class="sd">        :rtype: list[SugiyamaLabel]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+<div class="viewcode-block" id="SugiyamaPort.append_label">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPort.append_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one label to the port.</span>
+
+<span class="sd">        :param label: Label to append.</span>
+<span class="sd">        :type label: SugiyamaLabel</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaPort.clear_labels">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaPort.clear_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all labels from the port.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SugiyamaNode">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaNode</span><span class="p">(</span><span class="n">SugiyamaPrimitive</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Node manipulated by the layered layout pipeline.</span>
+
+<span class="sd">    :param identifier: Node identifier.</span>
+<span class="sd">    :type identifier: PrimitiveId</span>
+<span class="sd">    :param width: Node width.</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param height: Node height.</span>
+<span class="sd">    :type height: float</span>
+<span class="sd">    :param x: Optional x coordinate.</span>
+<span class="sd">    :type x: float | None</span>
+<span class="sd">    :param y: Optional y coordinate.</span>
+<span class="sd">    :type y: float | None</span>
+<span class="sd">    :param labels: Node labels.</span>
+<span class="sd">    :type labels: list[SugiyamaLabel] | None</span>
+<span class="sd">    :param ports: Node ports.</span>
+<span class="sd">    :type ports: list[SugiyamaPort] | None</span>
+<span class="sd">    :param children: Child nodes for hierarchical graphs.</span>
+<span class="sd">    :type children: list[SugiyamaNode] | None</span>
+<span class="sd">    :param parent: Parent identifier.</span>
+<span class="sd">    :type parent: PrimitiveId | None</span>
+<span class="sd">    :param layout_options: Layout options attached to the node.</span>
+<span class="sd">    :type layout_options: dict[str, Any] | None</span>
+<span class="sd">    :param properties: Additional node properties.</span>
+<span class="sd">    :type properties: dict[str, Any] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_width&quot;</span><span class="p">,</span> <span class="s2">&quot;_height&quot;</span><span class="p">,</span> <span class="s2">&quot;_x&quot;</span><span class="p">,</span> <span class="s2">&quot;_y&quot;</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">,</span> <span class="s2">&quot;_ports&quot;</span><span class="p">,</span> <span class="s2">&quot;_children&quot;</span><span class="p">,</span> <span class="s2">&quot;_parent&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ports</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaPort</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">parent</span><span class="p">:</span> <span class="n">PrimitiveId</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">labels_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span>
+        <span class="n">ports_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaPort</span><span class="p">]</span>
+        <span class="n">children_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">layout_options</span><span class="o">=</span><span class="n">layout_options</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ports</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ports_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ports_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ports</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">children</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">children_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">children_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">children</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ports</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaPort</span><span class="p">]</span> <span class="o">=</span> <span class="n">ports_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="n">children_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">:</span> <span class="n">PrimitiveId</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the node width.</span>
+
+<span class="sd">        :return: Node width.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the node width.</span>
+
+<span class="sd">        :param value: New width.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the node height.</span>
+
+<span class="sd">        :return: Node height.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="nd">@height</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the node height.</span>
+
+<span class="sd">        :param value: New height.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the x coordinate.</span>
+
+<span class="sd">        :return: X coordinate.</span>
+<span class="sd">        :rtype: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+
+    <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the x coordinate.</span>
+
+<span class="sd">        :param value: New x coordinate.</span>
+<span class="sd">        :type value: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the y coordinate.</span>
+
+<span class="sd">        :return: Y coordinate.</span>
+<span class="sd">        :rtype: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+
+    <span class="nd">@y</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the y coordinate.</span>
+
+<span class="sd">        :param value: New y coordinate.</span>
+<span class="sd">        :type value: float | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the node labels.</span>
+
+<span class="sd">        :return: Node labels.</span>
+<span class="sd">        :rtype: list[SugiyamaLabel]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaPort</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the node ports.</span>
+
+<span class="sd">        :return: Node ports.</span>
+<span class="sd">        :rtype: list[SugiyamaPort]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ports</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the child nodes.</span>
+
+<span class="sd">        :return: Child nodes.</span>
+<span class="sd">        :rtype: list[SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+
+    <span class="nd">@children</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the child node list.</span>
+
+<span class="sd">        :param value: New child node list.</span>
+<span class="sd">        :type value: list[SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="SugiyamaNode.append_label">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.append_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one label to the node.</span>
+
+<span class="sd">        :param label: Label to append.</span>
+<span class="sd">        :type label: SugiyamaLabel</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaNode.clear_labels">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.clear_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all labels from the node.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaNode.append_port">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.append_port">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one port to the node.</span>
+
+<span class="sd">        :param port: Port to append.</span>
+<span class="sd">        :type port: SugiyamaPort</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">port</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaNode.clear_ports">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.clear_ports">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all ports from the node.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ports</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaNode.append_child">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.append_child">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">SugiyamaNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one child to the node.</span>
+
+<span class="sd">        :param child: Child node to append.</span>
+<span class="sd">        :type child: SugiyamaNode</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaNode.set_children">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.set_children">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the child list explicitly.</span>
+
+<span class="sd">        :param children: New child nodes.</span>
+<span class="sd">        :type children: list[SugiyamaNode]</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">children</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaNode.clear_children">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.clear_children">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all child nodes.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PrimitiveId</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the parent identifier.</span>
+
+<span class="sd">        :return: Parent identifier.</span>
+<span class="sd">        :rtype: PrimitiveId | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+
+    <span class="nd">@parent</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">PrimitiveId</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the parent identifier.</span>
+
+<span class="sd">        :param value: New parent identifier.</span>
+<span class="sd">        :type value: PrimitiveId | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="SugiyamaNode.iter_descendants">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaNode.iter_descendants">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_descendants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the descendants of this node in breadth-first order.</span>
+
+<span class="sd">        The traversal expands children explicitly so phases that need stable</span>
+<span class="sd">        hierarchy flattening get one deterministic order.</span>
+
+<span class="sd">        :return: Descendant nodes.</span>
+<span class="sd">        :rtype: list[SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">child</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">children</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SugiyamaEdgeSection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdgeSection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaEdgeSection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One routed section of an edge.</span>
+
+<span class="sd">    :param start_point: Section start point.</span>
+<span class="sd">    :type start_point: tuple[float, float] | None</span>
+<span class="sd">    :param end_point: Section end point.</span>
+<span class="sd">    :type end_point: tuple[float, float] | None</span>
+<span class="sd">    :param bend_points: Intermediate bend points.</span>
+<span class="sd">    :type bend_points: list[tuple[float, float]] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_start_point&quot;</span><span class="p">,</span> <span class="s2">&quot;_end_point&quot;</span><span class="p">,</span> <span class="s2">&quot;_bend_points&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">start_point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">end_point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">bend_points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bend_points_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">bend_points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bend_points_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bend_points_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bend_points</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">start_point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end_point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">end_point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bend_points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">bend_points_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_point</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the section start point.</span>
+
+<span class="sd">        :return: Start point.</span>
+<span class="sd">        :rtype: tuple[float, float] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_point</span>
+
+    <span class="nd">@start_point</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the section start point.</span>
+
+<span class="sd">        :param value: New start point.</span>
+<span class="sd">        :type value: tuple[float, float] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_point</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end_point</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the section end point.</span>
+
+<span class="sd">        :return: End point.</span>
+<span class="sd">        :rtype: tuple[float, float] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_point</span>
+
+    <span class="nd">@end_point</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the section end point.</span>
+
+<span class="sd">        :param value: New end point.</span>
+<span class="sd">        :type value: tuple[float, float] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end_point</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bend_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the bend points.</span>
+
+<span class="sd">        :return: Bend points.</span>
+<span class="sd">        :rtype: list[tuple[float, float]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bend_points</span>
+
+<div class="viewcode-block" id="SugiyamaEdgeSection.append_bend_point">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdgeSection.append_bend_point">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_bend_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one bend point.</span>
+
+<span class="sd">        :param point: Bend point to append.</span>
+<span class="sd">        :type point: tuple[float, float]</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bend_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaEdgeSection.extend_bend_points">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdgeSection.extend_bend_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extend_bend_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append several bend points.</span>
+
+<span class="sd">        :param points: Bend points to append.</span>
+<span class="sd">        :type points: list[tuple[float, float]]</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bend_points</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">points</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaEdgeSection.clear_bend_points">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdgeSection.clear_bend_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_bend_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all bend points.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bend_points</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SugiyamaEdge">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdge">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaEdge</span><span class="p">(</span><span class="n">SugiyamaPrimitive</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Directed edge between one or more endpoints.</span>
+
+<span class="sd">    :param identifier: Edge identifier.</span>
+<span class="sd">    :type identifier: PrimitiveId</span>
+<span class="sd">    :param sources: Source endpoint identifiers.</span>
+<span class="sd">    :type sources: list[PrimitiveId] | None</span>
+<span class="sd">    :param targets: Target endpoint identifiers.</span>
+<span class="sd">    :type targets: list[PrimitiveId] | None</span>
+<span class="sd">    :param labels: Edge labels.</span>
+<span class="sd">    :type labels: list[SugiyamaLabel] | None</span>
+<span class="sd">    :param sections: Routed sections.</span>
+<span class="sd">    :type sections: list[SugiyamaEdgeSection] | None</span>
+<span class="sd">    :param layout_options: Layout options attached to the edge.</span>
+<span class="sd">    :type layout_options: dict[str, Any] | None</span>
+<span class="sd">    :param properties: Additional edge properties.</span>
+<span class="sd">    :type properties: dict[str, Any] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_sources&quot;</span><span class="p">,</span> <span class="s2">&quot;_targets&quot;</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">,</span> <span class="s2">&quot;_sections&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span><span class="p">,</span>
+            <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">sections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdgeSection</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sources_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]</span>
+        <span class="n">targets_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]</span>
+        <span class="n">labels_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span>
+        <span class="n">sections_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdgeSection</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">layout_options</span><span class="o">=</span><span class="n">layout_options</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sources</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sources_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sources_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">targets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">targets_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">targets_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sections</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sections_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sections_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sections</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]</span> <span class="o">=</span> <span class="n">sources_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]</span> <span class="o">=</span> <span class="n">targets_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdgeSection</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the source endpoint identifiers.</span>
+
+<span class="sd">        :return: Source endpoints.</span>
+<span class="sd">        :rtype: list[PrimitiveId]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the target endpoint identifiers.</span>
+
+<span class="sd">        :return: Target endpoints.</span>
+<span class="sd">        :rtype: list[PrimitiveId]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_targets</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the edge labels.</span>
+
+<span class="sd">        :return: Edge labels.</span>
+<span class="sd">        :rtype: list[SugiyamaLabel]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdgeSection</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the routed edge sections.</span>
+
+<span class="sd">        :return: Edge sections.</span>
+<span class="sd">        :rtype: list[SugiyamaEdgeSection]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span>
+
+<div class="viewcode-block" id="SugiyamaEdge.append_label">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdge.append_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one label to the edge.</span>
+
+<span class="sd">        :param label: Label to append.</span>
+<span class="sd">        :type label: SugiyamaLabel</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaEdge.clear_labels">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdge.clear_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all labels from the edge.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaEdge.append_section">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdge.append_section">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">SugiyamaEdgeSection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one routed section to the edge.</span>
+
+<span class="sd">        :param section: Section to append.</span>
+<span class="sd">        :type section: SugiyamaEdgeSection</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaEdge.clear_sections">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaEdge.clear_sections">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all routed sections from the edge.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SugiyamaGraph">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SugiyamaGraph</span><span class="p">(</span><span class="n">SugiyamaPrimitive</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Root graph used by the layered pipeline.</span>
+
+<span class="sd">    :param identifier: Graph identifier.</span>
+<span class="sd">    :type identifier: PrimitiveId</span>
+<span class="sd">    :param width: Graph width.</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param height: Graph height.</span>
+<span class="sd">    :type height: float</span>
+<span class="sd">    :param children: Root nodes.</span>
+<span class="sd">    :type children: list[SugiyamaNode] | None</span>
+<span class="sd">    :param edges: Graph edges.</span>
+<span class="sd">    :type edges: list[SugiyamaEdge] | None</span>
+<span class="sd">    :param labels: Graph labels.</span>
+<span class="sd">    :type labels: list[SugiyamaLabel] | None</span>
+<span class="sd">    :param layout_options: Layout options attached to the graph.</span>
+<span class="sd">    :type layout_options: dict[str, Any] | None</span>
+<span class="sd">    :param properties: Additional graph properties.</span>
+<span class="sd">    :type properties: dict[str, Any] | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_width&quot;</span><span class="p">,</span> <span class="s2">&quot;_height&quot;</span><span class="p">,</span> <span class="s2">&quot;_children&quot;</span><span class="p">,</span> <span class="s2">&quot;_edges&quot;</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="p">:</span> <span class="n">PrimitiveId</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdge</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">children_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span>
+        <span class="n">edges_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdge</span><span class="p">]</span>
+        <span class="n">labels_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">layout_options</span><span class="o">=</span><span class="n">layout_options</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">children</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">children_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">children_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">children</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">edges_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">edges_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="n">children_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdge</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the graph width.</span>
+
+<span class="sd">        :return: Graph width.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the graph width.</span>
+
+<span class="sd">        :param value: New width.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the graph height.</span>
+
+<span class="sd">        :return: Graph height.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="nd">@height</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the graph height.</span>
+
+<span class="sd">        :param value: New height.</span>
+<span class="sd">        :type value: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the root nodes.</span>
+
+<span class="sd">        :return: Root nodes.</span>
+<span class="sd">        :rtype: list[SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+
+    <span class="nd">@children</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the root node list.</span>
+
+<span class="sd">        :param value: New root node list.</span>
+<span class="sd">        :type value: list[SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaEdge</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the graph edges.</span>
+
+<span class="sd">        :return: Graph edges.</span>
+<span class="sd">        :rtype: list[SugiyamaEdge]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span>
+
+<div class="viewcode-block" id="SugiyamaGraph.append_child">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.append_child">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">SugiyamaNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one root node to the graph.</span>
+
+<span class="sd">        :param child: Root node to append.</span>
+<span class="sd">        :type child: SugiyamaNode</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.clear_children">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.clear_children">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all root nodes from the graph.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.append_edge">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.append_edge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">:</span> <span class="n">SugiyamaEdge</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one edge to the graph.</span>
+
+<span class="sd">        :param edge: Edge to append.</span>
+<span class="sd">        :type edge: SugiyamaEdge</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.clear_edges">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.clear_edges">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all edges from the graph.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.append_label">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.append_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">SugiyamaLabel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append one label to the graph.</span>
+
+<span class="sd">        :param label: Label to append.</span>
+<span class="sd">        :type label: SugiyamaLabel</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.clear_labels">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.clear_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all labels from the graph.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaLabel</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the graph labels.</span>
+
+<span class="sd">        :return: Graph labels.</span>
+<span class="sd">        :rtype: list[SugiyamaLabel]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+<div class="viewcode-block" id="SugiyamaGraph.all_nodes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.all_nodes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all nodes in breadth-first order.</span>
+
+<span class="sd">        The engine often needs one flat node list to resolve identifiers and</span>
+<span class="sd">        geometric relations. The traversal uses one explicit queue so the</span>
+<span class="sd">        returned ordering is deterministic to inspect and debug.</span>
+
+<span class="sd">        :return: Flattened node list.</span>
+<span class="sd">        :rtype: list[SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.all_ports">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.all_ports">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaPort</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all ports in graph traversal order.</span>
+
+<span class="sd">        :return: Flattened port list.</span>
+<span class="sd">        :rtype: list[SugiyamaPort]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SugiyamaPort</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">ports</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.node_by_id">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.node_by_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">node_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a node lookup by identifier.</span>
+
+<span class="sd">        The lookup is rebuilt explicitly when phases request it so no hidden</span>
+<span class="sd">        cache invalidation is needed after hierarchy or identifier updates.</span>
+
+<span class="sd">        :return: Node lookup.</span>
+<span class="sd">        :rtype: dict[PrimitiveId, SugiyamaNode]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.port_by_id">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.port_by_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">port_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">,</span> <span class="n">SugiyamaPort</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a port lookup by identifier.</span>
+
+<span class="sd">        :return: Port lookup.</span>
+<span class="sd">        :rtype: dict[PrimitiveId, SugiyamaPort]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">PrimitiveId</span><span class="p">,</span> <span class="n">SugiyamaPort</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">port</span><span class="p">:</span> <span class="n">SugiyamaPort</span>
+
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_ports</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">port</span><span class="o">.</span><span class="n">identifier</span><span class="p">]</span> <span class="o">=</span> <span class="n">port</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SugiyamaGraph.clone_shallow">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.html#VeraGridEngine.Utils.SugiyamaLayered.model.SugiyamaGraph.clone_shallow">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone_shallow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SugiyamaGraph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a shallow graph clone.</span>
+
+<span class="sd">        The clone duplicates the top-level containers so the caller can build</span>
+<span class="sd">        alternative graph variants while reusing the already allocated</span>
+<span class="sd">        primitives.</span>
+
+<span class="sd">        :return: Shallow graph clone.</span>
+<span class="sd">        :rtype: SugiyamaGraph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clone</span><span class="p">:</span> <span class="n">SugiyamaGraph</span> <span class="o">=</span> <span class="n">SugiyamaGraph</span><span class="p">(</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
+            <span class="n">layout_options</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_options</span><span class="p">),</span>
+            <span class="n">properties</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">children</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">),</span>
+            <span class="n">edges</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span>
+            <span class="n">labels</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">clone</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

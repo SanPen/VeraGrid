@@ -1,0 +1,37 @@
+.wy-nav-content {
+    max-width: 960px !important;
+}
+
+/* Keep the wide Block anatomy reference inside the article column. */
+#anatomy-of-a-block table.docutils {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#anatomy-of-a-block table.docutils th,
+#anatomy-of-a-block table.docutils td {
+  overflow-wrap: anywhere;
+  vertical-align: top;
+  white-space: normal;
+}
+
+#anatomy-of-a-block table.docutils th:nth-child(1),
+#anatomy-of-a-block table.docutils td:nth-child(1) {
+  width: 18%;
+}
+
+#anatomy-of-a-block table.docutils th:nth-child(2),
+#anatomy-of-a-block table.docutils td:nth-child(2) {
+  width: 32%;
+}
+
+#anatomy-of-a-block table.docutils th:nth-child(3),
+#anatomy-of-a-block table.docutils td:nth-child(3) {
+  width: 50%;
+}
+
+@media screen and (max-width: 256px) {
+  img {
+    width: auto;
+  }
+}

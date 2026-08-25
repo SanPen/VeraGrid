@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Compilers.Gslv package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Compilers.Gslv.Devices package" href="VeraGridEngine.Compilers.Gslv.Devices.html" />
+    <link rel="prev" title="VeraGridEngine.Compilers package" href="VeraGridEngine.Compilers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Compilers.Gslv package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Compilers.Gslv.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-compilers-gslv-package">
+<h1>VeraGridEngine.Compilers.Gslv package<a class="headerlink" href="#veragridengine-compilers-gslv-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html">VeraGridEngine.Compilers.Gslv.Devices package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.areas">VeraGridEngine.Compilers.Gslv.Devices.areas module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.areas.add_areas"><code class="docutils literal notranslate"><span class="pre">add_areas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.areas.convert_area"><code class="docutils literal notranslate"><span class="pre">convert_area()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.associations">VeraGridEngine.Compilers.Gslv.Devices.associations module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.associations.add_emission_gases"><code class="docutils literal notranslate"><span class="pre">add_emission_gases()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.associations.add_fuels"><code class="docutils literal notranslate"><span class="pre">add_fuels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.associations.add_technologies"><code class="docutils literal notranslate"><span class="pre">add_technologies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.associations.convert_emission_gas"><code class="docutils literal notranslate"><span class="pre">convert_emission_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.associations.convert_fuel"><code class="docutils literal notranslate"><span class="pre">convert_fuel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.associations.convert_technology"><code class="docutils literal notranslate"><span class="pre">convert_technology()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.batteries">VeraGridEngine.Compilers.Gslv.Devices.batteries module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.batteries.add_battery_data"><code class="docutils literal notranslate"><span class="pre">add_battery_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.batteries.battery_control_mode"><code class="docutils literal notranslate"><span class="pre">battery_control_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.batteries.convert_battery"><code class="docutils literal notranslate"><span class="pre">convert_battery()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.branch_groups">VeraGridEngine.Compilers.Gslv.Devices.branch_groups module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.branch_groups.add_branch_groups"><code class="docutils literal notranslate"><span class="pre">add_branch_groups()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.branch_groups.convert_branch_group"><code class="docutils literal notranslate"><span class="pre">convert_branch_group()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.buses">VeraGridEngine.Compilers.Gslv.Devices.buses module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.buses.add_buses"><code class="docutils literal notranslate"><span class="pre">add_buses()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.buses.convert_bus"><code class="docutils literal notranslate"><span class="pre">convert_bus()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.contingencies">VeraGridEngine.Compilers.Gslv.Devices.contingencies module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.contingencies.add_contingencies"><code class="docutils literal notranslate"><span class="pre">add_contingencies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.contingencies.add_contingency_groups"><code class="docutils literal notranslate"><span class="pre">add_contingency_groups()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.contingencies.convert_contingencies"><code class="docutils literal notranslate"><span class="pre">convert_contingencies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.contingencies.convert_contingency_groups"><code class="docutils literal notranslate"><span class="pre">convert_contingency_groups()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.controllable_shunts">VeraGridEngine.Compilers.Gslv.Devices.controllable_shunts module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.controllable_shunts.add_controllable_shunts"><code class="docutils literal notranslate"><span class="pre">add_controllable_shunts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.controllable_shunts.convert_controllable_shunt"><code class="docutils literal notranslate"><span class="pre">convert_controllable_shunt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.countries">VeraGridEngine.Compilers.Gslv.Devices.countries module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.countries.add_countries"><code class="docutils literal notranslate"><span class="pre">add_countries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.countries.convert_country"><code class="docutils literal notranslate"><span class="pre">convert_country()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.dc_lines">VeraGridEngine.Compilers.Gslv.Devices.dc_lines module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.dc_lines.add_dc_lines"><code class="docutils literal notranslate"><span class="pre">add_dc_lines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.dc_lines.convert_dc_line"><code class="docutils literal notranslate"><span class="pre">convert_dc_line()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.facilities">VeraGridEngine.Compilers.Gslv.Devices.facilities module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.facilities.add_facilities"><code class="docutils literal notranslate"><span class="pre">add_facilities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.facilities.convert_facility"><code class="docutils literal notranslate"><span class="pre">convert_facility()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.generators">VeraGridEngine.Compilers.Gslv.Devices.generators module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.generators.add_generators"><code class="docutils literal notranslate"><span class="pre">add_generators()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.generators.convert_generator"><code class="docutils literal notranslate"><span class="pre">convert_generator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.generators.generator_control_mode"><code class="docutils literal notranslate"><span class="pre">generator_control_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.generators.generator_tpe"><code class="docutils literal notranslate"><span class="pre">generator_tpe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.hvdc_line">VeraGridEngine.Compilers.Gslv.Devices.hvdc_line module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.hvdc_line.add_hvdcs"><code class="docutils literal notranslate"><span class="pre">add_hvdcs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.hvdc_line.convert_hvdc_line"><code class="docutils literal notranslate"><span class="pre">convert_hvdc_line()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.investments">VeraGridEngine.Compilers.Gslv.Devices.investments module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.investments.add_investment_groups"><code class="docutils literal notranslate"><span class="pre">add_investment_groups()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.investments.add_investments"><code class="docutils literal notranslate"><span class="pre">add_investments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.investments.convert_investment"><code class="docutils literal notranslate"><span class="pre">convert_investment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.investments.convert_investment_group"><code class="docutils literal notranslate"><span class="pre">convert_investment_group()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.lines">VeraGridEngine.Compilers.Gslv.Devices.lines module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.lines.add_lines"><code class="docutils literal notranslate"><span class="pre">add_lines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.lines.convert_line"><code class="docutils literal notranslate"><span class="pre">convert_line()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.loads">VeraGridEngine.Compilers.Gslv.Devices.loads module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.loads.add_loads"><code class="docutils literal notranslate"><span class="pre">add_loads()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.loads.convert_load"><code class="docutils literal notranslate"><span class="pre">convert_load()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.market_units">VeraGridEngine.Compilers.Gslv.Devices.market_units module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.market_units.add_market_units"><code class="docutils literal notranslate"><span class="pre">add_market_units()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.market_units.convert_market_unit"><code class="docutils literal notranslate"><span class="pre">convert_market_unit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.modelling_authorities">VeraGridEngine.Compilers.Gslv.Devices.modelling_authorities module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.modelling_authorities.add_modelling_authorities"><code class="docutils literal notranslate"><span class="pre">add_modelling_authorities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.modelling_authorities.convert_modelling_authority"><code class="docutils literal notranslate"><span class="pre">convert_modelling_authority()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.municipalities">VeraGridEngine.Compilers.Gslv.Devices.municipalities module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.municipalities.add_municipalities"><code class="docutils literal notranslate"><span class="pre">add_municipalities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.municipalities.convert_municipality"><code class="docutils literal notranslate"><span class="pre">convert_municipality()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.regions">VeraGridEngine.Compilers.Gslv.Devices.regions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.regions.add_regions"><code class="docutils literal notranslate"><span class="pre">add_regions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.regions.convert_region"><code class="docutils literal notranslate"><span class="pre">convert_region()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.shunts">VeraGridEngine.Compilers.Gslv.Devices.shunts module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.shunts.add_shunts"><code class="docutils literal notranslate"><span class="pre">add_shunts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.shunts.convert_shunt"><code class="docutils literal notranslate"><span class="pre">convert_shunt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.static_generators">VeraGridEngine.Compilers.Gslv.Devices.static_generators module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.static_generators.add_static_generators"><code class="docutils literal notranslate"><span class="pre">add_static_generators()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.static_generators.convert_static_generator"><code class="docutils literal notranslate"><span class="pre">convert_static_generator()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.substations">VeraGridEngine.Compilers.Gslv.Devices.substations module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.substations.add_substations"><code class="docutils literal notranslate"><span class="pre">add_substations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.substations.convert_substation"><code class="docutils literal notranslate"><span class="pre">convert_substation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.transformers">VeraGridEngine.Compilers.Gslv.Devices.transformers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.transformers.add_transformers"><code class="docutils literal notranslate"><span class="pre">add_transformers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.transformers.convert_transformer"><code class="docutils literal notranslate"><span class="pre">convert_transformer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.transformers3w">VeraGridEngine.Compilers.Gslv.Devices.transformers3w module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.transformers3w.add_transformers3w"><code class="docutils literal notranslate"><span class="pre">add_transformers3w()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.transformers3w.convert_transformer3w"><code class="docutils literal notranslate"><span class="pre">convert_transformer3w()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.voltage_levels">VeraGridEngine.Compilers.Gslv.Devices.voltage_levels module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.voltage_levels.add_voltage_levels"><code class="docutils literal notranslate"><span class="pre">add_voltage_levels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.voltage_levels.convert_voltage_level"><code class="docutils literal notranslate"><span class="pre">convert_voltage_level()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.vsc">VeraGridEngine.Compilers.Gslv.Devices.vsc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.vsc.add_vscs"><code class="docutils literal notranslate"><span class="pre">add_vscs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.vsc.convert_vsc"><code class="docutils literal notranslate"><span class="pre">convert_vsc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices.zones">VeraGridEngine.Compilers.Gslv.Devices.zones module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.zones.add_zones"><code class="docutils literal notranslate"><span class="pre">add_zones()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#VeraGridEngine.Compilers.Gslv.Devices.zones.convert_zone"><code class="docutils literal notranslate"><span class="pre">convert_zone()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Devices.html#module-VeraGridEngine.Compilers.Gslv.Devices">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html">VeraGridEngine.Compilers.Gslv.Simulations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations.contingencies">VeraGridEngine.Compilers.Gslv.Simulations.contingencies module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.contingencies.gslv_contingencies_snapshot"><code class="docutils literal notranslate"><span class="pre">gslv_contingencies_snapshot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.contingencies.gslv_contingencies_ts"><code class="docutils literal notranslate"><span class="pre">gslv_contingencies_ts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations.investments">VeraGridEngine.Compilers.Gslv.Simulations.investments module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.investments.get_gslv_investments_evaluation_options"><code class="docutils literal notranslate"><span class="pre">get_gslv_investments_evaluation_options()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.investments.gslv_investments_evaluation"><code class="docutils literal notranslate"><span class="pre">gslv_investments_evaluation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.investments.translate_gslv_investments_evaluation_results"><code class="docutils literal notranslate"><span class="pre">translate_gslv_investments_evaluation_results()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations.linear">VeraGridEngine.Compilers.Gslv.Simulations.linear module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.linear.gslv_linear_matrices"><code class="docutils literal notranslate"><span class="pre">gslv_linear_matrices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations.opf">VeraGridEngine.Compilers.Gslv.Simulations.opf module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.opf.get_gslv_opf_options"><code class="docutils literal notranslate"><span class="pre">get_gslv_opf_options()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.opf.gslv_opf"><code class="docutils literal notranslate"><span class="pre">gslv_opf()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations.power_flow">VeraGridEngine.Compilers.Gslv.Simulations.power_flow module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.get_gslv_pf_options"><code class="docutils literal notranslate"><span class="pre">get_gslv_pf_options()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.gslv_pf"><code class="docutils literal notranslate"><span class="pre">gslv_pf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.translate_gslv_pf_results"><code class="docutils literal notranslate"><span class="pre">translate_gslv_pf_results()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.power_flow.translate_gslv_pf_time_series_results"><code class="docutils literal notranslate"><span class="pre">translate_gslv_pf_time_series_results()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph">VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.gslv_pf_3ph"><code class="docutils literal notranslate"><span class="pre">gslv_pf_3ph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph.translate_gslv_pf_3ph_results"><code class="docutils literal notranslate"><span class="pre">translate_gslv_pf_3ph_results()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Compilers.Gslv.Simulations.html#module-VeraGridEngine.Compilers.Gslv.Simulations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.activation">
+<span id="veragridengine-compilers-gslv-activation-module"></span><h2>VeraGridEngine.Compilers.Gslv.activation module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.activation" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.activation.install_gslv_license">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.activation.</span></span><span class="sig-name descname"><span class="pre">install_gslv_license</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/activation.html#install_gslv_license"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.activation.install_gslv_license" title="Link to this definition"></a></dt>
+<dd><p>Copy one GSLV license file into VeraGrid’s managed folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fname</strong> – Source license file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Success flag and status message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.common">
+<span id="veragridengine-compilers-gslv-common-module"></span><h2>VeraGridEngine.Compilers.Gslv.common module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.common" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.apply_three_phase_load_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">apply_three_phase_load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#apply_three_phase_load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.apply_three_phase_load_data" title="Link to this definition"></a></dt>
+<dd><p>Copy explicit three-phase load data into one GSLV load object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gslv_load</strong> – Target GSLV load.</p></li>
+<li><p><strong>elm</strong> – Source VeraGrid load.</p></li>
+<li><p><strong>time_index</strong> – Source time index when exporting one time slice.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.apply_three_phase_shunt_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">apply_three_phase_shunt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_shunt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Shunt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ControllableShunt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.shunt_parent.ShuntParent" title="VeraGridEngine.Devices.Parents.shunt_parent.ShuntParent"><span class="pre">ShuntParent</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#apply_three_phase_shunt_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.apply_three_phase_shunt_data" title="Link to this definition"></a></dt>
+<dd><p>Copy explicit three-phase shunt data into one GSLV shunt-like object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gslv_shunt</strong> – Target GSLV shunt-like object.</p></li>
+<li><p><strong>elm</strong> – Source VeraGrid shunt-like object.</p></li>
+<li><p><strong>time_index</strong> – Source time index when exporting one time slice.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.convert_tap_module_control_mode_dict">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">convert_tap_module_control_mode_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapModuleControl" title="VeraGridEngine.enumerations.TapModuleControl"><span class="pre">TapModuleControl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">TapModuleControl</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#convert_tap_module_control_mode_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.convert_tap_module_control_mode_dict" title="Link to this definition"></a></dt>
+<dd><p>Function to convert a dictionary of TapModuleControl modes to pg.TapModuleControl modes
+:param data:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.convert_tap_module_control_mode_lst">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">convert_tap_module_control_mode_lst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapModuleControl" title="VeraGridEngine.enumerations.TapModuleControl"><span class="pre">TapModuleControl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">TapModuleControl</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#convert_tap_module_control_mode_lst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.convert_tap_module_control_mode_lst" title="Link to this definition"></a></dt>
+<dd><p>Function to convert a list of TapModuleControl modes to pg.TapModuleControl modes
+:param data:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.convert_tap_phase_control_mode_dict">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">convert_tap_phase_control_mode_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapPhaseControl" title="VeraGridEngine.enumerations.TapPhaseControl"><span class="pre">TapPhaseControl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">TapPhaseControl</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#convert_tap_phase_control_mode_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.convert_tap_phase_control_mode_dict" title="Link to this definition"></a></dt>
+<dd><p>Function to convert a dictionary of TapPhaseControl modes to pg.TapPhaseControl modes
+:param data:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.convert_tap_phase_control_mode_lst">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">convert_tap_phase_control_mode_lst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapPhaseControl" title="VeraGridEngine.enumerations.TapPhaseControl"><span class="pre">TapPhaseControl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">TapPhaseControl</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#convert_tap_phase_control_mode_lst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.convert_tap_phase_control_mode_lst" title="Link to this definition"></a></dt>
+<dd><p>Function to convert a list of TapPhaseControl modes to pg.TapPhaseControl modes
+:param data:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.fill_profile">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">fill_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Profiledouble</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Profilebool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Profileint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Profileuint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gc_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat" title="VeraGridEngine.Devices.Profiles.profile_float.ProfileFloat"><span class="pre">ProfileFloat</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_int.ProfileInt" title="VeraGridEngine.Devices.Profiles.profile_int.ProfileInt"><span class="pre">ProfileInt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool" title="VeraGridEngine.Devices.Profiles.profile_bool.ProfileBool"><span class="pre">ProfileBool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_device.ProfileDevice" title="VeraGridEngine.Devices.Profiles.profile_device.ProfileDevice"><span class="pre">ProfileDevice</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Profiles.html#VeraGridEngine.Devices.Profiles.profile_enum.ProfileEnum" title="VeraGridEngine.Devices.Profiles.profile_enum.ProfileEnum"><span class="pre">ProfileEnum</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapPhaseControl" title="VeraGridEngine.enumerations.TapPhaseControl"><span class="pre">TapPhaseControl</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapModuleControl" title="VeraGridEngine.enumerations.TapModuleControl"><span class="pre">TapModuleControl</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Profiledouble</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Profilebool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Profileint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Profileuint</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#fill_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.fill_profile" title="Link to this definition"></a></dt>
+<dd><p>Generates a default time series
+:param gslv_profile: Profile from gslv to fill in
+:param gc_profile: Profile from veragrid to convert
+:param use_time_series: use time series?
+:param time_indices: time series indices if any (optional)
+:param n_time: number of time steps
+:param default_val: Default value
+:return: Filled GSLV profile.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.fill_profile_with_array">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">fill_profile_with_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_profile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Profiledouble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Profiledouble</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#fill_profile_with_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.fill_profile_with_array" title="Link to this definition"></a></dt>
+<dd><p>Generate one profile from a dense array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gslv_profile</strong> – GSLV profile to fill.</p></li>
+<li><p><strong>arr</strong> – Dense VeraGrid array.</p></li>
+<li><p><strong>use_time_series</strong> – Whether time-series data is being exported.</p></li>
+<li><p><strong>time_indices</strong> – Optional time-series selection.</p></li>
+<li><p><strong>n_time</strong> – Number of exported time steps.</p></li>
+<li><p><strong>default_val</strong> – Scalar fallback value for snapshot exports.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filled GSLV profile.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.get_gslv_mip_solvers_list">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">get_gslv_mip_solvers_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#get_gslv_mip_solvers_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.get_gslv_mip_solvers_list" title="Link to this definition"></a></dt>
+<dd><p>Get list of available MIP solvers
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.get_single_three_phase_snapshot_index">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">get_single_three_phase_snapshot_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#get_single_three_phase_snapshot_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.get_single_three_phase_snapshot_index" title="Link to this definition"></a></dt>
+<dd><p>Return the original VeraGrid snapshot index when one three-phase slice is being exported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>use_time_series</strong> – Whether the conversion uses time-series slicing.</p></li>
+<li><p><strong>time_indices</strong> – Requested time indices.</p></li>
+<li><p><strong>n_time</strong> – Number of exported time steps.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Original time index when there is exactly one slice, else <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.set_generator_associations">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">set_generator_associations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Generator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">facility_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Facility</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">technology_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Technology</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.fuel.Fuel" title="VeraGridEngine.Devices.Associations.fuel.Fuel"><span class="pre">Fuel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Fuel</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emission_gas_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.emission_gas.EmissionGas" title="VeraGridEngine.Devices.Associations.emission_gas.EmissionGas"><span class="pre">EmissionGas</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">EmissionGas</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#set_generator_associations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.set_generator_associations" title="Link to this definition"></a></dt>
+<dd><p>Copy VeraGrid generator associations into one GSLV generator-like injection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gslv_elm</strong> – Target GSLV generator or battery.</p></li>
+<li><p><strong>elm</strong> – Source VeraGrid generator or battery.</p></li>
+<li><p><strong>facility_dict</strong> – VeraGrid-to-GSLV facility lookup.</p></li>
+<li><p><strong>technology_dict</strong> – VeraGrid-to-GSLV technology lookup.</p></li>
+<li><p><strong>fuel_dict</strong> – VeraGrid-to-GSLV fuel lookup.</p></li>
+<li><p><strong>emission_gas_dict</strong> – VeraGrid-to-GSLV emission gas lookup.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.common.set_injection_associations">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.common.</span></span><span class="sig-name descname"><span class="pre">set_injection_associations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InjectionParent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">facility_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Facility</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">technology_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Technology</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/common.html#set_injection_associations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.common.set_injection_associations" title="Link to this definition"></a></dt>
+<dd><p>Copy common VeraGrid injection associations into one GSLV injection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gslv_elm</strong> – Target GSLV injection.</p></li>
+<li><p><strong>elm</strong> – Source VeraGrid injection.</p></li>
+<li><p><strong>facility_dict</strong> – VeraGrid-to-GSLV facility lookup.</p></li>
+<li><p><strong>technology_dict</strong> – VeraGrid-to-GSLV technology lookup.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.compare">
+<span id="veragridengine-compilers-gslv-compare-module"></span><h2>VeraGridEngine.Compilers.Gslv.compare module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.compare" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.compare.CheckArr">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.compare.</span></span><span class="sig-name descname"><span class="pre">CheckArr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr_expected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/compare.html#CheckArr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.compare.CheckArr" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong></p></li>
+<li><p><strong>arr_expected</strong></p></li>
+<li><p><strong>tol</strong></p></li>
+<li><p><strong>name</strong></p></li>
+<li><p><strong>test</strong></p></li>
+<li><p><strong>verbose</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.compare.CheckArrEq">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.compare.</span></span><span class="sig-name descname"><span class="pre">CheckArrEq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr_expected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/compare.html#CheckArrEq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.compare.CheckArrEq" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong></p></li>
+<li><p><strong>arr_expected</strong></p></li>
+<li><p><strong>name</strong></p></li>
+<li><p><strong>test</strong></p></li>
+<li><p><strong>verbose</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.compare.compare_branch_parent_data">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.compare.</span></span><span class="sig-name descname"><span class="pre">compare_branch_parent_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gslv_branch_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BranchParentData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gc_branch_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.branch_parent_data.BranchParentData" title="VeraGridEngine.DataStructures.branch_parent_data.BranchParentData"><span class="pre">BranchParentData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/compare.html#compare_branch_parent_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.compare.compare_branch_parent_data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gslv_branch_data</strong></p></li>
+<li><p><strong>gc_branch_data</strong></p></li>
+<li><p><strong>tol</strong></p></li>
+<li><p><strong>parent_name</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.compare.compare_nc">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.compare.</span></span><span class="sig-name descname"><span class="pre">compare_nc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc_gslv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NumericalCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc_gc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit" title="VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit"><span class="pre">NumericalCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/compare.html#compare_nc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.compare.compare_nc" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc_gslv</strong></p></li>
+<li><p><strong>nc_gc</strong></p></li>
+<li><p><strong>tol</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.compare.convert_arr">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.compare.</span></span><span class="sig-name descname"><span class="pre">convert_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/compare.html#convert_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.compare.convert_arr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.compare.convert_gslv_arr_to_idx">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.compare.</span></span><span class="sig-name descname"><span class="pre">convert_gslv_arr_to_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/compare.html#convert_gslv_arr_to_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.compare.convert_gslv_arr_to_idx" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv.conversion">
+<span id="veragridengine-compilers-gslv-conversion-module"></span><h2>VeraGridEngine.Compilers.Gslv.conversion module<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv.conversion" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.FakeAdmittances">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.conversion.</span></span><span class="sig-name descname"><span class="pre">FakeAdmittances</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/conversion.html#FakeAdmittances"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.FakeAdmittances" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fake admittances class needed to make the translation</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.conversion.</span></span><span class="sig-name descname"><span class="pre">GslvDicts</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/conversion.html#GslvDicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hold the VeraGrid-to-GSLV object lookup dictionaries produced during conversion.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.area_dict">
+<span class="sig-name descname"><span class="pre">area_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Area</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.area_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.branch_groups_dict">
+<span class="sig-name descname"><span class="pre">branch_groups_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup" title="VeraGridEngine.Devices.Aggregation.branch_group.BranchGroup"><span class="pre">BranchGroup</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BranchGroup</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.branch_groups_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.con_groups_dict">
+<span class="sig-name descname"><span class="pre">con_groups_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Events.html#VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup" title="VeraGridEngine.Devices.Events.contingency_group.ContingencyGroup"><span class="pre">ContingencyGroup</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ContingencyGroup</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.con_groups_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.country_dict">
+<span class="sig-name descname"><span class="pre">country_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.country.Country" title="VeraGridEngine.Devices.Aggregation.country.Country"><span class="pre">Country</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Country</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.country_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.emission_gas_dict">
+<span class="sig-name descname"><span class="pre">emission_gas_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.emission_gas.EmissionGas" title="VeraGridEngine.Devices.Associations.emission_gas.EmissionGas"><span class="pre">EmissionGas</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">EmissionGas</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.emission_gas_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.facility_dict">
+<span class="sig-name descname"><span class="pre">facility_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.facility.Facility" title="VeraGridEngine.Devices.Aggregation.facility.Facility"><span class="pre">Facility</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Facility</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.facility_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.fuel_dict">
+<span class="sig-name descname"><span class="pre">fuel_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.fuel.Fuel" title="VeraGridEngine.Devices.Associations.fuel.Fuel"><span class="pre">Fuel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Fuel</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.fuel_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.inv_groups_dict">
+<span class="sig-name descname"><span class="pre">inv_groups_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup" title="VeraGridEngine.Devices.Aggregation.investments_group.InvestmentsGroup"><span class="pre">InvestmentsGroup</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">InvestmentGroup</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.inv_groups_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.market_unit_dict">
+<span class="sig-name descname"><span class="pre">market_unit_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.market_unit.MarketUnit" title="VeraGridEngine.Devices.Aggregation.market_unit.MarketUnit"><span class="pre">MarketUnit</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MarketUnit</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.market_unit_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.modelling_authorities_dict">
+<span class="sig-name descname"><span class="pre">modelling_authorities_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority" title="VeraGridEngine.Devices.Aggregation.modelling_authority.ModellingAuthority"><span class="pre">ModellingAuthority</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ModellingAuthority</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.modelling_authorities_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.municipalities_dict">
+<span class="sig-name descname"><span class="pre">municipalities_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.municipality.Municipality" title="VeraGridEngine.Devices.Aggregation.municipality.Municipality"><span class="pre">Municipality</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Municipality</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.municipalities_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.regions_dict">
+<span class="sig-name descname"><span class="pre">regions_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.region.Region" title="VeraGridEngine.Devices.Aggregation.region.Region"><span class="pre">Region</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Region</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.regions_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.substation_dict">
+<span class="sig-name descname"><span class="pre">substation_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.substation.Substation" title="VeraGridEngine.Devices.Substation.substation.Substation"><span class="pre">Substation</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Substation</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.substation_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.technology_dict">
+<span class="sig-name descname"><span class="pre">technology_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Associations.html#VeraGridEngine.Devices.Associations.technology.Technology" title="VeraGridEngine.Devices.Associations.technology.Technology"><span class="pre">Technology</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Technology</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.technology_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.voltage_level_dict">
+<span class="sig-name descname"><span class="pre">voltage_level_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel" title="VeraGridEngine.Devices.Substation.voltage_level.VoltageLevel"><span class="pre">VoltageLevel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">VoltageLevel</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.voltage_level_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.zone_dict">
+<span class="sig-name descname"><span class="pre">zone_dict</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.zone.Zone" title="VeraGridEngine.Devices.Aggregation.zone.Zone"><span class="pre">Zone</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Zone</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts.zone_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.get_snapshots_from_gslv">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.conversion.</span></span><span class="sig-name descname"><span class="pre">get_snapshots_from_gslv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_branch_controls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit" title="VeraGridEngine.DataStructures.numerical_circuit.NumericalCircuit"><span class="pre">NumericalCircuit</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/conversion.html#get_snapshots_from_gslv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.get_snapshots_from_gslv" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong></p></li>
+<li><p><strong>override_branch_controls</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Compilers.Gslv.conversion.to_gslv">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Compilers.Gslv.conversion.</span></span><span class="sig-name descname"><span class="pre">to_gslv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntVec</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_branch_controls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults" title="VeraGridEngine.Simulations.OPF.opf_results.OptimalPowerFlowResults"><span class="pre">OptimalPowerFlowResults</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_three_phase_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pg.MultiCircuit'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Compilers.Gslv.conversion.GslvDicts" title="VeraGridEngine.Compilers.Gslv.conversion.GslvDicts"><span class="pre">GslvDicts</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Compilers/Gslv/conversion.html#to_gslv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Compilers.Gslv.conversion.to_gslv" title="Link to this definition"></a></dt>
+<dd><p>Convert VeraGrid circuit to GSLV
+:param circuit: MultiCircuit
+:param use_time_series: compile the time series from VeraGrid? otherwise just the snapshot
+:param time_indices: Array of time indices
+:param override_branch_controls: If true the branch controls are set to Fix
+:param opf_results:
+:param add_three_phase_data: Export explicit three-phase device data when possible.
+:return: pg.MultiCircuit instance</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Compilers.Gslv">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Compilers.Gslv" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Compilers.html" class="btn btn-neutral float-left" title="VeraGridEngine.Compilers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Compilers.Gslv.Devices.html" class="btn btn-neutral float-right" title="VeraGridEngine.Compilers.Gslv.Devices package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

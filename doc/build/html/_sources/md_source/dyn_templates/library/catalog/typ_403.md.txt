@@ -1,0 +1,42 @@
+# Accelerating Power IPB
+
+This is Basic Block Catalog type `403` (`Accelerating Power IPB`). It processes measurement or control signals for use inside a dynamic control model.
+
+<!-- veragrid-block-introduction:start -->
+**Accelerating Power IPB** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Control and Measurement / Measurements and Units`.
+- Inputs: 4.
+- Outputs: 1.
+- Declared states: 0.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (Pa - (proc_{select\_0} \cdot (xmt - xme) \cdot speed + (1 - proc_{select\_0}) \cdot (xmt - xme) \cdot cosn \cdot speed))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `cosn` | Input signal consumed by the block | model-dependent |
+| Input | `speed` | Input signal consumed by the block | model-dependent |
+| Input | `xmt` | Input signal consumed by the block | model-dependent |
+| Input | `xme` | Input signal consumed by the block | model-dependent |
+| Output | `Pa` | Output signal produced by the block | model-dependent |
+| Parameter | `IPB` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

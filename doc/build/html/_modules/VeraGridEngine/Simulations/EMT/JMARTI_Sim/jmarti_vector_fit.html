@@ -1,0 +1,680 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">la</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_loewner_seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiModeLoewnerSeed</span>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiRationalModeFit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scalar rational fit of one JMARTI modal target.</span>
+
+<span class="sd">    The first JMARTI implementation fits each modal channel independently. The</span>
+<span class="sd">    object stores the resulting pole-residue form together with explicit error</span>
+<span class="sd">    metrics so later passivity and runtime stages can inspect the fit quality.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_mode_index&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_target_name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_poles_s&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_residues&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_constant_term&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_proportional_term&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_fit_error_rms&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_max_relative_error&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_iterations_completed&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_converged&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_stable&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">constant_term</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                 <span class="n">proportional_term</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                 <span class="n">fit_error_rms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">max_relative_error</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">iterations_completed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">stable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one scalar rational fit.</span>
+
+<span class="sd">        :param mode_index: Modal channel index.</span>
+<span class="sd">        :param target_name: Modal target name.</span>
+<span class="sd">        :param poles_s: Fitted continuous-time poles.</span>
+<span class="sd">        :param residues: Fitted residues paired with ``poles_s``.</span>
+<span class="sd">        :param constant_term: Constant term of the rational fit.</span>
+<span class="sd">        :param proportional_term: Proportional ``s`` term of the rational fit.</span>
+<span class="sd">        :param fit_error_rms: Global relative RMS fit error.</span>
+<span class="sd">        :param max_relative_error: Maximum pointwise relative fit error.</span>
+<span class="sd">        :param iterations_completed: Number of pole-relocation iterations performed.</span>
+<span class="sd">        :param converged: Whether the pole-relocation loop met its stopping criterion.</span>
+<span class="sd">        :param stable: Whether every fitted pole lies in the left half-plane.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mode_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">poles_s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">residues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constant_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">constant_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proportional_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">proportional_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_error_rms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fit_error_rms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_relative_error</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_relative_error</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iterations_completed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">iterations_completed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stable</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_mode_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_mode_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal channel index.</span>
+
+<span class="sd">        :return: Modal channel index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_index</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_target_name">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_target_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal target name.</span>
+
+<span class="sd">        :return: Modal target name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_name</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_poles_s">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_poles_s">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_poles_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the fitted continuous-time poles.</span>
+
+<span class="sd">        :return: Complex pole vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poles_s</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_residues">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_residues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_residues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the fitted residues.</span>
+
+<span class="sd">        :return: Complex residue vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_constant_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_constant_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_constant_term</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the fitted constant term.</span>
+
+<span class="sd">        :return: Complex constant term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constant_term</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_proportional_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_proportional_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_proportional_term</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the fitted proportional term.</span>
+
+<span class="sd">        :return: Complex proportional term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proportional_term</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_fit_error_rms">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_fit_error_rms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_fit_error_rms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the relative RMS fit error.</span>
+
+<span class="sd">        :return: Relative RMS fit error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_error_rms</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_max_relative_error">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_max_relative_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_max_relative_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the maximum pointwise relative fit error.</span>
+
+<span class="sd">        :return: Maximum relative fit error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_relative_error</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_iterations_completed">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_iterations_completed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_iterations_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of pole-relocation iterations performed.</span>
+
+<span class="sd">        :return: Completed iteration count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iterations_completed</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_converged">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_converged">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_converged</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the relocation loop converged.</span>
+
+<span class="sd">        :return: Boolean convergence flag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_converged</span></div>
+
+
+<div class="viewcode-block" id="JMartiRationalModeFit.get_stable">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.JMartiRationalModeFit.get_stable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether every fitted pole is stable.</span>
+
+<span class="sd">        :return: Boolean stability flag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stable</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_complex_frequency_points">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.build_jmarti_complex_frequency_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_complex_frequency_points</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Map one real frequency grid to the continuous-time imaginary axis.</span>
+
+<span class="sd">    :param frequency_hz: Frequency grid in Hz.</span>
+<span class="sd">    :return: Complex s-plane samples ``j*2*pi*f``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_reciprocal_pole_basis</span><span class="p">(</span><span class="n">s_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the reciprocal pole basis ``1 / (s - p)``.</span>
+
+<span class="sd">    :param s_values: Complex frequency samples.</span>
+<span class="sd">    :param poles_s: Pole vector.</span>
+<span class="sd">    :return: Basis matrix with shape ``(ns, npoles)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">s_values</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">poles_s</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_poles_by_real_imag</span><span class="p">(</span><span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sort poles deterministically by real part and then by imaginary part.</span>
+
+<span class="sd">    :param poles_s: Complex pole vector.</span>
+<span class="sd">    :return: Sorted pole vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sort_index</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">poles_s</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">poles_s</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">poles_s</span><span class="p">[</span><span class="n">sort_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_enforce_stable_poles</span><span class="p">(</span><span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">real_part_floor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reflect unstable poles into the left half-plane.</span>
+
+<span class="sd">    :param poles_s: Candidate pole vector.</span>
+<span class="sd">    :param real_part_floor: Minimum absolute negative real part after reflection.</span>
+<span class="sd">    :return: Stable pole vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stabilized_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">poles_s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pole_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">real_part_value</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">imag_part_value</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="k">while</span> <span class="n">pole_index</span> <span class="o">&lt;</span> <span class="n">stabilized_poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="n">real_part_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">stabilized_poles_s</span><span class="p">[</span><span class="n">pole_index</span><span class="p">]))</span>
+        <span class="n">imag_part_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">stabilized_poles_s</span><span class="p">[</span><span class="n">pole_index</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">real_part_value</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">real_part_floor</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stabilized_poles_s</span><span class="p">[</span><span class="n">pole_index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">real_part_value</span><span class="p">),</span> <span class="n">real_part_floor</span><span class="p">),</span> <span class="n">imag_part_value</span><span class="p">)</span>
+
+        <span class="n">pole_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">stabilized_poles_s</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_vector_fit_relocation_system</span><span class="p">(</span><span class="n">s_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                        <span class="n">response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                        <span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                        <span class="n">include_constant_term</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                        <span class="n">include_proportional_term</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the relaxed scalar Vector Fitting relocation least-squares system.</span>
+
+<span class="sd">    :param s_values: Complex frequency samples.</span>
+<span class="sd">    :param response_values: Complex scalar response samples.</span>
+<span class="sd">    :param poles_s: Current pole vector.</span>
+<span class="sd">    :param include_constant_term: Whether to include one constant term.</span>
+<span class="sd">    :param include_proportional_term: Whether to include one proportional ``s`` term.</span>
+<span class="sd">    :return: Tuple ``(A, b)`` for the complex least-squares problem.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">basis_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_build_reciprocal_pole_basis</span><span class="p">(</span><span class="n">s_values</span><span class="p">,</span> <span class="n">poles_s</span><span class="p">)</span>
+    <span class="n">column_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">basis_matrix</span><span class="p">])</span>
+    <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s_values</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_constant_term</span><span class="p">:</span>
+        <span class="n">column_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">row_count</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">include_proportional_term</span><span class="p">:</span>
+        <span class="n">column_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># The denominator perturbation is solved in the same least-squares system by</span>
+    <span class="c1"># multiplying the scalar samples against the reciprocal pole basis.</span>
+    <span class="n">column_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">response_values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">basis_matrix</span><span class="p">)</span>
+    <span class="n">system_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">column_blocks</span><span class="p">)</span>
+    <span class="n">rhs_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">response_values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">system_matrix</span><span class="p">,</span> <span class="n">rhs_vector</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_relocation_coefficients</span><span class="p">(</span><span class="n">solution_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                     <span class="n">pole_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                     <span class="n">include_constant_term</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                     <span class="n">include_proportional_term</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">complex</span><span class="p">,</span> <span class="nb">complex</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unpack one relocation least-squares solution vector.</span>
+
+<span class="sd">    :param solution_vector: Complex least-squares solution vector.</span>
+<span class="sd">    :param pole_count: Number of poles.</span>
+<span class="sd">    :param include_constant_term: Whether one constant term is present.</span>
+<span class="sd">    :param include_proportional_term: Whether one proportional term is present.</span>
+<span class="sd">    :return: Tuple ``(residues, constant_term, proportional_term, sigma_residues)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pole_count</span>
+    <span class="n">residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">solution_vector</span><span class="p">[:</span><span class="n">pole_count</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">constant_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span>
+    <span class="n">proportional_term</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span>
+
+    <span class="k">if</span> <span class="n">include_constant_term</span><span class="p">:</span>
+        <span class="n">constant_term</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">solution_vector</span><span class="p">[</span><span class="n">offset</span><span class="p">])</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">include_proportional_term</span><span class="p">:</span>
+        <span class="n">proportional_term</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">solution_vector</span><span class="p">[</span><span class="n">offset</span><span class="p">])</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">sigma_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">solution_vector</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="n">pole_count</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">residues</span><span class="p">,</span> <span class="n">constant_term</span><span class="p">,</span> <span class="n">proportional_term</span><span class="p">,</span> <span class="n">sigma_residues</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_relocate_poles_from_sigma</span><span class="p">(</span><span class="n">current_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                               <span class="n">sigma_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the zeros of the relaxed sigma function.</span>
+
+<span class="sd">    :param current_poles_s: Current pole vector.</span>
+<span class="sd">    :param sigma_residues: Sigma residues from the relocation solve.</span>
+<span class="sd">    :return: Relocated poles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">current_poles_s</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">current_poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">),</span> <span class="n">sigma_residues</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">la</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">state_matrix</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_relative_pole_shift</span><span class="p">(</span><span class="n">old_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">new_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute one relative pole-shift metric.</span>
+
+<span class="sd">    :param old_poles_s: Previous pole vector.</span>
+<span class="sd">    :param new_poles_s: Updated pole vector.</span>
+<span class="sd">    :return: Maximum relative pole shift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">denominator</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">old_poles_s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">new_poles_s</span> <span class="o">-</span> <span class="n">old_poles_s</span><span class="p">)</span> <span class="o">/</span> <span class="n">denominator</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_final_vector_fit_system</span><span class="p">(</span><span class="n">s_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                   <span class="n">poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                   <span class="n">include_constant_term</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                                   <span class="n">include_proportional_term</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the final fixed-pole rational least-squares system.</span>
+
+<span class="sd">    :param s_values: Complex frequency samples.</span>
+<span class="sd">    :param poles_s: Fixed pole vector.</span>
+<span class="sd">    :param include_constant_term: Whether to include one constant term.</span>
+<span class="sd">    :param include_proportional_term: Whether to include one proportional term.</span>
+<span class="sd">    :return: Complex least-squares matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">basis_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_build_reciprocal_pole_basis</span><span class="p">(</span><span class="n">s_values</span><span class="p">,</span> <span class="n">poles_s</span><span class="p">)</span>
+    <span class="n">column_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">basis_matrix</span><span class="p">])</span>
+    <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s_values</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_constant_term</span><span class="p">:</span>
+        <span class="n">column_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">row_count</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">include_proportional_term</span><span class="p">:</span>
+        <span class="n">column_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">column_blocks</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="evaluate_jmarti_rational_mode_fit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.evaluate_jmarti_rational_mode_fit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jmarti_rational_mode_fit</span><span class="p">(</span><span class="n">fit</span><span class="p">:</span> <span class="n">JMartiRationalModeFit</span><span class="p">,</span>
+                                      <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate one fitted scalar rational mode on the imaginary axis.</span>
+
+<span class="sd">    :param fit: Fitted scalar rational mode.</span>
+<span class="sd">    :param frequency_hz: Frequency grid in Hz.</span>
+<span class="sd">    :return: Complex response samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">build_jmarti_complex_frequency_points</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">)</span>
+    <span class="n">basis_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_build_reciprocal_pole_basis</span><span class="p">(</span><span class="n">s_values</span><span class="p">,</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_poles_s</span><span class="p">())</span>
+    <span class="n">response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">basis_matrix</span> <span class="o">@</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_residues</span><span class="p">()</span>
+
+    <span class="n">response_values</span> <span class="o">=</span> <span class="n">response_values</span> <span class="o">+</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_constant_term</span><span class="p">()</span>
+    <span class="n">response_values</span> <span class="o">=</span> <span class="n">response_values</span> <span class="o">+</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_proportional_term</span><span class="p">()</span> <span class="o">*</span> <span class="n">s_values</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">response_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_mode_vector_fit">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit.build_jmarti_mode_vector_fit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_mode_vector_fit</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                                 <span class="n">response_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                 <span class="n">loewner_seed</span><span class="p">:</span> <span class="n">JMartiModeLoewnerSeed</span><span class="p">,</span>
+                                 <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiRationalModeFit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one scalar Vector Fitting refinement from a Loewner seed.</span>
+
+<span class="sd">    :param frequency_hz: Frequency grid in Hz.</span>
+<span class="sd">    :param response_values: Complex scalar response samples on that grid.</span>
+<span class="sd">    :param loewner_seed: Loewner order/pole seed.</span>
+<span class="sd">    :param options: Optional user-configurable JMARTI fitting options.</span>
+<span class="sd">    :return: Scalar rational fit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">=</span> <span class="n">JMartiFitOptions</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">options</span>
+    <span class="n">s_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">build_jmarti_complex_frequency_points</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">)</span>
+    <span class="n">response_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">response_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">current_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_sort_poles_by_real_imag</span><span class="p">(</span><span class="n">loewner_seed</span><span class="o">.</span><span class="n">get_initial_poles_s</span><span class="p">())</span>
+    <span class="n">relocation_iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">include_constant_term</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">resolved_options</span><span class="o">.</span><span class="n">get_vf_include_constant_term</span><span class="p">()</span>
+    <span class="n">include_proportional_term</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">resolved_options</span><span class="o">.</span><span class="n">get_vf_include_proportional_term</span><span class="p">()</span>
+    <span class="n">system_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">rhs_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">solution_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">constant_term</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">proportional_term</span><span class="p">:</span> <span class="nb">complex</span>
+    <span class="n">sigma_residues</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">relocated_poles_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">relative_shift</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">final_system_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">final_solution_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">fitted_response</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">fit_error_rms</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">max_relative_error</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">stable</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="c1"># Stage 1: relaxed pole relocation iterations.</span>
+    <span class="k">while</span> <span class="n">relocation_iteration</span> <span class="o">&lt;</span> <span class="n">resolved_options</span><span class="o">.</span><span class="n">get_vf_max_iterations</span><span class="p">():</span>
+        <span class="n">system_matrix</span><span class="p">,</span> <span class="n">rhs_vector</span> <span class="o">=</span> <span class="n">_build_vector_fit_relocation_system</span><span class="p">(</span>
+            <span class="n">s_values</span><span class="o">=</span><span class="n">s_values</span><span class="p">,</span>
+            <span class="n">response_values</span><span class="o">=</span><span class="n">response_array</span><span class="p">,</span>
+            <span class="n">poles_s</span><span class="o">=</span><span class="n">current_poles_s</span><span class="p">,</span>
+            <span class="n">include_constant_term</span><span class="o">=</span><span class="n">include_constant_term</span><span class="p">,</span>
+            <span class="n">include_proportional_term</span><span class="o">=</span><span class="n">include_proportional_term</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">final_solution_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">system_matrix</span><span class="p">,</span> <span class="n">rhs_vector</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">residues</span><span class="p">,</span> <span class="n">constant_term</span><span class="p">,</span> <span class="n">proportional_term</span><span class="p">,</span> <span class="n">sigma_residues</span> <span class="o">=</span> <span class="n">_extract_relocation_coefficients</span><span class="p">(</span>
+            <span class="n">solution_vector</span><span class="o">=</span><span class="n">final_solution_vector</span><span class="p">,</span>
+            <span class="n">pole_count</span><span class="o">=</span><span class="n">current_poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">include_constant_term</span><span class="o">=</span><span class="n">include_constant_term</span><span class="p">,</span>
+            <span class="n">include_proportional_term</span><span class="o">=</span><span class="n">include_proportional_term</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">relocated_poles_s</span> <span class="o">=</span> <span class="n">_relocate_poles_from_sigma</span><span class="p">(</span>
+            <span class="n">current_poles_s</span><span class="o">=</span><span class="n">current_poles_s</span><span class="p">,</span>
+            <span class="n">sigma_residues</span><span class="o">=</span><span class="n">sigma_residues</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">resolved_options</span><span class="o">.</span><span class="n">get_vf_enforce_stable_poles</span><span class="p">():</span>
+            <span class="n">relocated_poles_s</span> <span class="o">=</span> <span class="n">_enforce_stable_poles</span><span class="p">(</span>
+                <span class="n">poles_s</span><span class="o">=</span><span class="n">relocated_poles_s</span><span class="p">,</span>
+                <span class="n">real_part_floor</span><span class="o">=</span><span class="n">resolved_options</span><span class="o">.</span><span class="n">get_vf_stability_real_part_floor</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">relocated_poles_s</span> <span class="o">=</span> <span class="n">_sort_poles_by_real_imag</span><span class="p">(</span><span class="n">relocated_poles_s</span><span class="p">)</span>
+        <span class="n">relative_shift</span> <span class="o">=</span> <span class="n">_compute_relative_pole_shift</span><span class="p">(</span><span class="n">current_poles_s</span><span class="p">,</span> <span class="n">relocated_poles_s</span><span class="p">)</span>
+        <span class="n">current_poles_s</span> <span class="o">=</span> <span class="n">relocated_poles_s</span>
+        <span class="n">relocation_iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">relative_shift</span> <span class="o">&lt;=</span> <span class="n">resolved_options</span><span class="o">.</span><span class="n">get_vf_pole_shift_tolerance</span><span class="p">():</span>
+            <span class="n">converged</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Stage 2: final fixed-pole residue solve.</span>
+    <span class="n">final_system_matrix</span> <span class="o">=</span> <span class="n">_build_final_vector_fit_system</span><span class="p">(</span>
+        <span class="n">s_values</span><span class="o">=</span><span class="n">s_values</span><span class="p">,</span>
+        <span class="n">poles_s</span><span class="o">=</span><span class="n">current_poles_s</span><span class="p">,</span>
+        <span class="n">include_constant_term</span><span class="o">=</span><span class="n">include_constant_term</span><span class="p">,</span>
+        <span class="n">include_proportional_term</span><span class="o">=</span><span class="n">include_proportional_term</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">final_solution_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">final_system_matrix</span><span class="p">,</span> <span class="n">response_array</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">residues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">final_solution_vector</span><span class="p">[:</span><span class="n">current_poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">constant_term</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span>
+    <span class="n">proportional_term</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span>
+
+    <span class="k">if</span> <span class="n">include_constant_term</span><span class="p">:</span>
+        <span class="n">constant_term</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">final_solution_vector</span><span class="p">[</span><span class="n">current_poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">include_proportional_term</span><span class="p">:</span>
+            <span class="n">proportional_term</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">final_solution_vector</span><span class="p">[</span><span class="n">current_poles_s</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">include_proportional_term</span><span class="p">:</span>
+            <span class="n">proportional_term</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">final_solution_vector</span><span class="p">[</span><span class="n">current_poles_s</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">fitted_response</span> <span class="o">=</span> <span class="n">evaluate_jmarti_rational_mode_fit</span><span class="p">(</span>
+        <span class="n">fit</span><span class="o">=</span><span class="n">JMartiRationalModeFit</span><span class="p">(</span>
+            <span class="n">mode_index</span><span class="o">=</span><span class="n">loewner_seed</span><span class="o">.</span><span class="n">get_mode_index</span><span class="p">(),</span>
+            <span class="n">target_name</span><span class="o">=</span><span class="n">loewner_seed</span><span class="o">.</span><span class="n">get_target_name</span><span class="p">(),</span>
+            <span class="n">poles_s</span><span class="o">=</span><span class="n">current_poles_s</span><span class="p">,</span>
+            <span class="n">residues</span><span class="o">=</span><span class="n">residues</span><span class="p">,</span>
+            <span class="n">constant_term</span><span class="o">=</span><span class="n">constant_term</span><span class="p">,</span>
+            <span class="n">proportional_term</span><span class="o">=</span><span class="n">proportional_term</span><span class="p">,</span>
+            <span class="n">fit_error_rms</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">max_relative_error</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">iterations_completed</span><span class="o">=</span><span class="n">relocation_iteration</span><span class="p">,</span>
+            <span class="n">converged</span><span class="o">=</span><span class="n">converged</span><span class="p">,</span>
+            <span class="n">stable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">frequency_hz</span><span class="o">=</span><span class="n">frequency_hz</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fit_error_rms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">fitted_response</span> <span class="o">-</span> <span class="n">response_array</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">response_array</span><span class="p">),</span> <span class="mf">1.0e-16</span><span class="p">))</span>
+    <span class="n">max_relative_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fitted_response</span> <span class="o">-</span> <span class="n">response_array</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">response_array</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0e-16</span><span class="p">)))</span>
+    <span class="n">stable</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">current_poles_s</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">JMartiRationalModeFit</span><span class="p">(</span>
+        <span class="n">mode_index</span><span class="o">=</span><span class="n">loewner_seed</span><span class="o">.</span><span class="n">get_mode_index</span><span class="p">(),</span>
+        <span class="n">target_name</span><span class="o">=</span><span class="n">loewner_seed</span><span class="o">.</span><span class="n">get_target_name</span><span class="p">(),</span>
+        <span class="n">poles_s</span><span class="o">=</span><span class="n">current_poles_s</span><span class="p">,</span>
+        <span class="n">residues</span><span class="o">=</span><span class="n">residues</span><span class="p">,</span>
+        <span class="n">constant_term</span><span class="o">=</span><span class="n">constant_term</span><span class="p">,</span>
+        <span class="n">proportional_term</span><span class="o">=</span><span class="n">proportional_term</span><span class="p">,</span>
+        <span class="n">fit_error_rms</span><span class="o">=</span><span class="n">fit_error_rms</span><span class="p">,</span>
+        <span class="n">max_relative_error</span><span class="o">=</span><span class="n">max_relative_error</span><span class="p">,</span>
+        <span class="n">iterations_completed</span><span class="o">=</span><span class="n">relocation_iteration</span><span class="p">,</span>
+        <span class="n">converged</span><span class="o">=</span><span class="n">converged</span><span class="p">,</span>
+        <span class="n">stable</span><span class="o">=</span><span class="n">stable</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

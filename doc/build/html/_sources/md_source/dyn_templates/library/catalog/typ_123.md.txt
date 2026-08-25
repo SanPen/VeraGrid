@@ -1,0 +1,48 @@
+# sT/(1+sT) (bypass)
+
+This is Basic Block Catalog type `123` (`sT/(1+sT) _bypass`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**sT/(1+sT) (bypass)** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Integrators and Derivatives`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x}{dt} = sT/(1+sT) _{bypass\_dx}
+$$
+
+$$
+0 = (sT/(1+sT) _{bypass\_dx} - (proc_{selfix\_0} \cdot \frac{yi - x}{T} + (1 - proc_{selfix\_0}) \cdot 0))
+$$
+
+$$
+0 = (yo - (proc_{selfix\_1} \cdot T \cdot sT/(1+sT) _{bypass\_dx} + (1 - proc_{selfix\_1}) \cdot yi))
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `sT/(1+sT) _bypass__x` | Internal dynamic state | model-dependent |
+| Parameter | `T` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

@@ -1,0 +1,103 @@
+# U seq/ab0 -> U abc
+
+This is Basic Block Catalog type `543` (`U seq/ab0 -> U abc`). It converts signals between the coordinate systems or units identified by the block name.
+
+<!-- veragrid-block-introduction:start -->
+**U seq/ab0 -> U abc** is a coordinate-transformation block. In three-phase analysis, Clarke and Park transforms separate stationary or rotating components so sinusoidal phase quantities can be controlled as nearly constant d-q signals. The selected scaling determines whether amplitude or instantaneous power is preserved.
+
+## Typical use
+
+- Use it to connect phase-domain electrical quantities with d-q or sequence-domain control laws.
+- Keep angle orientation, axis alignment, phase order, and power/amplitude convention consistent.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Transforms / RMS and Sequence`.
+- Inputs: 8.
+- Outputs: 6.
+- Declared states: 0.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (U seq/ab0 -> U abc_{uar} - (u1r + u0))
+$$
+
+$$
+0 = (U seq/ab0 -> U abc_{uai} - 0)
+$$
+
+$$
+0 = (U seq/ab0 -> U abc_{ubr} - (\frac{-u1r}{2} + \frac{u1i \cdot \sqrt{3}}{2} + u0))
+$$
+
+$$
+0 = (U seq/ab0 -> U abc_{ubi} - 0)
+$$
+
+$$
+0 = (U seq/ab0 -> U abc_{ucr} - (\frac{-u1r}{2} - \frac{u1i \cdot \sqrt{3}}{2} + u0))
+$$
+
+$$
+0 = (U seq/ab0 -> U abc_{uci} - 0)
+$$
+
+$$
+0 = (ua - (proc_{select\_1} \cdot \sqrt{2} \cdot \sqrt{0\Theta\left(0 - proc_{movingavg\_0}\right) + proc_{movingavg\_0} \cdot (1 - \Theta\left(0 - proc_{movingavg\_0}\right))} + (1 - proc_{select\_1}) \cdot u1))
+$$
+
+$$
+0 = (ub - (proc_{select\_3} \cdot \sqrt{2} \cdot \sqrt{0\Theta\left(0 - proc_{movingavg\_2}\right) + proc_{movingavg\_2} \cdot (1 - \Theta\left(0 - proc_{movingavg\_2}\right))} + (1 - proc_{select\_3}) \cdot u1))
+$$
+
+$$
+0 = (uc - (proc_{select\_5} \cdot \sqrt{2} \cdot \sqrt{0\Theta\left(0 - proc_{movingavg\_4}\right) + proc_{movingavg\_4} \cdot (1 - \Theta\left(0 - proc_{movingavg\_4}\right))} + (1 - proc_{select\_5}) \cdot u1))
+$$
+
+$$
+0 = (uab - (proc_{select\_7} \cdot \frac{\sqrt{2}}{\sqrt{3}} \cdot \sqrt{0\Theta\left(0 - proc_{movingavg\_6}\right) + proc_{movingavg\_6} \cdot (1 - \Theta\left(0 - proc_{movingavg\_6}\right))} + (1 - proc_{select\_7}) \cdot u1))
+$$
+
+$$
+0 = (ubc - (proc_{select\_9} \cdot \frac{\sqrt{2}}{\sqrt{3}} \cdot \sqrt{0\Theta\left(0 - proc_{movingavg\_8}\right) + proc_{movingavg\_8} \cdot (1 - \Theta\left(0 - proc_{movingavg\_8}\right))} + (1 - proc_{select\_9}) \cdot u1))
+$$
+
+$$
+0 = (uca - (proc_{select\_11} \cdot \frac{\sqrt{2}}{\sqrt{3}} \cdot \sqrt{0\Theta\left(0 - proc_{movingavg\_10}\right) + proc_{movingavg\_10} \cdot (1 - \Theta\left(0 - proc_{movingavg\_10}\right))} + (1 - proc_{select\_11}) \cdot u1))
+$$
+
+$$
+0 = (U seq/ab0 -> U abc_{t} - glob_{time})
+$$
+
+$$
+U seq/ab0 -> U abc_{t0}(t_0) = glob_{time}
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `u1` | Input signal consumed by the block | model-dependent |
+| Input | `u1r` | Input signal consumed by the block | model-dependent |
+| Input | `u1i` | Input signal consumed by the block | model-dependent |
+| Input | `u2r` | Input signal consumed by the block | model-dependent |
+| Input | `u2i` | Input signal consumed by the block | model-dependent |
+| Input | `u0r` | Input signal consumed by the block | model-dependent |
+| Input | `u0i` | Input signal consumed by the block | model-dependent |
+| Input | `u0` | Input signal consumed by the block | model-dependent |
+| Output | `ua` | Output signal produced by the block | model-dependent |
+| Output | `ub` | Output signal produced by the block | model-dependent |
+| Output | `uc` | Output signal produced by the block | model-dependent |
+| Output | `uab` | Output signal produced by the block | model-dependent |
+| Output | `ubc` | Output signal produced by the block | model-dependent |
+| Output | `uca` | Output signal produced by the block | model-dependent |
+| Parameter | `fn` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

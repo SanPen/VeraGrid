@@ -1,0 +1,558 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">EMT Floquet Linear Operators Module.</span>
+
+<span class="sd">This module provides high-performance LinearOperator subclasses compatible with</span>
+<span class="sd">SciPy&#39;s sparse linear algebra solvers (like ARPACK). These operators define the</span>
+<span class="sd">action of the Monodromy Matrix (state-transition over one full limit cycle)</span>
+<span class="sd">without explicitly constructing it.</span>
+
+<span class="sd">Included Operators:</span>
+<span class="sd">- EmtFloquetOperator: Standard (vector-by-vector) LU-cached operator.</span>
+<span class="sd">- BlockEmtFloquetOperator: Block (matrix-by-matrix) LU-cached operator.</span>
+<span class="sd">- AkStackBlockEmtFloquetOperator: Explicit pre-computed transition matrix stack operator.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spla</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">NUMBA_AVAILABLE</span><span class="p">,</span>
+                                                                                          <span class="n">apply_ak_stack_block_numba</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicIntegrationMethod</span>
+
+
+<div class="viewcode-block" id="EmtFloquetOperator">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator.EmtFloquetOperator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmtFloquetOperator</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">LinearOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HPC Matrix-Free Monodromy Operator for abc-frame EMT systems.</span>
+
+<span class="sd">    Optimized with LU Factorization Caching to eliminate redundant computations</span>
+<span class="sd">    during Krylov subspace iterations (Arnoldi). This operator processes single</span>
+<span class="sd">    perturbation vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_states</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">method</span><span class="p">:</span> <span class="n">DynamicIntegrationMethod</span> <span class="o">=</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">,</span>
+                 <span class="n">jac_evaluator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">static_params</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">Vec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_event_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">t_trajectory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Vec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the standard EmtFloquetOperator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            problem: The underlying EMT DAE problem instance.</span>
+<span class="sd">            trajectory: Pre-captured steady-state trajectory over one period.</span>
+<span class="sd">            h: Integration time step.</span>
+<span class="sd">            n_states: Number of differential state variables.</span>
+<span class="sd">            method_str: Numerical integration method (e.g., &#39;back_euler&#39;).</span>
+<span class="sd">            jac_evaluator: JIT-compiled Jacobian evaluator function.</span>
+<span class="sd">            static_params: Array of static system parameters.</span>
+<span class="sd">            n_event_params: Number of event-driven parameters.</span>
+<span class="sd">            t_trajectory: Time array corresponding to the limit cycle trajectory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">op_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_states</span><span class="p">,</span> <span class="n">n_states</span><span class="p">)</span>
+        <span class="n">op_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">op_dtype</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">op_shape</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">=</span> <span class="n">n_states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_states_number</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_algebraic_var_number</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Pre-computing Router</span>
+        <span class="k">if</span> <span class="n">jac_evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t_trajectory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_precompute_from_jit</span><span class="p">(</span><span class="n">jac_evaluator</span><span class="p">,</span> <span class="n">static_params</span><span class="p">,</span> <span class="n">n_event_params</span><span class="p">,</span><span class="n">t_trajectory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_precompute_lu_factorizations</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_precompute_from_jit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jac_evaluator</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">static_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">n_ev_params</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t_trajectory</span><span class="p">:</span><span class="n">Vec</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates and caches sparse LU factorizations using the JIT compiled evaluator</span>
+<span class="sd">        :param jac_evaluator:</span>
+<span class="sd">        :param static_params:</span>
+<span class="sd">        :param n_ev_params:</span>
+<span class="sd">        :param t_trajectory:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">full_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_ev_params</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">static_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">static_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_params</span><span class="p">[</span><span class="n">n_ev_params</span><span class="p">:]</span> <span class="o">=</span> <span class="n">static_params</span>
+
+        <span class="n">ev_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_ev_params</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">dx_dummy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_total</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">)):</span>
+            <span class="n">step_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">step_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">step_prev2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">step_prev</span>
+
+            <span class="n">x_k</span> <span class="o">=</span> <span class="n">step_k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_k</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">step_k</span>
+            <span class="n">x_prev</span> <span class="o">=</span> <span class="n">step_prev</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_prev</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">step_prev</span>
+            <span class="n">x_prev2</span> <span class="o">=</span> <span class="n">step_prev2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_prev2</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">step_prev2</span>
+            <span class="n">t_curr</span> <span class="o">=</span> <span class="n">t_trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">t_trajectory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n_ev_params</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ev_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">def_event_params_fn</span><span class="p">(</span><span class="n">ev_params</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_curr</span><span class="p">))</span>
+                <span class="n">full_params</span><span class="p">[:</span><span class="n">n_ev_params</span><span class="p">]</span> <span class="o">=</span> <span class="n">ev_params</span>
+
+            <span class="n">J_sparse</span> <span class="o">=</span> <span class="n">jac_evaluator</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="n">x_k</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">full_params</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="n">x_prev</span><span class="p">,</span>
+                                     <span class="n">d_history</span><span class="o">=</span><span class="n">dx_dummy</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">history2</span><span class="o">=</span><span class="n">x_prev2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="n">J_sparse</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_precompute_lu_factorizations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pre-calculates SuperLU factorizations for the entire periodic trajectory.</span>
+<span class="sd">        This reduces the cost of Arnoldi iterations from O(iters * steps * n^3)</span>
+<span class="sd">        to O(steps * n^3 + iters * steps * n^2), an extreme HPC acceleration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">:</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j11</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">fy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j12</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">gx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j21</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">gy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j22</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+            <span class="n">J_aug</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+                <span class="n">sp</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">]),</span>
+                <span class="n">sp</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">])</span>
+            <span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;csc&#39;</span><span class="p">)</span>
+
+            <span class="c1"># splu requires CSC format and computes the exact LU factorization once</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="n">J_aug</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_matvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the Monodromy operator to a single vector v0</span>
+<span class="sd">        :param v0:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_curr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_total</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">v_curr</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="n">v0</span>
+
+        <span class="n">v_prev</span> <span class="o">=</span> <span class="n">v_curr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">v_prev2</span> <span class="o">=</span> <span class="n">v_curr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dv_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">v_curr</span><span class="p">)</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">v_curr</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">lu</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">:</span>
+                <span class="n">rhs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBDF2</span><span class="p">:</span>
+                <span class="n">rhs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">v_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">v_prev2</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span><span class="p">:</span>
+                <span class="n">rhs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">*</span> <span class="n">v_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">+</span> <span class="n">dv_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rhs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+            <span class="n">v_curr</span> <span class="o">=</span> <span class="n">lu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span><span class="p">:</span>
+                <span class="n">dv_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_curr</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">])</span> <span class="o">-</span> <span class="n">dv_prev</span><span class="p">[</span>
+                    <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span>
+
+            <span class="n">v_prev2</span> <span class="o">=</span> <span class="n">v_prev</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">v_prev</span> <span class="o">=</span> <span class="n">v_curr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">v_curr</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rmatvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w0</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adjoint (Backward) integration to extract Left Eigenvectors.</span>
+<span class="sd">        Utilizes the trans=&#39;T&#39; flag in SuperLU for zero-cost matrix transposition.</span>
+<span class="sd">        :param w0:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w_curr</span> <span class="o">=</span> <span class="n">w0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_total</span><span class="p">)</span>
+
+        <span class="c1"># Reverse-time integration using the transposed solvers</span>
+        <span class="k">for</span> <span class="n">lu</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="p">):</span>
+            <span class="n">rhs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="n">w_curr</span>
+
+            <span class="c1"># Fast back-substitution solving J_aug^T * sol = rhs</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">lu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+            <span class="n">w_curr</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">w_curr</span></div>
+
+
+<span class="c1">#New Implementation System for Blocks calc.</span>
+<div class="viewcode-block" id="BlockEmtFloquetOperator">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator.BlockEmtFloquetOperator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlockEmtFloquetOperator</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">LinearOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Advanced HPC Block Monodromy Operator for EMT Small-Signal Stability.</span>
+
+<span class="sd">    This class is specifically designed to support Randomized Numerical Linear</span>
+<span class="sd">    Algebra (RandNLA) and Block Krylov subspace methods. Unlike standard operators</span>
+<span class="sd">    that process a single column vector at a time (BLAS Level 2), this operator</span>
+<span class="sd">    accepts a dense block matrix (N x p) of vectors simultaneously.</span>
+
+<span class="sd">    By processing multiple perturbation vectors at once, it forces the underlying</span>
+<span class="sd">    SciPy/SuperLU backend to utilize BLAS Level 3 routines (Matrix-Matrix</span>
+<span class="sd">    multiplication and Block Forward/Backward Substitution). This maximizes CPU</span>
+<span class="sd">    L1/L2 cache utilization, drastically reducing the memory-bound bottlenecks</span>
+<span class="sd">    inherent to large-scale sparse electrical networks.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        problem: The underlying EMT DAE problem instance.</span>
+<span class="sd">        trajectory: List of pre-captured steady-state tuples (x, y) over one period T.</span>
+<span class="sd">        h (float): Integration time step.</span>
+<span class="sd">        n_states (int): Number of differential state variables.</span>
+<span class="sd">        lu_solvers (list): Cached SuperLU factorizations for the entire trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_states</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">method</span><span class="p">:</span> <span class="n">DynamicIntegrationMethod</span> <span class="o">=</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">,</span>
+                 <span class="n">jac_evaluator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">static_params</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">Vec</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_event_params</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">t_trajectory</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">Vec</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the BlockEmtFloquetOperator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            problem: The underlying EMT DAE problem instance.</span>
+<span class="sd">            trajectory: List of pre-captured steady-state tuples (x, y) over one period T.</span>
+<span class="sd">            h: Integration time step.</span>
+<span class="sd">            n_states: Number of differential state variables.</span>
+<span class="sd">            method_str: Numerical integration method string.</span>
+<span class="sd">            jac_evaluator: JIT-compiled Jacobian evaluator function.</span>
+<span class="sd">            static_params: Array of static system parameters.</span>
+<span class="sd">            n_event_params: Number of event-driven parameters.</span>
+<span class="sd">            t_trajectory: Time array corresponding to the limit cycle trajectory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">n_total_calc</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_states_number</span><span class="p">()</span> <span class="o">+</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_algebraic_var_number</span><span class="p">()</span>
+        <span class="n">op_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_states</span><span class="p">,</span> <span class="n">n_states</span><span class="p">)</span>
+        <span class="n">op_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">op_dtype</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">op_shape</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">=</span> <span class="n">n_states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_total</span> <span class="o">=</span> <span class="n">n_total_calc</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">jac_evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_precompute_from_jit</span><span class="p">(</span><span class="n">jac_evaluator</span><span class="p">,</span> <span class="n">static_params</span><span class="p">,</span> <span class="n">n_event_params</span><span class="p">,</span> <span class="n">t_trajectory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_precompute_lu_factorizations</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_precompute_from_jit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jac_evaluator</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">static_params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                             <span class="n">n_ev_params</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">t_trajectory</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">Vec</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates and caches sparse LU factorizations using the JIT compiled evaluator.</span>
+<span class="sd">        :param jac_evaluator:</span>
+<span class="sd">        :param static_params:</span>
+<span class="sd">        :param n_ev_params:</span>
+<span class="sd">        :param t_trajectory:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_ev_params</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">static_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">static_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_params</span><span class="p">[</span><span class="n">n_ev_params</span><span class="p">:]</span> <span class="o">=</span> <span class="n">static_params</span>
+
+        <span class="n">ev_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_ev_params</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">dx_dummy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_total</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">)):</span>
+            <span class="n">step_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">step_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">step_prev2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">step_prev</span>
+
+            <span class="n">x_k</span> <span class="o">=</span> <span class="n">step_k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_k</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">step_k</span>
+            <span class="n">x_prev</span> <span class="o">=</span> <span class="n">step_prev</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_prev</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">step_prev</span>
+            <span class="n">x_prev2</span> <span class="o">=</span> <span class="n">step_prev2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_prev2</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">step_prev2</span>
+            <span class="n">t_curr</span> <span class="o">=</span> <span class="n">t_trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">t_trajectory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n_ev_params</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ev_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">def_event_params_fn</span><span class="p">(</span><span class="n">ev_params</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">t_curr</span><span class="p">))</span>
+                <span class="n">full_params</span><span class="p">[:</span><span class="n">n_ev_params</span><span class="p">]</span> <span class="o">=</span> <span class="n">ev_params</span>
+
+            <span class="n">J_sparse</span> <span class="o">=</span> <span class="n">jac_evaluator</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="n">x_k</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">full_params</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="n">x_prev</span><span class="p">,</span>
+                                     <span class="n">d_history</span><span class="o">=</span><span class="n">dx_dummy</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">history2</span><span class="o">=</span><span class="n">x_prev2</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="n">J_sparse</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_precompute_lu_factorizations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pre-calculates and caches the Sparse LU factorizations for the Jacobian</span>
+<span class="sd">        at every time step of the periodic limit cycle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">:</span>
+            <span class="c1"># Extract discrete DAE Jacobians from the exact analytical/AD backend</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j11</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">fy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j12</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">gx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j21</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">gy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_j22</span><span class="p">(</span><span class="n">x_k</span><span class="p">,</span> <span class="n">y_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+            <span class="c1"># Assemble the full augmented Jacobian block matrix</span>
+            <span class="n">J_aug</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+                <span class="n">sp</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">]),</span>
+                <span class="n">sp</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">])</span>
+            <span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;csc&#39;</span><span class="p">)</span>
+
+            <span class="c1"># splu requires CSC format and caches the exact LU decomposition</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="n">J_aug</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_matmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Mat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the Monodromy operator to a dense block of vectors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: Matrix block of shape (n_states, p).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Propagated block matrix of shape (n_states, p).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">X_curr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_total</span><span class="p">,</span> <span class="n">p_cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">X_curr</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">X</span>
+
+        <span class="n">X_prev</span> <span class="o">=</span> <span class="n">X_curr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">X_prev2</span> <span class="o">=</span> <span class="n">X_curr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dX_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_curr</span><span class="p">)</span>
+        <span class="n">rhs_block</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_curr</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">lu</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lu_solvers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">:</span>
+                <span class="n">rhs_block</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">X_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBDF2</span><span class="p">:</span>
+                <span class="n">rhs_block</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">X_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">X_prev2</span><span class="p">[</span>
+                    <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span><span class="p">:</span>
+                <span class="n">rhs_block</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">*</span> <span class="n">X_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">dX_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rhs_block</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">X_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+            <span class="n">X_curr</span> <span class="o">=</span> <span class="n">lu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rhs_block</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span><span class="p">:</span>
+                <span class="n">dX_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">X_curr</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">X_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:])</span> <span class="o">-</span> \
+                                             <span class="n">dX_prev</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="n">X_prev2</span> <span class="o">=</span> <span class="n">X_prev</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">X_prev</span> <span class="o">=</span> <span class="n">X_curr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">X_curr</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_matvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span><span class="n">Vec</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fallback routine: If a standard solver (like scipy.sparse.linalg.eigs)</span>
+<span class="sd">        calls this operator with a single 1D vector, it wraps it into a 2D matrix</span>
+<span class="sd">        and routes it through the high-performance _matmat implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reshape to (N, 1), compute via block logic, and flatten back to 1D</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matmat</span><span class="p">(</span><span class="n">v0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="AkStackBlockEmtFloquetOperator">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator.AkStackBlockEmtFloquetOperator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AkStackBlockEmtFloquetOperator</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">LinearOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Monodromy operator from an explicit stack of state-transition matrices A_k.</span>
+
+<span class="sd">    This is the preferred path for EMT/Floquet benchmarking when the EMT engine can</span>
+<span class="sd">    expose the per-step linearized state map:</span>
+<span class="sd">        x_{k+1} = A_k x_k</span>
+<span class="sd">    for one limit-cycle period. The operator applies:</span>
+<span class="sd">        Phi = A_{M-1} * ... * A_1 * A_0</span>
+<span class="sd">    on vectors or blocks. When Numba is available and use_numba=True, the block</span>
+<span class="sd">    path is JIT-compiled to reduce Python overhead in repeated Arnoldi calls.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ak_stack</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">use_numba</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the AkStackBlockEmtFloquetOperator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Ak_stack: 3D numpy array representing the sequence of transition matrices.</span>
+<span class="sd">            use_numba: Flag to enable Numba acceleration for the block multiplication.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Ak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Ak_stack</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Ak</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">Ak</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">Ak</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Ak_stack must have shape (n_steps, n, n); got </span><span class="si">{</span><span class="n">Ak</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Ak</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ak_stack</span> <span class="o">=</span> <span class="n">Ak</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Ak</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_numba</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">use_numba</span> <span class="ow">and</span> <span class="n">NUMBA_AVAILABLE</span> <span class="ow">and</span> <span class="n">apply_ak_stack_block_numba</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_matvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies the operator to a single 1D vector.&quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matmat</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_matmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Mat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies the transition matrix stack to a block of vectors.&quot;&quot;&quot;</span>
+        <span class="n">Xf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_numba</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">apply_ak_stack_block_numba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ak_stack</span><span class="p">,</span> <span class="n">Xf</span><span class="p">)</span>
+
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Xf</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="p">):</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ak_stack</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">Y</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AkStackBlockEmtFloquetOperator.matmat">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator.AkStackBlockEmtFloquetOperator.matmat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Mat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Public alias for matrix-matrix multiplication.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matmat</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

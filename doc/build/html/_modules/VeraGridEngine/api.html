@@ -1,0 +1,803 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.api &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.api</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.api</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NOTE: Do not optimize or remove imports here, this is the API and exposes functionality outside</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_open</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileOpen</span><span class="p">,</span> <span class="n">FileOpenOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_save</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileSave</span><span class="p">,</span> <span class="n">FileSavingOptions</span><span class="p">,</span> <span class="n">save_veragrid_multiverse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.remote</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">gather_model_as_jsons_for_communication</span><span class="p">,</span> <span class="n">RemoteInstruction</span><span class="p">,</span>
+                                               <span class="n">SimulationTypes</span><span class="p">,</span> <span class="n">send_json_data</span><span class="p">,</span> <span class="n">get_certificate_path</span><span class="p">,</span> <span class="n">get_certificate</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span><span class="p">,</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="open_file">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.open_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+              <span class="n">options</span><span class="p">:</span> <span class="n">FileOpenOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open file</span>
+<span class="sd">    :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)</span>
+<span class="sd">    :param options: FileOpenOptions instance (optional)</span>
+<span class="sd">    :return: MultiCircuit instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">drv</span> <span class="o">=</span> <span class="n">FileOpen</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">drv</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">drv</span><span class="o">.</span><span class="n">circuit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">drv</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;File open error&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">drv</span><span class="o">.</span><span class="n">circuit</span></div>
+
+
+<div class="viewcode-block" id="open_multiverse">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.open_multiverse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_multiverse</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+              <span class="n">options</span><span class="p">:</span> <span class="n">FileOpenOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiVerse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open file</span>
+<span class="sd">    :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)</span>
+<span class="sd">    :param options: FileOpenOptions instance (optional)</span>
+<span class="sd">    :return: MultiVerse instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">drv</span> <span class="o">=</span> <span class="n">FileOpen</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">drv</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">drv</span><span class="o">.</span><span class="n">multiverse</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No multiverse found :(&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">drv</span><span class="o">.</span><span class="n">multiverse</span></div>
+
+
+
+<div class="viewcode-block" id="save_file">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.save_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_file</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">drivers_to_save</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save file</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param filename: name of the file (.veragrid, .ejson)</span>
+<span class="sd">    :param drivers_to_save: List of drivers to save, this structure can be obtained from driver.get_save_data()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FileSave</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+            <span class="n">sessions_data</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span> <span class="k">if</span> <span class="n">drivers_to_save</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">drivers_to_save</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="save_multiverse">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.save_multiverse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_multiverse</span><span class="p">(</span><span class="n">mv</span><span class="p">:</span> <span class="n">MultiVerse</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">drivers_to_save</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save file</span>
+<span class="sd">    :param mv: MultiVerse instance</span>
+<span class="sd">    :param filename: name of the file (.veragrid)</span>
+<span class="sd">    :param drivers_to_save: List of drivers to save, this structure can be obtained from driver.get_save_data()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">save_veragrid_multiverse</span><span class="p">(</span>
+        <span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+            <span class="n">sessions_data</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span> <span class="k">if</span> <span class="n">drivers_to_save</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">drivers_to_save</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">multiverse</span><span class="o">=</span><span class="n">mv</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="open_cgmes">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.open_cgmes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_cgmes</span><span class="p">(</span><span class="n">filenames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">cgmes_version</span><span class="o">=</span><span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open CGMES files</span>
+<span class="sd">    :param filenames: name of the file (.xml, .zip) or list of files (.xml, .zip)</span>
+<span class="sd">    :param cgmes_version: CGMES version</span>
+<span class="sd">    :return: MultiCircuit instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">FileOpen</span><span class="p">(</span>
+        <span class="n">file_name</span><span class="o">=</span><span class="n">filenames</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">FileOpenOptions</span><span class="p">(</span>
+            <span class="n">cgmes_version</span><span class="o">=</span><span class="n">cgmes_version</span><span class="p">,</span>
+            <span class="n">file_type</span><span class="o">=</span><span class="n">FileType</span><span class="o">.</span><span class="n">CGMES</span>
+        <span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="save_cgmes_file">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.save_cgmes_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_cgmes_file</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">cgmes_boundary_set_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">cgmes_version</span><span class="p">:</span> <span class="n">CGMESVersions</span> <span class="o">=</span> <span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">,</span>
+                    <span class="n">pf_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">PowerFlowResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the grid in CGMES format</span>
+<span class="sd">    :param grid: MultiCircuit</span>
+<span class="sd">    :param filename: name of the CGMES file(.zip)</span>
+<span class="sd">    :param cgmes_boundary_set_path: Path to the boundary set in a single zip file</span>
+<span class="sd">    :param cgmes_version: CGMESVersions</span>
+<span class="sd">    :param pf_results: Matching PowerFlowResults (optional)</span>
+<span class="sd">    :return: Logger</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># define a logger</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="c1"># define the export options</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">FileSavingOptions</span><span class="p">(</span><span class="n">file_type</span><span class="o">=</span><span class="n">FileType</span><span class="o">.</span><span class="n">CGMES</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">cgmes_one_file_per_profile</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">cgmes_profiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span>
+                              <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span>
+                              <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">TP</span><span class="p">,</span>
+                              <span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SSH</span><span class="p">]</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">cgmes_version</span> <span class="o">=</span> <span class="n">cgmes_version</span>
+
+    <span class="k">if</span> <span class="n">pf_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># pack the results for saving</span>
+        <span class="n">pf_session_data</span> <span class="o">=</span> <span class="n">DriverToSave</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;powerflow results&quot;</span><span class="p">,</span>
+                                       <span class="n">tpe</span><span class="o">=</span><span class="n">SimulationTypes</span><span class="o">.</span><span class="n">PowerFlow_run</span><span class="p">,</span>
+                                       <span class="n">results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+                                       <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="n">options</span><span class="o">.</span><span class="n">sessions_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pf_session_data</span><span class="p">)</span>
+
+        <span class="n">options</span><span class="o">.</span><span class="n">cgmes_profiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CgmesProfileType</span><span class="o">.</span><span class="n">SV</span><span class="p">)</span>
+
+    <span class="c1"># since the CGMES boundary set is an external file, you need to define where it is</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">cgmes_boundary_set</span> <span class="o">=</span> <span class="n">cgmes_boundary_set_path</span>
+
+    <span class="c1"># save in CGMES format</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">FileSave</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">+=</span> <span class="n">handler</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+
+
+<div class="viewcode-block" id="power_flow">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.power_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+               <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">engine</span><span class="o">=</span><span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run power flow on the snapshot</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: PowerFlowOptions instance</span>
+<span class="sd">    :param engine: Engine to run with</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">()</span>
+
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="power_flow3ph">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.power_flow3ph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">power_flow3ph</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">engine</span><span class="o">=</span><span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults3Ph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run power flow on the snapshot</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: PowerFlowOptions instance</span>
+<span class="sd">    :param engine: Engine to run with</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">()</span>
+
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">PowerFlowDriver3Ph</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="power_flow3ph_ts">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.power_flow3ph_ts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">power_flow3ph_ts</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">clustering_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClusteringResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">auto_expand</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">engine</span><span class="o">=</span><span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowTimeSeriesResults3Ph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run three-phase power flow on the time series.</span>
+
+<span class="sd">    :param grid: MultiCircuit instance.</span>
+<span class="sd">    :param options: PowerFlowOptions instance (optional).</span>
+<span class="sd">    :param time_indices: Array of time indices to simulate, if ``None`` all are used.</span>
+<span class="sd">    :param clustering_results: ClusteringResults (optional).</span>
+<span class="sd">    :param auto_expand: If true the clustering results are expanded if clustering_results is provided.</span>
+<span class="sd">    :param engine: Engine to run with.</span>
+<span class="sd">    :return: Three-phase time-series power-flow results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">ti</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">()</span> <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">time_indices</span>
+
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">PowerFlowTimeSeriesDriver3Ph</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                          <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                          <span class="n">time_indices</span><span class="o">=</span><span class="n">ti</span><span class="p">,</span>
+                                          <span class="n">clustering_results</span><span class="o">=</span><span class="n">clustering_results</span><span class="p">,</span>
+                                          <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">auto_expand</span> <span class="ow">and</span> <span class="n">clustering_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">expand_clustered_results</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="power_flow_ts">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.power_flow_ts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">power_flow_ts</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">clustering_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClusteringResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">auto_expand</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="n">engine</span><span class="o">=</span><span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowTimeSeriesResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run power flow on the time series</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: PowerFlowOptions instance (optional)</span>
+<span class="sd">    :param time_indices: Array of time indices to simulate, if None all are used (optional)</span>
+<span class="sd">    :param clustering_results: ClusteringResults (optional)</span>
+<span class="sd">    :param auto_expand: If true the clustering results are expanded if clustering_results is provided</span>
+<span class="sd">    :param engine: Engine to run with (optional, default VeraGrid)</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">()</span>
+
+    <span class="c1">#  compose the time indices</span>
+    <span class="n">ti</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">()</span> <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">time_indices</span>
+
+    <span class="c1"># create the driver</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">PowerFlowTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                       <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                       <span class="n">time_indices</span><span class="o">=</span><span class="n">ti</span><span class="p">,</span>
+                                       <span class="n">clustering_results</span><span class="o">=</span><span class="n">clustering_results</span><span class="p">,</span>
+                                       <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+    <span class="c1"># run</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">auto_expand</span> <span class="ow">and</span> <span class="n">clustering_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">expand_clustered_results</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="linear_power_flow">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.linear_power_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">linear_power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                      <span class="n">options</span><span class="p">:</span> <span class="n">LinearAnalysisOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinearAnalysisResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run linear power flow on the snapshot</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: LinearAnalysisOptions instance</span>
+<span class="sd">    :return: LinearAnalysisResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">LinearAnalysisOptions</span><span class="p">()</span>
+
+    <span class="c1"># snapshot</span>
+    <span class="n">sn_driver</span> <span class="o">=</span> <span class="n">LinearAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">sn_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">sn_driver</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="linear_power_flow_ts">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.linear_power_flow_ts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">linear_power_flow_ts</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                         <span class="n">options</span><span class="p">:</span> <span class="n">LinearAnalysisOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinearAnalysisTimeSeriesResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run linear power flow time series</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: LinearAnalysisOptions instance</span>
+<span class="sd">    :return: LinearAnalysisTimeSeriesResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">LinearAnalysisOptions</span><span class="p">()</span>
+
+    <span class="c1"># snapshot</span>
+    <span class="n">sn_driver</span> <span class="o">=</span> <span class="n">LinearAnalysisTimeSeriesDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">sn_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">sn_driver</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="short_circuit">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.short_circuit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">short_circuit</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">fault_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                  <span class="n">fault_type</span><span class="o">=</span><span class="n">FaultType</span><span class="o">.</span><span class="n">LG</span><span class="p">,</span>
+                  <span class="n">pf_options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(),</span>
+                  <span class="n">pf_results</span><span class="p">:</span> <span class="n">PowerFlowResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">pf_results3ph</span><span class="p">:</span> <span class="n">PowerFlowResults3Ph</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShortCircuitResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run short circuit</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param fault_index: Bus fault index</span>
+<span class="sd">    :param fault_type: Short circuit FaultType</span>
+<span class="sd">    :param pf_options: Power Flow Options instance (optional)</span>
+<span class="sd">    :param pf_results: PowerFlowResults (optional, if none, a power flow is run)</span>
+<span class="sd">    :param pf_results3ph: PowerFlowResults3Ph (optional, if none, a power flow is run)</span>
+<span class="sd">    :return: Short circuit results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pf_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pf_results</span> <span class="o">=</span> <span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+
+    <span class="n">sc_options</span> <span class="o">=</span> <span class="n">ShortCircuitOptions</span><span class="p">()</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_short_circuit_event</span><span class="p">(</span>
+        <span class="n">ShortCircuitEvent</span><span class="p">(</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="n">fault_index</span><span class="p">],</span>
+            <span class="n">fault_type</span><span class="o">=</span><span class="n">fault_type</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">MethodShortCircuit</span><span class="o">.</span><span class="n">sequences</span><span class="p">,</span>
+            <span class="n">phases</span><span class="o">=</span><span class="n">PhasesShortCircuit</span><span class="o">.</span><span class="n">a</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">ShortCircuitDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                            <span class="n">options</span><span class="o">=</span><span class="n">sc_options</span><span class="p">,</span>
+                            <span class="n">pf_options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">,</span>
+                            <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+                            <span class="n">pf_results3ph</span><span class="o">=</span><span class="n">pf_results3ph</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">sc</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="continuation_power_flow">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.continuation_power_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">continuation_power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                            <span class="n">options</span><span class="p">:</span> <span class="n">ContinuationPowerFlowOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">pf_options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(),</span>
+                            <span class="n">pf_results</span><span class="p">:</span> <span class="n">PowerFlowResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">factor</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+                            <span class="n">stop_at</span><span class="o">=</span><span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Full</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShortCircuitResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run continuation power flow circuit</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: ContinuationPowerFlowOptions instance (optional)</span>
+<span class="sd">    :param pf_options: Power Flow Options instance (optional)</span>
+<span class="sd">    :param pf_results: PowerFlowResults (optional, if none, a power flow is run)</span>
+<span class="sd">    :param factor: number or vector to multiply the base power injection to provide the loading direction.</span>
+<span class="sd">                    If a vector, it must be the same size as Sbus  (optional)</span>
+<span class="sd">    :param stop_at: Where to stop [CpfStopAt.Full, Nose, ExtraOverloads] (optional)</span>
+<span class="sd">    :return: Short circuit results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pf_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pf_results2</span> <span class="o">=</span> <span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                 <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pf_results2</span> <span class="o">=</span> <span class="n">pf_results</span>
+
+    <span class="c1"># declare the CPF options</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options2</span> <span class="o">=</span> <span class="n">ContinuationPowerFlowOptions</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+                                                <span class="n">approximation_order</span><span class="o">=</span><span class="n">CpfParametrization</span><span class="o">.</span><span class="n">ArcLength</span><span class="p">,</span>
+                                                <span class="n">adapt_step</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                <span class="n">step_min</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>
+                                                <span class="n">step_max</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                                                <span class="n">error_tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+                                                <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                                                <span class="n">max_it</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                                                <span class="n">stop_at</span><span class="o">=</span><span class="n">stop_at</span><span class="p">,</span>
+                                                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">options2</span> <span class="o">=</span> <span class="n">options</span>
+
+    <span class="c1"># We compose the target direction</span>
+    <span class="n">base_power</span> <span class="o">=</span> <span class="n">pf_results2</span><span class="o">.</span><span class="n">Sbus</span> <span class="o">/</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span>
+    <span class="n">vc_inputs</span> <span class="o">=</span> <span class="n">ContinuationPowerFlowInput</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">base_power</span><span class="p">,</span>
+                                           <span class="n">Vbase</span><span class="o">=</span><span class="n">pf_results2</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                                           <span class="n">Starget</span><span class="o">=</span><span class="n">base_power</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span>
+
+    <span class="c1"># declare the CPF driver and run</span>
+    <span class="n">vc</span> <span class="o">=</span> <span class="n">ContinuationPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                     <span class="n">options</span><span class="o">=</span><span class="n">options2</span><span class="p">,</span>
+                                     <span class="n">inputs</span><span class="o">=</span><span class="n">vc_inputs</span><span class="p">,</span>
+                                     <span class="n">pf_options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+    <span class="n">vc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">vc</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="nonlinear_opf">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.nonlinear_opf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nonlinear_opf</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                  <span class="n">opf_options</span><span class="p">:</span> <span class="n">OptimalPowerFlowOptions</span> <span class="o">=</span> <span class="n">OptimalPowerFlowOptions</span><span class="p">(),</span>
+                  <span class="n">plot_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NonlinearOPFResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run AC Optimal Power Flow</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param opf_options: Optimal Power Flow Options instance (optional)</span>
+<span class="sd">    :param plot_error: Boolean that selects to plot error</span>
+<span class="sd">    :return: AC Optimal Power Flow results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">acopf_res</span> <span class="o">=</span> <span class="n">run_nonlinear_opf</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                  <span class="n">opf_options</span><span class="o">=</span><span class="n">opf_options</span><span class="p">,</span>
+                                  <span class="n">plot_error</span><span class="o">=</span><span class="n">plot_error</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">acopf_res</span></div>
+
+
+
+<div class="viewcode-block" id="linear_opf">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.linear_opf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">linear_opf</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+               <span class="n">options</span><span class="p">:</span> <span class="n">OptimalPowerFlowOptions</span> <span class="o">=</span> <span class="n">OptimalPowerFlowOptions</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">OptimalPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run Linear Optimal Power Flow</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: Optimal Power Flow Options instance (optional)</span>
+<span class="sd">    :return: Linear Optimal Power Flow results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># declare the snapshot opf</span>
+    <span class="n">opf_driver_</span> <span class="o">=</span> <span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">opf_driver_</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">opf_driver_</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="simple_opf">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.simple_opf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simple_opf</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+               <span class="n">options</span><span class="p">:</span> <span class="n">OptimalPowerFlowOptions</span> <span class="o">=</span> <span class="n">OptimalPowerFlowOptions</span><span class="p">(</span>
+                   <span class="n">solver</span><span class="o">=</span><span class="n">SolverType</span><span class="o">.</span><span class="n">GREEDY_DISPATCH_OPF</span><span class="p">,</span>
+               <span class="p">))</span> <span class="o">-&gt;</span> <span class="n">OptimalPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run Linear Optimal Power Flow</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: Optimal Power Flow Options instance (optional)</span>
+<span class="sd">    :return: Linear Optimal Power Flow results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># declare the snapshot opf</span>
+    <span class="n">opf_driver_</span> <span class="o">=</span> <span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">opf_driver_</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">opf_driver_</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="balanced_pf">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.balanced_pf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">balanced_pf</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">opf_options</span><span class="p">:</span> <span class="n">OptimalPowerFlowOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">engine</span><span class="o">=</span><span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run Linear Optimal Power Flow and feed that to a power flow</span>
+<span class="sd">    :param grid: MultiCircuit instance</span>
+<span class="sd">    :param options: PowerFlowOptions (optional)</span>
+<span class="sd">    :param opf_options: Optimal Power Flow Options instance (optional)</span>
+<span class="sd">    :param engine: EngineType (optional)</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">opf_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">opf_options</span> <span class="o">=</span> <span class="n">OptimalPowerFlowOptions</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">SolverType</span><span class="o">.</span><span class="n">GREEDY_DISPATCH_OPF</span><span class="p">)</span>
+
+    <span class="c1"># declare the snapshot opf</span>
+    <span class="n">opf_driver_</span> <span class="o">=</span> <span class="n">OptimalPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">opf_options</span><span class="p">)</span>
+    <span class="n">opf_driver_</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">()</span>
+
+    <span class="n">driver_</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                             <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                             <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_driver_</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
+                             <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">driver_</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">driver_</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="contingencies_ts">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.contingencies_ts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">contingencies_ts</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                     <span class="n">use_clustering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+                     <span class="n">use_srap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">srap_max_power</span><span class="o">=</span><span class="mf">1300.0</span><span class="p">,</span>
+                     <span class="n">srap_top_n</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                     <span class="n">srap_deadband</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                     <span class="n">srap_rever_to_nominal_rating</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">detailed_massive_report</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">contingency_deadband</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                     <span class="n">contingency_method</span><span class="o">=</span><span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContingencyAnalysisTimeSeriesResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a time series contingency analysis</span>
+<span class="sd">    :param circuit: MultiCircuit instance</span>
+<span class="sd">    :param use_clustering: Use clustering?</span>
+<span class="sd">    :param n_points: Number of points for clustering</span>
+<span class="sd">    :param use_srap: Use SRAP?</span>
+<span class="sd">    :param srap_max_power: Max power in SRAP</span>
+<span class="sd">    :param srap_top_n: Top number of SRAP nodes to consider</span>
+<span class="sd">    :param srap_deadband: Deadband for SRAP power</span>
+<span class="sd">    :param srap_rever_to_nominal_rating: Revert to nominal rating for SRAP flow</span>
+<span class="sd">    :param detailed_massive_report: Detailed massive report?</span>
+<span class="sd">    :param contingency_deadband: Deadband for contingency analysis</span>
+<span class="sd">    :param contingency_method: Contingency analysis method (ContingencyMethod)</span>
+<span class="sd">    :return: ContingencyAnalysisTimeSeriesResults</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">use_clustering</span><span class="p">:</span>
+        <span class="n">options_clustering</span> <span class="o">=</span> <span class="n">ClusteringAnalysisOptions</span><span class="p">(</span><span class="n">n_points</span><span class="o">=</span><span class="n">n_points</span><span class="p">)</span>
+        <span class="n">driver_clustering</span> <span class="o">=</span> <span class="n">ClusteringDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options_clustering</span><span class="p">)</span>
+        <span class="n">driver_clustering</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">clustering_results_</span> <span class="o">=</span> <span class="n">driver_clustering</span><span class="o">.</span><span class="n">results</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clustering_results_</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># declare the contingency analysis options</span>
+    <span class="n">options_contingencies</span> <span class="o">=</span> <span class="n">ContingencyAnalysisOptions</span><span class="p">(</span>
+        <span class="n">pf_options</span><span class="o">=</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">SolverType</span><span class="o">.</span><span class="n">Linear</span><span class="p">),</span>
+        <span class="n">lin_options</span><span class="o">=</span><span class="n">LinearAnalysisOptions</span><span class="p">(),</span>
+        <span class="n">use_srap</span><span class="o">=</span><span class="n">use_srap</span><span class="p">,</span>
+        <span class="n">srap_max_power</span><span class="o">=</span><span class="n">srap_max_power</span><span class="p">,</span>
+        <span class="n">srap_top_n</span><span class="o">=</span><span class="n">srap_top_n</span><span class="p">,</span>
+        <span class="n">srap_deadband</span><span class="o">=</span><span class="n">srap_deadband</span><span class="p">,</span>
+        <span class="n">srap_rever_to_nominal_rating</span><span class="o">=</span><span class="n">srap_rever_to_nominal_rating</span><span class="p">,</span>
+        <span class="n">detailed_massive_report</span><span class="o">=</span><span class="n">detailed_massive_report</span><span class="p">,</span>
+        <span class="n">contingency_deadband</span><span class="o">=</span><span class="n">contingency_deadband</span><span class="p">,</span>
+        <span class="n">contingency_method</span><span class="o">=</span><span class="n">contingency_method</span><span class="p">,</span>
+        <span class="n">contingency_groups</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">contingency_groups</span>
+    <span class="p">)</span>
+
+    <span class="c1"># declare the contingency drivers</span>
+    <span class="n">driver_contingencies</span> <span class="o">=</span> <span class="n">ContingencyAnalysisTimeSeriesDriver</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">options_contingencies</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">(),</span>
+        <span class="n">clustering_results</span><span class="o">=</span><span class="n">clustering_results_</span>
+    <span class="p">)</span>
+
+    <span class="c1"># run!</span>
+    <span class="n">driver_contingencies</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">use_clustering</span><span class="p">:</span>
+        <span class="c1"># this reconciles the results time steps properly</span>
+        <span class="n">driver_contingencies</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">expand_clustered_results</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">driver_contingencies</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="contingency_analysis">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.contingency_analysis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">contingency_analysis</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                         <span class="n">options</span><span class="p">:</span> <span class="n">ContingencyAnalysisOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContingencyAnalysisResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param grid:</span>
+<span class="sd">    :param options:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pf_options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">)</span>
+
+    <span class="c1"># declare the contingency options</span>
+    <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">ContingencyAnalysisOptions</span><span class="p">(</span>
+
+            <span class="c1"># Contingency method to use</span>
+            <span class="n">contingency_method</span><span class="o">=</span><span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">,</span>
+
+            <span class="c1"># optional, you can send here any contingency groups</span>
+            <span class="n">contingency_groups</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">(),</span>
+
+            <span class="c1"># if no power flow options are provided</span>
+            <span class="c1"># a linear power flow is used</span>
+            <span class="n">pf_options</span><span class="o">=</span><span class="n">pf_options</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Get all the defined contingency groups from the circuit</span>
+    <span class="n">contingency_groups</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">()</span>
+
+    <span class="c1"># Pass the list of contingency groups as required (optional)</span>
+    <span class="n">linear_multiple_contingencies</span> <span class="o">=</span> <span class="n">LinearMultiContingencies</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                                             <span class="n">contingency_groups_used</span><span class="o">=</span><span class="n">contingency_groups</span><span class="p">)</span>
+
+    <span class="n">simulation</span> <span class="o">=</span> <span class="n">ContingencyAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                           <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                           <span class="n">linear_multiple_contingencies</span><span class="o">=</span><span class="n">linear_multiple_contingencies</span><span class="p">)</span>
+
+    <span class="n">simulation</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">simulation</span><span class="o">.</span><span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="clustering">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.api.clustering">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clustering</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClusteringResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a clustering analysis for time series</span>
+<span class="sd">    This will analyze the loads and non dispatchable generation to get the time</span>
+<span class="sd">    indices that best represent the whole time series. It included each sample probability</span>
+<span class="sd">    :param circuit: MultiCircuit</span>
+<span class="sd">    :param n_points: number of clustering points</span>
+<span class="sd">    :return: ClusteringResults</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">ClusteringAnalysisOptions</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>
+    <span class="n">drv</span> <span class="o">=</span> <span class="n">ClusteringDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">opts</span><span class="p">)</span>
+    <span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

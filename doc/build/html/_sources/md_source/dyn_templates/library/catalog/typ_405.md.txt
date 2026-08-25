@@ -1,0 +1,45 @@
+# Mass J
+
+This is Basic Block Catalog type `405` (`Mass_J`). It represents a mechanical or drive-train relation used by rotating-machine models.
+
+<!-- veragrid-block-introduction:start -->
+**Mass J** belongs to an electromechanical machine or prime-mover model. It links electrical torque and flux with rotor speed, angle, mechanical power, or actuator dynamics, making it central to frequency, voltage, and rotor-angle stability studies.
+
+## Typical use
+
+- Use it when electrical transients must interact with rotating mass or machine controls.
+- Initialize torque, power, flux, and speed consistently with the solved power flow.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Mechanical / Drive Train`.
+- Inputs: 2.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 1.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d xomega}{dt} = (\frac{M1 - M2}{J})
+$$
+
+$$
+0 = (omega - xomega)
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `M1` | Input signal consumed by the block | model-dependent |
+| Input | `M2` | Input signal consumed by the block | model-dependent |
+| Output | `omega` | Output signal produced by the block | model-dependent |
+| State | `Mass_J__xomega` | Internal dynamic state | model-dependent |
+| Parameter | `J` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

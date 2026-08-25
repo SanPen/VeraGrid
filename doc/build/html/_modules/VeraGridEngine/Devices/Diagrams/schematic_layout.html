@@ -1,0 +1,1286 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Diagrams.schematic_layout &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Diagrams.schematic_layout</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Diagrams.schematic_layout</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Diagrams.graphic_location</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphicLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">SchematicAttachmentOwnerKind</span><span class="p">,</span>
+                                         <span class="n">SchematicAttachmentSide</span><span class="p">,</span>
+                                         <span class="n">SchematicAutoRouteStyle</span><span class="p">,</span>
+                                         <span class="n">SchematicBranchEndpoint</span><span class="p">,</span>
+                                         <span class="n">SchematicRouteKind</span><span class="p">)</span>
+
+<span class="n">SCHEMATIC_LAYOUT_SCHEMA_VERSION</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="SchematicExplicitAttachmentSlot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.SchematicExplicitAttachmentSlot">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SchematicExplicitAttachmentSlot</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store one typed explicit attachment slot for runtime behavior.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;owner_kind&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">owner_kind</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span><span class="p">,</span>
+                 <span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span><span class="p">,</span>
+                 <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize one typed explicit attachment slot.</span>
+
+<span class="sd">        :param owner_kind: Owning node kind.</span>
+<span class="sd">        :param side: Attachment side.</span>
+<span class="sd">        :param order: One-based slot order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">owner_kind</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span> <span class="o">=</span> <span class="n">owner_kind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">=</span> <span class="n">side</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">order</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SchematicRouteRecord">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.SchematicRouteRecord">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SchematicRouteRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store one typed route record for runtime behavior.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span> <span class="s2">&quot;route_style&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize one route record.</span>
+
+<span class="sd">        :param points: Route polyline points.</span>
+<span class="sd">        :param kind: Route kind enum.</span>
+<span class="sd">        :param locked: Locked-state flag.</span>
+<span class="sd">        :param route_style: Automatic route-style enum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">kind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">locked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">route_style</span></div>
+
+
+
+<div class="viewcode-block" id="SchematicAttachmentRecord">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.SchematicAttachmentRecord">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SchematicAttachmentRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store one typed attachment record for runtime behavior.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;owner_device_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;owner_device_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;anchor_x&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;anchor_y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;anchor_auto&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;side&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;slot_side&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;terminal_side&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;explicit_slot&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;explicit_terminal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;order&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;auto_slot&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize one attachment record with explicit defaults.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">owner_device_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">owner_device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anchor_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anchor_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anchor_auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slot_side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminal_side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explicit_slot</span><span class="p">:</span> <span class="n">SchematicExplicitAttachmentSlot</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explicit_terminal</span><span class="p">:</span> <span class="n">SchematicExplicitAttachmentSlot</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_slot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="SchematicDockRecord">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.SchematicDockRecord">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SchematicDockRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store one typed dock record for runtime behavior.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;owner_device_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;owner_device_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;side&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;offset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;order&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize one dock record with explicit defaults.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">owner_device_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">owner_device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="parse_schematic_branch_endpoint">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_schematic_branch_endpoint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_schematic_branch_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="p">:</span> <span class="n">SchematicBranchEndpoint</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicBranchEndpoint</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one branch endpoint value from runtime or persisted data.</span>
+
+<span class="sd">    :param endpoint: Runtime enum or persisted string.</span>
+<span class="sd">    :return: Parsed endpoint enum or ``None`` when absent/unknown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endpoint_value</span><span class="p">:</span> <span class="n">SchematicBranchEndpoint</span>
+    <span class="n">parsed_endpoint</span><span class="p">:</span> <span class="nb">object</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">SchematicBranchEndpoint</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">endpoint</span>
+    <span class="k">elif</span> <span class="n">endpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">endpoint_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
+
+    <span class="n">parsed_endpoint</span> <span class="o">=</span> <span class="n">SchematicBranchEndpoint</span><span class="o">.</span><span class="n">argparse</span><span class="p">(</span><span class="n">endpoint_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed_endpoint</span><span class="p">,</span> <span class="n">SchematicBranchEndpoint</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parsed_endpoint</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">endpoint_value</span> <span class="ow">in</span> <span class="n">SchematicBranchEndpoint</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">endpoint_value</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">endpoint_text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">endpoint_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="parse_schematic_attachment_side">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_schematic_attachment_side">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one attachment side value from runtime or persisted data.</span>
+
+<span class="sd">    :param side: Runtime enum or persisted string.</span>
+<span class="sd">    :return: Parsed side enum or ``None`` when absent/unknown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">side_value</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span>
+    <span class="n">parsed_side</span><span class="p">:</span> <span class="nb">object</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">SchematicAttachmentSide</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">side</span>
+    <span class="k">elif</span> <span class="n">side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">side_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">side</span><span class="p">)</span>
+
+    <span class="n">parsed_side</span> <span class="o">=</span> <span class="n">SchematicAttachmentSide</span><span class="o">.</span><span class="n">argparse</span><span class="p">(</span><span class="n">side_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed_side</span><span class="p">,</span> <span class="n">SchematicAttachmentSide</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parsed_side</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">side_value</span> <span class="ow">in</span> <span class="n">SchematicAttachmentSide</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">side_value</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">side_text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">side_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="parse_schematic_attachment_owner_kind">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_schematic_attachment_owner_kind">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_schematic_attachment_owner_kind</span><span class="p">(</span><span class="n">owner_kind</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+                                          <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicAttachmentOwnerKind</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one attachment owner kind from runtime or persisted data.</span>
+
+<span class="sd">    :param owner_kind: Runtime enum or persisted string.</span>
+<span class="sd">    :return: Parsed owner kind enum or ``None`` when absent/unknown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">owner_kind_value</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span>
+    <span class="n">parsed_owner_kind</span><span class="p">:</span> <span class="nb">object</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">owner_kind</span><span class="p">,</span> <span class="n">SchematicAttachmentOwnerKind</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">owner_kind</span>
+    <span class="k">elif</span> <span class="n">owner_kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">owner_kind_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">owner_kind</span><span class="p">)</span>
+
+    <span class="n">parsed_owner_kind</span> <span class="o">=</span> <span class="n">SchematicAttachmentOwnerKind</span><span class="o">.</span><span class="n">argparse</span><span class="p">(</span><span class="n">owner_kind_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed_owner_kind</span><span class="p">,</span> <span class="n">SchematicAttachmentOwnerKind</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parsed_owner_kind</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">owner_kind_value</span> <span class="ow">in</span> <span class="n">SchematicAttachmentOwnerKind</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">owner_kind_value</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">owner_kind_text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">owner_kind_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="serialize_schematic_attachment_side">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.serialize_schematic_attachment_side">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serialize_schematic_attachment_side</span><span class="p">(</span><span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">default_side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize one attachment side to the persisted string representation.</span>
+
+<span class="sd">    :param side: Runtime enum or persisted string.</span>
+<span class="sd">    :param default_side: Default side when ``side`` is absent or invalid.</span>
+<span class="sd">    :return: Persisted side string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parsed_side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default_side</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">parsed_side</span><span class="o">.</span><span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="parse_schematic_explicit_attachment_slot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_schematic_explicit_attachment_slot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_schematic_explicit_attachment_slot</span><span class="p">(</span><span class="n">slot_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicExplicitAttachmentSlot</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one explicit persisted slot identifier into a typed runtime object.</span>
+
+<span class="sd">    :param slot_key: Persisted slot key.</span>
+<span class="sd">    :return: Typed explicit slot object or ``None`` when the key is not explicit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">slot_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">slot_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">owner_kind</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_owner_kind</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">order_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">owner_kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">side</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">(</span><span class="n">SchematicAttachmentSide</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">,):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">order_text</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SchematicExplicitAttachmentSlot</span><span class="p">(</span><span class="n">owner_kind</span><span class="o">=</span><span class="n">owner_kind</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">order_text</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="serialize_schematic_explicit_attachment_slot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.serialize_schematic_explicit_attachment_slot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serialize_schematic_explicit_attachment_slot</span><span class="p">(</span><span class="n">explicit_slot</span><span class="p">:</span> <span class="n">SchematicExplicitAttachmentSlot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize one typed explicit slot to the persisted string representation.</span>
+
+<span class="sd">    :param explicit_slot: Typed explicit slot.</span>
+<span class="sd">    :return: Persisted slot key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">explicit_slot</span><span class="o">.</span><span class="n">owner_kind</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">explicit_slot</span><span class="o">.</span><span class="n">side</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">explicit_slot</span><span class="o">.</span><span class="n">order</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="parse_schematic_route_kind">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_schematic_route_kind">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_schematic_route_kind</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one route kind value from runtime or persisted data.</span>
+
+<span class="sd">    :param kind: Runtime enum or persisted string.</span>
+<span class="sd">    :return: Parsed route kind or ``None`` when absent/unknown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route_kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span>
+    <span class="n">parsed_kind</span><span class="p">:</span> <span class="nb">object</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">SchematicRouteKind</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">kind</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kind_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+
+    <span class="n">parsed_kind</span> <span class="o">=</span> <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">argparse</span><span class="p">(</span><span class="n">kind_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed_kind</span><span class="p">,</span> <span class="n">SchematicRouteKind</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parsed_kind</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">route_kind</span> <span class="ow">in</span> <span class="n">SchematicRouteKind</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">route_kind</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">kind_text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">route_kind</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="parse_schematic_auto_route_style">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_schematic_auto_route_style">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+                                     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one auto-route style value from runtime or persisted data.</span>
+
+<span class="sd">    :param route_style: Runtime enum or persisted string.</span>
+<span class="sd">    :return: Parsed route-style enum or ``None`` when absent/unknown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route_style_value</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span>
+    <span class="n">parsed_route_style</span><span class="p">:</span> <span class="nb">object</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">route_style</span><span class="p">,</span> <span class="n">SchematicAutoRouteStyle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">route_style</span>
+    <span class="k">elif</span> <span class="n">route_style</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">route_style_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">route_style</span><span class="p">)</span>
+
+    <span class="n">parsed_route_style</span> <span class="o">=</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">argparse</span><span class="p">(</span><span class="n">route_style_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed_route_style</span><span class="p">,</span> <span class="n">SchematicAutoRouteStyle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parsed_route_style</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">route_style_value</span> <span class="ow">in</span> <span class="n">SchematicAutoRouteStyle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">route_style_value</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">route_style_text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">route_style_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="serialize_schematic_auto_route_style">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.serialize_schematic_auto_route_style">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serialize_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">default_route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize one auto-route style to the persisted string representation.</span>
+
+<span class="sd">    :param route_style: Runtime enum or persisted string.</span>
+<span class="sd">    :param default_route_style: Default style when ``route_style`` is absent or invalid.</span>
+<span class="sd">    :return: Persisted route-style string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_style</span><span class="o">=</span><span class="n">route_style</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parsed_route_style</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default_route_style</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">parsed_route_style</span><span class="o">.</span><span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="serialize_schematic_route_kind">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.serialize_schematic_route_kind">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serialize_schematic_route_kind</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">default_kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize one route kind to the persisted string representation.</span>
+
+<span class="sd">    :param kind: Runtime enum or persisted string.</span>
+<span class="sd">    :param default_kind: Default route kind when ``kind`` is absent or invalid.</span>
+<span class="sd">    :return: Persisted route kind string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_route_kind</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parsed_kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default_kind</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">parsed_kind</span><span class="o">.</span><span class="n">value</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize persisted route points to plain numeric tuples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected 2D route point, got </span><span class="si">{</span><span class="n">point</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+
+    <span class="k">return</span> <span class="n">normalized</span>
+
+
+<div class="viewcode-block" id="ensure_layout_metadata">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.ensure_layout_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_layout_metadata</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensure the schematic metadata envelope exists and carries a schema version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s2">&quot;schema_version&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span><span class="p">:</span>
+        <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span><span class="p">[</span><span class="s2">&quot;schema_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SCHEMATIC_LAYOUT_SCHEMA_VERSION</span>
+
+    <span class="k">return</span> <span class="n">location</span><span class="o">.</span><span class="n">layout_metadata</span></div>
+
+
+
+<div class="viewcode-block" id="copy_layout_metadata">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.copy_layout_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">copy_layout_metadata</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a defensive copy of the schematic metadata envelope.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">ensure_layout_metadata</span><span class="p">(</span><span class="n">location</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="get_layout_section">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_layout_section">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a copied layout metadata section so callers do not mutate persistence by accident.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">ensure_layout_metadata</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_layout_section">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_layout_section">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace a layout metadata section with a defensive copy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">ensure_layout_metadata</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metadata</span></div>
+
+
+
+<div class="viewcode-block" id="get_branch_route_points">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_branch_route_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_branch_route_points</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return branch route points, preferring structured route metadata but falling back to legacy polyline storage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="n">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;route&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">route</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">points</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">poly_line</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_branch_route_record">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_branch_route_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_branch_route_record</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicRouteRecord</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return one typed route record from persisted metadata.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :return: Typed route record or ``None`` when the structured route section is absent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route_section</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;route&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">route_section</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">route_record</span><span class="p">:</span> <span class="n">SchematicRouteRecord</span> <span class="o">=</span> <span class="n">SchematicRouteRecord</span><span class="p">()</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">route_section</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+    <span class="n">route_record</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="k">if</span> <span class="n">points</span> <span class="k">else</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">route_record</span><span class="o">.</span><span class="n">kind</span> <span class="o">=</span> <span class="n">parse_schematic_route_kind</span><span class="p">(</span><span class="n">route_section</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">route_record</span><span class="o">.</span><span class="n">locked</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">route_section</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locked&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+    <span class="n">route_record</span><span class="o">.</span><span class="n">route_style</span> <span class="o">=</span> <span class="n">parse_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_section</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;route_style&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">route_record</span></div>
+
+
+
+<div class="viewcode-block" id="set_branch_route_record">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_branch_route_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_branch_route_record</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span>
+                            <span class="n">route_record</span><span class="p">:</span> <span class="n">SchematicRouteRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Persist one typed route record while preserving the persisted schema.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :param route_record: Typed route record.</span>
+<span class="sd">    :return: Updated layout metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route_section</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;route&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">normalized_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">route_record</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="c1"># Keep legacy polyline storage synchronized with the structured route section.</span>
+    <span class="n">location</span><span class="o">.</span><span class="n">poly_line</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">)</span>
+    <span class="n">route_section</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">)</span>
+    <span class="n">route_section</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">serialize_schematic_route_kind</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="n">route_record</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+                                                           <span class="n">default_kind</span><span class="o">=</span><span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">AUTO_POLYLINE</span><span class="p">)</span>
+    <span class="n">route_section</span><span class="p">[</span><span class="s2">&quot;locked&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">route_record</span><span class="o">.</span><span class="n">locked</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">route_record</span><span class="o">.</span><span class="n">route_style</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">route_section</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;route_style&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">route_section</span><span class="p">[</span><span class="s2">&quot;route_style&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">serialize_schematic_auto_route_style</span><span class="p">(</span>
+            <span class="n">route_style</span><span class="o">=</span><span class="n">route_record</span><span class="o">.</span><span class="n">route_style</span><span class="p">,</span>
+            <span class="n">default_route_style</span><span class="o">=</span><span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">STRAIGHT</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">set_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;route&quot;</span><span class="p">,</span> <span class="n">route_section</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_branch_route_points">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_branch_route_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_branch_route_points</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span>
+                            <span class="n">points</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+                            <span class="n">kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">AUTO_POLYLINE</span><span class="p">,</span>
+                            <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Persist route points in both the legacy polyline field and the structured layout metadata.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :param points: Route points.</span>
+<span class="sd">    :param kind: Route kind enum.</span>
+<span class="sd">    :param locked: Locked-state flag.</span>
+<span class="sd">    :param route_style: Automatic route-style enum.</span>
+<span class="sd">    :return: Updated layout metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">route_record</span><span class="p">:</span> <span class="n">SchematicRouteRecord</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_branch_route_record</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">normalized_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">route_record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">route_record</span> <span class="o">=</span> <span class="n">SchematicRouteRecord</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Update the typed route state first so the persistence conversion stays in one place.</span>
+    <span class="n">route_record</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">route_record</span><span class="o">.</span><span class="n">kind</span> <span class="o">=</span> <span class="n">parse_schematic_route_kind</span><span class="p">(</span><span class="n">route_record</span><span class="o">.</span><span class="n">kind</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">route_record</span><span class="o">.</span><span class="n">kind</span> <span class="o">=</span> <span class="n">parse_schematic_route_kind</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">locked</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">route_record</span><span class="o">.</span><span class="n">locked</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">route_record</span><span class="o">.</span><span class="n">locked</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">route_record</span><span class="o">.</span><span class="n">locked</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">locked</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">route_style</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">route_record</span><span class="o">.</span><span class="n">route_style</span> <span class="o">=</span> <span class="n">parse_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_style</span><span class="o">=</span><span class="n">route_record</span><span class="o">.</span><span class="n">route_style</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">route_record</span><span class="o">.</span><span class="n">route_style</span> <span class="o">=</span> <span class="n">parse_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_style</span><span class="o">=</span><span class="n">route_style</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">set_branch_route_record</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">route_record</span><span class="o">=</span><span class="n">route_record</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compress_route_points">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.compress_route_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compress_route_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove redundant route points while preserving orthogonal elbows.</span>
+
+<span class="sd">    :param points: Route points.</span>
+<span class="sd">    :return: Normalized route points without duplicates or collinear interior points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_points</span> <span class="o">=</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">compressed_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">point</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">normalized_points</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">compressed_points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">compressed_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">compressed_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">point</span><span class="p">:</span>
+            <span class="n">compressed_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">compressed_points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">compressed_points</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">simplified_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">compressed_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">point_index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">for</span> <span class="n">point_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">compressed_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">previous_point</span> <span class="o">=</span> <span class="n">simplified_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">current_point</span> <span class="o">=</span> <span class="n">compressed_points</span><span class="p">[</span><span class="n">point_index</span><span class="p">]</span>
+        <span class="n">next_point</span> <span class="o">=</span> <span class="n">compressed_points</span><span class="p">[</span><span class="n">point_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">is_vertical_chain</span> <span class="o">=</span> <span class="n">previous_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">current_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">current_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">next_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">is_horizontal_chain</span> <span class="o">=</span> <span class="n">previous_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">current_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">current_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">next_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">is_vertical_chain</span> <span class="ow">or</span> <span class="n">is_horizontal_chain</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">simplified_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_point</span><span class="p">)</span>
+
+    <span class="n">simplified_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compressed_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">simplified_points</span></div>
+
+
+
+<div class="viewcode-block" id="build_route_stub_point">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.build_route_stub_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_route_stub_point</span><span class="p">(</span><span class="n">point</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">side</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stub_length</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the first orthogonal stub point that leaves a node from one side.</span>
+
+<span class="sd">    :param point: Endpoint point.</span>
+<span class="sd">    :param side: Attachment side.</span>
+<span class="sd">    :param stub_length: Stub length.</span>
+<span class="sd">    :return: Stub point.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">stub_length</span><span class="p">,</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">stub_length</span><span class="p">,</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">stub_length</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">stub_length</span></div>
+
+
+
+<div class="viewcode-block" id="get_default_route_lane_index">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_default_route_lane_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_default_route_lane_index</span><span class="p">(</span><span class="n">start_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a deterministic lane index from endpoint slot orders.</span>
+
+<span class="sd">    :param start_order: Start slot order.</span>
+<span class="sd">    :param end_order: End slot order.</span>
+<span class="sd">    :return: One-based lane index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">orders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_order</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">start_order</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_order</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end_order</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">end_order</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_order</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">orders</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">orders</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">orders</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))))</span></div>
+
+
+
+<div class="viewcode-block" id="is_axis_aligned_route_segment">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.is_axis_aligned_route_segment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_axis_aligned_route_segment</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">end</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether one route segment is orthogonal.</span>
+
+<span class="sd">    :param start: Segment start point.</span>
+<span class="sd">    :param end: Segment end point.</span>
+<span class="sd">    :return: ``True`` when the segment is horizontal or vertical.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="is_orthogonal_route">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.is_orthogonal_route">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_orthogonal_route</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether a route is already orthogonal.</span>
+
+<span class="sd">    :param points: Route points.</span>
+<span class="sd">    :return: ``True`` when every segment is axis aligned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_normalize_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">point_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">)</span>
+    <span class="n">point_index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">if</span> <span class="n">point_count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">point_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">point_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_axis_aligned_route_segment</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">normalized_points</span><span class="p">[</span><span class="n">point_index</span><span class="p">],</span>
+                                         <span class="n">end</span><span class="o">=</span><span class="n">normalized_points</span><span class="p">[</span><span class="n">point_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="should_preserve_route_shape">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.should_preserve_route_shape">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">should_preserve_route_shape</span><span class="p">(</span><span class="n">route</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether one persisted route should drive redraw.</span>
+
+<span class="sd">    Locked routes always win. Non-locked auto-routed paths are regenerated</span>
+<span class="sd">    from the current endpoint anchors, while manual polyline routes are kept</span>
+<span class="sd">    exactly as saved apart from live endpoint replacement.</span>
+
+<span class="sd">    :param route: Persisted route metadata section.</span>
+<span class="sd">    :return: ``True`` when the interior route elbows should be preserved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">route</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">route_kind</span><span class="p">:</span> <span class="n">SchematicRouteKind</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_route_kind</span><span class="p">(</span><span class="n">route</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">locked</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">route</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locked&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+    <span class="n">auto_route_kinds</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">SchematicRouteKind</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">ORTHOGONAL</span><span class="p">,</span>
+        <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">AUTO</span><span class="p">,</span>
+        <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">AUTO_ORTHOGONAL</span><span class="p">,</span>
+        <span class="n">SchematicRouteKind</span><span class="o">.</span><span class="n">AUTO_POLYLINE</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">locked</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">route_kind</span> <span class="ow">in</span> <span class="n">auto_route_kinds</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">route_kind</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">route</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;points&quot;</span> <span class="ow">in</span> <span class="n">route</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="build_default_branch_route">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.build_default_branch_route">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_default_branch_route</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                               <span class="n">end</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                               <span class="n">start_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">end_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">STRAIGHT</span>
+                               <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one deterministic coordinate-driven auto route.</span>
+
+<span class="sd">    :param start: Start point.</span>
+<span class="sd">    :param end: End point.</span>
+<span class="sd">    :param start_order: Optional ordering hint used to separate coincident routes.</span>
+<span class="sd">    :param end_order: Optional ordering hint used to separate coincident routes.</span>
+<span class="sd">    :param route_style: Auto-route visual style.</span>
+<span class="sd">    :return: Route points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_point</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">end_point</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">parsed_route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_auto_route_style</span><span class="p">(</span><span class="n">route_style</span><span class="o">=</span><span class="n">route_style</span><span class="p">)</span>
+    <span class="n">effective_route_style</span><span class="p">:</span> <span class="n">SchematicAutoRouteStyle</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">STRAIGHT</span> <span class="k">if</span> <span class="n">parsed_route_style</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parsed_route_style</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">effective_route_style</span> <span class="o">==</span> <span class="n">SchematicAutoRouteStyle</span><span class="o">.</span><span class="n">STRAIGHT</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">compress_route_points</span><span class="p">([</span><span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">lane_pitch</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">14.0</span>
+    <span class="n">lane_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_default_route_lane_index</span><span class="p">(</span><span class="n">start_order</span><span class="o">=</span><span class="n">start_order</span><span class="p">,</span> <span class="n">end_order</span><span class="o">=</span><span class="n">end_order</span><span class="p">)</span>
+    <span class="n">lane_offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lane_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">lane_pitch</span>
+    <span class="n">delta_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">delta_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">midpoint_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">midpoint_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">route_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta_y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta_y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-9</span> <span class="ow">and</span> <span class="n">lane_offset</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">route_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">midpoint_y</span> <span class="o">+</span> <span class="n">lane_offset</span>
+            <span class="n">route_points</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">start_point</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">route_y</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">route_y</span><span class="p">),</span>
+                <span class="n">end_point</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">route_points</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">start_point</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">midpoint_x</span><span class="p">,</span> <span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="p">(</span><span class="n">midpoint_x</span><span class="p">,</span> <span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="n">end_point</span><span class="p">,</span>
+            <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-9</span> <span class="ow">and</span> <span class="n">lane_offset</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">route_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">midpoint_x</span> <span class="o">+</span> <span class="n">lane_offset</span>
+            <span class="n">route_points</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">start_point</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">route_x</span><span class="p">,</span> <span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="p">(</span><span class="n">route_x</span><span class="p">,</span> <span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="n">end_point</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">route_points</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">start_point</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">midpoint_y</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">midpoint_y</span><span class="p">),</span>
+                <span class="n">end_point</span><span class="p">,</span>
+            <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">compress_route_points</span><span class="p">(</span><span class="n">route_points</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_attachment">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_attachment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_attachment</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return attachment metadata for an endpoint such as &#39;from&#39;, &#39;to&#39;, or a shunt/injection id.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attachments</span> <span class="o">=</span> <span class="n">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;attachments&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">attachments</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_attachment_record">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_attachment_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_attachment_record</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span>
+                          <span class="n">endpoint</span><span class="p">:</span> <span class="n">SchematicBranchEndpoint</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicAttachmentRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return one typed attachment record from persisted metadata.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :param endpoint: Runtime endpoint enum or persisted string.</span>
+<span class="sd">    :return: Typed attachment record.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endpoint_value</span><span class="p">:</span> <span class="n">SchematicBranchEndpoint</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_branch_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">)</span>
+    <span class="n">attachment_record</span><span class="p">:</span> <span class="n">SchematicAttachmentRecord</span> <span class="o">=</span> <span class="n">SchematicAttachmentRecord</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">endpoint_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">attachment_record</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">persisted_attachment</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_attachment</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint_value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">owner_device_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_device_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">owner_device_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_device_type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_x</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anchor_x&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anchor_x&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_y</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anchor_y&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anchor_y&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_auto</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anchor_auto&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">side</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">slot_side</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slot&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">terminal_side</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;terminal_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">explicit_slot</span> <span class="o">=</span> <span class="n">parse_schematic_explicit_attachment_slot</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slot&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slot&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">explicit_terminal</span> <span class="o">=</span> <span class="n">parse_schematic_explicit_attachment_slot</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;terminal_key&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;terminal_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">attachment_record</span><span class="o">.</span><span class="n">auto_slot</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">persisted_attachment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_slot&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">attachment_record</span></div>
+
+
+
+<div class="viewcode-block" id="set_attachment_record">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_attachment_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_attachment_record</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span>
+                          <span class="n">endpoint</span><span class="p">:</span> <span class="n">SchematicBranchEndpoint</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">attachment_record</span><span class="p">:</span> <span class="n">SchematicAttachmentRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Persist one typed attachment record while preserving the persisted schema.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :param endpoint: Runtime endpoint enum or persisted string.</span>
+<span class="sd">    :param attachment_record: Typed attachment record.</span>
+<span class="sd">    :return: Updated layout metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endpoint_value</span><span class="p">:</span> <span class="n">SchematicBranchEndpoint</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_branch_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">endpoint_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ensure_layout_metadata</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_attachment</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint_value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Keep compatibility storage intact while replacing the runtime option handling with typed fields.</span>
+    <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;owner_device_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">owner_device_id</span>
+    <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;owner_device_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">owner_device_type</span>
+
+    <span class="k">if</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;anchor_x&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;anchor_x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;anchor_y&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;anchor_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_y</span><span class="p">)</span>
+
+    <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;anchor_auto&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">anchor_auto</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;side&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">side</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">explicit_slot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;slot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">serialize_schematic_explicit_attachment_slot</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">explicit_slot</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">slot_side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;slot&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;slot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">slot_side</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">explicit_terminal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;terminal_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">serialize_schematic_explicit_attachment_slot</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">explicit_terminal</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">terminal_side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;terminal_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;terminal_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">terminal_side</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">attachment_record</span><span class="o">.</span><span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+
+    <span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;auto_slot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">attachment_record</span><span class="o">.</span><span class="n">auto_slot</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">set_attachment</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint_value</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">attachment</span><span class="o">=</span><span class="n">attachment</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_attachment">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_attachment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_attachment</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attachment</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set attachment metadata for an endpoint.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attachments</span> <span class="o">=</span> <span class="n">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;attachments&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">attachments</span><span class="p">[</span><span class="n">endpoint</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">set_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;attachments&quot;</span><span class="p">,</span> <span class="n">attachments</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_dock">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_dock">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dock</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return dock metadata for a bus-connected child such as a shunt or generator.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :return: Dock metadata dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">get_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;dock&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_dock_record">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.get_dock_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dock_record</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchematicDockRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return one typed dock record from persisted metadata.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :return: Typed dock record.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">persisted_dock</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_dock</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">dock_record</span><span class="p">:</span> <span class="n">SchematicDockRecord</span> <span class="o">=</span> <span class="n">SchematicDockRecord</span><span class="p">()</span>
+    <span class="n">dock_record</span><span class="o">.</span><span class="n">owner_device_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">persisted_dock</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_device_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">dock_record</span><span class="o">.</span><span class="n">owner_device_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">persisted_dock</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_device_type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">dock_record</span><span class="o">.</span><span class="n">side</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">persisted_dock</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">dock_record</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">persisted_dock</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+    <span class="n">dock_record</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">persisted_dock</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">persisted_dock</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">dock_record</span></div>
+
+
+
+<div class="viewcode-block" id="set_dock_record">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_dock_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_dock_record</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span> <span class="n">dock_record</span><span class="p">:</span> <span class="n">SchematicDockRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Persist one typed dock record while preserving the persisted schema.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :param dock_record: Typed dock record.</span>
+<span class="sd">    :return: Updated layout metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dock</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_dock</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">dock</span><span class="p">[</span><span class="s2">&quot;owner_device_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dock_record</span><span class="o">.</span><span class="n">owner_device_id</span>
+    <span class="n">dock</span><span class="p">[</span><span class="s2">&quot;owner_device_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dock_record</span><span class="o">.</span><span class="n">owner_device_type</span>
+
+    <span class="k">if</span> <span class="n">dock_record</span><span class="o">.</span><span class="n">side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dock</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dock</span><span class="p">[</span><span class="s2">&quot;side&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dock_record</span><span class="o">.</span><span class="n">side</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="n">dock</span><span class="p">[</span><span class="s2">&quot;offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dock_record</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dock_record</span><span class="o">.</span><span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dock</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dock</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dock_record</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">set_dock</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">dock</span><span class="o">=</span><span class="n">dock</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_dock">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.set_dock">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_dock</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="n">GraphicLocation</span><span class="p">,</span> <span class="n">dock</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set dock metadata for a bus-connected child.</span>
+
+<span class="sd">    :param location: Graphic location record.</span>
+<span class="sd">    :param dock: Dock metadata dictionary.</span>
+<span class="sd">    :return: Updated layout metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">set_layout_section</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;dock&quot;</span><span class="p">,</span> <span class="n">dock</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_canonical_attachment_slot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.is_canonical_attachment_slot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_canonical_attachment_slot</span><span class="p">(</span><span class="n">slot_key</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether a slot key is one of the compatibility aliases.</span>
+
+<span class="sd">    :param slot_key: Persisted slot key.</span>
+<span class="sd">    :return: ``True`` when the key is a compatibility alias or missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">slot_key</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">slot_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">parsed_side</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="build_explicit_attachment_slot_key">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.build_explicit_attachment_slot_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_explicit_attachment_slot_key</span><span class="p">(</span><span class="n">owner_kind</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+                                       <span class="n">side</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+                                       <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a stable explicit slot identifier for persisted schematic attachments.</span>
+
+<span class="sd">    :param owner_kind: Node kind prefix such as ``&quot;bus&quot;`` or ``&quot;fluid&quot;``.</span>
+<span class="sd">    :param side: Attachment side.</span>
+<span class="sd">    :param order: One-based slot order on that side.</span>
+<span class="sd">    :return: Explicit slot key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">owner_kind_value</span><span class="p">:</span> <span class="n">SchematicAttachmentOwnerKind</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_owner_kind</span><span class="p">(</span><span class="n">owner_kind</span><span class="p">)</span>
+    <span class="n">side_value</span><span class="p">:</span> <span class="n">SchematicAttachmentSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_attachment_side</span><span class="p">(</span><span class="n">side</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">owner_kind_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">side_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Explicit attachment slots require a valid owner kind and side.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">explicit_slot</span><span class="p">:</span> <span class="n">SchematicExplicitAttachmentSlot</span> <span class="o">=</span> <span class="n">SchematicExplicitAttachmentSlot</span><span class="p">(</span><span class="n">owner_kind</span><span class="o">=</span><span class="n">owner_kind_value</span><span class="p">,</span>
+                                                                                         <span class="n">side</span><span class="o">=</span><span class="n">side_value</span><span class="p">,</span>
+                                                                                         <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">serialize_schematic_explicit_attachment_slot</span><span class="p">(</span><span class="n">explicit_slot</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_explicit_attachment_slot_key">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.schematic_layout.parse_explicit_attachment_slot_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_explicit_attachment_slot_key</span><span class="p">(</span><span class="n">slot_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+                                       <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">SchematicAttachmentOwnerKind</span><span class="p">,</span> <span class="n">SchematicAttachmentSide</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse an explicit slot identifier.</span>
+
+<span class="sd">    :param slot_key: Persisted slot key.</span>
+<span class="sd">    :return: Tuple ``(owner_kind, side, order)`` or ``None`` when the key is not explicit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">explicit_slot</span><span class="p">:</span> <span class="n">SchematicExplicitAttachmentSlot</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_schematic_explicit_attachment_slot</span><span class="p">(</span><span class="n">slot_key</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">explicit_slot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">explicit_slot</span><span class="o">.</span><span class="n">owner_kind</span><span class="p">,</span> <span class="n">explicit_slot</span><span class="o">.</span><span class="n">side</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">explicit_slot</span><span class="o">.</span><span class="n">order</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

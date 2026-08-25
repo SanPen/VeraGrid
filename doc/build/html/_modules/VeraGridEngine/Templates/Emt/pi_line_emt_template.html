@@ -1,0 +1,553 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.pi_line_emt_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.pi_line_emt_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.pi_line_emt_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span> <span class="n">EmtLineTypes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.template_definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDefinition</span><span class="p">,</span> <span class="n">TemplateProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span>
+
+
+<div class="viewcode-block" id="PiLineEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pi_line_emt_template.PiLineEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PiLineEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phN&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether neutral is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phA&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase A is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phB&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase B is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;phC&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Whether phase C is active.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Symbolic block name.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;Pi&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="PiLineEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pi_line_emt_template.PiLineEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phN&quot;</span><span class="p">)</span>
+        <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phA&quot;</span><span class="p">)</span>
+        <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phB&quot;</span><span class="p">)</span>
+        <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;phC&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">get_pi_line_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span> <span class="n">phN</span><span class="p">,</span> <span class="n">phA</span><span class="p">,</span> <span class="n">phB</span><span class="p">,</span> <span class="n">phC</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="get_pi_line_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.pi_line_emt_template.get_pi_line_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pi_line_emt_template</span><span class="p">(</span><span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+                             <span class="n">phN</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                             <span class="n">phA</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="n">phB</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="n">phC</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Pi&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the EMT pi-line template with explicit API-mapped parameters.</span>
+
+<span class="sd">    The line connection defines which phases are physically present, while the</span>
+<span class="sd">    EMT initializer later injects the electrical ``R``, ``Linv`` and ``C``</span>
+<span class="sd">    values through the block ``api_obj_mapping`` using the full 4x4 NABC enum</span>
+<span class="sd">    contract.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param phN: Bool. True if the line has neutral, else False.</span>
+<span class="sd">    :param phA: Bool. True if the line has phase A, else False.</span>
+<span class="sd">    :param phB: Bool. True if the line has phase B, else False.</span>
+<span class="sd">    :param phC: Bool. True if the line has phase C, else False.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: EMT pi-line model template.</span>
+<span class="sd">    :raises ValueError: If the line has no active phases.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">EmtLineTypes</span><span class="o">.</span><span class="n">PI</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Phase mask from the line itself [N,A,B,C]</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># The template phase layout must be driven exclusively by the explicit</span>
+    <span class="c1"># phase flags of the current API. The optional ``line`` argument remains</span>
+    <span class="c1"># only for backward compatibility with older callers.</span>
+    <span class="n">ph_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">phN</span><span class="p">,</span>
+        <span class="n">phA</span><span class="p">,</span>
+        <span class="n">phB</span><span class="p">,</span>
+        <span class="n">phC</span><span class="p">,</span>
+    <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">ph_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">])</span>
+    <span class="n">idx_global</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ph_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># indices in global NABC convention</span>
+    <span class="n">active_ph</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ph_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_ph</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PI line &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; has no enabled phases in line.ys&quot;</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Define the fixed NABC API mapping contract.</span>
+    <span class="c1"># The initializer writes parameter values into these exact enum slots,</span>
+    <span class="c1"># which is why the template must read them back with the same layout.</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">r_enums</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rnn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rna</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rnb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rnc</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ran</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Raa</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rab</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rac</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rbn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rba</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rbb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rbc</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rcn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rca</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rcb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Rcc</span><span class="p">,</span>
+        <span class="p">]),</span>
+    <span class="p">])</span>
+    <span class="n">linv_enums</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_nn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_na</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_nb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_nc</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_an</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_aa</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_ab</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_ac</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_bn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_ba</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_bb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_bc</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_cn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_ca</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_cb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Linv_cc</span><span class="p">,</span>
+        <span class="p">]),</span>
+    <span class="p">])</span>
+    <span class="n">c_enums</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cnn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cna</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cnb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cnc</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Can</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Caa</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cab</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cac</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cbn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cba</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cbb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cbc</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="nb">list</span><span class="p">([</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ccn</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Cca</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ccb</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ccc</span><span class="p">,</span>
+        <span class="p">]),</span>
+    <span class="p">])</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Create the symbolic model block first.</span>
+    <span class="c1"># The wrapped editor contract keeps the equations in one child block, but the</span>
+    <span class="c1"># same symbolic variables must also be visible from the root wrapper later.</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Create the symbolic parameter variables and publish them in the child API map.</span>
+    <span class="c1"># The EMT problem writes numerical values into these variables later, so the</span>
+    <span class="c1"># template equations must depend on the mapped variables instead of line data.</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">var_r</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R</span><span class="si">{</span><span class="n">phases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}{</span><span class="n">phases</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">r_enums</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="n">var_r</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">var_r</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="n">var_l</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linv_</span><span class="si">{</span><span class="n">phases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}{</span><span class="n">phases</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">linv_enums</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="n">var_l</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">var_l</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="n">var_c</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">phases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}{</span><span class="n">phases</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">c_enums</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="n">var_c</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">var_c</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Reduce the full mapped matrices using the physical line phase mask.</span>
+    <span class="c1"># This cleanly separates topology from parameters: line.ys chooses the</span>
+    <span class="c1"># active equations, while api_obj_mapping supplies the electrical values.</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">api_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span>
+    <span class="n">r_full</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">linv_full</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">c_full</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">r_row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">linv_row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">c_row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">r_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">api_mapping</span><span class="p">[</span><span class="n">r_enums</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]])</span>
+            <span class="n">linv_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">api_mapping</span><span class="p">[</span><span class="n">linv_enums</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]])</span>
+            <span class="n">c_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">api_mapping</span><span class="p">[</span><span class="n">c_enums</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]])</span>
+
+        <span class="n">r_full</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r_row</span><span class="p">)</span>
+        <span class="n">linv_full</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">linv_row</span><span class="p">)</span>
+        <span class="n">c_full</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_row</span><span class="p">)</span>
+
+    <span class="n">R_red</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">r_full</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span>
+    <span class="n">Linv_red</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">linv_full</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span>
+    <span class="n">C_red</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">c_full</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx_global</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Create ONLY active terminal voltage input vars</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">vf_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_N</span><span class="p">,</span>
+        <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_A</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_B</span><span class="p">,</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_C</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="n">vt_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_N</span><span class="p">,</span>
+        <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_A</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_B</span><span class="p">,</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_C</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="n">if_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_N</span><span class="p">,</span>
+        <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_A</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_B</span><span class="p">,</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_C</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="n">it_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_N</span><span class="p">,</span>
+        <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_A</span><span class="p">,</span>
+        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_B</span><span class="p">,</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_C</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="n">vf_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vf_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">vf_keys</span><span class="p">[</span><span class="n">ph_label</span><span class="p">])</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">vt_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vt_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">vt_keys</span><span class="p">[</span><span class="n">ph_label</span><span class="p">])</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+
+    <span class="c1"># d_vf_vars = [vf.add_diff_var(name=f&quot;d_vf_{ph_label}&quot;, base_var=v_base) for ph_label, v_base in zip(active_ph, vf_vars)]</span>
+    <span class="c1"># d_vt_vars = [vf.add_diff_var(name=f&quot;d_vt_{ph_label}&quot;, base_var=v_base) for ph_label, v_base in zip(active_ph, vt_vars)]</span>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Create model vars</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">i_ser</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_ser_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">q_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;q_f_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">q_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;q_t_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">d_vf_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_vf_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">d_vt_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;d_vt_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+
+    <span class="n">di_ser</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_ser_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_ser</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ph_label</span>  <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active_ph</span><span class="p">)]</span>
+    <span class="n">dq_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;dq_f_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">q_f</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ph_label</span>  <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active_ph</span><span class="p">)]</span>
+    <span class="n">dq_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;dq_t_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">q_t</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ph_label</span>  <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active_ph</span><span class="p">)]</span>
+
+    <span class="n">i_cap_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_cap_f_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">i_cap_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_cap_t_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">if_act</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;if_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">if_keys</span><span class="p">[</span><span class="n">ph_label</span><span class="p">])</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+    <span class="n">it_act</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;it_</span><span class="si">{</span><span class="n">ph_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">it_keys</span><span class="p">[</span><span class="n">ph_label</span><span class="p">])</span> <span class="k">for</span> <span class="n">ph_label</span> <span class="ow">in</span> <span class="n">active_ph</span><span class="p">]</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Build block</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">vf_vars</span> <span class="o">+</span> <span class="n">vt_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="n">i_ser</span> <span class="o">+</span> <span class="n">q_f</span> <span class="o">+</span> <span class="n">q_t</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">di_ser</span> <span class="o">+</span> <span class="n">dq_f</span> <span class="o">+</span> <span class="n">dq_t</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">i_cap_f</span> <span class="o">+</span> <span class="n">i_cap_t</span> <span class="o">+</span> <span class="n">if_act</span> <span class="o">+</span> <span class="n">it_act</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># State equations</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">state_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">expr_rhs</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">L_inv_ab</span> <span class="o">=</span> <span class="n">Linv_red</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">term_b</span> <span class="o">=</span> <span class="p">(</span><span class="n">vf_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">-</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">R_bk</span> <span class="o">=</span> <span class="n">R_red</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">term_b</span> <span class="o">=</span> <span class="n">term_b</span> <span class="o">-</span> <span class="n">R_bk</span> <span class="o">*</span> <span class="n">i_ser</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">expr_rhs</span> <span class="o">=</span> <span class="n">expr_rhs</span> <span class="o">+</span> <span class="n">L_inv_ab</span> <span class="o">*</span> <span class="n">term_b</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr_rhs</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_cap_f</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">state_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_cap_t</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="n">state_eqs</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Algebraic equations</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">alg_eqs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">rhs_q</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">C_ab</span> <span class="o">=</span> <span class="n">C_red</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">rhs_q</span> <span class="o">=</span> <span class="n">rhs_q</span> <span class="o">+</span> <span class="n">C_ab</span> <span class="o">*</span> <span class="n">vf_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q_f</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="n">rhs_q</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">rhs_q</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">C_ab</span> <span class="o">=</span> <span class="n">C_red</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">rhs_q</span> <span class="o">=</span> <span class="n">rhs_q</span> <span class="o">+</span> <span class="n">C_ab</span> <span class="o">*</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q_t</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="n">rhs_q</span><span class="p">)</span>
+
+    <span class="n">G_damp</span> <span class="o">=</span> <span class="mf">1e-5</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">if_act</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">i_ser</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_cap_f</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">G_damp</span> <span class="o">*</span> <span class="n">vf_vars</span><span class="p">[</span><span class="n">a</span><span class="p">]))</span>
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it_act</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">i_ser</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_cap_t</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">G_damp</span> <span class="o">*</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">a</span><span class="p">]))</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">alg_eqs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">if_act</span> <span class="o">+</span> <span class="n">it_act</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># External mapping</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">if_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_N</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_A</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_B</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_C</span><span class="p">})</span>
+    <span class="n">it_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_N</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_A</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_B</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_C</span><span class="p">})</span>
+
+    <span class="n">mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">if_keys</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">if_keys</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">if_keys</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">if_keys</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">it_keys</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">it_keys</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">it_keys</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">it_keys</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">vf_keys</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vf_keys</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vf_keys</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vf_keys</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">vt_keys</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vt_keys</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vt_keys</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vt_keys</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active_ph</span><span class="p">):</span>
+        <span class="n">mapping</span><span class="p">[</span><span class="n">vf_keys</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]]</span> <span class="o">=</span> <span class="n">vf_vars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">mapping</span><span class="p">[</span><span class="n">vt_keys</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]]</span> <span class="o">=</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">mapping</span><span class="p">[</span><span class="n">if_keys</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]]</span> <span class="o">=</span> <span class="n">if_act</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">mapping</span><span class="p">[</span><span class="n">it_keys</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]]</span> <span class="o">=</span> <span class="n">it_act</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">mapping</span>
+
+    <span class="n">d_vf_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_N_f</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_A_f</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_B_f</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_C_f</span><span class="p">})</span>
+    <span class="n">d_vt_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_N_t</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_A_t</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_B_t</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_C_t</span><span class="p">})</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active_ph</span><span class="p">):</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">d_vf_keys</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]]</span> <span class="o">=</span> <span class="n">d_vf_vars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">d_vt_keys</span><span class="p">[</span><span class="n">phase_label</span><span class="p">]]</span> <span class="o">=</span> <span class="n">d_vt_vars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">d_vf_vars</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">d_vt_vars</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Init equations</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">rhs_f</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="n">rhs_t</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">C_ab</span> <span class="o">=</span> <span class="n">C_red</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">rhs_f</span> <span class="o">+=</span> <span class="n">C_ab</span> <span class="o">*</span> <span class="n">vf_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">rhs_t</span> <span class="o">+=</span> <span class="n">C_ab</span> <span class="o">*</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">q_f</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rhs_f</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">q_t</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rhs_t</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">i_ser_from</span> <span class="o">=</span> <span class="n">if_act</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="n">i_cap_f</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="n">G_damp</span> <span class="o">*</span> <span class="n">vf_vars</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">i_ser_to</span> <span class="o">=</span> <span class="o">-</span><span class="n">it_act</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_cap_t</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">G_damp</span> <span class="o">*</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">i_ser</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_ser_from</span> <span class="o">+</span> <span class="n">i_ser_to</span><span class="p">)</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="n">init_eqs</span>
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Derivative initialization</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">diff_init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">di_expression</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">term_b</span> <span class="o">=</span> <span class="p">(</span><span class="n">vf_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">-</span> <span class="n">vt_vars</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">R_bk</span> <span class="o">=</span> <span class="n">R_red</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">term_b</span> <span class="o">=</span> <span class="n">term_b</span> <span class="o">-</span> <span class="n">R_bk</span> <span class="o">*</span> <span class="n">i_ser</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="n">Linv_red</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">di_expression</span> <span class="o">=</span> <span class="n">di_expression</span> <span class="o">+</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">term_b</span>
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">di_ser</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">di_expression</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">dq_f</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i_cap_f</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">dq_t</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i_cap_t</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">rhs_i_cap_f</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="n">rhs_i_cap_t</span> <span class="o">=</span> <span class="n">c0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">C_ab</span> <span class="o">=</span> <span class="n">C_red</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">rhs_i_cap_f</span> <span class="o">+=</span> <span class="n">C_ab</span> <span class="o">*</span> <span class="n">d_vf_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">rhs_i_cap_t</span> <span class="o">+=</span> <span class="n">C_ab</span> <span class="o">*</span> <span class="n">d_vt_vars</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">i_cap_f</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rhs_i_cap_f</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">i_cap_t</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rhs_i_cap_t</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

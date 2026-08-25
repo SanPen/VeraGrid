@@ -1,0 +1,1105 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.importer.examples.common &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.importer.examples.common</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.fmu.importer.examples.common</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.rms_events_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsEventsGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">Load</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.line</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.emt_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtSimulationDriver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowDriver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsSimulationDriver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.bus_emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">BusEmtTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_generator_thevenin_rl_emt_template_with_ref</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.bus_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_bus_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_complete_generator_template_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.line_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_line_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BranchImpedanceMode</span><span class="p">,</span>
+    <span class="n">DynamicIntegrationMethod</span><span class="p">,</span>
+    <span class="n">SolverType</span><span class="p">,</span>
+    <span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_fmu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportConfig</span> <span class="k">as</span> <span class="n">CsExportConfig</span><span class="p">,</span> <span class="n">detect_target_platform</span> <span class="k">as</span> <span class="n">detect_cs_target_platform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter.compat</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.emt_boundary</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_emt_boundary_updater</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_cs</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuRefBinding</span><span class="p">,</span> <span class="n">register_emt_fmu_cs_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_me</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuMeIntegrationMethod</span><span class="p">,</span> <span class="n">register_emt_fmu_me_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.model_description</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuInterfaceMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.user_api</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FmuDeviceAttachmentRequest</span><span class="p">,</span>
+    <span class="n">FmuDeviceDomain</span><span class="p">,</span>
+    <span class="n">FmuReferenceValue</span><span class="p">,</span>
+    <span class="n">attach_fmu_to_device</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter_me.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_fmu_me</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.exporter_me.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportConfig</span> <span class="k">as</span> <span class="n">MeExportConfig</span><span class="p">,</span> <span class="n">detect_target_platform</span> <span class="k">as</span> <span class="n">detect_me_target_platform</span>
+
+
+<div class="viewcode-block" id="get_example_output_dir">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.get_example_output_dir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_example_output_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the directory used by the FMU import example scripts.</span>
+
+<span class="sd">    :return: Example output directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;reports&quot;</span> <span class="o">/</span> <span class="s2">&quot;examples&quot;</span>
+    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_dir</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_has_fmpy</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether the current Python environment provides `fmpy`.</span>
+
+<span class="sd">    :return: `True` when `fmpy` can be imported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">fmpy</span>
+
+        <span class="k">return</span> <span class="n">fmpy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="write_example_report">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.write_example_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a plain-text report for one FMU import example run.</span>
+
+<span class="sd">    :param report_path: Report output path.</span>
+<span class="sd">    :param lines: Lines written to the report.</span>
+<span class="sd">    :return: Final report path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">report_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">report_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">report_path</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_rms_cs_source_block</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the self-contained source block used to export an example RMS CS FMU.</span>
+
+<span class="sd">    :return: Example RMS CS FMU block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">p_out</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;p_out&quot;</span><span class="p">)</span>
+    <span class="n">q_out</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;q_out&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">p_out</span><span class="p">,</span> <span class="n">q_out</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">p_out</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span> <span class="o">-</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span> <span class="n">q_out</span> <span class="o">-</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dx</span><span class="p">],</span>
+        <span class="n">init_values</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">p_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">q_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)},</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span><span class="n">p_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">q_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)},</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">p_out</span><span class="p">,</span> <span class="n">q_out</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_rms_me_source_block</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the self-contained source block used to export an example RMS ME FMU.</span>
+
+<span class="sd">    :return: Example RMS ME FMU block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">p_out</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;p_out&quot;</span><span class="p">)</span>
+    <span class="n">q_out</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;q_out&quot;</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">u</span><span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">p_out</span><span class="p">,</span> <span class="n">q_out</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">p_out</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">q_out</span> <span class="o">-</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dx</span><span class="p">],</span>
+        <span class="n">init_values</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">p_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">q_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)},</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span><span class="n">p_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">q_out</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)},</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span><span class="n">u</span><span class="p">],</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">p_out</span><span class="p">,</span> <span class="n">q_out</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_emt_cs_source_block</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the self-contained source block used to export an example EMT CS FMU.</span>
+
+<span class="sd">    :return: Example EMT CS FMU block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">i_a</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;i_a_out&quot;</span><span class="p">)</span>
+    <span class="n">i_b</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;i_b_out&quot;</span><span class="p">)</span>
+    <span class="n">i_c</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;i_c_out&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">i_a</span><span class="p">,</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">i_c</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">i_a</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span> <span class="n">i_b</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.005</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span> <span class="n">i_c</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.005</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">)],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dx</span><span class="p">],</span>
+        <span class="n">init_values</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_a</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_b</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_c</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)},</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span><span class="n">i_a</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_b</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_c</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)},</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">i_a</span><span class="p">,</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">i_c</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_emt_me_source_block</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the self-contained source block used to export an example EMT ME FMU.</span>
+
+<span class="sd">    :return: Example EMT ME FMU block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">i_a</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;i_a_out&quot;</span><span class="p">)</span>
+    <span class="n">i_b</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;i_b_out&quot;</span><span class="p">)</span>
+    <span class="n">i_c</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;i_c_out&quot;</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">u</span><span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">i_a</span><span class="p">,</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">i_c</span><span class="p">],</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span><span class="n">i_a</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">i_b</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span> <span class="n">i_c</span> <span class="o">-</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">)],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dx</span><span class="p">],</span>
+        <span class="n">init_values</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_a</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_b</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_c</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)},</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span><span class="n">i_a</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_b</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">i_c</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)},</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span><span class="n">u</span><span class="p">],</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">i_a</span><span class="p">,</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">i_c</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="export_example_rms_cs_fmu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.export_example_rms_cs_fmu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_example_rms_cs_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the self-contained RMS CS device FMU used by the example scripts.</span>
+
+<span class="sd">    :param output_dir: Output directory for the generated FMU.</span>
+<span class="sd">    :return: Generated FMU path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">unique_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ExampleRmsCsDevice_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">export_fmu</span><span class="p">(</span>
+        <span class="n">_build_rms_cs_source_block</span><span class="p">(),</span>
+        <span class="n">CsExportConfig</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">unique_name</span><span class="p">,</span>
+            <span class="n">output_path</span><span class="o">=</span><span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unique_name</span><span class="si">}</span><span class="s2">.fmu&quot;</span><span class="p">,</span>
+            <span class="n">target_platform</span><span class="o">=</span><span class="n">detect_cs_target_platform</span><span class="p">(),</span>
+            <span class="n">compile_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keep_build_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_example_rms_me_fmu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.export_example_rms_me_fmu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_example_rms_me_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the self-contained RMS ME device FMU used by the example scripts.</span>
+
+<span class="sd">    :param output_dir: Output directory for the generated FMU.</span>
+<span class="sd">    :return: Generated FMU path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">unique_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ExampleRmsMeDevice_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">export_fmu_me</span><span class="p">(</span>
+        <span class="n">_build_rms_me_source_block</span><span class="p">(),</span>
+        <span class="n">MeExportConfig</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">unique_name</span><span class="p">,</span>
+            <span class="n">output_path</span><span class="o">=</span><span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unique_name</span><span class="si">}</span><span class="s2">.fmu&quot;</span><span class="p">,</span>
+            <span class="n">target_platform</span><span class="o">=</span><span class="n">detect_me_target_platform</span><span class="p">(),</span>
+            <span class="n">compile_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keep_build_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_example_emt_cs_fmu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.export_example_emt_cs_fmu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_example_emt_cs_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the self-contained EMT CS device FMU used by the example scripts.</span>
+
+<span class="sd">    :param output_dir: Output directory for the generated FMU.</span>
+<span class="sd">    :return: Generated FMU path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">unique_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ExampleEmtCsDevice_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">export_fmu</span><span class="p">(</span>
+        <span class="n">_build_emt_cs_source_block</span><span class="p">(),</span>
+        <span class="n">CsExportConfig</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">unique_name</span><span class="p">,</span>
+            <span class="n">output_path</span><span class="o">=</span><span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unique_name</span><span class="si">}</span><span class="s2">.fmu&quot;</span><span class="p">,</span>
+            <span class="n">target_platform</span><span class="o">=</span><span class="n">detect_cs_target_platform</span><span class="p">(),</span>
+            <span class="n">compile_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keep_build_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_example_emt_me_fmu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.export_example_emt_me_fmu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_example_emt_me_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the self-contained EMT ME device FMU used by the example scripts.</span>
+
+<span class="sd">    :param output_dir: Output directory for the generated FMU.</span>
+<span class="sd">    :return: Generated FMU path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">unique_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ExampleEmtMeDevice_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">export_fmu_me</span><span class="p">(</span>
+        <span class="n">_build_emt_me_source_block</span><span class="p">(),</span>
+        <span class="n">MeExportConfig</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">unique_name</span><span class="p">,</span>
+            <span class="n">output_path</span><span class="o">=</span><span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unique_name</span><span class="si">}</span><span class="s2">.fmu&quot;</span><span class="p">,</span>
+            <span class="n">target_platform</span><span class="o">=</span><span class="n">detect_me_target_platform</span><span class="p">(),</span>
+            <span class="n">compile_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keep_build_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_power_flow_options</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">PowerFlowOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the power-flow options reused by the FMU import examples.</span>
+
+<span class="sd">    :return: Power-flow options.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">PowerFlowOptions</span><span class="p">(</span>
+        <span class="n">solver_type</span><span class="o">=</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span>
+        <span class="n">retry_with_other_methods</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">initialize_with_existing_solution</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">control_q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">control_taps_modules</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">control_taps_phase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">control_remote_voltage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">orthogonalize_controls</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">apply_temperature_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">branch_impedance_tolerance_mode</span><span class="o">=</span><span class="n">BranchImpedanceMode</span><span class="o">.</span><span class="n">Specified</span><span class="p">,</span>
+        <span class="n">distributed_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">ignore_single_node_islands</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">trust_radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">backtracking_parameter</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">initialize_angles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">generate_report</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bus_power_default</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">pf_results</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the exact active and reactive power injection solved at one bus.</span>
+
+<span class="sd">    The FMU examples use these values as output defaults so the imported FMU shell</span>
+<span class="sd">    starts from the same operating point that the static network used during the</span>
+<span class="sd">    power-flow initialization.</span>
+
+<span class="sd">    :param grid: Solved grid.</span>
+<span class="sd">    :param pf_results: Finished power-flow results.</span>
+<span class="sd">    :param bus: Bus where the imported FMU device is connected.</span>
+<span class="sd">    :return: Active and reactive bus injections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bus_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+    <span class="n">bus_power</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">pf_results</span><span class="o">.</span><span class="n">Sbus</span><span class="p">[</span><span class="n">bus_index</span><span class="p">]</span> <span class="o">/</span> <span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_power</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_power</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_rms_demo_grid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">Load</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the minimal RMS demo grid used by the RMS FMU import examples.</span>
+
+<span class="sd">    :return: Grid and imported device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">fbase</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+    <span class="n">bus_slack</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus0&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">bus_load</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus1&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus_slack</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus_load</span><span class="p">)</span>
+
+    <span class="c1"># RMS buses need their symbolic shell before attaching dynamic devices.</span>
+    <span class="n">initialize_bus_rms</span><span class="p">(</span><span class="n">bus_slack</span><span class="p">,</span> <span class="n">vf</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+    <span class="n">initialize_bus_rms</span><span class="p">(</span><span class="n">bus_load</span><span class="p">,</span> <span class="n">vf</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+
+    <span class="n">line</span><span class="p">:</span> <span class="n">Line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line_0_1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_slack</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_load</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">900.0</span><span class="p">)</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen0&quot;</span><span class="p">,</span>
+        <span class="n">P</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">vset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span>
+        <span class="n">x1</span><span class="o">=</span><span class="mf">0.86138701</span><span class="p">,</span>
+        <span class="n">r1</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">freq</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">load</span><span class="p">:</span> <span class="n">Load</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ImportedLoad&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_slack</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">generator</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus_load</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load</span><span class="p">)</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">get_complete_generator_template_rms</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_rms_events_group</span><span class="p">(</span><span class="n">RmsEventsGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;default_rms_example_group&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">load</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_emt_demo_grid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">Load</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the minimal EMT demo grid used by the EMT FMU import examples.</span>
+
+<span class="sd">    :return: Grid and imported device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">fbase</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+    <span class="n">bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus0&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+
+    <span class="c1"># The example forces a simple ABC bus shell because the demo grid has no EMT branches yet.</span>
+    <span class="n">bus_template</span> <span class="o">=</span> <span class="n">BusEmtTemplate</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">is_dc</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_emt_template&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The public setter copies the block through symbolic serialization and that path still rejects `None`</span>
+    <span class="c1"># entries present in EMT bus external mappings. For this controlled example we attach the template directly.</span>
+    <span class="n">bus</span><span class="o">.</span><span class="n">_emt_template</span> <span class="o">=</span> <span class="n">bus_template</span>
+    <span class="n">bus</span><span class="o">.</span><span class="n">_emt_model</span> <span class="o">=</span> <span class="n">bus_template</span><span class="o">.</span><span class="n">block</span>
+
+    <span class="n">generator</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen0&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">vset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">r1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">generator_template</span> <span class="o">=</span> <span class="n">get_generator_thevenin_rl_emt_template_with_ref</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">gen</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;emt_thevenin_source&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The public setter still serializes through external mappings with `None` placeholders, so we attach directly.</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">_emt_template</span> <span class="o">=</span> <span class="n">generator_template</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">_emt_model</span> <span class="o">=</span> <span class="n">generator_template</span><span class="o">.</span><span class="n">block</span>
+    <span class="n">load</span><span class="p">:</span> <span class="n">Load</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ImportedLoad&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">generator</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">load</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ExampleEmtProblem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Minimal EMT harness used by the example scripts.</span>
+
+<span class="sd">    :param block: Imported FMU shell block.</span>
+<span class="sd">    :param bus_voltage_var: Optional EMT bus voltage variable used as FMU input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;uid2idx_event_params&quot;</span><span class="p">,</span> <span class="s2">&quot;uid2idx_vars&quot;</span><span class="p">,</span> <span class="s2">&quot;_fmu_cs_adapters&quot;</span><span class="p">,</span> <span class="s2">&quot;_fmu_me_adapters&quot;</span><span class="p">,</span> <span class="s2">&quot;calls&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">bus_voltage_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the synthetic EMT harness state.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid2idx_event_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid2idx_vars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">event_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">event_parameter</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="k">for</span> <span class="n">event_parameter</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uid2idx_event_params</span><span class="p">[</span><span class="n">event_parameter</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_index</span>
+            <span class="n">event_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">bus_voltage_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uid2idx_vars</span><span class="p">[</span><span class="n">bus_voltage_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_cs_adapters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calls</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">emt_boundary_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_curr</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x_prev</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">full_params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record one synthetic EMT boundary update call.</span>
+
+<span class="sd">        :param t_curr: Current simulation time.</span>
+<span class="sd">        :param x_prev: Accepted state vector.</span>
+<span class="sd">        :param full_params: Runtime-parameter vector.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">calls</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_forced_event_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_prev</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t_target</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return that the synthetic harness has no forced events.</span>
+
+<span class="sd">        :param t_prev: Previous time.</span>
+<span class="sd">        :param t_target: Candidate target time.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provide the same close interface as the real EMT problem.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_emt_results_report_lines</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a simple textual report from the synthetic EMT boundary harness.</span>
+
+<span class="sd">    :param params: Runtime-parameter vector.</span>
+<span class="sd">    :param prefixes: Label prefixes for the report.</span>
+<span class="sd">    :return: Summary lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">prefixes</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">index</span><span class="p">])</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_rms_results_summary</span><span class="p">(</span><span class="n">driver</span><span class="p">:</span> <span class="n">RmsSimulationDriver</span><span class="p">,</span> <span class="n">load</span><span class="p">:</span> <span class="n">Load</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a human-readable summary for one RMS FMU import example.</span>
+
+<span class="sd">    :param driver: Finished RMS simulation driver.</span>
+<span class="sd">    :param load: Imported FMU load device.</span>
+<span class="sd">    :return: Summary lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The RMS simulation did not produce results&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">]</span>
+        <span class="n">q_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">]</span>
+        <span class="n">p_final</span> <span class="o">=</span> <span class="n">_try_get_result_value</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">uid2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">q_final</span> <span class="o">=</span> <span class="n">_try_get_result_value</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">uid2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">q_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">p_text</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">q_text</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">if</span> <span class="n">p_final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">p_text</span> <span class="o">=</span> <span class="s2">&quot;not recorded&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_final</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">q_final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">q_text</span> <span class="o">=</span> <span class="s2">&quot;not recorded&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">q_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">q_final</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;final_time = </span><span class="si">{</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;P_final = </span><span class="si">{</span><span class="n">p_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Q_final = </span><span class="si">{</span><span class="n">q_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_rms_fmu_output</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Load</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read one FMU-backed RMS output directly from the registered runtime adapters.</span>
+
+<span class="sd">    The helper prefers adapter indices over symbolic-name reconstruction because the</span>
+<span class="sd">    runtime adapters already own the authoritative mapping from VeraGrid references</span>
+<span class="sd">    to the parameter vector updated during the simulation.</span>
+
+<span class="sd">    :param problem: Finished RMS problem instance.</span>
+<span class="sd">    :param device: Device hosting the imported FMU.</span>
+<span class="sd">    :param reference: VeraGrid output reference to recover.</span>
+<span class="sd">    :return: Runtime output value when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">adapter</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_cs_adapters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">adapter</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">:</span>
+                        <span class="n">output_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+                        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span><span class="p">[</span><span class="n">output_index</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">adapter</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">:</span>
+                        <span class="n">output_index</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+                        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span><span class="p">[</span><span class="n">output_index</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_final_rms_snapshot</span><span class="p">(</span><span class="n">driver</span><span class="p">:</span> <span class="n">RmsSimulationDriver</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the final RMS state snapshot from the finished results matrix.</span>
+
+<span class="sd">    :param driver: Finished RMS simulation driver.</span>
+<span class="sd">    :return: Final RMS state/algebraic snapshot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">final_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">final_values</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_refresh_rms_fmu_outputs_from_final_snapshot</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                                                 <span class="n">device</span><span class="p">:</span> <span class="n">Load</span><span class="p">,</span>
+                                                 <span class="n">final_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                                 <span class="n">final_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Re-evaluate FMU outputs from the final RMS network snapshot when the runtime cache is empty.</span>
+
+<span class="sd">    The fallback is used only by the example report helpers. It keeps the example</span>
+<span class="sd">    informative even when the solver lifecycle closes the FMU before the report is</span>
+<span class="sd">    assembled.</span>
+
+<span class="sd">    :param problem: Finished RMS problem instance.</span>
+<span class="sd">    :param device: Device hosting the imported FMU.</span>
+<span class="sd">    :param final_snapshot: Final RMS state/algebraic snapshot.</span>
+<span class="sd">    :param final_time: Final simulation time.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">adapter</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_cs_adapters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">outputs</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">initialize_outputs</span><span class="p">(</span><span class="n">final_time</span><span class="p">,</span> <span class="n">final_snapshot</span><span class="p">)</span>
+                <span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+                <span class="n">adapter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">outputs</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">initialize_outputs</span><span class="p">(</span><span class="n">final_time</span><span class="p">,</span> <span class="n">final_snapshot</span><span class="p">)</span>
+                <span class="n">adapter</span><span class="o">.</span><span class="n">last_outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+                <span class="n">adapter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_emt_results_summary</span><span class="p">(</span><span class="n">driver</span><span class="p">:</span> <span class="n">EmtSimulationDriver</span><span class="p">,</span> <span class="n">load</span><span class="p">:</span> <span class="n">Load</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a human-readable summary for one EMT FMU import example.</span>
+
+<span class="sd">    :param driver: Finished EMT simulation driver.</span>
+<span class="sd">    :param load: Imported FMU load device.</span>
+<span class="sd">    :return: Summary lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The EMT simulation did not produce results&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">i_a_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">emt_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">]</span>
+        <span class="n">i_b_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">emt_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">]</span>
+        <span class="n">i_c_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">emt_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">]</span>
+        <span class="n">i_a_final</span> <span class="o">=</span> <span class="n">_try_get_result_value</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">uid2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i_a_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">i_b_final</span> <span class="o">=</span> <span class="n">_try_get_result_value</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">uid2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i_b_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">i_c_final</span> <span class="o">=</span> <span class="n">_try_get_result_value</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">uid2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i_c_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">i_a_text</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">i_b_text</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">i_c_text</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">if</span> <span class="n">i_a_final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">i_a_text</span> <span class="o">=</span> <span class="s2">&quot;not recorded&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">i_a_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i_a_final</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">i_b_final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">i_b_text</span> <span class="o">=</span> <span class="s2">&quot;not recorded&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">i_b_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i_b_final</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">i_c_final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">i_c_text</span> <span class="o">=</span> <span class="s2">&quot;not recorded&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">i_c_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i_c_final</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;final_time = </span><span class="si">{</span><span class="n">driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;iA_final = </span><span class="si">{</span><span class="n">i_a_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;iB_final = </span><span class="si">{</span><span class="n">i_b_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;iC_final = </span><span class="si">{</span><span class="n">i_c_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_try_get_result_value</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">column_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Try to recover one scalar value from a VeraGrid results matrix.</span>
+
+<span class="sd">    :param values: Results matrix.</span>
+<span class="sd">    :param column_index: Candidate variable column index.</span>
+<span class="sd">    :return: Final scalar value when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">column_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flat_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">column_index</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">flat_values</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">flat_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="run_rms_cs_example">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.run_rms_cs_example">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_rms_cs_example</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the full RMS Co-Simulation FMU device example.</span>
+
+<span class="sd">    :param output_dir: Output directory used for the FMU and the report.</span>
+<span class="sd">    :return: Generated report path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fmu_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">export_example_rms_cs_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">report_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;rms_cs_example_report.txt&quot;</span>
+    <span class="k">if</span> <span class="n">_has_fmpy</span><span class="p">():</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mode = CoSimulation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status = skipped&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reason = fmpy not installed in this Python environment&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+
+    <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span>
+    <span class="n">load</span><span class="p">:</span> <span class="n">Load</span>
+    <span class="n">grid</span><span class="p">,</span> <span class="n">load</span> <span class="o">=</span> <span class="n">_build_rms_demo_grid</span><span class="p">()</span>
+    <span class="n">pf_driver</span><span class="p">:</span> <span class="n">PowerFlowDriver</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">_build_power_flow_options</span><span class="p">())</span>
+    <span class="n">pf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">p_default</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">q_default</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">p_default</span><span class="p">,</span> <span class="n">q_default</span> <span class="o">=</span> <span class="n">_get_bus_power_default</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">load</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+    <span class="n">request</span> <span class="o">=</span> <span class="n">FmuDeviceAttachmentRequest</span><span class="p">(</span>
+        <span class="n">fmu_path</span><span class="o">=</span><span class="n">fmu_path</span><span class="p">,</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">FmuDeviceDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">,</span>
+        <span class="n">input_bindings</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(),</span>
+        <span class="n">output_bindings</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="s2">&quot;p_out&quot;</span><span class="p">),</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="s2">&quot;q_out&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">output_defaults</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="n">p_default</span><span class="p">),</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="n">q_default</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">extraction_root</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># The imported FMU is attached as a normal load device shell before running the RMS driver.</span>
+    <span class="n">attach_fmu_to_device</span><span class="p">(</span><span class="n">load</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+
+    <span class="n">rms_driver</span><span class="p">:</span> <span class="n">RmsSimulationDriver</span> <span class="o">=</span> <span class="n">RmsSimulationDriver</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">RmsOptions</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">simulation_time</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">integration_method</span><span class="o">=</span><span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">50</span><span class="p">),</span>
+        <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">rms_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The RMS example did not keep a reference to the simulation problem&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">final_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_build_final_rms_snapshot</span><span class="p">(</span><span class="n">rms_driver</span><span class="p">)</span>
+        <span class="n">final_time_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-9</span>
+        <span class="n">_refresh_rms_fmu_outputs_from_final_snapshot</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">final_snapshot</span><span class="p">,</span> <span class="n">final_time_seconds</span><span class="p">)</span>
+        <span class="n">p_value</span> <span class="o">=</span> <span class="n">_read_rms_fmu_output</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
+        <span class="n">q_value</span> <span class="o">=</span> <span class="n">_read_rms_fmu_output</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+        <span class="n">p_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;not available&quot;</span> <span class="k">if</span> <span class="n">p_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">q_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;not available&quot;</span> <span class="k">if</span> <span class="n">q_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">q_value</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;mode = </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;final_time = </span><span class="si">{</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;P_final = </span><span class="si">{</span><span class="n">p_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;Q_final = </span><span class="si">{</span><span class="n">q_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_rms_me_example">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.run_rms_me_example">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_rms_me_example</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the full RMS Model Exchange FMU device example.</span>
+
+<span class="sd">    :param output_dir: Output directory used for the FMU and the report.</span>
+<span class="sd">    :return: Generated report path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fmu_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">export_example_rms_me_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">report_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;rms_me_example_report.txt&quot;</span>
+    <span class="k">if</span> <span class="n">_has_fmpy</span><span class="p">():</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mode = ModelExchange&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status = skipped&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reason = fmpy not installed in this Python environment&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+
+    <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span>
+    <span class="n">load</span><span class="p">:</span> <span class="n">Load</span>
+    <span class="n">grid</span><span class="p">,</span> <span class="n">load</span> <span class="o">=</span> <span class="n">_build_rms_demo_grid</span><span class="p">()</span>
+    <span class="n">pf_driver</span><span class="p">:</span> <span class="n">PowerFlowDriver</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">_build_power_flow_options</span><span class="p">())</span>
+    <span class="n">pf_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">p_default</span><span class="p">,</span> <span class="n">q_default</span> <span class="o">=</span> <span class="n">_get_bus_power_default</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">load</span><span class="o">.</span><span class="n">bus</span><span class="p">)</span>
+
+    <span class="n">request</span> <span class="o">=</span> <span class="n">FmuDeviceAttachmentRequest</span><span class="p">(</span>
+        <span class="n">fmu_path</span><span class="o">=</span><span class="n">fmu_path</span><span class="p">,</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">FmuDeviceDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">,</span>
+        <span class="n">input_bindings</span><span class="o">=</span><span class="p">(</span><span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">),),</span>
+        <span class="n">output_bindings</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="s2">&quot;p_out&quot;</span><span class="p">),</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="s2">&quot;q_out&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">output_defaults</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="n">p_default</span><span class="p">),</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="n">q_default</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">extraction_root</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+        <span class="n">integration_method</span><span class="o">=</span><span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">attach_fmu_to_device</span><span class="p">(</span><span class="n">load</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+
+    <span class="n">rms_driver</span><span class="p">:</span> <span class="n">RmsSimulationDriver</span> <span class="o">=</span> <span class="n">RmsSimulationDriver</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">RmsOptions</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">simulation_time</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">integration_method</span><span class="o">=</span><span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">50</span><span class="p">),</span>
+        <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_driver</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">rms_driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The RMS example did not keep a reference to the simulation problem&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">final_snapshot</span> <span class="o">=</span> <span class="n">_build_final_rms_snapshot</span><span class="p">(</span><span class="n">rms_driver</span><span class="p">)</span>
+        <span class="n">final_time_seconds</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-9</span>
+        <span class="n">_refresh_rms_fmu_outputs_from_final_snapshot</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">final_snapshot</span><span class="p">,</span> <span class="n">final_time_seconds</span><span class="p">)</span>
+        <span class="n">p_value</span> <span class="o">=</span> <span class="n">_read_rms_fmu_output</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
+        <span class="n">q_value</span> <span class="o">=</span> <span class="n">_read_rms_fmu_output</span><span class="p">(</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+        <span class="n">p_text</span> <span class="o">=</span> <span class="s2">&quot;not available&quot;</span> <span class="k">if</span> <span class="n">p_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">q_text</span> <span class="o">=</span> <span class="s2">&quot;not available&quot;</span> <span class="k">if</span> <span class="n">q_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">q_value</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;mode = </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;final_time = </span><span class="si">{</span><span class="n">rms_driver</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;P_final = </span><span class="si">{</span><span class="n">p_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;Q_final = </span><span class="si">{</span><span class="n">q_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_emt_cs_example">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.run_emt_cs_example">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_emt_cs_example</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the full EMT Co-Simulation FMU device example.</span>
+
+<span class="sd">    :param output_dir: Output directory used for the FMU and the report.</span>
+<span class="sd">    :return: Generated report path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fmu_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">export_example_emt_cs_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">report_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;emt_cs_example_report.txt&quot;</span>
+    <span class="k">if</span> <span class="n">_has_fmpy</span><span class="p">():</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mode = CoSimulation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status = skipped&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reason = fmpy not installed in this Python environment&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">Load</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">var_factory</span><span class="o">=</span><span class="n">VarFactory</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ExampleEmtCsVarFactory&quot;</span><span class="p">))</span>
+    <span class="n">load</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ImportedLoad&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">load</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span>
+    <span class="n">bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ExampleBus&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">bus</span><span class="o">.</span><span class="n">_emt_model</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+    <span class="n">load</span><span class="o">.</span><span class="n">_bus</span> <span class="o">=</span> <span class="n">bus</span>
+
+    <span class="n">request</span> <span class="o">=</span> <span class="n">FmuDeviceAttachmentRequest</span><span class="p">(</span>
+        <span class="n">fmu_path</span><span class="o">=</span><span class="n">fmu_path</span><span class="p">,</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">FmuDeviceDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">CO_SIMULATION</span><span class="p">,</span>
+        <span class="n">input_bindings</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(),</span>
+        <span class="n">output_bindings</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">,</span> <span class="s2">&quot;i_a_out&quot;</span><span class="p">),</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">,</span> <span class="s2">&quot;i_b_out&quot;</span><span class="p">),</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">,</span> <span class="s2">&quot;i_c_out&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">output_defaults</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">extraction_root</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">attached_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">attach_fmu_to_device</span><span class="p">(</span><span class="n">load</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+    <span class="n">load</span><span class="o">.</span><span class="n">idtag</span> <span class="o">=</span> <span class="s2">&quot;example-emt-cs-device&quot;</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">_ExampleEmtProblem</span><span class="p">(</span><span class="n">attached_block</span><span class="p">)</span>
+    <span class="n">register_emt_fmu_cs_device</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">attached_block</span><span class="p">)</span>
+    <span class="n">boundary_updater</span> <span class="o">=</span> <span class="n">build_emt_boundary_updater</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;mode = </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;boundary_calls = </span><span class="si">{</span><span class="n">problem</span><span class="o">.</span><span class="n">calls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">+</span> <span class="n">_build_emt_results_report_lines</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;iA_final&quot;</span><span class="p">,</span> <span class="s2">&quot;iB_final&quot;</span><span class="p">,</span> <span class="s2">&quot;iC_final&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_emt_me_example">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.examples.html#VeraGridEngine.IO.fmu.importer.examples.common.run_emt_me_example">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_emt_me_example</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the full EMT Model Exchange FMU device example.</span>
+
+<span class="sd">    :param output_dir: Output directory used for the FMU and the report.</span>
+<span class="sd">    :return: Generated report path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fmu_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">export_example_emt_me_fmu</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">report_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;emt_me_example_report.txt&quot;</span>
+    <span class="k">if</span> <span class="n">_has_fmpy</span><span class="p">():</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mode = ModelExchange&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status = skipped&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reason = fmpy not installed in this Python environment&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">Load</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">var_factory</span><span class="o">=</span><span class="n">VarFactory</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ExampleEmtMeVarFactory&quot;</span><span class="p">))</span>
+    <span class="n">load</span> <span class="o">=</span> <span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ImportedLoad&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">load</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span>
+    <span class="n">bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ExampleBus&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">load</span><span class="o">.</span><span class="n">_bus</span> <span class="o">=</span> <span class="n">bus</span>
+
+    <span class="n">request</span> <span class="o">=</span> <span class="n">FmuDeviceAttachmentRequest</span><span class="p">(</span>
+        <span class="n">fmu_path</span><span class="o">=</span><span class="n">fmu_path</span><span class="p">,</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">FmuDeviceDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">,</span>
+        <span class="n">input_bindings</span><span class="o">=</span><span class="p">(</span><span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">),),</span>
+        <span class="n">output_bindings</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">,</span> <span class="s2">&quot;i_a_out&quot;</span><span class="p">),</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">,</span> <span class="s2">&quot;i_b_out&quot;</span><span class="p">),</span>
+            <span class="n">FmuRefBinding</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">,</span> <span class="s2">&quot;i_c_out&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">output_defaults</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_A</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_B</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">FmuReferenceValue</span><span class="p">(</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">i_C</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">extraction_root</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+        <span class="n">integration_method</span><span class="o">=</span><span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">attached_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">attach_fmu_to_device</span><span class="p">(</span><span class="n">load</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+    <span class="n">load</span><span class="o">.</span><span class="n">idtag</span> <span class="o">=</span> <span class="s2">&quot;example-emt-me-device&quot;</span>
+    <span class="n">bus_voltage_var</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;example_bus_v_a&quot;</span><span class="p">)</span>
+    <span class="n">bus</span><span class="o">.</span><span class="n">_emt_model</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">external_mapping</span><span class="o">=</span><span class="p">{</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">:</span> <span class="n">bus_voltage_var</span><span class="p">})</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">_ExampleEmtProblem</span><span class="p">(</span><span class="n">attached_block</span><span class="p">,</span> <span class="n">bus_voltage_var</span><span class="p">)</span>
+    <span class="n">register_emt_fmu_me_device</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">attached_block</span><span class="p">)</span>
+    <span class="n">boundary_updater</span> <span class="o">=</span> <span class="n">build_emt_boundary_updater</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+
+    <span class="n">x_snapshot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;fmu_path = </span><span class="si">{</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;mode = </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;boundary_calls = </span><span class="si">{</span><span class="n">problem</span><span class="o">.</span><span class="n">calls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">+</span> <span class="n">_build_emt_results_report_lines</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;iA_final&quot;</span><span class="p">,</span> <span class="s2">&quot;iB_final&quot;</span><span class="p">,</span> <span class="s2">&quot;iC_final&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">write_example_report</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

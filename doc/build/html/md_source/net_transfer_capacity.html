@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚢 Net transfer capacity optimization &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🏭 Nodal hosting capacity" href="nodal_hosting_capacity.html" />
+    <link rel="prev" title="🎢 Cascading" href="cascading.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🚢 Net transfer capacity optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#optimalnettransfercapacityresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optimalnettransfercapacitytimeseriesresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#availabletransfercapacityresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">AvailableTransferCapacityResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#availabletransfercapacitytimeseriesresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">AvailableTransferCapacityTimeSeriesResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#branches">Branches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hvdc-converters">HVDC converters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#power-control-mode">Power control mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#angle-droop-mode-ac-emulation">Angle droop mode (AC emulation)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nodal-balance">Nodal balance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🚢 Net transfer capacity optimization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/net_transfer_capacity.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="net-transfer-capacity-optimization">
+<h1>🚢 Net transfer capacity optimization<a class="headerlink" href="#net-transfer-capacity-optimization" title="Link to this heading"></a></h1>
+<p>The net transfer capacity optimization is an optimization routine that
+tries to move as much power between two given areas as possible.
+This optimization is done using linear programming.</p>
+<p><img alt="" src="../_images/settings-ntc.png" /></p>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="optimalnettransfercapacityresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults</span></code> registered properties<a class="headerlink" href="#optimalnettransfercapacityresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The snapshot NTC result stores the optimized transfer state, monitored elements, and contingency report data.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with VSC converter-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_group_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with contingency group-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dSbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power-injection increment used by the transfer study.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_shadow_prices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Bus shadow price or nodal marginal value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_shedding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Load shedding result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">overloads</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Overload slack or overload result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phase_shift</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Branch phase-shift angle result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Normal monitored element rates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Contingency monitored element rates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Sensitivity of monitored flow to the studied transfer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">monitor_logic</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ObjVec</span></code></p></td>
+<td><p>Monitor-selection logic associated with each monitored element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Convergence flag for the solved case or time step.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inter_area_flows</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Computed inter-area flow for the studied transfer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">structural_inter_area_flows</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Structural inter-area transfer limit before optimization constraints.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_flows_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency flow records.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sending_bus_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Bus indices belonging to the sending side of the transfer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">receiving_bus_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Bus indices belonging to the receiving side of the transfer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inter_space_branches</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Branches connecting the sending and receiving areas.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inter_space_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>HVDC lines connecting the sending and receiving areas.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inter_space_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>VSC converters connecting the sending and receiving areas.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="optimalnettransfercapacitytimeseriesresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults</span></code> registered properties<a class="headerlink" href="#optimalnettransfercapacitytimeseriesresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The time-series NTC result stores the optimized transfer state and monitored quantities for each simulated time index.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DateVec</span></code></p></td>
+<td><p>Time indices represented by the result object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with HVDC line-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_group_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with contingency group-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus voltage solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dSbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power-injection increment used by the transfer study.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_shadow_prices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Bus shadow price or nodal marginal value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_shedding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Load shedding result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">overloads</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Overload slack or overload result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phase_shift</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Branch phase-shift angle result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Normal monitored element rates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_rates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Contingency monitored element rates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Sensitivity of monitored flow to the studied transfer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">monitor_logic</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ObjMat</span></code></p></td>
+<td><p>Monitor-selection logic associated with each monitored element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>HVDC result field <code class="docutils literal notranslate"><span class="pre">hvdc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_Pf</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_loading</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vsc_losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>VSC result field <code class="docutils literal notranslate"><span class="pre">vsc_losses</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sending_bus_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Bus indices belonging to the sending side of the transfer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">receiving_bus_idx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Bus indices belonging to the receiving side of the transfer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inter_space_branches</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Branches connecting the sending and receiving areas.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inter_space_hvdc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>HVDC lines connecting the sending and receiving areas.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inter_space_vsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>VSC converters connecting the sending and receiving areas.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Convergence flag for the solved case or time step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inter_area_flows</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Computed inter-area flow for the studied transfer.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contingency_flows_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>List of contingency flow records.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="availabletransfercapacityresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">AvailableTransferCapacityResults</span></code> registered properties<a class="headerlink" href="#availabletransfercapacityresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The snapshot available-transfer-capacity result currently has no registered persisted properties.</p>
+<p>This result object currently does not register persisted result properties.</p>
+</section>
+<section id="availabletransfercapacitytimeseriesresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">AvailableTransferCapacityTimeSeriesResults</span></code> registered properties<a class="headerlink" href="#availabletransfercapacitytimeseriesresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The time-series available-transfer-capacity result currently has no registered persisted properties.</p>
+<p>This result object currently does not register persisted result properties.</p>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">,</span> <span class="s1">&#39;ACTIVSg2000.veragrid&#39;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">info</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_inter_aggregation_info</span><span class="p">(</span>
+    <span class="n">objects_from</span><span class="o">=</span><span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">[</span><span class="mi">6</span><span class="p">]],</span>  <span class="c1"># Coast</span>
+    <span class="n">objects_to</span><span class="o">=</span><span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">areas</span><span class="p">[</span><span class="mi">7</span><span class="p">]]</span>  <span class="c1"># East</span>
+<span class="p">)</span>
+
+<span class="c1"># declare the opf options</span>
+<span class="n">opf_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(</span>
+    <span class="n">consider_contingencies</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">contingency_groups_used</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">contingency_groups</span>
+<span class="p">)</span>
+
+<span class="c1"># declare the linear analysis options</span>
+<span class="n">lin_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">LinearAnalysisOptions</span><span class="p">()</span>
+
+<span class="c1"># declare the NTC options</span>
+<span class="n">ntc_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalNetTransferCapacityOptions</span><span class="p">(</span>
+    <span class="n">sending_bus_idx</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">idx_bus_from</span><span class="p">,</span>
+    <span class="n">receiving_bus_idx</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">idx_bus_to</span><span class="p">,</span>
+    <span class="n">transfer_method</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">AvailableTransferMode</span><span class="o">.</span><span class="n">InstalledPower</span><span class="p">,</span>
+    <span class="n">loading_threshold_to_report</span><span class="o">=</span><span class="mf">98.0</span><span class="p">,</span>
+    <span class="n">skip_generation_limits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">transmission_reliability_margin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">branch_exchange_sensitivity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">use_branch_exchange_sensitivity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">branch_rating_contribution</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">monitor_only_ntc_load_rule_branches</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">consider_contingencies</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">strict_formulation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">opf_options</span><span class="o">=</span><span class="n">opf_options</span><span class="p">,</span>
+    <span class="n">lin_options</span><span class="o">=</span><span class="n">lin_options</span>
+<span class="p">)</span>
+
+<span class="c1"># declate the driver and run</span>
+<span class="n">drv</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalNetTransferCapacityDriver</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">ntc_options</span><span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span>
+<span class="n">ntc_no_contingencies</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">inter_area_flows</span>
+
+<span class="c1"># check basics from the results</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">nodal_balance</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+<span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span>
+<span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">inter_area_flows</span> <span class="o">&lt;</span> <span class="n">res</span><span class="o">.</span><span class="n">structural_inter_area_flows</span>
+</pre></div>
+</div>
+<p>To run a time series of NTC optimizations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># same inputs as before ...</span>
+
+<span class="c1"># declare the time series NTC driver</span>
+<span class="n">drv</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">OptimalNetTransferCapacityTimeSeriesDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="p">,</span> 
+    <span class="n">ntc_options</span><span class="p">,</span>
+    <span class="n">time_indices</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">drv</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">results</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">nodal_balance</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+<span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">converged</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>We decide to compute the injections per node directly.
+We use a function to summ up all generation present at a
+node and obtain the power injection limits of that node.</p>
+<p>The power increment sent, must be equal to the power increment received:</p>
+<div class="math">
+<p><span class="math">\Delta P_{Send} = \Delta P_{Receive}</span></p>
+</div><p>Where:</p>
+<div class="math">
+<p><span class="math">\Delta P_i = share_i \cdot  \Delta P_{Send} \quad \forall i \in send</span></p>
+</div><div class="math">
+<p><span class="math">\Delta P_i = share_i \cdot  \Delta P_{Receive} \quad \forall i \in receive</span></p>
+</div><p>Finally, we add the nodal injection to the nodal balance summation</p>
+<div class="math">
+<p><span class="math">P_{{balance}_i} = Pbase_i + \Delta P_i</span></p>
+</div><blockquote>
+<div><p>To apply these equations, the generation and the load must be numerically equal in the grid,
+this is, equal to the complete precision of the computer. This requirement is impossible in real life
+since there would be losses; However, in this formulation we are
+forcing everything to be linear and lossless. This means the the summation of the
+$Pbase` vector must be exactly zero.</p>
+</div></blockquote>
+<p>-<span class="math">A_{send}</span>: Node indices of the sending area.</p>
+<p>-<span class="math">A_{receive}</span>: Node indices of the receiving area.</p>
+<p>-<span class="math">\Delta P_i</span>: Power increment at the node i.</p>
+<p>-<span class="math">P_{{balance}_i}</span>: Power balance at the node i. In the end this will be a summation of terms.</p>
+<p>-<span class="math">share_i</span>: scale for the increment at the node i. This is akin to the GLSK’s.</p>
+<p>-<span class="math">Pbase_i</span>: Power injection (generation - load) of the base situation at the node i.</p>
+<section id="branches">
+<h3>Branches<a class="headerlink" href="#branches" title="Link to this heading"></a></h3>
+<p>The flow at the “from” node in a branch is:</p>
+<div class="math">
+<p><span class="math">flow_k = \frac{\theta_f - \theta_t}{x_k}</span></p>
+</div><p>In case of a phase shifter transformer:</p>
+<div class="math">
+<p><span class="math">flow_k = \frac{\theta_f - \theta_t + \tau_k}{x_k}</span></p>
+</div><p>We need to limit the flow to the line specified rating:</p>
+<div class="math">
+<p><span class="math">- rate_k \leq flow_k \leq rate_k</span></p>
+</div><p>Finally, we add the flows to the nodal balance summation:</p>
+<div class="math">
+<p><span class="math">P_{{balance}_f} -= flow_k</span></p>
+</div><div class="math">
+<p><span class="math">P_{{balance}_t} += flow_k</span></p>
+</div><p>-<span class="math">f</span>: index of the node “from”</p>
+<p>-<span class="math">t</span>: index of the node “to”</p>
+<p>-<span class="math">\theta_f</span>: Nodal voltage angle at the node f.</p>
+<p>-<span class="math">\theta_t</span>: Nodal voltage angle at the node t.</p>
+<p>-<span class="math">x_k</span>: Branch k reactance.</p>
+<p>-<span class="math">rate_k</span>: Branch k power rating.</p>
+<p>-<span class="math">\tau_k</span>: Tap angle of the branch k.</p>
+<p>-<span class="math">P_f</span>: Power balance at the node f.</p>
+<p>-<span class="math">P_t</span>: Power balance at the node t.</p>
+</section>
+<section id="hvdc-converters">
+<h3>HVDC converters<a class="headerlink" href="#hvdc-converters" title="Link to this heading"></a></h3>
+<p>These are controlled branches for which the flow is determined by a control equation.
+The $flow_k` value will differ depending on the control mode chosen:</p>
+<section id="power-control-mode">
+<h4>Power control mode<a class="headerlink" href="#power-control-mode" title="Link to this heading"></a></h4>
+<p>This is the most common control mode of an HVDC
+converter, where the active power send is controlled and fixed.
+For out optimization, the variable $flow_k` is an optimization value
+that moves freely between the +/- rating values.</p>
+<div class="math">
+<p><span class="math">- rate_k \leq flow_k \leq rate_k</span></p>
+</div></section>
+<section id="angle-droop-mode-ac-emulation">
+<h4>Angle droop mode (AC emulation)<a class="headerlink" href="#angle-droop-mode-ac-emulation" title="Link to this heading"></a></h4>
+<p>This is a very uncommon control decision solely used by the INELFE HVDC
+between Spain and France. It is uncommon because the DC equipment is made
+to vary depending on an AC magnitude measured as the difference between
+the AC voltage angle at the AC sides of both converters.
+This can only work because the two areas are also joined by AC lines already.</p>
+<p>For the purpose of running an old-fashioned ac power flow, this is very
+convenient, since we don’t need to come up with a proper DC formulation
+using voltage magnitudes on top of using the classic linear formulations
+based on susceptances and angles.</p>
+<p>This mode, introduces some complexity; The angles are only coupled by the
+expression “$y`” when the converter power is within limits, otherwise
+the converter flow is set to the maximum value and the angles are set free.
+This is of course because of the artificial coupling imposed by the math,
+since in reality the voltage angles are independent of this of that control
+mode. To appropriately express this, we need to use a piece-wise function
+formulation:</p>
+<div class="math">
+<p><span class="math">flow_k =
+    \begin{cases}
+        -rate_k &amp; if \quad  flow\_lin \le -rate_k \\
+        P_0 + k(\theta_f - \theta_t) &amp; if \quad -rate_k &lt; flow\_lin &lt; rate_k \\
+        rate_k &amp; if \quad flow\_lin \ge rate_k
+    \end{cases}</span></p>
+</div><p>To implement this piecewise function we need to perform a serious
+amount of MIP magic.</p>
+<p>Selector constraint:</p>
+<div class="math">
+<p><span class="math">z_{neg} + z_{mid} + z_{pos} = 1</span></p>
+</div><p>Linear flow expression:</p>
+<div class="math">
+<p><span class="math">flow\_lin = P_0 + k(\theta_f - \theta_t)</span></p>
+</div><p>Lower flow definitionNegative flow saturation:</p>
+<div class="math">
+<p><span class="math">flow_k \le -rate_k + M(1 - z_{neg}) \\
+    flow_k \ge -rate_k - M(1 - z_{neg}) \\
+    flow\_lin \le -rate_k + M(1 - z_{neg})</span></p>
+</div><p>Mid-range: the droop operation zone:</p>
+<div class="math">
+<p><span class="math">flow_k \le flow\_lin + M(1 - z_{mid}) \\
+    flow_k \ge flow\_lin - M(1 - z_{mid}) \\
+    flow\_lin \le rate_k - \varepsilon + M(1 - z_{mid}) \\
+    flow\_lin \ge -rate_k + \varepsilon - M(1 - z_{mid})</span></p>
+</div><p>Upper flow definitionNegative flow saturation:</p>
+<div class="math">
+<p><span class="math">flow_k \le rate_k + M(1 - z_{pos}) \\
+    flow_k \ge rate_k - M(1 - z_{pos}) \\
+    flow\_lin \ge rate_k - M(1 - z_{pos})</span></p>
+</div><ul class="simple">
+<li><p><span class="math">K_k</span>: Arbitrary control parameter used.</p></li>
+<li><p><span class="math">P0_k</span>: Base power (i.e. the given market exchange for the line).</p></li>
+<li><p><span class="math">flow_k</span>: real variable to be computed</p></li>
+<li><p><span class="math">flow\_lin</span>: Auxiliary variable.</p></li>
+<li><p><span class="math">rate_k</span>: maximum allowable flow in either direction</p></li>
+<li><p><span class="math">M</span>: large constant for Big-M logic (e.g., $M \ge 2 \cdot rate`)</p></li>
+<li><p><span class="math">\varepsilon</span>: small tolerance for strict inequalities</p></li>
+<li><p>$z_{neg}, z_{mid}, z_{pos} \in {0, 1}`</p></li>
+</ul>
+<p>Finally, we add the flows to the nodal balance summation, just like we would with the branches:</p>
+<div class="math">
+<p><span class="math">P_{{balance}_f} -= flow_k</span></p>
+</div><div class="math">
+<p><span class="math">P_{{balance}_t} += flow_k</span></p>
+</div></section>
+</section>
+<section id="nodal-balance">
+<h3>Nodal balance<a class="headerlink" href="#nodal-balance" title="Link to this heading"></a></h3>
+<p>To respect the nodal flows, we create constraints where every nodal power
+summation is equal to zero to fulfill the Bucherot theorem:
+<em>All power summation at a node is zero</em>.</p>
+<div class="math">
+<p><span class="math">\sum^{Nodes}_i {P_{{balance}_i} =0 }</span></p>
+</div><p>The expressions contained in <span class="math">P_{{balance}_i}</span> will be dependent on the angles
+<span class="math">\theta</span> because of the branches and HVDC formulations.
+Therefore, the angles will be solved by the optimization too.
+However, we must take care to set the slack angles to exactly zero:</p>
+<div class="math">
+<p><span class="math">\theta_{slack} = 0</span></p>
+</div></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cascading.html" class="btn btn-neutral float-left" title="🎢 Cascading" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nodal_hosting_capacity.html" class="btn btn-neutral float-right" title="🏭 Nodal hosting capacity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

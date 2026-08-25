@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.raw.versioned.base.induction_machine &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.raw.versioned.base.induction_machine</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.raw.versioned.base.induction_machine</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Unit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawObject</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_property</span><span class="w"> </span><span class="kn">import</span> <span class="n">PsseProperty</span>
+
+
+<div class="viewcode-block" id="RawInductionMachine">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.induction_machine.RawInductionMachine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RawInductionMachine</span><span class="p">(</span><span class="n">RawObject</span><span class="p">):</span>
+    <span class="n">LOCAL_PROPERTIES</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PsseProperty</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;ibus&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Bus number&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                     <span class="n">max_value</span><span class="o">=</span><span class="mi">999997</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;imid&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;One or  two character ID&#39;</span><span class="p">,</span>
+                     <span class="n">max_chars</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;STAT&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;stat&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Status&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                     <span class="n">max_value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;SCODE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;scode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Machine standard code: </span><span class="se">\n</span><span class="s1">1:NEMA</span><span class="se">\n</span><span class="s1">2:IEC&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;DCODE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;dcode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Machine design code.</span><span class="se">\n</span><span class="s1">•  0 - for Custom design with equivalent circuit reactances specified</span><span class="se">\n</span><span class="s1">•  1 - for NEMA Design A</span><span class="se">\n</span><span class="s1">•  2 - for NEMA Design B / IEC Design N</span><span class="se">\n</span><span class="s1">•  3 - for NEMA Design C / IEC Design H</span><span class="se">\n</span><span class="s1">•  4 - for NEMA Design D</span><span class="se">\n</span><span class="s1">•  5 - for NEMA Design E&#39;</span><span class="p">,</span>
+                     <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;AREA&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Area number&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;ZONE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;zone&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Zone number&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;OWNER&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;owner&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Owner number&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;TCODE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;tcode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Type of mechanical load torque variation:</span><span class="se">\n</span><span class="s1">•  1 - Simple power law</span><span class="se">\n</span><span class="s1">•  2 - WECC model&#39;</span><span class="p">,</span>
+                     <span class="n">min_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;BCODE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;bcode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Machine base power code:</span><span class="se">\n</span><span class="s1">•  1 - Mechanical power (MW) output of the machine</span><span class="se">\n</span><span class="s1">•  2 - Apparent electrical power (MVA) drawn by the machine&#39;</span><span class="p">,</span>
+                     <span class="n">min_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;MBASE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;mbase&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Nominal power (see the manual for more funkyness).&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mva</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;RATEKV&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;ratekv&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Rated voltage&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_kv</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;PCODE&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;pcode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Scheduled power code&#39;</span><span class="p">,</span>
+                     <span class="n">min_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;PSET&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;pset&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_mw</span><span class="p">(),</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Scheduled  active  power (see the manual).&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;hconst&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Machine inertia, in per unit on MBASE base.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;aconst&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A parameter to model the torque of the mechanical load with speed. (see manual)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;bconst&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;B parameter to model the torque of the mechanical load with speed. (see manual)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;dconst&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;D parameter to model the torque of the mechanical load with speed. (see manual)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;econst&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;E parameter to model the torque of the mechanical load with speed. (see manual)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;RA&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Armature resistance&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;XA&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;xa&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Armature leakage reactance.&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;XM&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;xm&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Unsaturated magnetizing reactance.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;R1&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;r1&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Resistance of the first rotor winding.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;X1&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Reactance of the first rotor winding.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;R2&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Resistance of the second rotor winding.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;X2&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Reactance of the second rotor winding.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;X3&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;x3&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Third rotor reactance.&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;E1&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;First terminal voltage point from the open circuit saturation  curve.&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;SE1&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;se1&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Saturation factor at terminal voltage E1, S(E1).&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;E2&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Second terminal voltage point from the open circuit saturation curve.&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;SE2&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;se2&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Saturation factor at terminal voltage E2, S(E2)&#39;</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;IA1&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;ia1&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Stator currents in PU specifying saturation of the stator leakage reactance, XA.&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;IA2&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;ia2&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Stator currents in PU specifying saturation of the stator leakage reactance, XA.&#39;</span><span class="p">,</span>
+                     <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;XAMULT&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;xamult&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Multiplier for the saturated value. Allowed value 0 to 1.0.&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">get_pu</span><span class="p">()),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">RawObject</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Induction machine&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STAT</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SCODE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DCODE</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AREA</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ZONE</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OWNER</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TCODE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BCODE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MBASE</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RATEKV</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PCODE</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PSET</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">RA</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XA</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XM</span> <span class="o">=</span> <span class="mf">2.5</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">R1</span> <span class="o">=</span> <span class="mf">999.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X1</span> <span class="o">=</span> <span class="mf">999.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="mf">999.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X2</span> <span class="o">=</span> <span class="mf">999.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X3</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">E1</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SE1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E2</span> <span class="o">=</span> <span class="mf">1.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SE2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">IA1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">IA2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XAMULT</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<div class="viewcode-block" id="RawInductionMachine.parse">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.induction_machine.RawInductionMachine.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.parse must be implemented in a version-specific subclass&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RawInductionMachine.get_raw_line">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.induction_machine.RawInductionMachine.get_raw_line">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_raw_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.get_raw_line must be implemented in a version-specific subclass&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RawInductionMachine.get_id">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.induction_machine.RawInductionMachine.get_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the element PSSE ID</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RawInductionMachine.get_object">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.raw.versioned.base.html#VeraGridEngine.IO.raw.versioned.base.induction_machine.RawInductionMachine.get_object">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return Newton Load object</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Newton Load object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">),</span>
+                            <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PSET</span><span class="p">,</span>
+                            <span class="n">vset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">RATEKV</span><span class="p">,</span>
+                            <span class="n">Snom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">MBASE</span><span class="p">,</span>
+                            <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">STAT</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">elm</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">STATUS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAT</span>
+
+    <span class="nd">@STATUS</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">STATUS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STAT</span> <span class="o">=</span> <span class="n">value</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

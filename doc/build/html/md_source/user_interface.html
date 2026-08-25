@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 User interface &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🔎 Grid analysis" href="grid_analysis.html" />
+    <link rel="prev" title="💽 Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📊 User interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#diagram-view">Diagram View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#library-and-parameters">Library and parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#schematic-and-map-editors">Schematic and map editors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diagram-settings-scenarios-and-variations">Diagram Settings, Scenarios and Variations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#working-in-the-model-view">Working in the model view</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tabular-database-editor">Tabular database editor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#object-categories">Object Categories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#branch-templates">Branch templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timeseries-loading">Timeseries loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-queries">Search queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#compiled-arrays">Compiled Arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#snapshot-and-time-series-results">Snapshot and time-series results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamic-results">Dynamic results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logs">Logs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#report">Report</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scripting">Scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#settings">Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#base-settings">Base settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#saving-results-with-the-model">Saving results with the model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulation-settings">Simulation settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-analysis-dashboard">Data analysis dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comments-editor">Comments editor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📊 User interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/user_interface.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="user-interface">
+<h1>📊 User interface<a class="headerlink" href="#user-interface" title="Link to this heading"></a></h1>
+<p>The user interface of VeraGrid is written using the Qt graphical interface
+framework. This allows VeraGrid to be multi-platform and to have sufficient
+performance to handle thousands of graphical items in the editor and to be
+responsive when working with large data sets.</p>
+<p><img alt="" src="../_images/VeraGrid_GUI_Light_500bus.png" /><br />
+VeraGrid user interface representing  a zoom of a ~500 node grid.</p>
+<p>The interface automatically detects your system language when available. If your system language is not available, the program defaults to English. You can change the language directly from the GUI. VeraGrid is currently available in:</p>
+<ul class="simple">
+<li><p>English</p></li>
+<li><p>Mandarin Chinese</p></li>
+<li><p>Cantonese</p></li>
+<li><p>Japanese</p></li>
+<li><p>Korean</p></li>
+<li><p>Hindi</p></li>
+<li><p>Arabic</p></li>
+<li><p>Greek</p></li>
+<li><p>Spanish</p></li>
+<li><p>Portuguese</p></li>
+<li><p>French</p></li>
+<li><p>German</p></li>
+<li><p>Italian</p></li>
+<li><p>Dutch</p></li>
+</ul>
+<p>If you would like to contribute to adding your language, feel free to get in touch.</p>
+<p>The graphical user interface (GUI) makes extensive use of tooltip texts. These are tags that appear
+when you hover the mouse cursor over a button from the interface. The tooltip texts are meant to be explanatory
+so that reading a manual is not required unless you need the technical details.</p>
+<p>Nevertheless, this guide hopes to guide you through the GUI well enough so that the program is usable.</p>
+<section id="diagram-view">
+<h2>Diagram View<a class="headerlink" href="#diagram-view" title="Link to this heading"></a></h2>
+<p>The diagram view is where all the editing is done. It is divided into three different panels.</p>
+<section id="library-and-parameters">
+<h3>Library and parameters<a class="headerlink" href="#library-and-parameters" title="Link to this heading"></a></h3>
+<p>In the left panel, you can find the library of elements to drag and drop into your schematics. By then clicking on an element in the schematic and switching to the properties tab, you will be able to observe and edit a specific element’s parameters. These properties can be filtered to include only the parameters relevant to the simulation you’re conducting.</p>
+</section>
+<section id="schematic-and-map-editors">
+<h3>Schematic and map editors<a class="headerlink" href="#schematic-and-map-editors" title="Link to this heading"></a></h3>
+<p>In the main panel, you can find the schematics and map diagrams that represent the system currently under study. You can create as many maps and schematics, either of the whole system or of specific portions, as you want. Creating these smaller schematics will allow you to focus on results for specific areas, while still simulating the full system.</p>
+<p><img alt="" src="../_images/VeraGrid_Map_Light_500bus.png" /><br />
+Sample map diagram of ~500 node grid.</p>
+</section>
+<section id="diagram-settings-scenarios-and-variations">
+<h3>Diagram Settings, Scenarios and Variations<a class="headerlink" href="#diagram-settings-scenarios-and-variations" title="Link to this heading"></a></h3>
+<p>In the right plane, there are three more tabs you can use.</p>
+<p>In the diagrams tab, you can create new maps or diagrams and also edit settings for the map and schematic diagrams, using either preset templates or customized sizes, set the algorithm for automatic schematic layouts, and set the plotting style for the results visible in the diagram and results tab.</p>
+<p>In the scenarios tab, you can create different variations of you grid using scenarios, and easily merge changes from different working branches.</p>
+<p>In the variations tab, you will find results from studies with many different possible outcomes, such as the investment optimization, from this you will be able to select specific outputs of the simulation to investigate deeper.</p>
+</section>
+<section id="working-in-the-model-view">
+<h3>Working in the model view<a class="headerlink" href="#working-in-the-model-view" title="Link to this heading"></a></h3>
+<p>The usage of the model view is quite simple:</p>
+<ul class="simple">
+<li><p>Drag &amp; Drop the buses from the left panel into the main panel.</p></li>
+<li><p>Click on a bus bar (black line) and drag the link into another bus bar, a branch will be created.</p>
+<ul>
+<li><p>Branch types can be selected (branch, transformer, line, switch, reactance).</p></li>
+<li><p>If you double-click a branch that is a line of transformer, a simplified editor will pop up.</p></li>
+</ul>
+</li>
+<li><p>To add loads, generators, shunts, etc… just right click on  bus and select from the context menu.</p>
+<ul>
+<li><p>If you double-click on a generator or load, a simplified editor will pop up.</p></li>
+</ul>
+</li>
+<li><p>The context menu from the buses allow plenty of operations such as view the bus profiles (if timeseries are present) or setting a bus as a short circuit point. This can be accessed by right clicking on the bus.</p></li>
+</ul>
+<p>The schematic objects are coloured based on the results of the latest simulation. For buses and branches, the most relevant simulation results are also shown.</p>
+<p><img alt="" src="../_images/GUI_Results.png" /></p>
+<p>When multiple simulation results are available, use the controls at the bottom of the right panel in the Diagram tab to select which simulation is displayed on the schematic. For simulations with a time component, such as time series, use the slider below the results selector to navigate to a specific time step. You can also right-click on buses or branches to observe the full simulation profiles.</p>
+</section>
+</section>
+<section id="tabular-database-editor">
+<h2>Tabular database editor<a class="headerlink" href="#tabular-database-editor" title="Link to this heading"></a></h2>
+<p>Sometimes is far more practical to edit the objects in bulk. For that, VeraGrid features the tabular view
+of the objects. All the static properties of the objects can be edited here. The database is divided into three editors.</p>
+<ul class="simple">
+<li><p>The objects editor allows you to edit parameters in the snapshot case and parameters that do not have timeseries associations. When you edit any parameter here for a value that has an associated timeseries, you will be prompted to decide whether to apply this change to the full timeseries as well.</p></li>
+<li><p>The associations editor allows you to edit associations of the grid elements. This includes the owner of that element, and technology, fuel, and emissions associations for generators and loads.</p></li>
+<li><p>The timeseries editor allows you to visualize, create and manipulate the profiles of the various magnitudes of the program.</p></li>
+</ul>
+<p><img alt="" src="../_images/Database_GUI.png" /></p>
+<section id="object-categories">
+<h3>Object Categories<a class="headerlink" href="#object-categories" title="Link to this heading"></a></h3>
+<p>The object tree on the left side of the database editor organizes the model objects by purpose. Expand a category and select an object type to display all objects of that type in the table.</p>
+<p>Each row represents one object and each column represents one of its properties. The available columns depend on the selected object type and on the property-category filter applied above the table.</p>
+<p>You can the VeraGrid default catalogues for RMS, EMT, FMU, and device templates under Actions -&gt; Add default catalogue</p>
+</section>
+<section id="branch-templates">
+<h3>Branch templates<a class="headerlink" href="#branch-templates" title="Link to this heading"></a></h3>
+<p>Templates are available for different branch types. The templates are designed to ease the process of defining the
+properties of the branch objects.</p>
+<ul class="simple">
+<li><p><em>Wires</em>: A wire is not strictly a branch, but it is required to be able to define an overhead line.</p></li>
+<li><p><em>Tower</em>: It is a composition of wires bundled by phase (A:1, B:2, C:3, Neutral:0) that represents a tower.
+The overhead lines can be further edited using the Line builder (see below)</p></li>
+<li><p><em>Underground lines</em>: Underground lines are defined with the zero sequence and positive sequence parameters.</p></li>
+<li><p><em>Sequence lines</em>: Generic sequence lines are defined with the zero sequence and positive sequence parameters.</p></li>
+<li><p><em>Transformers</em>: The three-phase transformers are defined with the short circuit study parameters.</p></li>
+</ul>
+<p>Visit the theory section to learn more about these models.</p>
+<p>The overhead line editor allows you to define an overhead line in any way you want, bundling many wires per phase if you
+need and including the neutral. The equations for this functionality are taken from the EMTP theory book.</p>
+<p><img alt="" src="../_images/GUI_Tower.png" /></p>
+</section>
+<section id="timeseries-loading">
+<h3>Timeseries loading<a class="headerlink" href="#timeseries-loading" title="Link to this heading"></a></h3>
+<p>The time series is what makes VeraGrid what it is. To handle time series efficiently by design is what made me
+design this program.</p>
+<p>Timeseries values can be inputted in many ways, including with scripting. Within the database tab, there are a few options to do this using wizards.</p>
+<p>From the time series tab you can access the time series importer. This is a program to read excel and csv files from which
+to import the profiles. Each column of the imported file is treated as an individual profile.
+The imported profiles can be normalized and scaled. Each profile can be assigned in a number of ways to the objects for
+which the profiles are being imported.</p>
+<p>Linking methods:</p>
+<ul class="simple">
+<li><p>Automatically based on the profile name and the object’s names.</p></li>
+<li><p>Random links between profiles and objects; Each object is assigned with a random profile.</p></li>
+<li><p>Assign the selected profile to all objects.</p></li>
+<li><p>Assign the selected profile to the selected objects.</p></li>
+</ul>
+<p><img alt="" src="../_images/profiles_import_csv.png" /></p>
+<p>The second option is to import from various snapshot models. To complete this, first load a single model. Once completed, you can then load all remaining models in order using the blue button beside the previous mentioned, and the profiles will be completed by reading the model data.</p>
+<p>The final option is to copy and paste the profiles to the associated generators and loads from another tabular editor. This is less recommended as it can cause conflicts in input type.</p>
+</section>
+<section id="search-queries">
+<h3>Search queries<a class="headerlink" href="#search-queries" title="Link to this heading"></a></h3>
+<p>The database and the results tab contain search boxes to perform advanced searches.</p>
+<p>Here we explain how to compose a search query.</p>
+<p>Queries in VeraGrid are made by using the following synthax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="p">[</span><span class="n">subject</span><span class="p">]</span> <span class="p">[</span><span class="n">operation</span><span class="p">]</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="p">[</span><span class="ow">and</span><span class="o">/</span><span class="ow">or</span><span class="p">]</span> <span class="p">[</span><span class="n">subject</span><span class="p">]</span> <span class="p">[</span><span class="n">operation</span><span class="p">]</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="p">[</span><span class="ow">and</span><span class="o">/</span><span class="ow">or</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Observe that this query is composed by smaller sub-queries that are joined by the <em>and</em> / <em>or</em> operations</p>
+<p>Each subquery is composed as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="p">[</span><span class="n">subject</span><span class="p">]</span> <span class="p">[</span><span class="n">operation</span><span class="p">]</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The subject is what to compare. Possible subjects:</p>
+<ul class="simple">
+<li><p>val: Value</p></li>
+<li><p>col: column value</p></li>
+<li><p>idx: Index value</p></li>
+<li><p>colobj: Object underlying</p></li>
+<li><p>idxobj: Object underlying</p></li>
+</ul>
+<p>The operation is how to compare. Possible operations:</p>
+<ul class="simple">
+<li><p>&lt;: less than the value</p></li>
+<li><p>&lt;= less or equal than the value</p></li>
+<li><p>&gt;: Greater than the value</p></li>
+<li><p>&gt;=: Greater than or equal to the value</p></li>
+<li><p>“=”: Equal than the value</p></li>
+<li><p>“!=”: Different than the value</p></li>
+<li><p>“like”: The value is in the subject</p></li>
+<li><p>“notlike”: The value is not in the subject</p></li>
+<li><p>“starts”: The subject starts with the value</p></li>
+<li><p>“ends”: The subject ends with the value</p></li>
+</ul>
+<p>Finally, the value is what to compare to. The value can be a single entity
+or a list of values provided between brackets [val1, val2, …]</p>
+</section>
+</section>
+<section id="compiled-arrays">
+<h2>Compiled Arrays<a class="headerlink" href="#compiled-arrays" title="Link to this heading"></a></h2>
+<p>In this tab you can see the underlying arrays for the computations VeraGrid is completing. To show them, click the calculator icon.</p>
+<p><img alt="" src="../_images/Compiled_Arrays.png" /></p>
+<p>This tab can be useful when investigating grids to find topological islands that need to be resolved.</p>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p>The Results tab provides a common interface for reviewing the outputs of all simulations performed during the current session. Results are organized by study in the tree on the left. Expanding a study displays the result categories available for that simulation.</p>
+<p>Selecting a result displays its data in the appropriate results view. The information shown in the grid diagrams can therefore also be inspected numerically, plotted, copied, filtered, and exported.</p>
+<section id="snapshot-and-time-series-results">
+<h3>Snapshot and time-series results<a class="headerlink" href="#snapshot-and-time-series-results" title="Link to this heading"></a></h3>
+<p>The tabular results view is used for snapshot simulations and simulations containing multiple time steps. Each row and column corresponds to a result dimension, such as a bus, branch, device, contingency, area, or point in time. The units of the selected result are displayed next to the table.</p>
+<p>The available results depend on the simulation.</p>
+<p><img alt="" src="../_images/results_staticts.png" /></p>
+<p>The table includes several tools for inspecting and processing the results:</p>
+<ul class="simple">
+<li><p>Transpose exchanges the rows and columns of the table.</p></li>
+<li><p>Absolute converts the displayed values to their absolute values.</p></li>
+<li><p>CDF converts the values into a cumulative distribution representation.</p></li>
+<li><p>Search filters the table using an expression.</p></li>
+<li><p>Stacked plot displays compatible result series as a stacked chart.</p></li>
+<li><p>Copy places the displayed table on the clipboard so that it can be pasted into spreadsheet software.</p></li>
+<li><p>Copy as NumPy places a NumPy representation of the data on the clipboard for use in Python.</p></li>
+<li><p>Save exports the displayed table to CSV or Excel format.</p></li>
+</ul>
+<p>For time-series simulations, timestamps or time indices form one of the table dimensions. This makes it possible to inspect the evolution of grid quantities over the simulation period and plot selected devices or variables against time.</p>
+<p>The result tree may contain several completed simulations at the same time, although only one of the same study (ex: power flow) at the same time. Selecting a different study changes the active table, logs, and report. A simulation and its stored results can also be removed through the context menu of the result tree.</p>
+</section>
+<section id="dynamic-results">
+<h3>Dynamic results<a class="headerlink" href="#dynamic-results" title="Link to this heading"></a></h3>
+<p>The dynamic results view is used for RMS and EMT simulations. Dynamic variables are organized by device type, device, model, and variable, allowing individual states, measurements, control signals, and parameters to be located within large dynamic models.</p>
+<p>Use the search field to filter the dynamic object tree. Double-clicking an available result variable plots it directly.</p>
+<p>For more structured analysis, variables can be organized into plot groups:</p>
+<ol class="arabic simple">
+<li><p>Create a plot group.</p></li>
+<li><p>Drag variables from the dynamic object tree into the group.</p></li>
+<li><p>Select the group or one of its variables.</p></li>
+<li><p>Display the corresponding plot or inspect its numerical values in the table.</p></li>
+</ol>
+<p>Plot groups and variables can be renamed to produce clearer figure labels. Individual variables or complete groups can also be removed. A plot group can contain variables from different devices, making it possible to compare quantities such as voltages, frequencies, currents, power outputs, controller states, and protection signals in the same figure.</p>
+<p>Where a simulation contains several event groups, the selected series remains associated with its corresponding event group. This distinguishes results that have the same variable name but originate from different simulated events.</p>
+<p>Dynamic plot definitions are stored with the circuit. RMS and EMT plot groups can therefore be prepared before running a simulation and reused when the study is repeated. This is useful when the same set of signals must be reviewed across different model parameters, events, or operating conditions.</p>
+<p>Selecting a plot entry also displays its underlying values in tabular form, providing access to the numerical data used to generate the figure.</p>
+</section>
+<section id="logs">
+<h3>Logs<a class="headerlink" href="#logs" title="Link to this heading"></a></h3>
+<p>The Logs view displays the messages produced by the selected simulation. Entries are organized by severity and context and may include:</p>
+<ul class="simple">
+<li><p>Information about the simulation process.</p></li>
+<li><p>Convergence messages.</p></li>
+<li><p>Model or data warnings.</p></li>
+<li><p>Devices affected by a particular issue.</p></li>
+<li><p>Numerical errors and failed checks.</p></li>
+<li><p>Additional information generated while compiling or solving the network.</p></li>
+</ul>
+<p><img alt="" src="../_images/logs_GUI.png" /></p>
+<p>Logs are particularly useful when a simulation does not converge, produces incomplete results, or requires changes to the grid model. Selecting another study loads the logs associated with that specific simulation.</p>
+<p>The complete log can be exported to CSV or Excel for further review, issue tracking, or inclusion in validation records.</p>
+</section>
+<section id="report">
+<h3>Report<a class="headerlink" href="#report" title="Link to this heading"></a></h3>
+<p>The Report view displays the textual report generated by the selected simulation.</p>
+</section>
+</section>
+<section id="scripting">
+<h2>Scripting<a class="headerlink" href="#scripting" title="Link to this heading"></a></h2>
+<p>The Scripting tab provides an embedded Python environment for automating tasks directly within the graphical user interface. It includes a script editor for writing and saving reusable Python code and an interactive console for running individual commands and inspecting objects.</p>
+<p><img alt="" src="../_images/Scripting_GUI.png" /></p>
+<p>The active VeraGrid application is available through the <code class="docutils literal notranslate"><span class="pre">app</span></code> object. The grid currently open in the GUI can be accessed as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">app.circuit</span></code> is a <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> object and provides access to the complete network model. Through it, scripts can complete any actions available in the GUI.</p>
+<p>The simulation session is available through:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span>
+</pre></div>
+</div>
+<p>The session manages simulation drivers and their results. It can be used to list the completed studies, retrieve a driver or results object, iterate through the available results, inspect simulation logs, register a driver, or run a simulation programmatically.</p>
+<p>The GUI application itself exposes additional functionality through <code class="docutils literal notranslate"><span class="pre">app</span></code>. This includes simulation options, result tables, diagram tools, import and export functions, and many of the operations available from the menus and toolbars.</p>
+<p>Diagrams stored in the grid are available through:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">diagrams</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">diagrams</span>
+</pre></div>
+</div>
+<p>This collection can contain schematic diagrams and map diagrams. Scripts can inspect their represented devices and stored locations, create new diagrams, add or remove diagram elements, process geographic coordinates, and automate the preparation of network views.</p>
+<p>Since the console is a normal Python environment, standard Python operations and compatible installed packages can be used for numerical processing, plotting, data analysis, and file handling. VeraGrid Engine classes and simulation drivers can also be imported and used in the same way as in an external Python script.</p>
+<p>Changes made directly to the underlying circuit are immediately applied to the in-memory model. Some graphical changes may require refreshing the relevant table, tree, diagram, or results view before they become visible in the interface. Saving the project stores supported changes in the VeraGrid file.</p>
+</section>
+<section id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Link to this heading"></a></h2>
+<p>The Settings tab contains the general grid configuration and the options associated with each simulation type.</p>
+<section id="base-settings">
+<h3>Base settings<a class="headerlink" href="#base-settings" title="Link to this heading"></a></h3>
+<p><img alt="" src="../_images/Setting_GUI.png" /></p>
+<p>The base settings are:</p>
+<ul class="simple">
+<li><p>Grid name: Name used to identify the grid model.</p></li>
+<li><p>Base power: Power base of the grid in megavolt-amperes (MVA). VeraGrid uses the per-unit system, for which this value defines the base power. It is recommended not to change it.</p></li>
+<li><p>Base frequency: Nominal frequency of the grid in hertz (Hz).</p></li>
+<li><p>Time index of snapshot: Time-series index used to populate the snapshot values of the grid. Changing this index updates the snapshot to the values stored at the selected time step.</p></li>
+<li><p>Language: Language used by the graphical user interface. VeraGrid can automatically detect the system language, and the language can also be selected manually from the available translations.</p></li>
+</ul>
+</section>
+<section id="saving-results-with-the-model">
+<h3>Saving results with the model<a class="headerlink" href="#saving-results-with-the-model" title="Link to this heading"></a></h3>
+<p>VeraGrid can save simulation results together with the grid model. When this option is enabled, the results remain available after closing and reopening the file. This is also useful when sharing a model with another user who needs to inspect the results.</p>
+<p>Saving results can increase the size of the file, particularly for time-series and dynamic simulations.</p>
+</section>
+<section id="simulation-settings">
+<h3>Simulation settings<a class="headerlink" href="#simulation-settings" title="Link to this heading"></a></h3>
+<p>Each simulation has its own settings, which control how the study is configured and executed. These settings are explained in detail in the documentation section dedicated to the corresponding simulation.</p>
+</section>
+</section>
+<section id="data-analysis-dashboard">
+<h2>Data analysis dashboard<a class="headerlink" href="#data-analysis-dashboard" title="Link to this heading"></a></h2>
+<p>The data analysis dashboard evaluates the quality and simulation readiness of the grid model. It combines structural checks, numerical conditioning, power-balance analysis, and the sigma stability margin into an overall grid health score.</p>
+<p><img alt="" src="../_images/Grid_Health_GUI.png" /></p>
+<p>The dashboard includes:</p>
+<ul class="simple">
+<li><p>An executive overview with the overall score, critical issues, and available automatic fixes.</p></li>
+<li><p>A findings explorer that can be filtered by severity, object type, fixability, or search text.</p></li>
+<li><p>An action narrative summarizing the main problems and recommended next steps.</p></li>
+<li><p>A balance explorer for comparing active and reactive power balances by area, zone, country, or other available aggregations.</p></li>
+<li><p>A sigma stability view showing the distance of each bus from the sigma boundary.</p></li>
+<li><p>Assessment controls for adjusting diagnostic thresholds and deciding whether time-series profiles should also be analysed or corrected.</p></li>
+</ul>
+<p>Supported issues can be corrected directly using Fix Safe Issues. After applying the changes, VeraGrid reruns the analysis and updates the score. The findings can be exported separately to Excel, while the complete dashboard report can be exported to Excel, HTML, or PDF.</p>
+</section>
+<section id="comments-editor">
+<h2>Comments editor<a class="headerlink" href="#comments-editor" title="Link to this heading"></a></h2>
+<p>You can add comments to the grid file, for example when collaborating with other users or documenting modelling decisions, assumptions, data sources, and pending changes. These comments are saved with the grid and remain available when the file is reopened.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="💽 Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="grid_analysis.html" class="btn btn-neutral float-right" title="🔎 Grid analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

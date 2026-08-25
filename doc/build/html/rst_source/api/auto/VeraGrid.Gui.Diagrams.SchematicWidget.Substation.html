@@ -1,0 +1,851 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.SchematicWidget.Substation package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.Gui.DynamicModelEditor package" href="VeraGrid.Gui.DynamicModelEditor.html" />
+    <link rel="prev" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections package" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.html">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.html">VeraGrid.Gui.Diagrams package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.Gui.Diagrams.SchematicWidget.html">VeraGrid.Gui.Diagrams.SchematicWidget package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.SchematicWidget.Substation package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.Gui.Diagrams.SchematicWidget.Substation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-gui-diagrams-schematicwidget-substation-package">
+<h1>VeraGrid.Gui.Diagrams.SchematicWidget.Substation package<a class="headerlink" href="#veragrid-gui-diagrams-schematicwidget-substation-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics">
+<span id="veragrid-gui-diagrams-schematicwidget-substation-bus-graphics-module"></span><h2>VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics module<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.</span></span><span class="sig-name descname"><span class="pre">BusGraphicItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGrid.Gui.Diagrams.html#VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget" title="VeraGrid.Gui.Diagrams.generic_graphics.GenericDiagramWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericDiagramWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsRectItem</span></code></p>
+<p>Represents a block in the diagram
+Has an x and y and width and height
+width and height can only be adjusted with a tip in the lower right corner.</p>
+<ul class="simple">
+<li><p>in and output ports</p></li>
+<li><p>parameters</p></li>
+<li><p>description</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_battery">
+<span class="sig-name descname"><span class="pre">add_battery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_battery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_battery" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_big_marker">
+<span class="sig-name descname"><span class="pre">add_big_marker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QColor</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide6.QtGui.QColor.fromRgbF(1.000000,</span> <span class="pre">0.000000,</span> <span class="pre">0.000000,</span> <span class="pre">1.000000)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_tip_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_big_marker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_big_marker" title="Link to this definition"></a></dt>
+<dd><p>Add a big marker to the bus
+:param color: Qt Color ot the marker
+:param tool_tip_text: tool tip text to display</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_child_graphic">
+<span class="sig-name descname"><span class="pre">add_child_graphic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem"><span class="pre">BatteryGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem"><span class="pre">ShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem"><span class="pre">ExternalGridGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem"><span class="pre">ControllableShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem"><span class="pre">LoadGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem"><span class="pre">GeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem"><span class="pre">StaticGeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem"><span class="pre">CurrentInjectionGraphicItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_child_graphic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_child_graphic" title="Link to this definition"></a></dt>
+<dd><p>Add an api object and its graphic to this bus graphics domain
+:param elm:
+:param graphic:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_controllable_shunt">
+<span class="sig-name descname"><span class="pre">add_controllable_shunt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_controllable_shunt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_controllable_shunt" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_current_injection">
+<span class="sig-name descname"><span class="pre">add_current_injection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_current_injection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_current_injection" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_external_grid">
+<span class="sig-name descname"><span class="pre">add_external_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_external_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_external_grid" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_obj</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_generator">
+<span class="sig-name descname"><span class="pre">add_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_generator" title="Link to this definition"></a></dt>
+<dd><p>Add a generator to this bus
+:param api_obj: if None, a new generator is created</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_load">
+<span class="sig-name descname"><span class="pre">add_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_load" title="Link to this definition"></a></dt>
+<dd><p>Add a load object to this bus
+:param api_obj:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_object">
+<span class="sig-name descname"><span class="pre">add_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_object" title="Link to this definition"></a></dt>
+<dd><p>Add any recognized object
+:param api_obj: EditableDevice</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_short_circuit">
+<span class="sig-name descname"><span class="pre">add_short_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_short_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_short_circuit" title="Link to this definition"></a></dt>
+<dd><p>Enable 3-phase short circuit</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_shunt">
+<span class="sig-name descname"><span class="pre">add_shunt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_shunt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_shunt" title="Link to this definition"></a></dt>
+<dd><p>Add a shunt device to this bus
+:param api_obj: If None, a new shunt is created</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_static_generator">
+<span class="sig-name descname"><span class="pre">add_static_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.add_static_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.add_static_generator" title="Link to this definition"></a></dt>
+<dd><p>Add a static generator to this bus
+:param api_obj: If none, a new static generator is created
+:return:</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.api_object">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.api_object" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.apply_rotation_state">
+<span class="sig-name descname"><span class="pre">apply_rotation_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.apply_rotation_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.apply_rotation_state" title="Link to this definition"></a></dt>
+<dd><p>Apply the persisted rotation state to the live graphics item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>refresh_geometry</strong> – Refresh attached routes and docked children afterwards.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.arrange_children">
+<span class="sig-name descname"><span class="pre">arrange_children</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.arrange_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.arrange_children" title="Link to this definition"></a></dt>
+<dd><p>This function sorts the load and generators icons
+Returns:</p>
+<blockquote>
+<div><p>Nothing</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.assign_status_to_profile">
+<span class="sig-name descname"><span class="pre">assign_status_to_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.assign_status_to_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.assign_status_to_profile" title="Link to this definition"></a></dt>
+<dd><p>Assign the snapshot rate to the profile</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.auto_assign_branch_slots">
+<span class="sig-name descname"><span class="pre">auto_assign_branch_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.auto_assign_branch_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.auto_assign_branch_slots" title="Link to this definition"></a></dt>
+<dd><p>Assign coordinate-based branch anchors from current geometry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.change_size">
+<span class="sig-name descname"><span class="pre">change_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.change_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.change_size" title="Link to this definition"></a></dt>
+<dd><p>Resize block function
+:param w:
+:param dummy:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.clear_label">
+<span class="sig-name descname"><span class="pre">clear_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.clear_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.clear_label" title="Link to this definition"></a></dt>
+<dd><p>Clear the result label</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneContextMenuEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.contextMenuEvent" title="Link to this definition"></a></dt>
+<dd><p>Display the context menu
+&#64;param event:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.convert_to_connectivity_grid">
+<span class="sig-name descname"><span class="pre">convert_to_connectivity_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.convert_to_connectivity_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.convert_to_connectivity_grid" title="Link to this definition"></a></dt>
+<dd><p>Transform this bus into a grid of buses to be able to compute the bus currents
+and delete this bus afterward</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.convert_to_voltage_level">
+<span class="sig-name descname"><span class="pre">convert_to_voltage_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.convert_to_voltage_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.convert_to_voltage_level" title="Link to this definition"></a></dt>
+<dd><p>Open the voltage level conversion wizard</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.create_children_widgets">
+<span class="sig-name descname"><span class="pre">create_children_widgets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">injections_by_tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType" title="VeraGridEngine.enumerations.DeviceType"><span class="pre">DeviceType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.generator.Generator" title="VeraGridEngine.Devices.Injections.generator.Generator"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.battery.Battery" title="VeraGridEngine.Devices.Injections.battery.Battery"><span class="pre">Battery</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.load.Load" title="VeraGridEngine.Devices.Injections.load.Load"><span class="pre">Load</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.external_grid.ExternalGrid" title="VeraGridEngine.Devices.Injections.external_grid.ExternalGrid"><span class="pre">ExternalGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.static_generator.StaticGenerator" title="VeraGridEngine.Devices.Injections.static_generator.StaticGenerator"><span class="pre">StaticGenerator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.shunt.Shunt" title="VeraGridEngine.Devices.Injections.shunt.Shunt"><span class="pre">Shunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt" title="VeraGridEngine.Devices.Injections.controllable_shunt.ControllableShunt"><span class="pre">ControllableShunt</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Injections.html#VeraGridEngine.Devices.Injections.current_injection.CurrentInjection" title="VeraGridEngine.Devices.Injections.current_injection.CurrentInjection"><span class="pre">CurrentInjection</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.create_children_widgets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.create_children_widgets" title="Link to this definition"></a></dt>
+<dd><p>Create the icons of the elements that are attached to the API bus object
+Returns: Nothing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.delete" title="Link to this definition"></a></dt>
+<dd><p>Remove this element
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.delete_big_marker">
+<span class="sig-name descname"><span class="pre">delete_big_marker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.delete_big_marker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.delete_big_marker" title="Link to this definition"></a></dt>
+<dd><p>Delete the big marker</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.delete_child">
+<span class="sig-name descname"><span class="pre">delete_child</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem"><span class="pre">BatteryGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem"><span class="pre">ShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem"><span class="pre">ExternalGridGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem"><span class="pre">ControllableShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem"><span class="pre">LoadGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem"><span class="pre">GeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem"><span class="pre">StaticGeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem"><span class="pre">CurrentInjectionGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics.InjectionTemplateGraphicItem"><span class="pre">InjectionTemplateGraphicItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.delete_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.delete_child" title="Link to this definition"></a></dt>
+<dd><p>Delete a child object
+:param obj:</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.editor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">editor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget" title="VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.SchematicWidget"><span class="pre">SchematicWidget</span></a></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.editor" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.enable_disable_dc">
+<span class="sig-name descname"><span class="pre">enable_disable_dc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.enable_disable_dc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.enable_disable_dc" title="Link to this definition"></a></dt>
+<dd><p>Activates or deactivates the bus as a DC bus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.enable_disable_toggle">
+<span class="sig-name descname"><span class="pre">enable_disable_toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.enable_disable_toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.enable_disable_toggle" title="Link to this definition"></a></dt>
+<dd><p>Toggle bus element state
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.expand_diagram_from_bus">
+<span class="sig-name descname"><span class="pre">expand_diagram_from_bus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.expand_diagram_from_bus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.expand_diagram_from_bus" title="Link to this definition"></a></dt>
+<dd><p>Expands the diagram from this bus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_associated_branch_graphics">
+<span class="sig-name descname"><span class="pre">get_associated_branch_graphics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_associated_branch_graphics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_associated_branch_graphics" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all associated branch graphics
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_associated_shunt_graphics">
+<span class="sig-name descname"><span class="pre">get_associated_shunt_graphics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem"><span class="pre">BatteryGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem"><span class="pre">ShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem"><span class="pre">ExternalGridGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem"><span class="pre">ControllableShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem"><span class="pre">LoadGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem"><span class="pre">GeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem"><span class="pre">StaticGeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem"><span class="pre">CurrentInjectionGraphicItem</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_associated_shunt_graphics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_associated_shunt_graphics" title="Link to this definition"></a></dt>
+<dd><p>List of associated shunt graphics
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_associated_widgets">
+<span class="sig-name descname"><span class="pre">get_associated_widgets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">INJECTION_GRAPHICS</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QGraphicsItem</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_associated_widgets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_associated_widgets" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all associated graphics
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_bottom_dock_baseline">
+<span class="sig-name descname"><span class="pre">get_bottom_dock_baseline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_bottom_dock_baseline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_bottom_dock_baseline" title="Link to this definition"></a></dt>
+<dd><p>Return the baseline local Y coordinate used for bottom-docked children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bottom dock baseline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_branch_attachment_center">
+<span class="sig-name descname"><span class="pre">get_branch_attachment_center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_branch_attachment_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_branch_attachment_center" title="Link to this definition"></a></dt>
+<dd><p>Get the scene center used to infer branch attachment sides.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_branch_endpoint_for_graphic">
+<span class="sig-name descname"><span class="pre">get_branch_endpoint_for_graphic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphic_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SchematicBranchEndpoint" title="VeraGridEngine.enumerations.SchematicBranchEndpoint"><span class="pre">SchematicBranchEndpoint</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_branch_endpoint_for_graphic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_branch_endpoint_for_graphic" title="Link to this definition"></a></dt>
+<dd><p>Determine which endpoint of a branch graphic is attached to this node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_connection_local_point_from_local_point">
+<span class="sig-name descname"><span class="pre">get_connection_local_point_from_local_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_connection_local_point_from_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_connection_local_point_from_local_point" title="Link to this definition"></a></dt>
+<dd><p>Project one local point to the valid electrical connection locus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>local_point</strong> – Requested local point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Projected local attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_connection_local_point_from_scene_point">
+<span class="sig-name descname"><span class="pre">get_connection_local_point_from_scene_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_connection_local_point_from_scene_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_connection_local_point_from_scene_point" title="Link to this definition"></a></dt>
+<dd><p>Project one scene point to the valid electrical connection locus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scene_point</strong> – Requested scene point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Projected local attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_connection_scene_point_from_local_point">
+<span class="sig-name descname"><span class="pre">get_connection_scene_point_from_local_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_connection_scene_point_from_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_connection_scene_point_from_local_point" title="Link to this definition"></a></dt>
+<dd><p>Map one local connection point to the scene after clamping it to the host geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>local_point</strong> – Requested local point.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Scene attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_default_connection_local_point">
+<span class="sig-name descname"><span class="pre">get_default_connection_local_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_default_connection_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_default_connection_local_point" title="Link to this definition"></a></dt>
+<dd><p>Return the default local anchor used for bar-style branch attachments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Local attachment point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_explicit_slot_entries">
+<span class="sig-name descname"><span class="pre">get_explicit_slot_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_explicit_slot_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_explicit_slot_entries" title="Link to this definition"></a></dt>
+<dd><p>Collect persisted explicit slot entries for this graphic on one side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_explicit_slot_orders">
+<span class="sig-name descname"><span class="pre">get_explicit_slot_orders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_explicit_slot_orders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_explicit_slot_orders" title="Link to this definition"></a></dt>
+<dd><p>Collect persisted explicit slot orders for this graphic on one side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_explicit_terminal_slots">
+<span class="sig-name descname"><span class="pre">get_explicit_terminal_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_explicit_terminal_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_explicit_terminal_slots" title="Link to this definition"></a></dt>
+<dd><p>Build the explicit slot catalog currently attached to this bus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_extra_graphics">
+<span class="sig-name descname"><span class="pre">get_extra_graphics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">QGraphicsItem</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_extra_graphics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_extra_graphics" title="Link to this definition"></a></dt>
+<dd><p>Get a list of all QGraphicsItem elements associated with this widget.
+In the case of a GeneratorGraphicsItem, it will be all the nexus
+This function is meant to be overloaded.
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_nexus_point">
+<span class="sig-name descname"><span class="pre">get_nexus_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_nexus_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_nexus_point" title="Link to this definition"></a></dt>
+<dd><p>Get the connection point for the children nexus line
+(connection points for loads, shunts, generators, etc.)
+:return: QPointF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_nexus_point_for_child">
+<span class="sig-name descname"><span class="pre">get_nexus_point_for_child</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child_graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem"><span class="pre">BatteryGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem"><span class="pre">ShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem"><span class="pre">ExternalGridGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem"><span class="pre">ControllableShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem"><span class="pre">LoadGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem"><span class="pre">GeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem"><span class="pre">StaticGeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem"><span class="pre">CurrentInjectionGraphicItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_nexus_point_for_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_nexus_point_for_child" title="Link to this definition"></a></dt>
+<dd><p>Get the connection point for one docked child graphic.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_rotation_origin_local_point">
+<span class="sig-name descname"><span class="pre">get_rotation_origin_local_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_rotation_origin_local_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_rotation_origin_local_point" title="Link to this definition"></a></dt>
+<dd><p>Return the local rotation origin used for saved/loadable bus orientation.</p>
+<p>All bus rotation now happens around the widget geometric center so the
+whole symbol behaves as one rigid body during interactive rotation and
+when restored from persisted schematic coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Local rotation origin.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal">
+<span class="sig-name descname"><span class="pre">get_terminal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.html#VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item.BarTerminalItem"><span class="pre">BarTerminalItem</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_terminal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal" title="Link to this definition"></a></dt>
+<dd><p>Get the hosting terminal of this bus object
+:return: TerminalItem</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_alignment_from_scene_point">
+<span class="sig-name descname"><span class="pre">get_terminal_alignment_from_scene_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_terminal_alignment_from_scene_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_alignment_from_scene_point" title="Link to this definition"></a></dt>
+<dd><p>Convert one scene point to a normalized alignment value on the requested side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>side_key</strong> – Attachment side.</p></li>
+<li><p><strong>scene_point</strong> – Scene point selected by the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized alignment factor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_anchor_by_key">
+<span class="sig-name descname"><span class="pre">get_terminal_anchor_by_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminal_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphic_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template.LineGraphicTemplateItem"><span class="pre">LineGraphicTemplateItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_terminal_anchor_by_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_anchor_by_key" title="Link to this definition"></a></dt>
+<dd><p>Resolve the scene anchor point for a named attachment slot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_center">
+<span class="sig-name descname"><span class="pre">get_terminal_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QPointF</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_terminal_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_center" title="Link to this definition"></a></dt>
+<dd><p>Get the center of the terminal
+:param val: position of a branch point
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_slots">
+<span class="sig-name descname"><span class="pre">get_terminal_slots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.get_terminal_slots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.get_terminal_slots" title="Link to this definition"></a></dt>
+<dd><p>Compatibility catalog for named bus attachment slots.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.has_duplicate_explicit_slot_order">
+<span class="sig-name descname"><span class="pre">has_duplicate_explicit_slot_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.has_duplicate_explicit_slot_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.has_duplicate_explicit_slot_order" title="Link to this definition"></a></dt>
+<dd><p>Check whether an explicit slot order is duplicated on one side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.infer_branch_slot_side_and_sort_value">
+<span class="sig-name descname"><span class="pre">infer_branch_slot_side_and_sort_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPointF</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.html#VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot" title="VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry.SchematicAttachmentSlot"><span class="pre">SchematicAttachmentSlot</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.infer_branch_slot_side_and_sort_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.infer_branch_slot_side_and_sort_value" title="Link to this definition"></a></dt>
+<dd><p>Infer the attachment side and sorting coordinate for one connected branch.</p>
+<p>Bar-style buses are routed as vertical feeders by default, so they only use
+<code class="docutils literal notranslate"><span class="pre">top</span></code> and <code class="docutils literal notranslate"><span class="pre">bottom</span></code> during automatic legacy migration. Connectivity nodes
+still use all four sides.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_bus_graphic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem"><span class="pre">BusGraphicItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.merge" title="Link to this definition"></a></dt>
+<dd><p>Merge another BusGraphicItem into this
+:param other_bus_graphic: BusGraphicItem</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.mouseDoubleClickEvent" title="Link to this definition"></a></dt>
+<dd><p>Mouse double click
+:param event: event object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.mouseMoveEvent" title="Link to this definition"></a></dt>
+<dd><p>On mouse move of this object…
+Args:</p>
+<blockquote>
+<div><p>event: QGraphicsSceneMouseEvent inherited</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QGraphicsSceneMouseEvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.mousePressEvent" title="Link to this definition"></a></dt>
+<dd><p>mouse press: display the editor
+:param event: QGraphicsSceneMouseEvent</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.new_vicinity_diagram_from_here">
+<span class="sig-name descname"><span class="pre">new_vicinity_diagram_from_here</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.new_vicinity_diagram_from_here"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.new_vicinity_diagram_from_here" title="Link to this definition"></a></dt>
+<dd><p>Create new vicinity diagram
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.open_street_view">
+<span class="sig-name descname"><span class="pre">open_street_view</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.open_street_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.open_street_view" title="Link to this definition"></a></dt>
+<dd><p>Call open street maps
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.plot_profiles">
+<span class="sig-name descname"><span class="pre">plot_profiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.plot_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.plot_profiles" title="Link to this definition"></a></dt>
+<dd><p>Plot profiles</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.recolour_mode">
+<span class="sig-name descname"><span class="pre">recolour_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.recolour_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.recolour_mode" title="Link to this definition"></a></dt>
+<dd><p>Change the color according to the system theme</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.refresh_connected_geometry_after_rotation">
+<span class="sig-name descname"><span class="pre">refresh_connected_geometry_after_rotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.refresh_connected_geometry_after_rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.refresh_connected_geometry_after_rotation" title="Link to this definition"></a></dt>
+<dd><p>Refresh docked children and attached branches after one rotation change.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.rotate" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_height">
+<span class="sig-name descname"><span class="pre">set_height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.set_height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_height" title="Link to this definition"></a></dt>
+<dd><p>Set the height of the
+:param h:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_position">
+<span class="sig-name descname"><span class="pre">set_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.set_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_position" title="Link to this definition"></a></dt>
+<dd><p>Set the bus x, y position
+:param x: x in pixels
+:param y: y in pixels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_rotation_angle">
+<span class="sig-name descname"><span class="pre">set_rotation_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle_degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.set_rotation_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_rotation_angle" title="Link to this definition"></a></dt>
+<dd><p>Set one persisted bus rotation angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle_degrees</strong> – Rotation angle in degrees.</p></li>
+<li><p><strong>persist</strong> – Update the backing diagram location.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_tile_color">
+<span class="sig-name descname"><span class="pre">set_tile_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brush</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QBrush</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QColor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.set_tile_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_tile_color" title="Link to this definition"></a></dt>
+<dd><p>Set the color of the bus
+Args:</p>
+<blockquote>
+<div><p>brush:  Qt Color</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_values">
+<span class="sig-name descname"><span class="pre">set_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Va</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:10.2f}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vm_fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{:10.4f}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.set_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_values" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong></p></li>
+<li><p><strong>Vm</strong></p></li>
+<li><p><strong>Va</strong></p></li>
+<li><p><strong>P</strong></p></li>
+<li><p><strong>Q</strong></p></li>
+<li><p><strong>tpe</strong></p></li>
+<li><p><strong>format_str</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_values_3ph">
+<span class="sig-name descname"><span class="pre">set_values_3ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VmA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VmB</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VmC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VaA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VaB</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VaC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:10.2f}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.set_values_3ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.set_values_3ph" title="Link to this definition"></a></dt>
+<dd><p>Set the three-phase tags
+:param i: Bus index
+:param VmA:
+:param VmB:
+:param VmC:
+:param VaA:
+:param VaB:
+:param VaC:
+:param tpe: Bus type
+:param format_str: number formatting string</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.terminal">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">terminal</span></span><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.terminal" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QRectF</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">QRect</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Ellipsis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.update" title="Link to this definition"></a></dt>
+<dd><p>Update the object
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.update_color">
+<span class="sig-name descname"><span class="pre">update_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#BusGraphicItem.update_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.BusGraphicItem.update_color" title="Link to this definition"></a></dt>
+<dd><p>Update the colour</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.ShortCircuitFlags">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.</span></span><span class="sig-name descname"><span class="pre">ShortCircuitFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sc_3p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_lg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_ll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_llg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#ShortCircuitFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.ShortCircuitFlags" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Short circuit flags</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.ShortCircuitFlags.disable_all">
+<span class="sig-name descname"><span class="pre">disable_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#ShortCircuitFlags.disable_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.ShortCircuitFlags.disable_all" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.get_dock_sort_key">
+<span class="sig-prename descclassname"><span class="pre">VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.</span></span><span class="sig-name descname"><span class="pre">get_dock_sort_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.battery_graphics.BatteryGraphicItem"><span class="pre">BatteryGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.shunt_graphics.ShuntGraphicItem"><span class="pre">ShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.external_grid_graphics.ExternalGridGraphicItem"><span class="pre">ExternalGridGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics.ControllableShuntGraphicItem"><span class="pre">ControllableShuntGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics.LoadGraphicItem"><span class="pre">LoadGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics.GeneratorGraphicItem"><span class="pre">GeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.static_generator_graphics.StaticGeneratorGraphicItem"><span class="pre">StaticGeneratorGraphicItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html#VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics.CurrentInjectionGraphicItem"><span class="pre">CurrentInjectionGraphicItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGrid/Gui/Diagrams/SchematicWidget/Substation/bus_graphics.html#get_dock_sort_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics.get_dock_sort_key" title="Link to this definition"></a></dt>
+<dd><p>Build the ordering key for docked child graphics.</p>
+</dd></dl>
+
+</section>
+<section id="module-VeraGrid.Gui.Diagrams.SchematicWidget.Substation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.Gui.Diagrams.SchematicWidget.Substation" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Gui.Diagrams.SchematicWidget.Injections.html" class="btn btn-neutral float-left" title="VeraGrid.Gui.Diagrams.SchematicWidget.Injections package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.Gui.DynamicModelEditor.html" class="btn btn-neutral float-right" title="VeraGrid.Gui.DynamicModelEditor package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

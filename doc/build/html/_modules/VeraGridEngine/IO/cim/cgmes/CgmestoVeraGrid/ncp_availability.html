@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CgmesCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">CGMES_ASSETS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.cim.cgmes.cgmes_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_cgmes_reference_uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
+
+
+<div class="viewcode-block" id="parse_ncp_bool">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.parse_ncp_bool">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_ncp_bool</span><span class="p">(</span><span class="n">raw_value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse one NCP boolean candidate value.</span>
+
+<span class="sd">    The parser accepts canonical bool values and common string encodings.</span>
+
+<span class="sd">    :param raw_value: Raw boolean candidate.</span>
+<span class="sd">    :return: Parsed bool or ``None`` when not parseable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">raw_value</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">normalized_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">raw_value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">normalized_value</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">normalized_value</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="get_resolved_cgmes_reference_list">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.get_resolved_cgmes_reference_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_resolved_cgmes_reference_list</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve every object reference from one CGMES relation field.</span>
+
+<span class="sd">    CGMES relation fields can contain one object, a list of objects, unresolved</span>
+<span class="sd">    strings, or ``None``. This helper returns only resolved object references and</span>
+<span class="sd">    keeps deterministic order for stable conversion behavior.</span>
+
+<span class="sd">    :param reference: Raw CGMES relation value.</span>
+<span class="sd">    :return: List of resolved object references.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolved_references</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">resolved_references</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">resolved_references</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">reference_item</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference_item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference_item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">resolved_references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reference_item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resolved_references</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resolved_references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resolved_references</span></div>
+
+
+
+<div class="viewcode-block" id="collect_ncp_availability_timestamps">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.collect_ncp_availability_timestamps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_ncp_availability_timestamps</span><span class="p">(</span><span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+                                        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span>
+                                        <span class="n">parse_time_to_utc_timestamp</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+                                            <span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">DataLogger</span><span class="p">,</span> <span class="n">CGMES_ASSETS</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> \
+        <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collect availability schedule timestamps from NCP EventTimePoint objects.</span>
+
+<span class="sd">    :param cgmes_model: CGMES model.</span>
+<span class="sd">    :param logger: Data logger.</span>
+<span class="sd">    :param parse_time_to_utc_timestamp: Shared NCP timestamp parser callback.</span>
+<span class="sd">    :return: List of parsed UTC timestamps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">collected_timestamps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">event_time_point</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">EventTimePoint_list</span><span class="p">:</span>
+        <span class="n">parsed_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_time_to_utc_timestamp</span><span class="p">(</span>
+            <span class="n">event_time_point</span><span class="o">.</span><span class="n">atTime</span><span class="p">,</span>
+            <span class="n">logger</span><span class="p">,</span>
+            <span class="n">event_time_point</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">parsed_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">collected_timestamps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">collected_timestamps</span></div>
+
+
+
+<div class="viewcode-block" id="get_event_time_point_sort_key">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.get_event_time_point_sort_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_event_time_point_sort_key</span><span class="p">(</span><span class="n">event_point</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get sorting key for one event time point tuple.</span>
+
+<span class="sd">    :param event_point: Tuple with timestamp and active state.</span>
+<span class="sd">    :return: Nanoseconds since epoch used for chronological sorting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">event_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_event_schedule_timepoints_lookup">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.build_event_schedule_timepoints_lookup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_event_schedule_timepoints_lookup</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">get_first_resolved_reference</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">object</span><span class="p">],</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build EventSchedule UUID to EventTimePoint list mapping.</span>
+
+<span class="sd">    :param cgmes_model: CGMES model.</span>
+<span class="sd">    :param get_first_resolved_reference: Shared CGMES reference resolver callback.</span>
+<span class="sd">    :return: Dictionary keyed by EventSchedule UUID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">schedule_timepoints_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">event_time_point</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">EventTimePoint_list</span><span class="p">:</span>
+        <span class="n">schedule_reference</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">event_time_point</span><span class="o">.</span><span class="n">EventSchedule</span>
+        <span class="n">resolved_schedule</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_first_resolved_reference</span><span class="p">(</span><span class="n">schedule_reference</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resolved_schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">schedule_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">resolved_schedule</span><span class="o">.</span><span class="n">uuid</span>
+            <span class="n">existing_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">schedule_timepoints_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">schedule_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">existing_points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">new_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">new_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time_point</span><span class="p">)</span>
+                <span class="n">schedule_timepoints_lookup</span><span class="p">[</span><span class="n">schedule_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_points</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">existing_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time_point</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">schedule_timepoints_lookup</span></div>
+
+
+
+<div class="viewcode-block" id="build_availability_schedule_status_map">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.build_availability_schedule_status_map">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_availability_schedule_status_map</span><span class="p">(</span><span class="n">time_profile</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">,</span>
+                                           <span class="n">schedule_time_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one boolean availability map over the complete VeraGrid time profile.</span>
+
+<span class="sd">    The resulting array is piecewise constant and starts as available. Every</span>
+<span class="sd">    event point updates the current availability state from its timestamp</span>
+<span class="sd">    onwards.</span>
+
+<span class="sd">    :param time_profile: VeraGrid global time profile.</span>
+<span class="sd">    :param schedule_time_points: Ordered list of (timestamp, is_active) events.</span>
+<span class="sd">    :return: Boolean array where ``True`` means available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">profile_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_profile</span><span class="p">)</span>
+    <span class="n">availability_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profile_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+    <span class="n">current_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">event_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">sorted_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">schedule_time_points</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">get_event_time_point_sort_key</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">time_index</span><span class="p">,</span> <span class="n">profile_timestamp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">time_profile</span><span class="p">):</span>
+        <span class="n">profile_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">profile_timestamp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">profile_time</span><span class="o">.</span><span class="n">tz</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">profile_time</span> <span class="o">=</span> <span class="n">profile_time</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">profile_time</span> <span class="o">=</span> <span class="n">profile_time</span><span class="o">.</span><span class="n">tz_convert</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">event_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_points</span><span class="p">):</span>
+            <span class="n">event_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">sorted_points</span><span class="p">[</span><span class="n">event_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event_time</span> <span class="o">&lt;=</span> <span class="n">profile_time</span><span class="p">:</span>
+                <span class="n">current_status</span> <span class="o">=</span> <span class="n">sorted_points</span><span class="p">[</span><span class="n">event_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">event_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">availability_map</span><span class="p">[</span><span class="n">time_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_status</span>
+
+    <span class="k">return</span> <span class="n">availability_map</span></div>
+
+
+
+<div class="viewcode-block" id="apply_ncp_availability_profiles">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.html#VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability.apply_ncp_availability_profiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_ncp_availability_profiles</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="p">:</span> <span class="n">CgmesCircuit</span><span class="p">,</span>
+        <span class="n">gcdev_model</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">device_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">DataLogger</span><span class="p">,</span>
+        <span class="n">get_first_resolved_reference</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">object</span><span class="p">],</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">parse_time_to_utc_timestamp</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">DataLogger</span><span class="p">,</span> <span class="n">CGMES_ASSETS</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">set_device_property_at_time</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">object</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CGMES_ASSETS</span><span class="p">,</span>
+                                               <span class="n">DataLogger</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply NCP ER/AVS availability schedules as VeraGrid ``active`` profile gates.</span>
+
+<span class="sd">    Mapping policy:</span>
+<span class="sd">        - ``AvailabilityEquipment`` is converted.</span>
+<span class="sd">        - ``ActualSchedule`` is preferred over ``PlannedSchedule``.</span>
+<span class="sd">        - Only unavailable states are enforced (``active=0``); available states</span>
+<span class="sd">          do not force ``active=1`` to avoid overriding SIS/topology controls.</span>
+
+<span class="sd">    :param cgmes_model: CGMES model.</span>
+<span class="sd">    :param gcdev_model: VeraGrid model.</span>
+<span class="sd">    :param device_lookup: CGMES UUID to VeraGrid device lookup.</span>
+<span class="sd">    :param logger: Data logger.</span>
+<span class="sd">    :param get_first_resolved_reference: Shared CGMES reference resolver callback.</span>
+<span class="sd">    :param parse_time_to_utc_timestamp: Shared NCP timestamp parser callback.</span>
+<span class="sd">    :param set_device_property_at_time: Shared VeraGrid profile assignment callback.</span>
+<span class="sd">    :return: Number of successful ``active`` assignments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">gcdev_model</span><span class="o">.</span><span class="n">time_profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">gcdev_model</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">schedule_timepoints_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]]</span> <span class="o">=</span> <span class="n">build_event_schedule_timepoints_lookup</span><span class="p">(</span>
+        <span class="n">cgmes_model</span><span class="o">=</span><span class="n">cgmes_model</span><span class="p">,</span>
+        <span class="n">get_first_resolved_reference</span><span class="o">=</span><span class="n">get_first_resolved_reference</span>
+    <span class="p">)</span>
+    <span class="n">assignment_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">availability_equipment</span> <span class="ow">in</span> <span class="n">cgmes_model</span><span class="o">.</span><span class="n">cgmes_assets</span><span class="o">.</span><span class="n">AvailabilityEquipment_list</span><span class="p">:</span>
+        <span class="n">equipment_references</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_resolved_cgmes_reference_list</span><span class="p">(</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">Equipment</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">equipment_references</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;AvailabilityEquipment without resolved Equipment reference&#39;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                <span class="n">device_class</span><span class="o">=</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Equipment&#39;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">availability_schedule_ref</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">availability_equipment</span><span class="o">.</span><span class="n">AvailabilitySchedule</span>
+            <span class="n">availability_schedule</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_first_resolved_reference</span><span class="p">(</span><span class="n">availability_schedule_ref</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">availability_schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;AvailabilityEquipment without resolved AvailabilitySchedule reference&#39;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                    <span class="n">device_class</span><span class="o">=</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                    <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;AvailabilitySchedule&#39;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">actual_schedule_ref</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">availability_schedule</span><span class="o">.</span><span class="n">ActualSchedule</span>
+                <span class="n">planned_schedule_ref</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">availability_schedule</span><span class="o">.</span><span class="n">PlannedSchedule</span>
+                <span class="n">selected_event_schedule</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_first_resolved_reference</span><span class="p">(</span><span class="n">actual_schedule_ref</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">selected_event_schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">selected_event_schedule</span> <span class="o">=</span> <span class="n">get_first_resolved_reference</span><span class="p">(</span><span class="n">planned_schedule_ref</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">selected_event_schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                        <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;AvailabilitySchedule without resolved ActualSchedule/PlannedSchedule&#39;</span><span class="p">,</span>
+                        <span class="n">device</span><span class="o">=</span><span class="n">availability_schedule</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                        <span class="n">device_class</span><span class="o">=</span><span class="n">availability_schedule</span><span class="o">.</span><span class="n">tpe</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">schedule_points_raw</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CGMES_ASSETS</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">schedule_timepoints_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">selected_event_schedule</span><span class="o">.</span><span class="n">uuid</span><span class="p">,</span> <span class="kc">None</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">schedule_points_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;EventSchedule has no EventTimePoint data&#39;</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="n">selected_event_schedule</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                            <span class="n">device_class</span><span class="o">=</span><span class="n">selected_event_schedule</span><span class="o">.</span><span class="n">tpe</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">schedule_points_raw</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;EventSchedule has no EventTimePoint data&#39;</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="n">selected_event_schedule</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                            <span class="n">device_class</span><span class="o">=</span><span class="n">selected_event_schedule</span><span class="o">.</span><span class="n">tpe</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">parsed_schedule_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">event_time_point</span> <span class="ow">in</span> <span class="n">schedule_points_raw</span><span class="p">:</span>
+                            <span class="n">parsed_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_time_to_utc_timestamp</span><span class="p">(</span>
+                                <span class="n">event_time_point</span><span class="o">.</span><span class="n">atTime</span><span class="p">,</span>
+                                <span class="n">logger</span><span class="p">,</span>
+                                <span class="n">event_time_point</span>
+                            <span class="p">)</span>
+                            <span class="n">parsed_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parse_ncp_bool</span><span class="p">(</span><span class="n">event_time_point</span><span class="o">.</span><span class="n">isActive</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">parsed_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">parsed_active</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                        <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;EventTimePoint without parseable isActive state&#39;</span><span class="p">,</span>
+                                        <span class="n">device</span><span class="o">=</span><span class="n">event_time_point</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                                        <span class="n">device_class</span><span class="o">=</span><span class="n">event_time_point</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                        <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;isActive&#39;</span><span class="p">,</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">event_time_point</span><span class="o">.</span><span class="n">isActive</span>
+                                    <span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">parsed_schedule_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">parsed_time</span><span class="p">,</span> <span class="n">parsed_active</span><span class="p">))</span>
+
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parsed_schedule_points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">schedule_status_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">build_availability_schedule_status_map</span><span class="p">(</span>
+                                <span class="n">time_profile</span><span class="o">=</span><span class="n">gcdev_model</span><span class="o">.</span><span class="n">time_profile</span><span class="p">,</span>
+                                <span class="n">schedule_time_points</span><span class="o">=</span><span class="n">parsed_schedule_points</span>
+                            <span class="p">)</span>
+                            <span class="k">for</span> <span class="n">equipment_reference</span> <span class="ow">in</span> <span class="n">equipment_references</span><span class="p">:</span>
+                                <span class="n">target_device</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">device_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">equipment_reference</span><span class="o">.</span><span class="n">uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">target_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                    <span class="n">normalized_equipment_uuid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">normalize_cgmes_reference_uuid</span><span class="p">(</span>
+                                        <span class="n">equipment_reference</span><span class="o">.</span><span class="n">uuid</span>
+                                    <span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">normalized_equipment_uuid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                        <span class="n">target_device</span> <span class="o">=</span> <span class="kc">None</span>
+                                    <span class="k">else</span><span class="p">:</span>
+                                        <span class="n">target_device</span> <span class="o">=</span> <span class="n">device_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">normalized_equipment_uuid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">pass</span>
+
+                                <span class="k">if</span> <span class="n">target_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                        <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;AvailabilityEquipment target not imported in VeraGrid model&#39;</span><span class="p">,</span>
+                                        <span class="n">device</span><span class="o">=</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">rdfid</span><span class="p">,</span>
+                                        <span class="n">device_class</span><span class="o">=</span><span class="n">availability_equipment</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span>
+                                        <span class="n">device_property</span><span class="o">=</span><span class="s1">&#39;Equipment.uuid&#39;</span><span class="p">,</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="n">equipment_reference</span><span class="o">.</span><span class="n">uuid</span>
+                                    <span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">for</span> <span class="n">time_index</span><span class="p">,</span> <span class="n">is_available</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">schedule_status_map</span><span class="p">):</span>
+                                        <span class="k">if</span> <span class="n">is_available</span><span class="p">:</span>
+                                            <span class="k">pass</span>
+                                        <span class="k">else</span><span class="p">:</span>
+                                            <span class="k">if</span> <span class="n">set_device_property_at_time</span><span class="p">(</span>
+                                                    <span class="n">target_device</span><span class="p">,</span>
+                                                    <span class="s1">&#39;active&#39;</span><span class="p">,</span>
+                                                    <span class="mf">0.0</span><span class="p">,</span>
+                                                    <span class="nb">int</span><span class="p">(</span><span class="n">time_index</span><span class="p">),</span>
+                                                    <span class="n">availability_equipment</span><span class="p">,</span>
+                                                    <span class="n">logger</span>
+                                            <span class="p">):</span>
+                                                <span class="n">assignment_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                                            <span class="k">else</span><span class="p">:</span>
+                                                <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">assignment_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Imported NCP ER/AVS availability gates into active profiles&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">assignment_count</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">assignment_count</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

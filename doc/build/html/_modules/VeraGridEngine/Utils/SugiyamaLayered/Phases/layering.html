@@ -1,0 +1,834 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.SugiyamaLayered.Phases.layering &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.SugiyamaLayered.Phases.layering</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.SugiyamaLayered.Phases.layering</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">SugiyamaNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsiderModelOrderStrategy</span><span class="p">,</span> <span class="n">LayeringStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.SugiyamaLayered.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutContext</span><span class="p">,</span> <span class="n">LayoutPhaseBase</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_integer_candidate</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an optional integer candidate.</span>
+
+<span class="sd">    :param value: Raw value coming from properties or layout options.</span>
+<span class="sd">    :returns: Parsed integer when conversion is valid, otherwise ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">parsed_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">parsed_value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_node_model_order</span><span class="p">(</span><span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the model-order hint used to stabilize ordering.</span>
+
+<span class="sd">    :param node_id: Identifier of the node to inspect.</span>
+<span class="sd">    :param fallback: Stable fallback index when no explicit value exists.</span>
+<span class="sd">    :param node_by_id: Node lookup table.</span>
+<span class="sd">    :returns: Numeric ordering hint for the node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">node_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">resolved_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">candidates</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;modelOrder&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;model_order&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span>
+                <span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.groupModelOrder.layeringId&quot;</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span>
+                <span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.groupModelOrder.cycleBreakingId&quot;</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="n">parsed_candidate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_read_integer_candidate</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parsed_candidate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">parsed_candidate</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">resolved_order</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resolved_order</span> <span class="o">=</span> <span class="n">fallback</span>
+
+    <span class="k">return</span> <span class="n">resolved_order</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_key_for_node</span><span class="p">(</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">node_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the stable sorting key used by layering.</span>
+
+<span class="sd">    :param node_id: Identifier of the node being ranked.</span>
+<span class="sd">    :param node_order: Original order of nodes in the graph.</span>
+<span class="sd">    :param node_by_id: Node lookup table.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order hints must override insertion order.</span>
+<span class="sd">    :returns: Tuple used for deterministic ordering.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fallback_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">node_order</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">primary_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fallback_order</span>
+
+    <span class="k">if</span> <span class="n">prefer_model_order</span><span class="p">:</span>
+        <span class="n">primary_order</span> <span class="o">=</span> <span class="n">_node_model_order</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">fallback_order</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">primary_order</span> <span class="o">=</span> <span class="n">fallback_order</span>
+
+    <span class="k">return</span> <span class="n">primary_order</span><span class="p">,</span> <span class="n">node_id</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sorted_node_ids</span><span class="p">(</span>
+    <span class="n">node_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">node_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort node identifiers with the deterministic strategy of this phase.</span>
+
+<span class="sd">    :param node_ids: Node identifiers to sort.</span>
+<span class="sd">    :param node_order: Original order of nodes in the graph.</span>
+<span class="sd">    :param node_by_id: Node lookup table.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order hints should be preferred.</span>
+<span class="sd">    :returns: Sorted node identifiers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">decorated_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">sorted_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># The layering algorithm repeatedly needs deterministic node order; precomputing</span>
+    <span class="c1"># the key list makes the queue logic explicit and avoids inline lambdas.</span>
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">:</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sort_key_for_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">node_order</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">,</span> <span class="n">prefer_model_order</span><span class="p">)</span>
+        <span class="n">decorated_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">node_id</span><span class="p">))</span>
+
+    <span class="n">decorated_items</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">resolved_node_id</span> <span class="ow">in</span> <span class="n">decorated_items</span><span class="p">:</span>
+        <span class="n">sorted_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resolved_node_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sorted_items</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_consider_model_order_enabled</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether model-order hints must affect layering.</span>
+
+<span class="sd">    :param context: Pipeline execution context.</span>
+<span class="sd">    :returns: ``True`` when model-order hints are enabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">option_resolver</span><span class="o">.</span><span class="n">resolve_for_element</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">layout_options</span><span class="p">)</span>
+    <span class="n">strategy_value</span><span class="p">:</span> <span class="n">ConsiderModelOrderStrategy</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;org.vera.sugiyama.layered.considerModelOrder.strategy&quot;</span><span class="p">,</span>
+        <span class="n">ConsiderModelOrderStrategy</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">is_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">strategy_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">ConsiderModelOrderStrategy</span><span class="o">.</span><span class="n">NONE</span>
+    <span class="k">return</span> <span class="n">is_enabled</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_layering_strategy</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LayeringStrategy</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the configured layering strategy.</span>
+
+<span class="sd">    :param context: Pipeline execution context.</span>
+<span class="sd">    :returns: Configured strategy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">option_resolver</span><span class="o">.</span><span class="n">resolve_for_element</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">layout_options</span><span class="p">)</span>
+    <span class="n">strategy_value</span><span class="p">:</span> <span class="n">LayeringStrategy</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;org.vera.sugiyama.layered.layering.strategy&quot;</span><span class="p">,</span>
+        <span class="n">LayeringStrategy</span><span class="o">.</span><span class="n">NETWORK_SIMPLEX</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">strategy_value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_topological_order</span><span class="p">(</span>
+    <span class="n">node_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span>
+    <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a deterministic topological order for the DAG.</span>
+
+<span class="sd">    :param node_ids: Node identifiers present in the graph.</span>
+<span class="sd">    :param successors: Successor adjacency table.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :param node_by_id: Node lookup table.</span>
+<span class="sd">    :param prefer_model_order: Whether model-order hints should affect queue ordering.</span>
+<span class="sd">    :returns: Ordered node identifiers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indegree</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">node_order</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">zero_indegree_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">queue</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># The phase first measures DAG indegrees because Kahn&#39;s algorithm requires the</span>
+    <span class="c1"># count of unresolved predecessors before a node can be emitted.</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">resolved_node_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node_ids</span><span class="p">):</span>
+        <span class="n">node_order</span><span class="p">[</span><span class="n">resolved_node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">indegree</span><span class="p">[</span><span class="n">resolved_node_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">resolved_node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">()))</span>
+
+    <span class="k">for</span> <span class="n">resolved_node_id</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">:</span>
+        <span class="n">degree</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">indegree</span><span class="p">[</span><span class="n">resolved_node_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">zero_indegree_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resolved_node_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">zero_indegree_nodes</span> <span class="o">=</span> <span class="n">zero_indegree_nodes</span>
+
+    <span class="n">zero_indegree_nodes</span> <span class="o">=</span> <span class="n">_sorted_node_ids</span><span class="p">(</span>
+        <span class="n">zero_indegree_nodes</span><span class="p">,</span>
+        <span class="n">node_order</span><span class="p">,</span>
+        <span class="n">node_by_id</span><span class="p">,</span>
+        <span class="n">prefer_model_order</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">zero_indegree_nodes</span><span class="p">)</span>
+
+    <span class="c1"># The queue emits nodes whose predecessors are already fixed, producing the base</span>
+    <span class="c1"># order for longest-path layering and all following compaction steps.</span>
+    <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+        <span class="n">current_node_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_node_id</span><span class="p">)</span>
+
+        <span class="n">successor_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sorted_node_ids</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())),</span>
+            <span class="n">node_order</span><span class="p">,</span>
+            <span class="n">node_by_id</span><span class="p">,</span>
+            <span class="n">prefer_model_order</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">successor_id</span> <span class="ow">in</span> <span class="n">successor_ids</span><span class="p">:</span>
+            <span class="n">remaining_indegree</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">indegree</span><span class="p">[</span><span class="n">successor_id</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">indegree</span><span class="p">[</span><span class="n">successor_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">remaining_indegree</span>
+            <span class="k">if</span> <span class="n">remaining_indegree</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+
+    <span class="c1"># If the DAG data is incomplete we still emit all nodes so that later phases can</span>
+    <span class="c1"># work with a total order instead of failing on missing entries.</span>
+    <span class="n">sorted_all_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sorted_node_ids</span><span class="p">(</span><span class="n">node_ids</span><span class="p">,</span> <span class="n">node_order</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">,</span> <span class="n">prefer_model_order</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">resolved_node_id</span> <span class="ow">in</span> <span class="n">sorted_all_nodes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">resolved_node_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resolved_node_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+
+    <span class="k">return</span> <span class="n">order</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_longest_path_layers</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign initial layers using longest-path distances from sources.</span>
+
+<span class="sd">    :param order: Topological order of nodes.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :returns: Mapping from node identifier to layer index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># Every node starts at layer zero; predecessors then push the node down until all</span>
+    <span class="c1"># edge directions respect the DAG orientation.</span>
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+        <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+        <span class="n">predecessor_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">predecessor_ids</span><span class="p">:</span>
+            <span class="n">max_predecessor_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">predecessor_id</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">predecessor_id</span> <span class="ow">in</span> <span class="n">predecessor_ids</span><span class="p">)</span>
+            <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_predecessor_layer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">layer_of</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compact_to_sinks</span><span class="p">(</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push nodes towards their successors without breaking edge directions.</span>
+
+<span class="sd">    :param order: Topological order of nodes.</span>
+<span class="sd">    :param layer_of: Mutable layer assignment.</span>
+<span class="sd">    :param successors: Successor adjacency table.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">changed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Reverse sweeps pull nodes closer to their sinks, reducing edge span while</span>
+    <span class="c1"># keeping the acyclic constraints established by the longest-path layering.</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+            <span class="n">successor_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">successor_ids</span><span class="p">:</span>
+                <span class="n">upper_bound</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">successor_id</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">successor_id</span> <span class="ow">in</span> <span class="n">successor_ids</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">upper_bound</span> <span class="o">&gt;</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]:</span>
+                    <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">upper_bound</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="n">changed</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">changed</span> <span class="o">=</span> <span class="n">changed</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_layer_bounds</span><span class="p">(</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the feasible layer interval for a node.</span>
+
+<span class="sd">    :param node_id: Identifier of the node being relocated.</span>
+<span class="sd">    :param layer_of: Current layer assignment.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :param successors: Successor adjacency table.</span>
+<span class="sd">    :returns: Inclusive lower and upper bounds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lower_bound</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">upper_bound</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer_of</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">predecessor_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+    <span class="n">successor_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">predecessor_ids</span><span class="p">:</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">predecessor_id</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">predecessor_id</span> <span class="ow">in</span> <span class="n">predecessor_ids</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">lower_bound</span>
+
+    <span class="k">if</span> <span class="n">successor_ids</span><span class="p">:</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">successor_id</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">successor_id</span> <span class="ow">in</span> <span class="n">successor_ids</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">upper_bound</span>
+
+    <span class="k">if</span> <span class="n">upper_bound</span> <span class="o">&lt;</span> <span class="n">lower_bound</span><span class="p">:</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">lower_bound</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">upper_bound</span>
+
+    <span class="k">return</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_node_span_cost</span><span class="p">(</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">candidate_layer</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Measure the total edge span induced by a candidate layer.</span>
+
+<span class="sd">    :param node_id: Identifier of the node being evaluated.</span>
+<span class="sd">    :param candidate_layer: Candidate layer for the node.</span>
+<span class="sd">    :param layer_of: Current layer assignment.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :param successors: Successor adjacency table.</span>
+<span class="sd">    :returns: Sum of predecessor and successor spans.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cost</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">predecessor_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">successor_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># The promotion heuristic minimizes local edge lengths to reduce the amount of</span>
+    <span class="c1"># dummy nodes that later phases need to insert for long edges.</span>
+    <span class="k">for</span> <span class="n">predecessor_id</span> <span class="ow">in</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+        <span class="n">cost</span> <span class="o">+=</span> <span class="n">candidate_layer</span> <span class="o">-</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">predecessor_id</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">successor_id</span> <span class="ow">in</span> <span class="n">successors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
+        <span class="n">cost</span> <span class="o">+=</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">successor_id</span><span class="p">]</span> <span class="o">-</span> <span class="n">candidate_layer</span>
+
+    <span class="k">return</span> <span class="n">cost</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_promote_nodes</span><span class="p">(</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Relocate nodes within feasible bounds to reduce local span cost.</span>
+
+<span class="sd">    :param order: Topological order of nodes.</span>
+<span class="sd">    :param layer_of: Mutable layer assignment.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :param successors: Successor adjacency table.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="c1"># A bounded number of local passes is enough here because the heuristic is only a</span>
+    <span class="c1"># refinement stage after longest-path layering and sink compaction.</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+        <span class="n">moved</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+            <span class="n">lower_bound</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="n">upper_bound</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">_layer_bounds</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+            <span class="n">current_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span>
+            <span class="n">best_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">current_layer</span>
+            <span class="n">best_cost</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_node_span_cost</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">current_layer</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+
+            <span class="n">candidate_layer</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">candidate_layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">candidate_cost</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_node_span_cost</span><span class="p">(</span>
+                    <span class="n">node_id</span><span class="p">,</span>
+                    <span class="n">candidate_layer</span><span class="p">,</span>
+                    <span class="n">layer_of</span><span class="p">,</span>
+                    <span class="n">predecessors</span><span class="p">,</span>
+                    <span class="n">successors</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">candidate_cost</span> <span class="o">&lt;</span> <span class="n">best_cost</span><span class="p">:</span>
+                    <span class="n">best_cost</span> <span class="o">=</span> <span class="n">candidate_cost</span>
+                    <span class="n">best_layer</span> <span class="o">=</span> <span class="n">candidate_layer</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">best_cost</span> <span class="o">=</span> <span class="n">best_cost</span>
+
+            <span class="k">if</span> <span class="n">best_layer</span> <span class="o">!=</span> <span class="n">current_layer</span><span class="p">:</span>
+                <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_layer</span>
+                <span class="n">moved</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">moved</span> <span class="o">=</span> <span class="n">moved</span>
+
+        <span class="n">_compact_to_sinks</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">moved</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">moved</span> <span class="o">=</span> <span class="n">moved</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_node_layer_constraint</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the normalized layer constraint of a node.</span>
+
+<span class="sd">    :param node: Node to inspect.</span>
+<span class="sd">    :returns: Constraint name or the empty string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">constraint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;layer_constraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;layerConstraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span><span class="s2">&quot;org.vera.sugiyama.layered.layering.layerConstraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">constraint</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">constraint</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">constraint</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_node_layer_id</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the explicit layer id requested by a node.</span>
+
+<span class="sd">    :param node: Node to inspect.</span>
+<span class="sd">    :returns: Non-negative layer id or ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;layer_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">node</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;layerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">node</span><span class="o">.</span><span class="n">get_layout_option</span><span class="p">(</span><span class="s2">&quot;org.vera.sugiyama.layered.layering.layerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">candidate_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_read_integer_candidate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">candidate_layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">candidate_layer</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">parsed_layer</span> <span class="o">=</span> <span class="n">candidate_layer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parsed_layer</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_layer</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">parsed_layer</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_first_constraints</span><span class="p">(</span>
+    <span class="n">first_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply FIRST constraints and re-propagate predecessor feasibility.</span>
+
+<span class="sd">    :param first_nodes: Nodes constrained to the first layer.</span>
+<span class="sd">    :param order: Topological order.</span>
+<span class="sd">    :param layer_of: Mutable layer assignment.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">changed</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">first_nodes</span><span class="p">:</span>
+        <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+            <span class="n">predecessor_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">predecessor_ids</span><span class="p">:</span>
+                <span class="n">required_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">predecessor_id</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">predecessor_id</span> <span class="ow">in</span> <span class="n">predecessor_ids</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">required_layer</span> <span class="o">&gt;</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]:</span>
+                    <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_layer</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">changed</span> <span class="o">=</span> <span class="n">changed</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">changed</span> <span class="o">=</span> <span class="n">changed</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_last_constraints</span><span class="p">(</span><span class="n">last_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push LAST-constrained nodes behind the unconstrained suffix.</span>
+
+<span class="sd">    :param last_nodes: Nodes constrained to the last layer.</span>
+<span class="sd">    :param layer_of: Mutable layer assignment.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">excluded_nodes</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">last_nodes</span><span class="p">)</span>
+    <span class="n">max_other_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">layer</span> <span class="k">for</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layer_of</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">node_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_nodes</span><span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_last_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">max_other_layer</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">last_nodes</span><span class="p">:</span>
+        <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">],</span> <span class="n">target_last_layer</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_exact_constraints</span><span class="p">(</span><span class="n">exact_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span> <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply explicit numeric layer ids.</span>
+
+<span class="sd">    :param exact_nodes: Nodes with an explicit layer id.</span>
+<span class="sd">    :param node_by_id: Node lookup table.</span>
+<span class="sd">    :param layer_of: Mutable layer assignment.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">exact_nodes</span><span class="p">:</span>
+        <span class="n">exact_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_node_layer_id</span><span class="p">(</span><span class="n">node_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">exact_layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">],</span> <span class="n">exact_layer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_constraints</span><span class="p">(</span>
+    <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">],</span>
+    <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply supported layer constraints on top of the heuristic layering.</span>
+
+<span class="sd">    :param node_by_id: Node lookup table.</span>
+<span class="sd">    :param layer_of: Mutable layer assignment.</span>
+<span class="sd">    :param order: Topological order.</span>
+<span class="sd">    :param predecessors: Predecessor adjacency table.</span>
+<span class="sd">    :returns: ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">first_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">last_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">exact_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># Constraints are extracted first so the mutation phase is explicit and later</span>
+    <span class="c1"># changes can apply the groups in a deterministic order.</span>
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">SugiyamaNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">node_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">constraint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_node_layer_constraint</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">layer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_node_layer_id</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">constraint</span> <span class="o">==</span> <span class="s2">&quot;FIRST&quot;</span><span class="p">:</span>
+            <span class="n">first_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">first_nodes</span> <span class="o">=</span> <span class="n">first_nodes</span>
+
+        <span class="k">if</span> <span class="n">constraint</span> <span class="o">==</span> <span class="s2">&quot;LAST&quot;</span><span class="p">:</span>
+            <span class="n">last_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">last_nodes</span> <span class="o">=</span> <span class="n">last_nodes</span>
+
+        <span class="k">if</span> <span class="n">layer_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exact_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">exact_nodes</span> <span class="o">=</span> <span class="n">exact_nodes</span>
+
+    <span class="k">if</span> <span class="n">first_nodes</span><span class="p">:</span>
+        <span class="n">_apply_first_constraints</span><span class="p">(</span><span class="n">first_nodes</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">first_nodes</span> <span class="o">=</span> <span class="n">first_nodes</span>
+
+    <span class="k">if</span> <span class="n">last_nodes</span><span class="p">:</span>
+        <span class="n">_apply_last_constraints</span><span class="p">(</span><span class="n">last_nodes</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">last_nodes</span> <span class="o">=</span> <span class="n">last_nodes</span>
+
+    <span class="k">if</span> <span class="n">exact_nodes</span><span class="p">:</span>
+        <span class="n">_apply_exact_constraints</span><span class="p">(</span><span class="n">exact_nodes</span><span class="p">,</span> <span class="n">node_by_id</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exact_nodes</span> <span class="o">=</span> <span class="n">exact_nodes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_layers</span><span class="p">(</span><span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compact sparse layer ids into a dense zero-based range.</span>
+
+<span class="sd">    :param layer_of: Layer assignment to normalize.</span>
+<span class="sd">    :returns: New dense layer assignment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">used_layers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">layer_of</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">remap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">normalized_layers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">layer_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">layer_value</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="c1"># Dense layer ids simplify the subsequent phases because they can use the index</span>
+    <span class="c1"># directly when creating per-layer arrays and routing structures.</span>
+    <span class="k">for</span> <span class="n">layer_index</span><span class="p">,</span> <span class="n">layer_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">used_layers</span><span class="p">):</span>
+        <span class="n">remap</span><span class="p">[</span><span class="n">layer_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_index</span>
+
+    <span class="k">for</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">original_layer</span> <span class="ow">in</span> <span class="n">layer_of</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">normalized_layers</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">remap</span><span class="p">[</span><span class="n">original_layer</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">normalized_layers</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_default_adjacency</span><span class="p">(</span><span class="n">node_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an empty adjacency table for all nodes.</span>
+
+<span class="sd">    :param node_ids: Node identifiers present in the graph.</span>
+<span class="sd">    :returns: Empty adjacency mapping with one set per node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">adjacency</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">:</span>
+        <span class="n">adjacency</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">adjacency</span>
+
+
+<div class="viewcode-block" id="LayeringPhase">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LayeringPhase</span><span class="p">(</span><span class="n">LayoutPhaseBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign graph nodes to discrete layers.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;layering&quot;</span>
+
+<div class="viewcode-block" id="LayeringPhase.run">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.SugiyamaLayered.Phases.html#VeraGridEngine.Utils.SugiyamaLayered.Phases.layering.LayeringPhase.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">LayoutContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the layer assignment for the current graph.</span>
+
+<span class="sd">        :param context: Pipeline execution context.</span>
+<span class="sd">        :returns: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">identifier</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">children</span><span class="p">]</span>
+        <span class="n">node_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SugiyamaNode</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">node_by_id</span><span class="p">()</span>
+        <span class="n">prefer_model_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">_consider_model_order_enabled</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">strategy</span><span class="p">:</span> <span class="n">LayeringStrategy</span> <span class="o">=</span> <span class="n">_layering_strategy</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">successors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">dag_successors</span>
+        <span class="n">predecessors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">dag_predecessors</span>
+
+        <span class="c1"># The layering phase requires a complete DAG view; when previous phases did not</span>
+        <span class="c1"># populate adjacency we still create empty tables so all downstream code sees a</span>
+        <span class="c1"># uniform structure.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">successors</span><span class="p">:</span>
+            <span class="n">successors</span> <span class="o">=</span> <span class="n">_build_default_adjacency</span><span class="p">(</span><span class="n">node_ids</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">successors</span> <span class="o">=</span> <span class="n">successors</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">predecessors</span><span class="p">:</span>
+            <span class="n">predecessors</span> <span class="o">=</span> <span class="n">_build_default_adjacency</span><span class="p">(</span><span class="n">node_ids</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">predecessors</span> <span class="o">=</span> <span class="n">predecessors</span>
+
+        <span class="c1"># The final layering combines deterministic topological order, longest-path</span>
+        <span class="c1"># placement and optional refinement depending on the configured strategy.</span>
+        <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_topological_order</span><span class="p">(</span>
+            <span class="n">node_ids</span><span class="p">,</span>
+            <span class="n">successors</span><span class="p">,</span>
+            <span class="n">predecessors</span><span class="p">,</span>
+            <span class="n">node_by_id</span><span class="p">,</span>
+            <span class="n">prefer_model_order</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_longest_path_layers</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="p">{</span><span class="n">LayeringStrategy</span><span class="o">.</span><span class="n">NETWORK_SIMPLEX</span><span class="p">,</span> <span class="n">LayeringStrategy</span><span class="o">.</span><span class="n">INTERACTIVE</span><span class="p">}:</span>
+            <span class="n">_compact_to_sinks</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+            <span class="n">_promote_nodes</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="p">{</span><span class="n">LayeringStrategy</span><span class="o">.</span><span class="n">LONGEST_PATH</span><span class="p">,</span> <span class="n">LayeringStrategy</span><span class="o">.</span><span class="n">LONGEST_PATH_SOURCE</span><span class="p">}:</span>
+                <span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_compact_to_sinks</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">successors</span><span class="p">)</span>
+
+        <span class="n">_apply_constraints</span><span class="p">(</span><span class="n">node_by_id</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">)</span>
+        <span class="n">normalized_layer_of</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_normalize_layers</span><span class="p">(</span><span class="n">layer_of</span><span class="p">)</span>
+
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">topological_order</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">topological_order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">layer_of</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">phase_state</span><span class="o">.</span><span class="n">layer_of</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">normalized_layer_of</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span>
+            <span class="s2">&quot;Layering uses longest-path assignment, sink compaction, local node promotion, &quot;</span>
+            <span class="s2">&quot;basic layer constraints and layer normalization.&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,622 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.Stochastic package &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.Simulations.Topology package" href="VeraGridEngine.Simulations.Topology.html" />
+    <link rel="prev" title="VeraGridEngine.Simulations.StateEstimation package" href="VeraGridEngine.Simulations.StateEstimation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.Stochastic package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.Simulations.Stochastic.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-simulations-stochastic-package">
+<h1>VeraGridEngine.Simulations.Stochastic package<a class="headerlink" href="#veragridengine-simulations-stochastic-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling">
+<span id="veragridengine-simulations-stochastic-latin-hypercube-sampling-module"></span><h2>VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling" title="Link to this heading"></a></h2>
+<p>This code was originally published by the following individuals for use with
+Scilab:</p>
+<blockquote>
+<div><p>Copyright (C) 2012 - 2013 - Michael Baudin
+Copyright (C) 2012 - Maria Christopoulou
+Copyright (C) 2010 - 2011 - INRIA - Michael Baudin
+Copyright (C) 2009 - Yann Collette
+Copyright (C) 2009 - CEA - Jean-Marc Martinez</p>
+<p>website: forge.scilab.org/index.php/p/scidoe/sourcetree/master/macros</p>
+</div></blockquote>
+<p>Much thanks goes to these individuals. It has been converted to Python by
+Abraham Lee.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling.lhs">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling.</span></span><span class="sig-name descname"><span class="pre">lhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'center'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/latin_hypercube_sampling.html#lhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.latin_hypercube_sampling.lhs" title="Link to this definition"></a></dt>
+<dd><p>Generate a latin-hypercube design</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>n<span class="classifier">int</span></dt><dd><p>The number of factors to generate samples for</p>
+</dd>
+<dt>samples<span class="classifier">int</span></dt><dd><p>The number of samples to generate for each factor (Default: n)</p>
+</dd>
+<dt>criterion<span class="classifier">str</span></dt><dd><p>Allowable values are “center” or “c”, “maximin” or “m”,
+“centermaximin” or “cm”, and “correlation” or “corr”. If no value
+given, the design is simply randomized.</p>
+</dd>
+<dt>iterations<span class="classifier">int</span></dt><dd><p>The number of iterations in the maximin and correlations algorithms
+(Default: 5).</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>H<span class="classifier">2d-array</span></dt><dd><p>An n-by-samples design matrix that has been normalized so factor values
+are uniformly spaced between zero and one.</p>
+</dd>
+</dl>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
+<p>A 3-factor design (defaults to 3 samples):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lhs</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([[ 0.40069325,  0.08118402,  0.69763298],</span>
+<span class="go">       [ 0.19524568,  0.41383587,  0.29947106],</span>
+<span class="go">       [ 0.85341601,  0.75460699,  0.360024  ]])</span>
+</pre></div>
+</div>
+<p>A 4-factor design with 6 samples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lhs</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">array([[ 0.27226812,  0.02811327,  0.62792445,  0.91988196],</span>
+<span class="go">       [ 0.76945538,  0.43501682,  0.01107457,  0.09583358],</span>
+<span class="go">       [ 0.45702981,  0.76073773,  0.90245401,  0.18773015],</span>
+<span class="go">       [ 0.99342115,  0.85814198,  0.16996665,  0.65069309],</span>
+<span class="go">       [ 0.63092013,  0.22148567,  0.33616859,  0.36332478],</span>
+<span class="go">       [ 0.05276917,  0.5819198 ,  0.67194243,  0.78703262]])</span>
+</pre></div>
+</div>
+<p>A 2-factor design with 5 centered samples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lhs</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+<span class="go">array([[ 0.3,  0.5],</span>
+<span class="go">       [ 0.7,  0.9],</span>
+<span class="go">       [ 0.1,  0.3],</span>
+<span class="go">       [ 0.9,  0.1],</span>
+<span class="go">       [ 0.5,  0.7]])</span>
+</pre></div>
+</div>
+<p>A 3-factor design with 4 samples where the minimum distance between
+all samples has been maximized:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lhs</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;maximin&#39;</span><span class="p">)</span>
+<span class="go">array([[ 0.02642564,  0.55576963,  0.50261649],</span>
+<span class="go">       [ 0.51606589,  0.88933259,  0.34040838],</span>
+<span class="go">       [ 0.98431735,  0.0380364 ,  0.01621717],</span>
+<span class="go">       [ 0.40414671,  0.33339132,  0.84845707]])</span>
+</pre></div>
+</div>
+<p>A 4-factor design with 5 samples where the samples are as uncorrelated
+as possible (within 10 iterations):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lhs</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;correlate&#39;</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver">
+<span id="veragridengine-simulations-stochastic-stochastic-power-flow-driver-module"></span><h2>VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.</span></span><span class="sig-name descname"><span class="pre">StochasticPowerFlowDriver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions" title="VeraGridEngine.Simulations.PowerFlow.power_flow_options.PowerFlowOptions"><span class="pre">PowerFlowOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opf_time_series_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType" title="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType"><span class="pre">StochasticPowerFlowType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">StochasticPowerFlowType.LatinHypercube</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowDriver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.driver_template.DriverTemplate" title="VeraGridEngine.Simulations.driver_template.DriverTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DriverTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.batch_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowDriver.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.cancel" title="Link to this definition"></a></dt>
+<dd><p>Cancel the simulation
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.get_steps">
+<span class="sig-name descname"><span class="pre">get_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowDriver.get_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.get_steps" title="Link to this definition"></a></dt>
+<dd><p>Get time steps list of strings</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.max_sampling_points">
+<span class="sig-name descname"><span class="pre">max_sampling_points</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.max_sampling_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.mc_tol">
+<span class="sig-name descname"><span class="pre">mc_tol</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.mc_tol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Stochastic</span> <span class="pre">Power</span> <span class="pre">Flow'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.opf_time_series_results">
+<span class="sig-name descname"><span class="pre">opf_time_series_results</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.opf_time_series_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.options">
+<span class="sig-name descname"><span class="pre">options</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.options" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.pool">
+<span class="sig-name descname"><span class="pre">pool</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.pool" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.returned_results">
+<span class="sig-name descname"><span class="pre">returned_results</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.returned_results" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowDriver.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.run" title="Link to this definition"></a></dt>
+<dd><p>Run the monte carlo simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.run_single_thread_mc">
+<span class="sig-name descname"><span class="pre">run_single_thread_mc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_lhs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults" title="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults"><span class="pre">StochasticPowerFlowResults</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowDriver.run_single_thread_mc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.run_single_thread_mc" title="Link to this definition"></a></dt>
+<dd><p>Run the stochastic sampling loop in the current thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>use_lhs</strong> – Whether Latin Hypercube sampling must be used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>StochasticPowerFlowResults when the study can be executed,
+otherwise <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.simulation_type">
+<span class="sig-name descname"><span class="pre">simulation_type</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.simulation_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Stochastic</span> <span class="pre">Power</span> <span class="pre">Flow'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.tpe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.update_progress_mt">
+<span class="sig-name descname"><span class="pre">update_progress_mt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowDriver.update_progress_mt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowDriver.update_progress_mt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.</span></span><span class="sig-name descname"><span class="pre">StochasticPowerFlowType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_driver.html#StochasticPowerFlowType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType.LatinHypercube">
+<span class="sig-name descname"><span class="pre">LatinHypercube</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Latin</span> <span class="pre">Hypercube'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType.LatinHypercube" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType.MonteCarlo">
+<span class="sig-name descname"><span class="pre">MonteCarlo</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Monte</span> <span class="pre">Carlo'</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver.StochasticPowerFlowType.MonteCarlo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input">
+<span id="veragridengine-simulations-stochastic-stochastic-power-flow-input-module"></span><h2>VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.</span></span><span class="sig-name descname"><span class="pre">StochasticPowerFlowInput</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_input.html#StochasticPowerFlowInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.Scdf_fixed">
+<span class="sig-name descname"><span class="pre">Scdf_fixed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.CDF" title="VeraGridEngine.basic_structures.CDF"><span class="pre">CDF</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.Scdf_fixed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_latin_hypercube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_input.html#StochasticPowerFlowInput.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.get" title="Link to this definition"></a></dt>
+<dd><p>Generate stochastic samples for the grid injections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> – number of samples</p></li>
+<li><p><strong>use_latin_hypercube</strong> – use Latin Hypercube to sample</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CxMat (p.u.)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.get_at">
+<span class="sig-name descname"><span class="pre">get_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_input.html#StochasticPowerFlowInput.get_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.get_at" title="Link to this definition"></a></dt>
+<dd><p>Get samples at x
+:param x: values in [0, 1] to sample the CDF
+:return: CxVec</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.has_profile_samples">
+<span class="sig-name descname"><span class="pre">has_profile_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_input.html#StochasticPowerFlowInput.has_profile_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.has_profile_samples" title="Link to this definition"></a></dt>
+<dd><p>Check whether the input contains at least one time-series sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when stochastic samples can be generated.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.n">
+<span class="sig-name descname"><span class="pre">n</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.n" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.regression_model">
+<span class="sig-name descname"><span class="pre">regression_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">KNeighborsRegressor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input.StochasticPowerFlowInput.regression_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results">
+<span id="veragridengine-simulations-stochastic-stochastic-power-flow-results-module"></span><h2>VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results module<a class="headerlink" href="#module-VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.</span></span><span class="sig-name descname"><span class="pre">StochasticPowerFlowResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_template.ResultsTemplate" title="VeraGridEngine.Simulations.results_template.ResultsTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsTemplate</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.CLASS_DATA_VARIABLES">
+<span class="sig-name descname"><span class="pre">CLASS_DATA_VARIABLES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'S_points':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'Sbr_points':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'V_points':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'branch_names':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'bus_names':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'bus_types':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'error_series':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'l_avg_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'l_std_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'loading':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'loading_points':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'loss_avg_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'loss_std_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'losses':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'losses_points':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'points_number':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'s_avg_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'s_std_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'sbranch':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'v_avg_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'v_std_conv':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'voltage':</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.CLASS_DATA_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.CLASS_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">CLASS_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.CLASS_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.LOCAL_RESULTS_DECLARATIONS">
+<span class="sig-name descname"><span class="pre">LOCAL_RESULTS_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.Simulations.results_template.ResultsProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.LOCAL_RESULTS_DECLARATIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.S_points">
+<span class="sig-name descname"><span class="pre">S_points</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.S_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.Sbr_points">
+<span class="sig-name descname"><span class="pre">Sbr_points</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.Sbr_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.V_points">
+<span class="sig-name descname"><span class="pre">V_points</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.V_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.append_batch">
+<span class="sig-name descname"><span class="pre">append_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcres</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults.append_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.append_batch" title="Link to this definition"></a></dt>
+<dd><p>Append a batch (a StochasticPowerFlowResults object) to this object
+&#64;param mcres: StochasticPowerFlowResults object
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.branch_names">
+<span class="sig-name descname"><span class="pre">branch_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.branch_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.bus_names">
+<span class="sig-name descname"><span class="pre">bus_names</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.bus_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.bus_types">
+<span class="sig-name descname"><span class="pre">bus_types</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.bus_types" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.compile" title="Link to this definition"></a></dt>
+<dd><p>Compiles the final Monte Carlo values by running an online mean and
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.error_series">
+<span class="sig-name descname"><span class="pre">error_series</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.error_series" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.get_index_loading_cdf">
+<span class="sig-name descname"><span class="pre">get_index_loading_cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults.get_index_loading_cdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.get_index_loading_cdf" title="Link to this definition"></a></dt>
+<dd><p>Find the elements where the CDF is greater or equal to a value
+:param max_val: value to compare
+:return: indices, associated probability</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.get_voltage_sum">
+<span class="sig-name descname"><span class="pre">get_voltage_sum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults.get_voltage_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.get_voltage_sum" title="Link to this definition"></a></dt>
+<dd><p>Return the voltage summation
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.l_avg_conv">
+<span class="sig-name descname"><span class="pre">l_avg_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.l_avg_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.l_std_conv">
+<span class="sig-name descname"><span class="pre">l_std_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.l_std_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loading">
+<span class="sig-name descname"><span class="pre">loading</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loading" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loading_points">
+<span class="sig-name descname"><span class="pre">loading_points</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loading_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loss_avg_conv">
+<span class="sig-name descname"><span class="pre">loss_avg_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loss_avg_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loss_std_conv">
+<span class="sig-name descname"><span class="pre">loss_std_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.loss_std_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.losses">
+<span class="sig-name descname"><span class="pre">losses</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.losses" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.losses_points">
+<span class="sig-name descname"><span class="pre">losses_points</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.losses_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.mdl">
+<span class="sig-name descname"><span class="pre">mdl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes" title="VeraGridEngine.enumerations.ResultTypes"><span class="pre">ResultTypes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable" title="VeraGridEngine.Simulations.results_table.ResultsTable"><span class="pre">ResultsTable</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults.mdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.mdl" title="Link to this definition"></a></dt>
+<dd><p>Plot the results
+:param result_type:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.points_number">
+<span class="sig-name descname"><span class="pre">points_number</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.points_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.query_voltage">
+<span class="sig-name descname"><span class="pre">query_voltage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">power_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Simulations/Stochastic/stochastic_power_flow_results.html#StochasticPowerFlowResults.query_voltage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.query_voltage" title="Link to this definition"></a></dt>
+<dd><p>Fantastic function that allows to query the voltage from the sampled points without having to run power Sf
+Args:</p>
+<blockquote>
+<div><p>power_array: power Injections vector</p>
+</div></blockquote>
+<p>Returns: Interpolated voltages vector</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.s_avg_conv">
+<span class="sig-name descname"><span class="pre">s_avg_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.s_avg_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.s_std_conv">
+<span class="sig-name descname"><span class="pre">s_std_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.s_std_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.sbranch">
+<span class="sig-name descname"><span class="pre">sbranch</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.sbranch" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.v_avg_conv">
+<span class="sig-name descname"><span class="pre">v_avg_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.v_avg_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.v_std_conv">
+<span class="sig-name descname"><span class="pre">v_std_conv</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.v_std_conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.voltage">
+<span class="sig-name descname"><span class="pre">voltage</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results.StochasticPowerFlowResults.voltage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.Simulations.Stochastic">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.Simulations.Stochastic" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.Simulations.StateEstimation.html" class="btn btn-neutral float-left" title="VeraGridEngine.Simulations.StateEstimation package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.Simulations.Topology.html" class="btn btn-neutral float-right" title="VeraGridEngine.Simulations.Topology package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

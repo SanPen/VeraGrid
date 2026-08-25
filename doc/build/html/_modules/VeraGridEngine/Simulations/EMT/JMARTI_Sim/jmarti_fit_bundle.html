@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_modal_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiModalSamples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_modal_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiModeDelayEstimate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_passivity</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiPassivityReport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiRationalModeFit</span>
+
+
+<div class="viewcode-block" id="JMartiFitBundle">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiFitBundle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aggregated offline JMARTI fitting product ready for runtime conversion.</span>
+
+<span class="sd">    The fitting pipeline produces modal preprocessing, per-mode delay estimates,</span>
+<span class="sd">    per-mode rational fits and optional passivity diagnostics. This object keeps</span>
+<span class="sd">    those pieces together under one typed interface before the EMT runtime layer</span>
+<span class="sd">    discretizes and consumes them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_line_length_m&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_phase_labels&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_modal_transform&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_modal_transform_inv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_reference_frequency_hz&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_decoupling_error_z&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_decoupling_error_y&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_mode_delays&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_yc_fits&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hres_fits&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_passivity_report&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">line_length_m</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">phase_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                 <span class="n">modal_transform</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">modal_transform_inv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">reference_frequency_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">decoupling_error_z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">decoupling_error_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">mode_delays</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiModeDelayEstimate</span><span class="p">],</span>
+                 <span class="n">yc_fits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">],</span>
+                 <span class="n">hres_fits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">],</span>
+                 <span class="n">passivity_report</span><span class="p">:</span> <span class="n">JMartiPassivityReport</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one complete offline JMARTI fitting bundle.</span>
+
+<span class="sd">        :param frequency_hz: Frequency grid in Hz.</span>
+<span class="sd">        :param line_length_m: Line length in meters.</span>
+<span class="sd">        :param phase_labels: Ordered phase labels.</span>
+<span class="sd">        :param modal_transform: Frozen modal transform.</span>
+<span class="sd">        :param modal_transform_inv: Inverse frozen modal transform.</span>
+<span class="sd">        :param reference_frequency_hz: Frequency used to freeze the modal basis.</span>
+<span class="sd">        :param decoupling_error_z: Off-diagonal Z decoupling errors.</span>
+<span class="sd">        :param decoupling_error_y: Off-diagonal Y decoupling errors.</span>
+<span class="sd">        :param mode_delays: Modal delay estimates.</span>
+<span class="sd">        :param yc_fits: Scalar rational fits of ``Yc`` per mode.</span>
+<span class="sd">        :param hres_fits: Scalar rational fits of ``Hres`` per mode.</span>
+<span class="sd">        :param passivity_report: Optional passivity report.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frequency_hz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_length_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line_length_m</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">modal_transform</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform_inv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">modal_transform_inv</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">reference_frequency_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decoupling_error_z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">decoupling_error_z</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decoupling_error_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">decoupling_error_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_delays</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModeDelayEstimate</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">mode_delays</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yc_fits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">yc_fits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hres_fits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">hres_fits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_passivity_report</span><span class="p">:</span> <span class="n">JMartiPassivityReport</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">passivity_report</span>
+
+<div class="viewcode-block" id="JMartiFitBundle.get_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the fitted frequency grid.</span>
+
+<span class="sd">        :return: Frequency grid in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_line_length_m">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_line_length_m">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_line_length_m</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the line length in meters.</span>
+
+<span class="sd">        :return: Line length in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_length_m</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_phase_labels">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_phase_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_phase_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the ordered phase labels.</span>
+
+<span class="sd">        :return: Ordered phase-label tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_labels</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_modal_transform">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_modal_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_modal_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the frozen modal transform.</span>
+
+<span class="sd">        :return: Complex modal transform.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_modal_transform_inv">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_modal_transform_inv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_modal_transform_inv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the inverse frozen modal transform.</span>
+
+<span class="sd">        :return: Inverse modal transform.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modal_transform_inv</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_reference_frequency_hz">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_reference_frequency_hz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reference_frequency_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the frequency used to freeze the modal basis.</span>
+
+<span class="sd">        :return: Reference frequency in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_frequency_hz</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_decoupling_error_z">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_decoupling_error_z">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_decoupling_error_z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the off-diagonal Z decoupling errors.</span>
+
+<span class="sd">        :return: Real-valued Z decoupling error vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoupling_error_z</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_decoupling_error_y">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_decoupling_error_y">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_decoupling_error_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the off-diagonal Y decoupling errors.</span>
+
+<span class="sd">        :return: Real-valued Y decoupling error vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoupling_error_y</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_mode_delays">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_mode_delays">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_delays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiModeDelayEstimate</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal delay estimates.</span>
+
+<span class="sd">        :return: Per-mode delay tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_delays</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_yc_fits">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_yc_fits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the scalar ``Yc`` fits.</span>
+
+<span class="sd">        :return: Per-mode ``Yc`` fit tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yc_fits</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_hres_fits">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_hres_fits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hres_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the scalar ``Hres`` fits.</span>
+
+<span class="sd">        :return: Per-mode ``Hres`` fit tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hres_fits</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_passivity_report">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_passivity_report">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_passivity_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiPassivityReport</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the optional passivity report.</span>
+
+<span class="sd">        :return: Passivity report or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passivity_report</span></div>
+
+
+<div class="viewcode-block" id="JMartiFitBundle.get_mode_count">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.JMartiFitBundle.get_mode_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the modal order of the fit bundle.</span>
+
+<span class="sd">        :return: Number of modes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_delays</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="build_jmarti_fit_bundle">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.JMARTI_Sim.html#VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_bundle.build_jmarti_fit_bundle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_jmarti_fit_bundle</span><span class="p">(</span><span class="n">modal_samples</span><span class="p">:</span> <span class="n">JMartiModalSamples</span><span class="p">,</span>
+                            <span class="n">mode_delays</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiModeDelayEstimate</span><span class="p">],</span>
+                            <span class="n">yc_fits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">],</span>
+                            <span class="n">hres_fits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">JMartiRationalModeFit</span><span class="p">],</span>
+                            <span class="n">passivity_report</span><span class="p">:</span> <span class="n">JMartiPassivityReport</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JMartiFitBundle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one validated JMARTI fit bundle.</span>
+
+<span class="sd">    :param modal_samples: Modal preprocessing output.</span>
+<span class="sd">    :param mode_delays: Per-mode delay estimates.</span>
+<span class="sd">    :param yc_fits: Per-mode ``Yc`` rational fits.</span>
+<span class="sd">    :param hres_fits: Per-mode ``Hres`` rational fits.</span>
+<span class="sd">    :param passivity_report: Optional passivity report.</span>
+<span class="sd">    :return: Validated fit bundle.</span>
+<span class="sd">    :raises ValueError: If the per-mode objects do not align.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mode_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">modal_samples</span><span class="o">.</span><span class="n">get_mode_count</span><span class="p">()</span>
+    <span class="n">yc_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">hres_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mode_delays</span><span class="p">)</span> <span class="o">==</span> <span class="n">mode_count</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">yc_fits</span><span class="p">)</span> <span class="o">==</span> <span class="n">mode_count</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hres_fits</span><span class="p">)</span> <span class="o">==</span> <span class="n">mode_count</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI fit bundle requires exactly one delay, Yc fit and Hres fit per mode&quot;</span><span class="p">)</span>
+
+    <span class="n">yc_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">yc_index</span> <span class="o">&lt;</span> <span class="n">mode_count</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode_delays</span><span class="p">[</span><span class="n">yc_index</span><span class="p">]</span><span class="o">.</span><span class="n">get_mode_index</span><span class="p">()</span> <span class="o">==</span> <span class="n">yc_index</span> <span class="ow">and</span> <span class="n">yc_fits</span><span class="p">[</span><span class="n">yc_index</span><span class="p">]</span><span class="o">.</span><span class="n">get_mode_index</span><span class="p">()</span> <span class="o">==</span> <span class="n">yc_index</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI delay/Yc fit ordering is inconsistent with the modal indices&quot;</span><span class="p">)</span>
+
+        <span class="n">yc_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">hres_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">hres_index</span> <span class="o">&lt;</span> <span class="n">mode_count</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">hres_fits</span><span class="p">[</span><span class="n">hres_index</span><span class="p">]</span><span class="o">.</span><span class="n">get_mode_index</span><span class="p">()</span> <span class="o">==</span> <span class="n">hres_index</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JMARTI Hres fit ordering is inconsistent with the modal indices&quot;</span><span class="p">)</span>
+
+        <span class="n">hres_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">JMartiFitBundle</span><span class="p">(</span>
+        <span class="n">frequency_hz</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_frequency_hz</span><span class="p">(),</span>
+        <span class="n">line_length_m</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_line_length_m</span><span class="p">(),</span>
+        <span class="n">phase_labels</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_phase_labels</span><span class="p">(),</span>
+        <span class="n">modal_transform</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_modal_transform</span><span class="p">(),</span>
+        <span class="n">modal_transform_inv</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_modal_transform_inv</span><span class="p">(),</span>
+        <span class="n">reference_frequency_hz</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_reference_frequency_hz</span><span class="p">(),</span>
+        <span class="n">decoupling_error_z</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_decoupling_error_z</span><span class="p">(),</span>
+        <span class="n">decoupling_error_y</span><span class="o">=</span><span class="n">modal_samples</span><span class="o">.</span><span class="n">get_decoupling_error_y</span><span class="p">(),</span>
+        <span class="n">mode_delays</span><span class="o">=</span><span class="n">mode_delays</span><span class="p">,</span>
+        <span class="n">yc_fits</span><span class="o">=</span><span class="n">yc_fits</span><span class="p">,</span>
+        <span class="n">hres_fits</span><span class="o">=</span><span class="n">hres_fits</span><span class="p">,</span>
+        <span class="n">passivity_report</span><span class="o">=</span><span class="n">passivity_report</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

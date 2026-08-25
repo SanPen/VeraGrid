@@ -1,0 +1,1220 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.fmu.importer.experimental_me &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.fmu.importer.experimental_me</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.fmu.importer.experimental_me</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.branch_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.injection_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">InjectionParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">ParamPowerFlowRefferenceType</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Var</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.bindings</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuImportConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.device_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fmu_me_device_config</span><span class="p">,</span> <span class="n">restore_fmu_me_spec_from_record</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_cs</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuRefBinding</span><span class="p">,</span> <span class="n">_ensure_emt_external_mapping_keys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.model_description</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuInterfaceMode</span><span class="p">,</span> <span class="n">FmuModelDescription</span><span class="p">,</span> <span class="n">FmuVariableDescription</span><span class="p">,</span> <span class="n">read_fmu_model_description</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.runtime_host</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuRuntimeHost</span><span class="p">,</span> <span class="n">open_fmu_runtime_host</span>
+
+
+<div class="viewcode-block" id="FmuMeDomain">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDomain">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuMeDomain</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumerate the VeraGrid domains that may host FMU ME devices.</span>
+
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">RMS</span> <span class="o">=</span> <span class="s2">&quot;rms&quot;</span>
+    <span class="n">EMT</span> <span class="o">=</span> <span class="s2">&quot;emt&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuMeIntegrationMethod">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeIntegrationMethod">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuMeIntegrationMethod</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumerate the internal predictor methods available for FMU ME devices.</span>
+
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EXPLICIT_EULER</span> <span class="o">=</span> <span class="s2">&quot;explicit_euler&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuMeDeviceSpec">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceSpec">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuMeDeviceSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store the runtime metadata required to execute one FMU ME device.</span>
+
+<span class="sd">    :param domain: VeraGrid domain that will consume the FMU.</span>
+<span class="sd">    :param config: FMU runtime configuration.</span>
+<span class="sd">    :param device_tpe: VeraGrid device type.</span>
+<span class="sd">    :param input_variable_names: Ordered FMU input names.</span>
+<span class="sd">    :param output_variable_names: Ordered FMU output names.</span>
+<span class="sd">    :param state_variable_names: Ordered FMU continuous-state names.</span>
+<span class="sd">    :param derivative_variable_names: Ordered FMU derivative names.</span>
+<span class="sd">    :param integration_method: Internal predictor used by the adapter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;domain&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;config&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;device_tpe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input_variable_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_variable_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;state_variable_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;derivative_variable_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;integration_method&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input_bindings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_bindings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_defaults&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_param_uids&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">domain</span><span class="p">:</span> <span class="n">FmuMeDomain</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">FmuImportConfig</span><span class="p">,</span>
+        <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+        <span class="n">input_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">output_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">state_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">derivative_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">integration_method</span><span class="p">:</span> <span class="n">FmuMeIntegrationMethod</span><span class="p">,</span>
+        <span class="n">input_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">output_defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">output_param_uids</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the runtime FMU ME specification.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">:</span> <span class="n">FmuMeDomain</span> <span class="o">=</span> <span class="n">domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span> <span class="n">FmuImportConfig</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">device_tpe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_variable_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_variable_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_variable_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivative_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">derivative_variable_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integration_method</span><span class="p">:</span> <span class="n">FmuMeIntegrationMethod</span> <span class="o">=</span> <span class="n">integration_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_bindings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_bindings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_param_uids</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_param_uids</span></div>
+
+
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuMeDeviceAdapter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute one FMU ME device with a light internal predictor.</span>
+
+<span class="sd">    :param spec: Runtime specification of the FMU ME device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">,</span> <span class="s2">&quot;runtime_host&quot;</span><span class="p">,</span> <span class="s2">&quot;state_vector&quot;</span><span class="p">,</span> <span class="s2">&quot;initialized&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">FmuMeDeviceSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the FMU ME runtime adapter.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">:</span> <span class="n">FmuMeDeviceSpec</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FmuRuntimeHost</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.initialize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.initialize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open and initialize the FMU ME runtime.</span>
+
+<span class="sd">        :param start_time: Initial simulation time.</span>
+<span class="sd">        :param input_values: FMU input values applied during initialization.</span>
+<span class="sd">        :param start_values: Additional FMU start values.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">start_values_payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">start_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_values_payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">start_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">input_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_values_payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">input_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># The runtime host is opened lazily so the adapter carries no external state before use.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="o">=</span> <span class="n">open_fmu_runtime_host</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">start_values</span><span class="o">=</span><span class="n">start_values_payload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">get_continuous_states</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.get_state_vector">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.get_state_vector">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_state_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the current continuous-state vector.</span>
+
+<span class="sd">        :return: Copy of the current state vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.set_state_vector">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.set_state_vector">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the adapter continuous-state vector and propagate it to the FMU.</span>
+
+<span class="sd">        :param values: New continuous-state vector.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;FMU ME adapter must be initialized before setting states&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">set_continuous_states</span><span class="p">(</span><span class="n">state_values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span> <span class="o">=</span> <span class="n">state_values</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply one input vector to the FMU runtime.</span>
+
+<span class="sd">        :param input_values: FMU input values.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;FMU ME adapter must be initialized before applying inputs&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">set_real</span><span class="p">(</span><span class="n">input_values</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.evaluate_derivatives">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.evaluate_derivatives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_derivatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the FMU derivative vector at the provided time and inputs.</span>
+
+<span class="sd">        :param time_value: Current evaluation time.</span>
+<span class="sd">        :param input_values: FMU input values.</span>
+<span class="sd">        :return: Derivative vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;FMU ME adapter must be initialized before derivative evaluation&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">set_time</span><span class="p">(</span><span class="n">time_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_inputs</span><span class="p">(</span><span class="n">input_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">set_continuous_states</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">derivative_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">get_derivatives</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">derivative_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.evaluate_outputs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.evaluate_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the FMU output vector at the provided time and inputs.</span>
+
+<span class="sd">        :param time_value: Current evaluation time.</span>
+<span class="sd">        :param input_values: FMU input values.</span>
+<span class="sd">        :return: Output values indexed by FMU variable name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;FMU ME adapter must be initialized before output evaluation&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">set_time</span><span class="p">(</span><span class="n">time_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_inputs</span><span class="p">(</span><span class="n">input_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">set_continuous_states</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_vector</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">get_real</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_variable_names</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.explicit_euler_step">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.explicit_euler_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">explicit_euler_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Advance the FMU one explicit-Euler predictor step.</span>
+
+<span class="sd">        :param current_time: Current integration time.</span>
+<span class="sd">        :param step_size: Step length.</span>
+<span class="sd">        :param input_values: FMU input values.</span>
+<span class="sd">        :return: Output values after the step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">integration_method</span> <span class="o">==</span> <span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">:</span>
+            <span class="n">derivatives</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_derivatives</span><span class="p">(</span><span class="n">current_time</span><span class="p">,</span> <span class="n">input_values</span><span class="p">)</span>
+            <span class="n">state_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_state_vector</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">state_vector</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">state_vector</span> <span class="o">=</span> <span class="n">state_vector</span> <span class="o">+</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">derivatives</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_state_vector</span><span class="p">(</span><span class="n">state_vector</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_outputs</span><span class="p">(</span><span class="n">current_time</span> <span class="o">+</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">input_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported FMU ME integration method </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">integration_method</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FmuMeDeviceAdapter.close">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.FmuMeDeviceAdapter.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Release the FMU runtime used by the adapter.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_host</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_state_variable_names</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recover the ordered continuous-state variable names from derivative metadata.</span>
+
+<span class="sd">    :param metadata: Parsed FMU metadata.</span>
+<span class="sd">    :return: Ordered continuous-state variable names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">state_variable_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">derivative_variable</span><span class="p">:</span> <span class="n">FmuVariableDescription</span>
+    <span class="k">for</span> <span class="n">derivative_variable</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_derivative_variables</span><span class="p">():</span>
+        <span class="n">derivative_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">derivative_variable</span><span class="o">.</span><span class="n">derivative_index</span>
+        <span class="k">if</span> <span class="n">derivative_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># FMI derivative indices are 1-based and point to the associated state variable.</span>
+            <span class="n">state_variable_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">derivative_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">state_variable_names</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="build_fmu_me_device_spec">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.build_fmu_me_device_spec">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_fmu_me_device_spec</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="n">FmuMeDomain</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">FmuImportConfig</span><span class="p">,</span>
+    <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+    <span class="n">input_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">output_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">integration_method</span><span class="p">:</span> <span class="n">FmuMeIntegrationMethod</span> <span class="o">=</span> <span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FmuMeDeviceSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the clean runtime specification required by a future FMU ME device adapter.</span>
+
+<span class="sd">    :param domain: VeraGrid domain that will consume the FMU.</span>
+<span class="sd">    :param config: FMU runtime configuration.</span>
+<span class="sd">    :param device_tpe: VeraGrid device type.</span>
+<span class="sd">    :param input_variable_names: Ordered FMU input names.</span>
+<span class="sd">    :param output_variable_names: Ordered FMU output names.</span>
+<span class="sd">    :param integration_method: Predictor used by the adapter.</span>
+<span class="sd">    :return: Runtime FMU ME device specification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">FmuModelDescription</span> <span class="o">=</span> <span class="n">read_fmu_model_description</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">fmu_path</span><span class="p">)</span>
+    <span class="n">resolved_mode</span><span class="p">:</span> <span class="n">FmuInterfaceMode</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">resolve_mode</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">preferred_mode</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resolved_mode</span> <span class="o">==</span> <span class="n">FmuInterfaceMode</span><span class="o">.</span><span class="n">MODEL_EXCHANGE</span><span class="p">:</span>
+        <span class="n">available_variables</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get_variable_names</span><span class="p">())</span>
+        <span class="n">input_variable_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">for</span> <span class="n">input_variable_name</span> <span class="ow">in</span> <span class="n">input_variable_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">input_variable_name</span> <span class="ow">in</span> <span class="n">available_variables</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FMU variable </span><span class="si">{</span><span class="n">input_variable_name</span><span class="si">!r}</span><span class="s2"> was not found in </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">output_variable_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">for</span> <span class="n">output_variable_name</span> <span class="ow">in</span> <span class="n">output_variable_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output_variable_name</span> <span class="ow">in</span> <span class="n">available_variables</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FMU variable </span><span class="si">{</span><span class="n">output_variable_name</span><span class="si">!r}</span><span class="s2"> was not found in </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">fmu_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">state_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_state_variable_names</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">derivative_variable_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_derivative_variables</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">FmuMeDeviceSpec</span><span class="p">(</span>
+            <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+            <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+            <span class="n">input_variable_names</span><span class="o">=</span><span class="n">input_variable_names</span><span class="p">,</span>
+            <span class="n">output_variable_names</span><span class="o">=</span><span class="n">output_variable_names</span><span class="p">,</span>
+            <span class="n">state_variable_names</span><span class="o">=</span><span class="n">state_variable_names</span><span class="p">,</span>
+            <span class="n">derivative_variable_names</span><span class="o">=</span><span class="n">derivative_variable_names</span><span class="p">,</span>
+            <span class="n">integration_method</span><span class="o">=</span><span class="n">integration_method</span><span class="p">,</span>
+            <span class="n">input_bindings</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(),</span>
+            <span class="n">output_bindings</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(),</span>
+            <span class="n">output_defaults</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+            <span class="n">output_param_uids</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FMU ME device specs require a Model Exchange FMU, got </span><span class="si">{</span><span class="n">resolved_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_rms_me_output_shell_block</span><span class="p">(</span>
+    <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">output_defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the symbolic RMS shell used to expose FMU ME outputs to VeraGrid.</span>
+
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param name: Template name.</span>
+<span class="sd">    :param output_bindings: FMU-to-VeraGrid bindings.</span>
+<span class="sd">    :param output_defaults: Default output values before the first FMU step.</span>
+<span class="sd">    :return: Symbolic shell block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">output_defaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">output_defaults</span><span class="p">)</span>
+
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">algebraic_eqs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">event_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">external_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">output_bindings</span><span class="p">:</span>
+        <span class="n">reference_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">output_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fmu_</span><span class="si">{</span><span class="n">reference_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">)</span>
+        <span class="n">parameter_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fmu_param_</span><span class="si">{</span><span class="n">reference_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">default_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+        <span class="c1"># The FMU outputs are projected into runtime parameters so the RMS DAE sees a normal block.</span>
+        <span class="n">event_dict</span><span class="p">[</span><span class="n">parameter_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_var</span><span class="p">)</span>
+        <span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_var</span> <span class="o">-</span> <span class="n">parameter_var</span><span class="p">)</span>
+        <span class="n">external_mapping</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_var</span>
+
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">algebraic_vars</span><span class="p">,</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">algebraic_eqs</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">algebraic_vars</span><span class="p">),</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="n">external_mapping</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="build_rms_fmu_me_injection_template">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.build_rms_fmu_me_injection_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_rms_fmu_me_injection_template</span><span class="p">(</span>
+    <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">FmuImportConfig</span><span class="p">,</span>
+    <span class="n">input_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span><span class="p">,</span>
+    <span class="n">output_defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">integration_method</span><span class="p">:</span> <span class="n">FmuMeIntegrationMethod</span> <span class="o">=</span> <span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the symbolic RMS shell for an imported FMU ME device.</span>
+
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param config: FMU runtime configuration.</span>
+<span class="sd">    :param input_bindings: VeraGrid-to-FMU bindings.</span>
+<span class="sd">    :param output_bindings: FMU-to-VeraGrid bindings.</span>
+<span class="sd">    :param name: Template name.</span>
+<span class="sd">    :param device_tpe: VeraGrid device type.</span>
+<span class="sd">    :param output_defaults: Default output values before the first FMU step.</span>
+<span class="sd">    :param integration_method: Internal ME predictor method.</span>
+<span class="sd">    :return: RMS template wrapping the FMU shell block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_variable_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">output_variable_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">input_bindings</span><span class="p">:</span>
+        <span class="n">input_variable_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">output_bindings</span><span class="p">:</span>
+        <span class="n">output_variable_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">)</span>
+
+    <span class="c1"># The FMU metadata is validated before the symbolic shell block is created.</span>
+    <span class="n">build_fmu_me_device_spec</span><span class="p">(</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">FmuMeDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+        <span class="n">input_variable_names</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">input_variable_names</span><span class="p">),</span>
+        <span class="n">output_variable_names</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">output_variable_names</span><span class="p">),</span>
+        <span class="n">integration_method</span><span class="o">=</span><span class="n">integration_method</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">template</span><span class="p">:</span> <span class="n">RmsModelTemplate</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">device_tpe</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">_build_rms_me_output_shell_block</span><span class="p">(</span><span class="n">vfactory</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">,</span> <span class="n">output_defaults</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+
+
+<div class="viewcode-block" id="build_emt_fmu_me_injection_template">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.build_emt_fmu_me_injection_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_emt_fmu_me_injection_template</span><span class="p">(</span>
+    <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">FmuImportConfig</span><span class="p">,</span>
+    <span class="n">input_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">output_bindings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FmuRefBinding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span><span class="p">,</span>
+    <span class="n">output_defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">integration_method</span><span class="p">:</span> <span class="n">FmuMeIntegrationMethod</span> <span class="o">=</span> <span class="n">FmuMeIntegrationMethod</span><span class="o">.</span><span class="n">EXPLICIT_EULER</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the symbolic EMT shell for an imported FMU ME device.</span>
+
+<span class="sd">    :param vfactory: Variable factory used by the owning grid.</span>
+<span class="sd">    :param config: FMU runtime configuration.</span>
+<span class="sd">    :param input_bindings: VeraGrid-to-FMU bindings.</span>
+<span class="sd">    :param output_bindings: FMU-to-VeraGrid bindings.</span>
+<span class="sd">    :param name: Template name.</span>
+<span class="sd">    :param device_tpe: VeraGrid device type.</span>
+<span class="sd">    :param output_defaults: Default output values before the first FMU step.</span>
+<span class="sd">    :param integration_method: Internal ME predictor method.</span>
+<span class="sd">    :return: EMT template wrapping the FMU shell block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_variable_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">output_variable_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">input_bindings</span><span class="p">:</span>
+        <span class="n">input_variable_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">output_bindings</span><span class="p">:</span>
+        <span class="n">output_variable_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">)</span>
+
+    <span class="n">build_fmu_me_device_spec</span><span class="p">(</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">FmuMeDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">,</span>
+        <span class="n">input_variable_names</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">input_variable_names</span><span class="p">),</span>
+        <span class="n">output_variable_names</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">output_variable_names</span><span class="p">),</span>
+        <span class="n">integration_method</span><span class="o">=</span><span class="n">integration_method</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">device_tpe</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">_build_rms_me_output_shell_block</span><span class="p">(</span><span class="n">vfactory</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">output_bindings</span><span class="p">,</span> <span class="n">output_defaults</span><span class="p">)</span>
+    <span class="n">_ensure_emt_external_mapping_keys</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Pl0_A</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Pl0_B</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Pl0_C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Ql0_A</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Ql0_B</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Ql0_C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowRefferenceType</span><span class="o">.</span><span class="n">omega_base</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">template</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_rms_me_device_config</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the serialized FMU ME configuration stored on one device.</span>
+
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :return: Parsed device configuration when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">rms_fmu_me_import_config</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">InjectionParent</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">BranchParent</span><span class="p">):</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">load_fmu_me_device_config</span><span class="p">(</span><span class="n">config_text</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_emt_me_device_config</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the serialized FMU ME configuration stored on one EMT device.</span>
+
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :return: Parsed device configuration when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">emt_fmu_me_import_config</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">InjectionParent</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">BranchParent</span><span class="p">):</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">load_fmu_me_device_config</span><span class="p">(</span><span class="n">config_text</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_rms_me_runtime_spec</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rebuild the FMU ME runtime specification from the stored device config.</span>
+
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param block: Device block used in the active RMS problem.</span>
+<span class="sd">    :return: Runtime FMU ME specification when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">record</span> <span class="o">=</span> <span class="n">_read_rms_me_device_config</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">domain</span> <span class="o">==</span> <span class="n">FmuMeDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">restore_fmu_me_spec_from_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_emt_me_runtime_spec</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rebuild the FMU ME runtime specification from the stored EMT device config.</span>
+
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param block: Device block used in the active EMT problem.</span>
+<span class="sd">    :return: Runtime FMU ME specification when available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">record</span> <span class="o">=</span> <span class="n">_read_emt_me_device_config</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">domain</span> <span class="o">==</span> <span class="n">FmuMeDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">restore_fmu_me_spec_from_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_event_param_index_map</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the runtime event-parameter index map exposed by the active problem.</span>
+
+<span class="sd">    :param problem: Runtime problem wrapper.</span>
+<span class="sd">    :return: UID-to-index event-parameter map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">_uid2idx_event_params</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">uid2idx_event_params</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_rms_me_input_value</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read one RMS FMU ME input from the current network snapshot.</span>
+
+<span class="sd">    :param problem: RMS problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param reference: Requested VeraGrid external reference.</span>
+<span class="sd">    :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">    :return: Numeric input value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="p">{</span><span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">,</span> <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">}:</span>
+        <span class="n">bus_model</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">rms_model</span>
+        <span class="n">variable</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">bus_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">[</span><span class="n">problem</span><span class="o">.</span><span class="n">uid2idx_vars</span><span class="p">[</span><span class="n">variable</span><span class="o">.</span><span class="n">uid</span><span class="p">]])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported RMS FMU ME input reference </span><span class="si">{</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_emt_me_input_value</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read one EMT FMU ME input from the current network snapshot.</span>
+
+<span class="sd">    :param problem: EMT problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param reference: Requested VeraGrid external reference.</span>
+<span class="sd">    :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">    :return: Numeric input value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">reference</span> <span class="ow">in</span> <span class="p">{</span>
+        <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">v_N</span><span class="p">,</span>
+        <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">v_A</span><span class="p">,</span>
+        <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">v_B</span><span class="p">,</span>
+        <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">v_C</span><span class="p">,</span>
+        <span class="n">VarPowerFlowRefferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">,</span>
+    <span class="p">}:</span>
+        <span class="n">bus_model</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">emt_model</span>
+        <span class="n">variable</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">bus_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">[</span><span class="n">problem</span><span class="o">.</span><span class="n">uid2idx_vars</span><span class="p">[</span><span class="n">variable</span><span class="o">.</span><span class="n">uid</span><span class="p">]])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported EMT FMU ME input reference </span><span class="si">{</span><span class="n">reference</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="RmsFmuMeDeviceAdapter">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.RmsFmuMeDeviceAdapter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RmsFmuMeDeviceAdapter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adapt one imported FMU ME device to the RMS communication-step loop.</span>
+
+<span class="sd">    :param problem: RMS problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param spec: Runtime FMU ME specification.</span>
+<span class="sd">    :param output_param_indices: Runtime-parameter indices receiving FMU outputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;problem&quot;</span><span class="p">,</span> <span class="s2">&quot;device&quot;</span><span class="p">,</span> <span class="s2">&quot;spec&quot;</span><span class="p">,</span> <span class="s2">&quot;output_param_indices&quot;</span><span class="p">,</span> <span class="s2">&quot;runtime_adapter&quot;</span><span class="p">,</span> <span class="s2">&quot;last_outputs&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">FmuMeDeviceSpec</span><span class="p">,</span>
+        <span class="n">output_param_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the RMS FMU ME runtime adapter.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">:</span> <span class="n">FmuMeDeviceSpec</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_param_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="p">:</span> <span class="n">FmuMeDeviceAdapter</span> <span class="o">=</span> <span class="n">FmuMeDeviceAdapter</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_input_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect the FMU ME input values from the current RMS snapshot.</span>
+
+<span class="sd">        :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">        :return: FMU input values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+        <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">input_bindings</span><span class="p">:</span>
+            <span class="n">input_values</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_rms_me_input_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">input_values</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_map_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runtime_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map runtime FMU outputs back to VeraGrid references.</span>
+
+<span class="sd">        :param runtime_outputs: FMU outputs indexed by FMU variable name.</span>
+<span class="sd">        :return: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mapped_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+        <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_bindings</span><span class="p">:</span>
+            <span class="n">mapped_outputs</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">runtime_outputs</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">mapped_outputs</span>
+
+<div class="viewcode-block" id="RmsFmuMeDeviceAdapter.initialize_outputs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.RmsFmuMeDeviceAdapter.initialize_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the FMU ME runtime and return its first output sample.</span>
+
+<span class="sd">        :param time_value: Current simulation time.</span>
+<span class="sd">        :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">        :return: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">time_value</span><span class="p">,</span> <span class="n">input_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_input_values</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">))</span>
+        <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_outputs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">evaluate_outputs</span><span class="p">(</span><span class="n">time_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_input_values</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span></div>
+
+
+<div class="viewcode-block" id="RmsFmuMeDeviceAdapter.advance">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.RmsFmuMeDeviceAdapter.advance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">advance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Advance the FMU ME runtime for one RMS communication step.</span>
+
+<span class="sd">        :param current_time: Current simulation time.</span>
+<span class="sd">        :param step_size: RMS communication step.</span>
+<span class="sd">        :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">        :return: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_outputs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">explicit_euler_step</span><span class="p">(</span><span class="n">current_time</span><span class="o">=</span><span class="n">current_time</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span> <span class="n">input_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_input_values</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span></div>
+
+
+<div class="viewcode-block" id="RmsFmuMeDeviceAdapter.apply_outputs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.RmsFmuMeDeviceAdapter.apply_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the FMU ME outputs into VeraGrid runtime-parameter storage.</span>
+
+<span class="sd">        :param target: Runtime-parameter array.</span>
+<span class="sd">        :param outputs: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span>
+        <span class="k">for</span> <span class="n">reference</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">target</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">[</span><span class="n">reference</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RmsFmuMeDeviceAdapter.close">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.RmsFmuMeDeviceAdapter.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Release the FMU ME runtime used by the adapter.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">evaluate_outputs</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EmtFmuMeDeviceAdapter">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.EmtFmuMeDeviceAdapter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmtFmuMeDeviceAdapter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adapt one imported FMU ME device to the EMT boundary-update loop.</span>
+
+<span class="sd">    :param problem: EMT problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param spec: Runtime FMU ME specification.</span>
+<span class="sd">    :param output_param_indices: Runtime-parameter indices receiving FMU outputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;problem&quot;</span><span class="p">,</span> <span class="s2">&quot;device&quot;</span><span class="p">,</span> <span class="s2">&quot;spec&quot;</span><span class="p">,</span> <span class="s2">&quot;output_param_indices&quot;</span><span class="p">,</span> <span class="s2">&quot;runtime_adapter&quot;</span><span class="p">,</span> <span class="s2">&quot;last_time&quot;</span><span class="p">,</span> <span class="s2">&quot;initialized&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">FmuMeDeviceSpec</span><span class="p">,</span>
+        <span class="n">output_param_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store the EMT FMU ME runtime adapter.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">:</span> <span class="n">FmuMeDeviceSpec</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_param_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="p">:</span> <span class="n">FmuMeDeviceAdapter</span> <span class="o">=</span> <span class="n">FmuMeDeviceAdapter</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_input_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect the FMU ME input values from the current EMT snapshot.</span>
+
+<span class="sd">        :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">        :return: FMU input values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">input_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+        <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">input_bindings</span><span class="p">:</span>
+            <span class="n">input_values</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_emt_me_input_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">input_values</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_map_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runtime_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map runtime FMU outputs back to VeraGrid references.</span>
+
+<span class="sd">        :param runtime_outputs: FMU outputs indexed by FMU variable name.</span>
+<span class="sd">        :return: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mapped_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">binding</span><span class="p">:</span> <span class="n">FmuRefBinding</span>
+        <span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_bindings</span><span class="p">:</span>
+            <span class="n">mapped_outputs</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">runtime_outputs</span><span class="p">[</span><span class="n">binding</span><span class="o">.</span><span class="n">fmu_variable_name</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">mapped_outputs</span>
+
+<div class="viewcode-block" id="EmtFmuMeDeviceAdapter.initialize_outputs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.EmtFmuMeDeviceAdapter.initialize_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the FMU ME runtime and return its first output sample.</span>
+
+<span class="sd">        :param time_value: Current simulation time.</span>
+<span class="sd">        :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">        :return: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">time_value</span><span class="p">,</span> <span class="n">input_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_input_values</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_time</span> <span class="o">=</span> <span class="n">time_value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_outputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">evaluate_outputs</span><span class="p">(</span><span class="n">time_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_input_values</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="EmtFmuMeDeviceAdapter.advance">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.EmtFmuMeDeviceAdapter.advance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">advance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Advance the FMU ME runtime for one EMT communication step.</span>
+
+<span class="sd">        :param current_time: Current simulation time.</span>
+<span class="sd">        :param step_size: EMT communication step.</span>
+<span class="sd">        :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">        :return: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_outputs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">explicit_euler_step</span><span class="p">(</span><span class="n">current_time</span><span class="o">=</span><span class="n">current_time</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span> <span class="n">input_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_input_values</span><span class="p">(</span><span class="n">x_snapshot</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_time</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">+</span> <span class="n">step_size</span>
+        <span class="k">return</span> <span class="n">outputs</span></div>
+
+
+<div class="viewcode-block" id="EmtFmuMeDeviceAdapter.apply_outputs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.EmtFmuMeDeviceAdapter.apply_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the FMU ME outputs into VeraGrid runtime-parameter storage.</span>
+
+<span class="sd">        :param target: Runtime-parameter array.</span>
+<span class="sd">        :param outputs: FMU outputs indexed by VeraGrid reference.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span>
+        <span class="k">for</span> <span class="n">reference</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">target</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_param_indices</span><span class="p">[</span><span class="n">reference</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EmtFmuMeDeviceAdapter.close">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.EmtFmuMeDeviceAdapter.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Release the FMU ME runtime used by the adapter.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_adapter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="register_rms_fmu_me_device">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.register_rms_fmu_me_device">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_rms_fmu_me_device</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register one imported FMU ME device in the active RMS problem.</span>
+
+<span class="sd">    :param problem: RMS problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param block: Device RMS block used in the active problem.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FmuMeDeviceSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_rms_me_runtime_spec</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adapter</span><span class="p">:</span> <span class="n">RmsFmuMeDeviceAdapter</span>
+        <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">idtag</span> <span class="o">==</span> <span class="n">device</span><span class="o">.</span><span class="n">idtag</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">output_param_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">uid_to_index</span> <span class="o">=</span> <span class="n">_get_event_param_index_map</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+        <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span>
+        <span class="k">for</span> <span class="n">reference</span><span class="p">,</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_param_uids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">output_param_indices</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">uid_to_index</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+
+        <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">RmsFmuMeDeviceAdapter</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">output_param_indices</span><span class="o">=</span><span class="n">output_param_indices</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_initialized</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="initialize_rms_fmu_me_devices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.initialize_rms_fmu_me_devices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_rms_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize all imported FMU ME devices before the RMS loop starts.</span>
+
+<span class="sd">    :param problem: RMS problem instance.</span>
+<span class="sd">    :param x_snapshot: Initial accepted state snapshot.</span>
+<span class="sd">    :param time_value: Initial simulation time.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">adapter</span><span class="p">:</span> <span class="n">RmsFmuMeDeviceAdapter</span>
+        <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">initialize_outputs</span><span class="p">(</span><span class="n">time_value</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">)</span>
+            <span class="n">adapter</span><span class="o">.</span><span class="n">apply_outputs</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_initialized</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="advance_rms_fmu_me_devices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.advance_rms_fmu_me_devices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">advance_rms_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Advance all imported FMU ME devices for one RMS communication step.</span>
+
+<span class="sd">    :param problem: RMS problem instance.</span>
+<span class="sd">    :param time_value: Current simulation time.</span>
+<span class="sd">    :param x_snapshot: Current accepted state snapshot.</span>
+<span class="sd">    :param step_size: RMS communication step.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_initialized</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">initialize_rms_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="o">=</span><span class="n">x_snapshot</span><span class="p">,</span> <span class="n">time_value</span><span class="o">=</span><span class="n">time_value</span><span class="p">)</span>
+
+        <span class="n">adapter</span><span class="p">:</span> <span class="n">RmsFmuMeDeviceAdapter</span>
+        <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">current_time</span><span class="o">=</span><span class="n">time_value</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="o">=</span><span class="n">x_snapshot</span><span class="p">)</span>
+            <span class="n">adapter</span><span class="o">.</span><span class="n">apply_outputs</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">problem</span><span class="o">.</span><span class="n">_last_variable_parameters_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="close_rms_fmu_me_devices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.close_rms_fmu_me_devices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">close_rms_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close all imported FMU ME devices.</span>
+
+<span class="sd">    :param problem: RMS problem instance.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">adapter</span><span class="p">:</span> <span class="n">RmsFmuMeDeviceAdapter</span>
+    <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+        <span class="n">adapter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="register_emt_fmu_me_device">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.register_emt_fmu_me_device">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_emt_fmu_me_device</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register one imported FMU ME device in the active EMT problem.</span>
+
+<span class="sd">    :param problem: EMT problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param block: Device EMT block used in the active problem.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FmuMeDeviceSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_emt_me_runtime_spec</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adapter</span><span class="p">:</span> <span class="n">EmtFmuMeDeviceAdapter</span>
+        <span class="k">for</span> <span class="n">adapter</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">idtag</span> <span class="o">==</span> <span class="n">device</span><span class="o">.</span><span class="n">idtag</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">output_param_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">VarPowerFlowRefferenceType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">uid_to_index</span> <span class="o">=</span> <span class="n">_get_event_param_index_map</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+        <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowRefferenceType</span>
+        <span class="k">for</span> <span class="n">reference</span><span class="p">,</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_param_uids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">output_param_indices</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span> <span class="o">=</span> <span class="n">uid_to_index</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+
+        <span class="n">problem</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">EmtFmuMeDeviceAdapter</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">output_param_indices</span><span class="o">=</span><span class="n">output_param_indices</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="queue_emt_fmu_me_device">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.queue_emt_fmu_me_device">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">queue_emt_fmu_me_device</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Queue one EMT device for FMU ME restoration after problem repartitioning.</span>
+
+<span class="sd">    :param problem: EMT problem instance.</span>
+<span class="sd">    :param device: VeraGrid device instance.</span>
+<span class="sd">    :param block: Device EMT block used in the active problem.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">record</span> <span class="o">=</span> <span class="n">_read_emt_me_device_config</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">_pending_fmu_me_devices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">device</span><span class="p">,</span> <span class="n">block</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="finalize_emt_fmu_me_devices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.fmu.importer.html#VeraGridEngine.IO.fmu.importer.experimental_me.finalize_emt_fmu_me_devices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">finalize_emt_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Restore all queued EMT FMU ME devices after the EMT problem is assembled.</span>
+
+<span class="sd">    :param problem: EMT problem instance.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pending_device</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">pending_device</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">_pending_fmu_me_devices</span><span class="p">:</span>
+        <span class="n">register_emt_fmu_me_device</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">pending_device</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pending_device</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

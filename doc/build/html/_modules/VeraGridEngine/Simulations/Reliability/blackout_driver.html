@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.Reliability.blackout_driver &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.Reliability.blackout_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.Reliability.blackout_driver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_worker</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowDriver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">StochasticPowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">StochasticPowerFlowDriver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span><span class="p">,</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationTypes</span><span class="p">,</span> <span class="n">CascadeType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverTemplate</span>
+
+
+<div class="viewcode-block" id="CascadingReportElement">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingReportElement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CascadingReportElement</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;removed_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pf_results&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;criteria&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">removed_idx</span><span class="p">,</span> <span class="n">pf_results</span><span class="p">,</span> <span class="n">criteria</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CascadingReportElement constructor</span>
+<span class="sd">        :param removed_idx: list of removed branch indices</span>
+<span class="sd">        :param pf_results: power flow results object</span>
+<span class="sd">        :param criteria: criteria used in the end</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removed_idx</span> <span class="o">=</span> <span class="n">removed_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pf_results</span> <span class="o">=</span> <span class="n">pf_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criteria</span> <span class="o">=</span> <span class="n">criteria</span></div>
+
+
+
+<div class="viewcode-block" id="CascadingResults">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingResults">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CascadingResults</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;cascade_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;events&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># TODO: refactor this class</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cascade_type</span><span class="p">:</span> <span class="n">CascadeType</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cascading results constructor</span>
+<span class="sd">        :param cascade_type: Cascade type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span> <span class="o">=</span> <span class="n">cascade_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CascadingResults.get_failed_idx">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingResults.get_failed_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_failed_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the array of all failed Branches</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            array of all failed Branches</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="CascadingResults.get_table">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingResults.get_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get DataFrame of the failed elements</span>
+<span class="sd">        :return: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dta</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)):</span>
+            <span class="n">dta</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;Step &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">removed_idx</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">criteria</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dta</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Cascade step&#39;</span><span class="p">,</span> <span class="s1">&#39;Elements failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Criteria&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="CascadingResults.plot">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingResults.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># TODO: implement cascading plot</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CascadingDriver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CascadingDriver</span><span class="p">(</span><span class="n">DriverTemplate</span><span class="p">):</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;options&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;triggering_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;current_step&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max_additional_islands&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cascade_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_lhs_samples&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Cascading&#39;</span>
+    <span class="n">tpe</span> <span class="o">=</span> <span class="n">SimulationTypes</span><span class="o">.</span><span class="n">Cascade_run</span>
+
+    <span class="c1"># TODO: re-make this simulation class</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span> <span class="n">triggering_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_additional_islands</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">cascade_type_</span><span class="p">:</span> <span class="n">CascadeType</span> <span class="o">=</span> <span class="n">CascadeType</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">,</span> <span class="n">n_lhs_samples_</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        Args:</span>
+<span class="sd">            grid: MultiCircuit instance to cascade</span>
+<span class="sd">            options: Power flow Options</span>
+<span class="sd">            triggering_idx: branch indices to trigger first</span>
+<span class="sd">            max_additional_islands: number of islands that shall be formed to consider a blackout</span>
+<span class="sd">            cascade_type_: Cascade simulation kind</span>
+<span class="sd">            n_lhs_samples_: number of latin hypercube samples if using LHS cascade</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">DriverTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">triggering_idx</span> <span class="o">=</span> <span class="n">triggering_idx</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_additional_islands</span> <span class="o">=</span> <span class="n">max_additional_islands</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span> <span class="o">=</span> <span class="n">cascade_type_</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_lhs_samples</span> <span class="o">=</span> <span class="n">n_lhs_samples_</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">CascadingResults</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CascadingDriver.remove_elements">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.remove_elements">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_elements</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">loading_vector</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove Branches based on loading</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">load</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">loading_vector</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">load</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;Loading&#39;</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">load</span> <span class="o">&gt;=</span> <span class="n">load</span><span class="o">.</span><span class="n">max</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># disable the selected Branches</span>
+        <span class="c1"># print(&#39;Removing:&#39;, idx, load[idx])</span>
+        <span class="n">branches</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_branches</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">:</span>
+            <span class="n">branches</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">idx</span><span class="p">,</span> <span class="n">criteria</span></div>
+
+
+<div class="viewcode-block" id="CascadingDriver.remove_probability_based">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.remove_probability_based">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_probability_based</span><span class="p">(</span><span class="n">numerical_circuit</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                                 <span class="n">results</span><span class="p">:</span> <span class="n">StochasticPowerFlowResults</span><span class="p">,</span>
+                                 <span class="n">max_val</span><span class="p">,</span>
+                                 <span class="n">min_prob</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove Branches based on their chance of overload</span>
+<span class="sd">        :param numerical_circuit:</span>
+<span class="sd">        :param results:</span>
+<span class="sd">        :param max_val:</span>
+<span class="sd">        :param min_prob:</span>
+<span class="sd">        :return: list of indices actually removed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">loading</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get_index_loading_cdf</span><span class="p">(</span><span class="n">max_val</span><span class="o">=</span><span class="n">max_val</span><span class="p">)</span>
+
+        <span class="n">any_removed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prob</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_prob</span><span class="p">:</span>
+                <span class="n">any_removed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">numerical_circuit</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">idx_val</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx_val</span><span class="p">)</span>
+                <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;Overload probability &gt; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">min_prob</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">any_removed</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loading</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># pick a random value</span>
+                    <span class="n">idx_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+                    <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;Random with overloads&#39;</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># pick the most loaded</span>
+                    <span class="n">idx_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">loading</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">loading</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;Max loading, Overloads not seen&#39;</span>
+
+                <span class="n">numerical_circuit</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">idx_val</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx_val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">criteria</span> <span class="o">=</span> <span class="s1">&#39;No Branches&#39;</span>
+
+        <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">criteria</span></div>
+
+
+<div class="viewcode-block" id="CascadingDriver.perform_step_run">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.perform_step_run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">perform_step_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform only one step cascading</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialize the simulator</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span> <span class="ow">is</span> <span class="n">CascadeType</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">:</span>
+            <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span> <span class="ow">is</span> <span class="n">CascadeType</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">:</span>
+            <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">StochasticPowerFlowDriver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                                                        <span class="n">sampling_points</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_lhs_samples</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="c1"># For every circuit, run a power flow</span>
+        <span class="c1"># for c in self.grid.circuits:</span>
+        <span class="n">model_simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># the first iteration try to trigger the selected indices, if any</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">criteria</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_elements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">triggering_idx</span><span class="p">,</span>
+                                                 <span class="n">loading_vector</span><span class="o">=</span><span class="n">model_simulator</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># cascade normally</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">criteria</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_elements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">loading_vector</span><span class="o">=</span><span class="n">model_simulator</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+
+        <span class="c1"># store the removed indices and the results</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="n">CascadingReportElement</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">model_simulator</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">criteria</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+        <span class="c1"># increase the step number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_step</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># print(model_simulator.results.get_convergence_report())</span>
+
+        <span class="c1"># send the finnish signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_done</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CascadingDriver.run">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the monte carlo simulation</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># compile</span>
+        <span class="c1"># print(&#39;Compiling...&#39;, end=&#39;&#39;)</span>
+        <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="n">calculation_inputs</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">(</span><span class="n">ignore_single_node_islands</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">ignore_single_node_islands</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">CascadingResults</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span><span class="p">)</span>
+
+        <span class="c1"># initialize the simulator</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span> <span class="ow">is</span> <span class="n">CascadeType</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">:</span>
+            <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascade_type</span> <span class="ow">is</span> <span class="n">CascadeType</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">:</span>
+            <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">StochasticPowerFlowDriver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                                                        <span class="n">sampling_points</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_lhs_samples</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Running cascading failure...&#39;</span><span class="p">)</span>
+
+        <span class="n">n_grids</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">calculation_inputs</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_additional_islands</span>
+        <span class="k">if</span> <span class="n">n_grids</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">):</span>  <span class="c1"># safety check</span>
+            <span class="n">n_grids</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># print(&#39;n grids: &#39;, n_grids)</span>
+
+        <span class="n">it</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">calculation_inputs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n_grids</span> <span class="ow">and</span> <span class="n">it</span> <span class="o">&lt;=</span> <span class="n">n_grids</span><span class="p">:</span>
+
+            <span class="c1"># For every circuit, run the model (time series, lhs, or whatever)</span>
+            <span class="n">model_simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+            <span class="c1"># delete grid elements (Branches)</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">criteria</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_probability_based</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">model_simulator</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
+                                                          <span class="n">max_val</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">min_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+            <span class="c1"># store the removed indices and the results</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="n">CascadingReportElement</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">model_simulator</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">criteria</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+            <span class="c1"># recompile grid</span>
+            <span class="n">calculation_inputs</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">(</span>
+                <span class="n">ignore_single_node_islands</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">ignore_single_node_islands</span><span class="p">)</span>
+
+            <span class="n">it</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">prog</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">calculation_inputs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_grids</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">it</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_grids</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="n">prog</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;Info&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="s2">&quot;Number of grids split&quot;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">calculation_inputs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;Info&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="s2">&quot;Steps&quot;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">it</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CascadingDriver.get_failed_idx">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.get_failed_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_failed_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the array of all failed Branches</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            array of all failed Branches</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_failed_idx</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CascadingDriver.get_table">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.get_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get DataFrame of the failed elements</span>
+<span class="sd">        :return: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_table</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CascadingDriver.cancel">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Reliability.html#VeraGridEngine.Simulations.Reliability.blackout_driver.CascadingDriver.cancel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel the simulation</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_done</span><span class="p">(</span><span class="n">txt</span><span class="o">=</span><span class="s2">&quot;Cancelled&quot;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

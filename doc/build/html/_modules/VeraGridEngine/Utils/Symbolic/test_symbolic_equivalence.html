@@ -1,0 +1,1229 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Standalone tests for symbolic expression equivalence system.</span>
+<span class="sd">This test file imports ONLY the minimal classes needed and does not</span>
+<span class="sd">trigger the full VeraGridEngine import chain.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/home/marina/PycharmProjects/VeraGrid/src&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Const">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.Const">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Const</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.Var">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Var</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+
+
+
+<div class="viewcode-block" id="BinOp">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.BinOp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinOp</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;op&quot;</span><span class="p">,</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">op</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">right</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="UnOp">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.UnOp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnOp</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;op&quot;</span><span class="p">,</span> <span class="s2">&quot;operand&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">op</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operand</span> <span class="o">=</span> <span class="n">operand</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">operand</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Func">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.Func">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Func</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;op&quot;</span><span class="p">,</span> <span class="s2">&quot;arg&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">op</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">arg</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_expr</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">val</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_radd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rsub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rmul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_truediv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rtruediv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rpow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">_to_expr</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_neg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">UnOp</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+<span class="n">Const</span><span class="o">.</span><span class="fm">__add__</span> <span class="o">=</span> <span class="n">_add</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__radd__</span> <span class="o">=</span> <span class="n">_radd</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__sub__</span> <span class="o">=</span> <span class="n">_sub</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__rsub__</span> <span class="o">=</span> <span class="n">_rsub</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__mul__</span> <span class="o">=</span> <span class="n">_mul</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__rmul__</span> <span class="o">=</span> <span class="n">_rmul</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__truediv__</span> <span class="o">=</span> <span class="n">_truediv</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__rtruediv__</span> <span class="o">=</span> <span class="n">_rtruediv</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__pow__</span> <span class="o">=</span> <span class="n">_pow</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__rpow__</span> <span class="o">=</span> <span class="n">_rpow</span>
+<span class="n">Const</span><span class="o">.</span><span class="fm">__neg__</span> <span class="o">=</span> <span class="n">_neg</span>
+
+<span class="n">Var</span><span class="o">.</span><span class="fm">__add__</span> <span class="o">=</span> <span class="n">_add</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__radd__</span> <span class="o">=</span> <span class="n">_radd</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__sub__</span> <span class="o">=</span> <span class="n">_sub</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__rsub__</span> <span class="o">=</span> <span class="n">_rsub</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__mul__</span> <span class="o">=</span> <span class="n">_mul</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__rmul__</span> <span class="o">=</span> <span class="n">_rmul</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__truediv__</span> <span class="o">=</span> <span class="n">_truediv</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__rtruediv__</span> <span class="o">=</span> <span class="n">_rtruediv</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__pow__</span> <span class="o">=</span> <span class="n">_pow</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__rpow__</span> <span class="o">=</span> <span class="n">_rpow</span>
+<span class="n">Var</span><span class="o">.</span><span class="fm">__neg__</span> <span class="o">=</span> <span class="n">_neg</span>
+
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__add__</span> <span class="o">=</span> <span class="n">_add</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__radd__</span> <span class="o">=</span> <span class="n">_radd</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__sub__</span> <span class="o">=</span> <span class="n">_sub</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__rsub__</span> <span class="o">=</span> <span class="n">_rsub</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__mul__</span> <span class="o">=</span> <span class="n">_mul</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__rmul__</span> <span class="o">=</span> <span class="n">_rmul</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__truediv__</span> <span class="o">=</span> <span class="n">_truediv</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__rtruediv__</span> <span class="o">=</span> <span class="n">_rtruediv</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__pow__</span> <span class="o">=</span> <span class="n">_pow</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__rpow__</span> <span class="o">=</span> <span class="n">_rpow</span>
+<span class="n">BinOp</span><span class="o">.</span><span class="fm">__neg__</span> <span class="o">=</span> <span class="n">_neg</span>
+
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__add__</span> <span class="o">=</span> <span class="n">_add</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__radd__</span> <span class="o">=</span> <span class="n">_radd</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__sub__</span> <span class="o">=</span> <span class="n">_sub</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__rsub__</span> <span class="o">=</span> <span class="n">_rsub</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__mul__</span> <span class="o">=</span> <span class="n">_mul</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__rmul__</span> <span class="o">=</span> <span class="n">_rmul</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__truediv__</span> <span class="o">=</span> <span class="n">_truediv</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__rtruediv__</span> <span class="o">=</span> <span class="n">_rtruediv</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__pow__</span> <span class="o">=</span> <span class="n">_pow</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__rpow__</span> <span class="o">=</span> <span class="n">_rpow</span>
+<span class="n">UnOp</span><span class="o">.</span><span class="fm">__neg__</span> <span class="o">=</span> <span class="n">_neg</span>
+
+
+<div class="viewcode-block" id="sin">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.sin">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;sin&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cos">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.cos">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cos</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;cos&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="n">CommutativeOps</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_canonical_const</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">complex</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;complex&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">imag</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_assoc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">op</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="n">op</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_flatten_assoc</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span> <span class="o">+</span> <span class="n">_flatten_assoc</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">expr</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_exprs</span><span class="p">(</span><span class="n">exprs</span><span class="p">,</span> <span class="n">key_func</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exprs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key_func</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hash_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+        <span class="n">type_key</span><span class="p">,</span> <span class="n">norm_val</span> <span class="o">=</span> <span class="n">_canonical_const</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Const:</span><span class="si">{</span><span class="n">type_key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">norm_val</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Var:</span><span class="si">{</span><span class="n">expr</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UnOp:</span><span class="si">{</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">_hash_expr</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">operand</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+        <span class="n">child_hash</span> <span class="o">=</span> <span class="n">_hash_expr</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">_hash_expr</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="ow">in</span> <span class="n">CommutativeOps</span><span class="p">:</span>
+            <span class="n">child_hash</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">child_hash</span><span class="p">))</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinOp:</span><span class="si">{</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">child_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Func</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Func:</span><span class="si">{</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">_hash_expr</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown expression type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_sum</span><span class="p">(</span><span class="n">terms</span><span class="p">):</span>
+    <span class="n">sorted_terms</span> <span class="o">=</span> <span class="n">_sort_exprs</span><span class="p">(</span><span class="n">terms</span><span class="p">,</span> <span class="n">_hash_expr</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sorted_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">sorted_terms</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_product</span><span class="p">(</span><span class="n">factors</span><span class="p">):</span>
+    <span class="n">sorted_factors</span> <span class="o">=</span> <span class="n">_sort_exprs</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">_hash_expr</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sorted_factors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">sorted_factors</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_eval_func</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;sin&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;cos&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;tan&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;exp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;sqrt&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;abs&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;floor&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;ceil&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;heaviside&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot evaluate function </span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="canonical">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.canonical">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">canonical</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Var</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">):</span>
+        <span class="n">canonical_operand</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">operand</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">canonical_operand</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="o">-</span><span class="n">canonical_operand</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">canonical_operand</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">canonical_operand</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">canonical_operand</span><span class="o">.</span><span class="n">operand</span>
+            <span class="k">return</span> <span class="n">UnOp</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">canonical_operand</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">UnOp</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">canonical_operand</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+            <span class="n">terms</span> <span class="o">=</span> <span class="n">_flatten_assoc</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">right</span><span class="p">),</span> <span class="s2">&quot;+&quot;</span><span class="p">)</span>
+            <span class="n">const_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">non_const_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">const_sum</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">non_const_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">const_sum</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">non_const_terms</span><span class="p">:</span>
+                <span class="n">non_const_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="n">const_sum</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_const_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">non_const_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">_build_sum</span><span class="p">(</span><span class="n">non_const_terms</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="n">_flatten_assoc</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right</span><span class="p">),</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>
+            <span class="n">zero_found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">const_product</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">non_const_factors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">zero_found</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                    <span class="n">const_product</span> <span class="o">*=</span> <span class="n">f</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">non_const_factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">zero_found</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">const_product</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">non_const_factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="n">const_product</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">non_const_factors</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_const_factors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">non_const_factors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">_build_product</span><span class="p">(</span><span class="n">non_const_factors</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">left</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">UnOp</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">left</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;**&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">left</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="n">right</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Func</span><span class="p">):</span>
+        <span class="n">arg_canon</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_canon</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg_canon</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">_eval_func</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">arg_canon</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="n">arg_canon</span><span class="p">,</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">expr</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_expand_power</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">or</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">!=</span> <span class="s2">&quot;**&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    
+    <span class="n">base</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exponent</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">exponent</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">canonical</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">base</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">base</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">base</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">result</span>
+    
+    <span class="k">return</span> <span class="n">expr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_product_vars</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">expr</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_get_product_vars</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">_get_product_vars</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_sorted_vars_key</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a canonical key (sorted tuple) for variable comparison in products.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_get_product_vars</span><span class="p">(</span><span class="n">expr</span><span class="p">)))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_const_from_term</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+        <span class="n">consts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">consts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">consts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">consts</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">consts</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">*=</span> <span class="n">c</span>
+            <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="mf">1.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_non_const_part</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_get_non_const_part</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_get_non_const_part</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">expr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_expand_product_sum</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    
+    <span class="n">left</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span>
+    
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;**&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">left</span><span class="o">.</span><span class="n">left</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">left</span><span class="o">.</span><span class="n">right</span>
+                <span class="n">a_sq</span> <span class="o">=</span> <span class="n">_expand_power</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
+                <span class="n">b_sq</span> <span class="o">=</span> <span class="n">_expand_power</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
+                <span class="n">ab</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+                <span class="n">ba</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+                <span class="n">two_ab</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">ab</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">a_sq</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">two_ab</span><span class="p">),</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">b_sq</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">10</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">left</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">left</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+        <span class="n">left_exp</span> <span class="o">=</span> <span class="n">_expand_product_sum</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">right_exp</span> <span class="o">=</span> <span class="n">_expand_product_sum</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left_exp</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left_exp</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="p">)</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">term1</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">term2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right_exp</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">right_exp</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">term1</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">term2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left_exp</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left_exp</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="p">)</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">canonical</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">term1</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">term2</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right_exp</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">right_exp</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_exp</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">right_exp</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">canonical</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">term1</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">term2</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">expr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_combine_like_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine like terms in a sum by collecting all terms first.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">or</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">!=</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    
+    <span class="n">all_terms</span> <span class="o">=</span> <span class="n">_collect_all_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_merge_terms_list</span><span class="p">(</span><span class="n">all_terms</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_all_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect all terms from a sum into a flat list.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_collect_all_terms</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">_collect_all_terms</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">expr</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_terms_list</span><span class="p">(</span><span class="n">terms</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge like terms from a flat list of terms.&quot;&quot;&quot;</span>
+    <span class="n">term_map</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">_get_sorted_vars_key</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+        <span class="n">const</span> <span class="o">=</span> <span class="n">_get_const_from_term</span><span class="p">(</span><span class="n">term</span><span class="p">)</span> <span class="ow">or</span> <span class="mf">0.0</span>
+        
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">term_map</span><span class="p">:</span>
+            <span class="n">existing_const</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">term_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">term_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">existing_const</span> <span class="o">+</span> <span class="n">const</span><span class="p">,</span> <span class="n">term</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">term_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="p">,</span> <span class="n">term</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">term_map</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="n">merged</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">const</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">term_map</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">const</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">non_const</span> <span class="o">=</span> <span class="n">_get_non_const_part</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">non_const</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+            <span class="n">merged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="n">const</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">const</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">merged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">non_const</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">merged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="n">const</span><span class="p">),</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">non_const</span><span class="p">))</span>
+    
+    <span class="n">merged</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">_hash_expr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_try_expand</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="n">left_expanded</span> <span class="o">=</span> <span class="n">_try_expand</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">right_expanded</span> <span class="o">=</span> <span class="n">_try_expand</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        
+        <span class="n">new_expr</span> <span class="o">=</span> <span class="n">BinOp</span><span class="p">(</span><span class="n">left_expanded</span><span class="p">,</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">right_expanded</span><span class="p">)</span>
+        
+        <span class="n">expanded</span> <span class="o">=</span> <span class="n">_expand_product_sum</span><span class="p">(</span><span class="n">new_expr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expanded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">new_expr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">expanded</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">new_expr</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;**&quot;</span><span class="p">:</span>
+            <span class="n">pow_expanded</span> <span class="o">=</span> <span class="n">_expand_power</span><span class="p">(</span><span class="n">new_expr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pow_expanded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">new_expr</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">pow_expanded</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">_combine_like_terms</span><span class="p">(</span><span class="n">new_expr</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">):</span>
+        <span class="n">operand_expanded</span> <span class="o">=</span> <span class="n">_try_expand</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">operand</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">operand_expanded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">expr</span><span class="o">.</span><span class="n">operand</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnOp</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">operand_expanded</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Func</span><span class="p">):</span>
+        <span class="n">arg_expanded</span> <span class="o">=</span> <span class="n">_try_expand</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arg_expanded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">expr</span><span class="o">.</span><span class="n">arg</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="n">arg_expanded</span><span class="p">,</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    
+    <span class="k">return</span> <span class="n">expr</span>
+
+
+<div class="viewcode-block" id="expand">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.expand">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">expr</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">expanded</span> <span class="o">=</span> <span class="n">_try_expand</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">expanded</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">expanded</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="expand_and_canonicalize">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.expand_and_canonicalize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">expand_and_canonicalize</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="n">expanded</span> <span class="o">=</span> <span class="n">expand</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">expanded</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">canonicalized</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">canonicalized</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">canonicalized</span>
+        
+        <span class="n">expanded2</span> <span class="o">=</span> <span class="n">expand</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">expanded2</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">expanded2</span>
+    
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="structural_hash">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.structural_hash">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">structural_hash</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="n">canon</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_hash_expr</span><span class="p">(</span><span class="n">canon</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="structural_hash_expanded">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.structural_hash_expanded">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">structural_hash_expanded</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+    <span class="n">canon</span> <span class="o">=</span> <span class="n">expand_and_canonicalize</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_hash_expr</span><span class="p">(</span><span class="n">canon</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="equivalent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.equivalent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">equivalent</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">e1</span> <span class="ow">is</span> <span class="n">e2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span></div>
+
+
+
+<div class="viewcode-block" id="equivalent_expanded">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.equivalent_expanded">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">equivalent_expanded</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">e1</span> <span class="ow">is</span> <span class="n">e2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash_expanded</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash_expanded</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span></div>
+
+
+
+<div class="viewcode-block" id="equivalent_systems">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.equivalent_systems">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">equivalent_systems</span><span class="p">(</span><span class="n">sys1</span><span class="p">,</span> <span class="n">sys2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">hashes1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">structural_hash</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">sys1</span><span class="p">)</span>
+    <span class="n">hashes2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">structural_hash</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">sys2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hashes1</span> <span class="o">==</span> <span class="n">hashes2</span></div>
+
+
+
+<div class="viewcode-block" id="equations_equivalent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.equations_equivalent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">equations_equivalent</span><span class="p">(</span><span class="n">eq1</span><span class="p">,</span> <span class="n">eq2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq1</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eq2</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">eq1</span><span class="p">)</span> <span class="o">==</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">eq2</span><span class="p">)</span>
+
+    <span class="n">lhs1_hash</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">eq1</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+    <span class="n">lhs2_hash</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">eq2</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+    <span class="n">rhs1_hash</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">eq1</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+    <span class="n">rhs2_hash</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">eq2</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lhs1_hash</span> <span class="o">==</span> <span class="n">lhs2_hash</span> <span class="ow">and</span> <span class="n">rhs1_hash</span> <span class="o">==</span> <span class="n">rhs2_hash</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">lhs1_hash</span> <span class="o">==</span> <span class="n">rhs2_hash</span> <span class="ow">and</span> <span class="n">rhs1_hash</span> <span class="o">==</span> <span class="n">lhs2_hash</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="n">diff1</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">eq1</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">eq1</span><span class="o">.</span><span class="n">right</span><span class="p">))</span>
+    <span class="n">diff2</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">BinOp</span><span class="p">(</span><span class="n">eq2</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">eq2</span><span class="o">.</span><span class="n">right</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">diff1</span><span class="p">)</span> <span class="o">==</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">diff2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_commutativity">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_commutativity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_commutativity</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test a + b == b + a&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="n">a</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test commutativity (add):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a + b hash: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  b + a hash: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Hashes should match: </span><span class="si">{</span><span class="n">h1</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">h2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;a + b should be equivalent to b + a&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_commutativity_mult">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_commutativity_mult">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_commutativity_mult</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test a * b == b * a&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="n">a</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test commutativity (mult):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a * b hash: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  b * a hash: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Hashes should match: </span><span class="si">{</span><span class="n">h1</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">h2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;a * b should be equivalent to b * a&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_associativity">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_associativity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_associativity</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test (a + b) + c == a + (b + c)&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test associativity (add):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (a + b) + c: </span><span class="si">{</span><span class="n">expr1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a + (b + c): </span><span class="si">{</span><span class="n">expr2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  hash1: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  hash2: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Hashes should match: </span><span class="si">{</span><span class="n">h1</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">h2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;(a+b)+c should be equivalent to a+(b+c)&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_associativity_mult">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_associativity_mult">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_associativity_mult</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test (a * b) * c == a * (b * c)&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test associativity (mult):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (a * b) * c: </span><span class="si">{</span><span class="n">expr1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a * (b * c): </span><span class="si">{</span><span class="n">expr2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Hashes should match: </span><span class="si">{</span><span class="n">h1</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">h2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;(a*b)*c should be equivalent to a*(b*c)&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_polynomial_equivalence">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_polynomial_equivalence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_polynomial_equivalence</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test (x + 1)^2 == x^2 + 2x + 1 using expanded comparison&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">**</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">x</span> <span class="o">**</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test polynomial equivalence:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (x + 1)^2: </span><span class="si">{</span><span class="n">expr1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  x^2 + 2x + 1: </span><span class="si">{</span><span class="n">expr2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (x + 1)^2 expanded: </span><span class="si">{</span><span class="n">expand</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  x^2 + 2x + 1 expanded: </span><span class="si">{</span><span class="n">expand</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (x + 1)^2 expand+canon: </span><span class="si">{</span><span class="n">expand_and_canonicalize</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  x^2 + 2x + 1 expand+canon: </span><span class="si">{</span><span class="n">expand_and_canonicalize</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash_expanded</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash_expanded</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  expanded hash1: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  expanded hash2: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="n">equivalent_expanded</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;(x+1)^2 should equal x^2+2x+1 with expansion&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_function_stability">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_function_stability">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_function_stability</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test sin(x + 0) == sin(x)&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test function stability:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sin(x + 0): </span><span class="si">{</span><span class="n">canonical</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sin(x): </span><span class="si">{</span><span class="n">canonical</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sin(x+0) should hash same as sin(x)&quot;</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;sin(x+0) should be equivalent to sin(x)&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_complex_expression">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_complex_expression">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_complex_expression</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test more complex expressions&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test complex expression:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (x + y)^2: </span><span class="si">{</span><span class="n">expr1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  x^2 + 2xy + y^2: </span><span class="si">{</span><span class="n">expr2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (x + y)^2 expanded: </span><span class="si">{</span><span class="n">expand</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  x^2 + 2xy + y^2 expanded: </span><span class="si">{</span><span class="n">expand</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (x + y)^2 expand+canon: </span><span class="si">{</span><span class="n">expand_and_canonicalize</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  x^2 + 2xy + y^2 expand+canon: </span><span class="si">{</span><span class="n">expand_and_canonicalize</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash_expanded</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash_expanded</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  expanded hash1: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  expanded hash2: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="n">equivalent_expanded</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;(x+y)^2 should equal x^2+2xy+y^2 with expansion&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_equations_equivalent">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_equations_equivalent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_equations_equivalent</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test equation equivalence considering a=b == b=a&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    
+    <span class="n">eq1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">eq2</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test equations_equivalent:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  eq1: x - 1&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  eq2: 1 - x&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  eq1 canonical: </span><span class="si">{</span><span class="n">canonical</span><span class="p">(</span><span class="n">eq1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  eq2 canonical: </span><span class="si">{</span><span class="n">canonical</span><span class="p">(</span><span class="n">eq2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">canonical</span><span class="p">(</span><span class="n">eq1</span><span class="p">))</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">canonical</span><span class="p">(</span><span class="n">eq2</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  hash1: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  hash2: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="n">equations_equivalent</span><span class="p">(</span><span class="n">eq1</span><span class="p">,</span> <span class="n">eq2</span><span class="p">),</span> <span class="s2">&quot;x-1 should be equivalent to 1-x as equations&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_system_equivalence">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_system_equivalence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_system_equivalence</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that two systems with equations in different order are equivalent&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+    
+    <span class="n">sys1</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span>
+        <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span>
+        <span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span>
+    <span class="p">]</span>
+    
+    <span class="n">sys2</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span>
+        <span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span>
+        <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span>
+    <span class="p">]</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test system equivalence:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sys1 hashes: </span><span class="si">{</span><span class="p">[</span><span class="n">structural_hash</span><span class="p">(</span><span class="n">e</span><span class="p">)[:</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">sys1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sys2 hashes: </span><span class="si">{</span><span class="p">[</span><span class="n">structural_hash</span><span class="p">(</span><span class="n">e</span><span class="p">)[:</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">sys2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="n">equivalent_systems</span><span class="p">(</span><span class="n">sys1</span><span class="p">,</span> <span class="n">sys2</span><span class="p">),</span> <span class="s2">&quot;Systems should be equivalent regardless of equation order&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_constant_folding">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_constant_folding">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_constant_folding</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test constant folding&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test constant folding:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  2 + 3 canonical: </span><span class="si">{</span><span class="n">canonical</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  5 canonical: </span><span class="si">{</span><span class="n">canonical</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">,</span> <span class="s2">&quot;2+3 should hash same as 5&quot;</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;2+3 should be equivalent to 5&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_neutral_elements">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_neutral_elements">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_neutral_elements</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test a + 0 = a, a * 1 = a&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test neutral elements:&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">a</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a + 0 hash: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a hash: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;a + 0 should be equivalent to a&quot;</span>
+    
+    <span class="n">expr3</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">expr4</span> <span class="o">=</span> <span class="n">a</span>
+    
+    <span class="n">h3</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr3</span><span class="p">)</span>
+    <span class="n">h4</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr4</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a * 1 hash: </span><span class="si">{</span><span class="n">h3</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a hash: </span><span class="si">{</span><span class="n">h4</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr3</span><span class="p">,</span> <span class="n">expr4</span><span class="p">),</span> <span class="s2">&quot;a * 1 should be equivalent to a&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_zero_product">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_zero_product">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_zero_product</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test a * 0 = 0&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test zero product:&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a * 0 hash: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  0 hash: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;a * 0 should be equivalent to 0&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_power_normalization">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.test_power_normalization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_power_normalization</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test a**0 = 1, a**1 = a&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test power normalization:&quot;</span><span class="p">)</span>
+    
+    <span class="n">expr1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">**</span> <span class="n">Const</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expr2</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr1</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a**0 hash: </span><span class="si">{</span><span class="n">h1</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  1 hash: </span><span class="si">{</span><span class="n">h2</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr1</span><span class="p">,</span> <span class="n">expr2</span><span class="p">),</span> <span class="s2">&quot;a**0 should be equivalent to 1&quot;</span>
+    
+    <span class="n">expr3</span> <span class="o">=</span> <span class="n">a</span> <span class="o">**</span> <span class="n">Const</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">h3</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">expr3</span><span class="p">)</span>
+    <span class="n">h4</span> <span class="o">=</span> <span class="n">structural_hash</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a**1 hash: </span><span class="si">{</span><span class="n">h3</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a hash: </span><span class="si">{</span><span class="n">h4</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">equivalent</span><span class="p">(</span><span class="n">expr3</span><span class="p">,</span> <span class="n">a</span><span class="p">),</span> <span class="s2">&quot;a**1 should be equivalent to a&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  PASSED</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_all_tests">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.test_symbolic_equivalence.run_all_tests">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_all_tests</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RUNNING SYMBOLIC EQUIVALENCE TESTS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">test_commutativity</span><span class="p">,</span>
+        <span class="n">test_commutativity_mult</span><span class="p">,</span>
+        <span class="n">test_associativity</span><span class="p">,</span>
+        <span class="n">test_associativity_mult</span><span class="p">,</span>
+        <span class="n">test_polynomial_equivalence</span><span class="p">,</span>
+        <span class="n">test_function_stability</span><span class="p">,</span>
+        <span class="n">test_complex_expression</span><span class="p">,</span>
+        <span class="n">test_equations_equivalent</span><span class="p">,</span>
+        <span class="n">test_system_equivalence</span><span class="p">,</span>
+        <span class="n">test_constant_folding</span><span class="p">,</span>
+        <span class="n">test_neutral_elements</span><span class="p">,</span>
+        <span class="n">test_zero_product</span><span class="p">,</span>
+        <span class="n">test_power_normalization</span><span class="p">,</span>
+    <span class="p">]</span>
+    
+    <span class="n">passed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test</span><span class="p">()</span>
+            <span class="n">passed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  FAILED: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">failed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="n">failed</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RESULTS: </span><span class="si">{</span><span class="n">passed</span><span class="si">}</span><span class="s2"> passed, </span><span class="si">{</span><span class="n">failed</span><span class="si">}</span><span class="s2"> failed&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">failed</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">run_all_tests</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">success</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

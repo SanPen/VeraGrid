@@ -1,0 +1,844 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.epc.epc_parser &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.epc.epc_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.epc.epc_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">chardet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">AnyStr</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+
+
+<div class="viewcode-block" id="interpret_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.interpret_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpret_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">splitter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split text into arguments and parse each of them to an appropriate format (int, float or string)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        line: text line</span>
+<span class="sd">        splitter: value to split by</span>
+<span class="sd">    Returns: list of arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">elms</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">splitter</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">elms</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># try int</span>
+            <span class="n">el</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># try float</span>
+                <span class="n">el</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex2</span><span class="p">:</span>
+                <span class="c1"># otherwise just leave it as string</span>
+                <span class="n">el</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parsed</span></div>
+
+
+
+<div class="viewcode-block" id="find_between">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.find_between">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_between</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param s:</span>
+<span class="sd">    :param start:</span>
+<span class="sd">    :param end:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if start in s and end in s:</span>
+    <span class="c1">#     return (s.split(start))[1].split(end)[0]</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     return &quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">start</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">end</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="split_line">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.split_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_line</span><span class="p">(</span><span class="n">lne</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param lne:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lne</span><span class="p">):</span>
+
+        <span class="n">current</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">started</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">reading_str</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">float_detected</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="nb">chr</span> <span class="ow">in</span> <span class="n">lne</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">chr</span> <span class="o">!=</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">chr</span> <span class="o">!=</span> <span class="s1">&#39; &#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">started</span><span class="p">:</span>
+                    <span class="c1"># start any</span>
+                    <span class="n">reading_str</span> <span class="o">=</span> <span class="nb">chr</span> <span class="o">==</span> <span class="s1">&#39;&quot;&#39;</span>
+                    <span class="n">started</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">float_detected</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">current</span> <span class="o">+=</span> <span class="nb">chr</span>
+
+                <span class="k">elif</span> <span class="nb">chr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">started</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">reading_str</span><span class="p">:</span>
+                    <span class="c1"># keep reading value</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">float_detected</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">chr</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+                            <span class="n">float_detected</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="n">current</span> <span class="o">+=</span> <span class="nb">chr</span>
+
+                <span class="k">elif</span> <span class="nb">chr</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span> <span class="ow">and</span> <span class="n">started</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">reading_str</span><span class="p">:</span>
+                    <span class="c1"># finalize reading value</span>
+                    <span class="n">started</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">float_detected</span><span class="p">:</span>
+                        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+                <span class="k">elif</span> <span class="nb">chr</span> <span class="o">!=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">and</span> <span class="n">started</span> <span class="ow">and</span> <span class="n">reading_str</span><span class="p">:</span>
+                    <span class="c1"># keep reading string</span>
+                    <span class="n">current</span> <span class="o">+=</span> <span class="nb">chr</span>
+
+                <span class="k">elif</span> <span class="nb">chr</span> <span class="o">==</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">and</span> <span class="n">started</span> <span class="ow">and</span> <span class="n">reading_str</span><span class="p">:</span>
+                    <span class="c1"># finalize reading string</span>
+                    <span class="n">current</span> <span class="o">+=</span> <span class="nb">chr</span>
+                    <span class="n">started</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># add the last chunk</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">reading_str</span><span class="p">:</span>
+                <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">float_detected</span><span class="p">:</span>
+                    <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">chunks</span></div>
+
+
+
+<div class="viewcode-block" id="parse_substations">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_substations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_substations</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                    <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                    <span class="n">latitude</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                    <span class="n">longitude</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_areas">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_areas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_areas</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                              <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_zones">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_zones">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_zones</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Zone</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                              <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_buses">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_buses</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">substations_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">],</span> <span class="n">area_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">],</span> <span class="n">zone_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Zone</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param substations_dict:</span>
+<span class="sd">    :param area_dict:</span>
+<span class="sd">    :param zone_dict:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">buses_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">bus_volt</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">zone_idx</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+        <span class="n">active</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">raw</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">substations_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">st_idx</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span>  <span class="c1"># or maybe 28</span>
+            <span class="n">substation</span> <span class="o">=</span> <span class="n">substations_dict</span><span class="p">[</span><span class="n">st_idx</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">lat</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">lat</span> <span class="o">=</span> <span class="n">substation</span><span class="o">.</span><span class="n">latitude</span>
+
+            <span class="k">if</span> <span class="n">lon</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">lon</span> <span class="o">=</span> <span class="n">substation</span><span class="o">.</span><span class="n">longitude</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">substation</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">area_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">area_idx</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>  <span class="c1"># or maybe 28</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">area_dict</span><span class="p">[</span><span class="n">area_idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">area_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">zone_idx</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>  <span class="c1"># or maybe 28</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="n">zone_dict</span><span class="p">[</span><span class="n">zone_idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">bus_volt</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="n">buses_dict</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                   <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                   <span class="n">Vnom</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                   <span class="n">vmin</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                                   <span class="n">vmax</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
+                                   <span class="n">angle_min</span><span class="o">=-</span><span class="mf">6.28</span><span class="p">,</span> <span class="n">angle_max</span><span class="o">=</span><span class="mf">6.28</span><span class="p">,</span> <span class="n">r_fault</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_fault</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                   <span class="n">xpos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                   <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+                                   <span class="n">is_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                   <span class="n">is_dc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                   <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span>
+                                   <span class="n">zone</span><span class="o">=</span><span class="n">zone</span><span class="p">,</span>
+                                   <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                                   <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span>
+                                   <span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">buses_dict</span><span class="p">,</span> <span class="n">bus_volt</span></div>
+
+
+
+<div class="viewcode-block" id="parse_dc_buses">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_dc_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_dc_buses</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">buses_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">bus_volt</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">area_idx</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">zone_idx</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+        <span class="n">lat</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">substation</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">bus_volt</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">/</span> <span class="n">raw</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+
+        <span class="n">buses_dict</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                   <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                   <span class="n">Vnom</span><span class="o">=</span><span class="n">raw</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                                   <span class="n">vmin</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                                   <span class="n">vmax</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
+                                   <span class="n">angle_min</span><span class="o">=-</span><span class="mf">6.28</span><span class="p">,</span> <span class="n">angle_max</span><span class="o">=</span><span class="mf">6.28</span><span class="p">,</span> <span class="n">r_fault</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_fault</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                   <span class="n">xpos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                   <span class="n">active</span><span class="o">=</span><span class="n">active</span><span class="p">,</span>
+                                   <span class="n">is_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                   <span class="n">is_dc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">zone</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">substation</span><span class="o">=</span><span class="n">substation</span><span class="p">,</span>
+                                   <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span>
+                                   <span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">buses_dict</span><span class="p">,</span> <span class="n">bus_volt</span></div>
+
+
+
+<div class="viewcode-block" id="parse_transformers">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_transformers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_transformers</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param buses_dict:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+        <span class="n">Vh</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">29</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">30</span><span class="p">])</span>
+        <span class="n">Vl</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">29</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">30</span><span class="p">])</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">35</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span>
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                                <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                                <span class="n">HV</span><span class="o">=</span><span class="n">Vh</span><span class="p">,</span>
+                                <span class="n">LV</span><span class="o">=</span><span class="n">Vl</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                                <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                                <span class="n">g</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                                <span class="n">b</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                                <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                <span class="n">nominal_power</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                                <span class="n">tap_module</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                                <span class="n">tap_module_max</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+                                <span class="n">tap_module_min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                <span class="n">tap_phase</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                <span class="n">tap_phase_max</span><span class="o">=</span><span class="mf">6.28</span><span class="p">,</span>
+                                <span class="n">tap_phase_min</span><span class="o">=-</span><span class="mf">6.28</span><span class="p">,</span>
+                                <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="p">)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_branches">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_branches">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_branches</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param buses_dict:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                       <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                       <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                       <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                       <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                       <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                       <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+                       <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                       <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_dc_lines">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_dc_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_dc_lines</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">Sbase</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param buses_dict:</span>
+<span class="sd">    :param Sbase:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>
+        <span class="n">zbase</span> <span class="o">=</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">*</span> <span class="n">bus_f</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">/</span> <span class="n">Sbase</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">/</span> <span class="n">zbase</span>
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">DcLine</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                         <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                         <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                         <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                         <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_dc_converters">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_dc_converters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_dc_converters</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">dc_buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param buses_dict:</span>
+<span class="sd">    :param dc_buses_dict:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">bus_t</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">dc_buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="mf">100.0</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VSC</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus_f</span><span class="p">,</span>
+                      <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_t</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                      <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                      <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
+                      <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_loads">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_loads">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_loads</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param buses_dict:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                       <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                       <span class="n">P</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                       <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                       <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">bus_f</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="parse_generators">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.parse_generators">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_generators</span><span class="p">(</span><span class="n">data_lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">bus_volt</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param data_lst:</span>
+<span class="sd">    :param buses_dict:</span>
+<span class="sd">    :param bus_volt:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">data_lst</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">bus_f</span> <span class="o">=</span> <span class="n">buses_dict</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">Vset</span> <span class="o">=</span> <span class="n">bus_volt</span><span class="p">[</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+        <span class="n">Pmax</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>
+        <span class="n">Pmin</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+        <span class="n">Qmax</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span>
+        <span class="n">Qmin</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
+        <span class="n">Sbase</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span>
+
+        <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                            <span class="n">P</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                            <span class="n">vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">,</span>
+                            <span class="n">Pmin</span><span class="o">=</span><span class="n">Pmin</span><span class="p">,</span>
+                            <span class="n">Pmax</span><span class="o">=</span><span class="n">Pmax</span><span class="p">,</span>
+                            <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+                            <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+                            <span class="n">Snom</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Pmax</span><span class="o">*</span><span class="n">Pmax</span><span class="o">+</span><span class="n">Qmax</span><span class="o">*</span><span class="n">Qmax</span><span class="p">),</span>
+                            <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                            <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">elm</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">bus_f</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="PowerWorldParser">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.PowerWorldParser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PowerWorldParser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PowerWorldParser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse PowerWorld EPC file</span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_name: file name or path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">versions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_case</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="s1">&#39;Converted from the PowerWorld .epc file &#39;</span> \
+                                <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PowerWorldParser.read_and_split">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.PowerWorldParser.read_and_split">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_and_split</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">,</span> <span class="n">AnyStr</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the text file and split it into sections</span>
+<span class="sd">        :return: list of sections, dictionary of sections by type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make a guess of the file encoding</span>
+        <span class="n">detection</span> <span class="o">=</span> <span class="n">chardet</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="c1"># open the text file into a variable</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">detection</span><span class="p">[</span><span class="s1">&#39;encoding&#39;</span><span class="p">])</span> <span class="k">as</span> <span class="n">my_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">my_file</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;@&#39;</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">+=</span> <span class="n">line</span>
+
+        <span class="c1"># fix stupid line partition</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">txt_lowercase</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="n">expected_sections</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;comments&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;solution parameters&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;substation data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;bus data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;branch data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;transformer data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;generator data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;load data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;shunt data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;svd data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;area data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;zone data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;interface data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;interface branch data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;dc bus data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;dc line data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;dc converter data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;vs converter data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;z table data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;gcd data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;transaction data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;owner data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;qtable data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;ba data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;injgroup data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;injgrpelem data&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;end&#39;</span><span class="p">]</span>
+
+        <span class="c1"># find which of the expected sections are actually in the file</span>
+        <span class="n">present_sections</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">expected_sections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">txt_lowercase</span><span class="p">:</span>
+                <span class="n">present_sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+        <span class="c1"># split the text file into the found sections</span>
+        <span class="n">sections_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">present_sections</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">present_sections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">present_sections</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">txt_lowercase</span> <span class="ow">and</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">txt_lowercase</span><span class="p">:</span>
+                <span class="n">raw_txt</span> <span class="o">=</span> <span class="n">find_between</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">raw_txt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;[&#39;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="n">new_lines</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+                            <span class="n">line_data</span> <span class="o">=</span> <span class="n">split_line</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">new_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_data</span><span class="p">)</span>
+
+                        <span class="n">sections_dict</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">header</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">new_lines</span><span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sections_dict</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">lines</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sections_dict</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">()}</span>
+
+        <span class="k">return</span> <span class="n">sections_dict</span></div>
+
+
+<div class="viewcode-block" id="PowerWorldParser.parse_case">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.epc.html#VeraGridEngine.IO.epc.epc_parser.PowerWorldParser.parse_case">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_case</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        EPC power world case</span>
+
+<span class="sd">        Returns: MultiCircuit, List[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">()</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_and_split</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s1">&#39;substation data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">substations_dict</span> <span class="o">=</span> <span class="n">parse_substations</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;substation data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">substations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">substations_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">substations_dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="s1">&#39;area data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">area_dict</span> <span class="o">=</span> <span class="n">parse_areas</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;area data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">areas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">area_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">area_dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="s1">&#39;zone data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">zone_dict</span> <span class="o">=</span> <span class="n">parse_zones</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;zone data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">zone_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">zone_dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">buses_dict</span><span class="p">,</span> <span class="n">bus_volt</span> <span class="o">=</span> <span class="n">parse_buses</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;bus data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">substations_dict</span><span class="p">,</span> <span class="n">area_dict</span><span class="p">,</span> <span class="n">zone_dict</span><span class="p">)</span>
+
+        <span class="c1"># create devices</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">buses_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="k">if</span> <span class="s1">&#39;branch data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">parse_branches</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;branch data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="n">lines</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;transformer data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">transformers2w</span> <span class="o">=</span> <span class="n">parse_transformers</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;transformer data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="n">transformers2w</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;load data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">loads</span> <span class="o">=</span> <span class="n">parse_loads</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;load data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="n">loads</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;generator data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">generators</span> <span class="o">=</span> <span class="n">parse_generators</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;generator data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">,</span> <span class="n">bus_volt</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="n">generators</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;dc bus data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># augments buses_dict and bus_volt</span>
+            <span class="n">dc_buses_dict</span><span class="p">,</span> <span class="n">dc_bus_volt</span> <span class="o">=</span> <span class="n">parse_dc_buses</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;dc bus data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">dc_buses_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;dc line data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dc_lines</span> <span class="o">=</span> <span class="n">parse_dc_lines</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;dc line data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">dc_buses_dict</span><span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="n">dc_lines</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;dc converter data&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">vsc_devices</span> <span class="o">=</span> <span class="n">parse_dc_converters</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;dc converter data&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">buses_dict</span><span class="p">,</span> <span class="n">dc_buses_dict</span><span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">set_elements_list_by_type</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">VscDevice</span><span class="p">,</span> <span class="n">devices</span><span class="o">=</span><span class="n">vsc_devices</span><span class="p">)</span>
+
+        <span class="n">logger</span> <span class="o">+=</span> <span class="n">grid</span><span class="o">.</span><span class="n">fill_xy_from_lat_lon</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">logger</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

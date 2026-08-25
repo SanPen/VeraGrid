@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragridengine-io-cim-cgmes-ncp-devices-metadata-package">
+<h1>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata package<a class="headerlink" href="#veragridengine-io-cim-cgmes-ncp-devices-metadata-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-activity-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.</span></span><span class="sig-name descname"><span class="pre">Activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Activity'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/activity.html#Activity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/activity.html#Activity.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.activity.Activity.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-agent-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.</span></span><span class="sig-name descname"><span class="pre">Agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Agent'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/agent.html#Agent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/agent.html#Agent.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.agent.Agent.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-assessment-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.</span></span><span class="sig-name descname"><span class="pre">Assessment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Assessment'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/assessment.html#Assessment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/assessment.html#Assessment.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.assessment.Assessment.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-collection-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.</span></span><span class="sig-name descname"><span class="pre">Collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Collection'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/collection.html#Collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/collection.html#Collection.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.collection.Collection.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-concept-scheme-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.</span></span><span class="sig-name descname"><span class="pre">ConceptScheme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ConceptScheme'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/concept_scheme.html#ConceptScheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/concept_scheme.html#ConceptScheme.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.concept_scheme.ConceptScheme.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-dataset-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Dataset'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'accessRights':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'accrualPeriodicity':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'alternativeVersionOf':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'applicationSoftware':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'conformsTo':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'description':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'endDate':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'generatedAtTime':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'hasAlternativeVersion':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'hasPart':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'hasPreferredVersion':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'hasVersion':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'identifier':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'inSeries':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'isPartOf':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'isReferencedBy':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'isReplacedBy':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'isRequiredBy':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'isVersionOf':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'issued':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'keyword':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'license':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'nextVersion':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'preferredVersion':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'previousVersion':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'processType':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'publisher':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'references':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'replaces':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'requires':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'rights':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'rightsHolder':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'seriesMember':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'source':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'spatial':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'startDate':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'temporalResolution':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'type':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'usedSettings':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'version':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'versionNotes':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'wasGeneratedBy':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.accessRights">
+<span class="sig-name descname"><span class="pre">accessRights</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.accessRights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.accrualPeriodicity">
+<span class="sig-name descname"><span class="pre">accrualPeriodicity</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.accrualPeriodicity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.alternativeVersionOf">
+<span class="sig-name descname"><span class="pre">alternativeVersionOf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.alternativeVersionOf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.applicationSoftware">
+<span class="sig-name descname"><span class="pre">applicationSoftware</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.applicationSoftware" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.conformsTo">
+<span class="sig-name descname"><span class="pre">conformsTo</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.conformsTo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.description">
+<span class="sig-name descname"><span class="pre">description</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.endDate">
+<span class="sig-name descname"><span class="pre">endDate</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.endDate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.generatedAtTime">
+<span class="sig-name descname"><span class="pre">generatedAtTime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.generatedAtTime" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasAlternativeVersion">
+<span class="sig-name descname"><span class="pre">hasAlternativeVersion</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasAlternativeVersion" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasPart">
+<span class="sig-name descname"><span class="pre">hasPart</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasPart" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasPreferredVersion">
+<span class="sig-name descname"><span class="pre">hasPreferredVersion</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasPreferredVersion" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasVersion">
+<span class="sig-name descname"><span class="pre">hasVersion</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.hasVersion" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.identifier">
+<span class="sig-name descname"><span class="pre">identifier</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.identifier" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.inSeries">
+<span class="sig-name descname"><span class="pre">inSeries</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.inSeries" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isPartOf">
+<span class="sig-name descname"><span class="pre">isPartOf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isPartOf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isReferencedBy">
+<span class="sig-name descname"><span class="pre">isReferencedBy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isReferencedBy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isReplacedBy">
+<span class="sig-name descname"><span class="pre">isReplacedBy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isReplacedBy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isRequiredBy">
+<span class="sig-name descname"><span class="pre">isRequiredBy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isRequiredBy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isVersionOf">
+<span class="sig-name descname"><span class="pre">isVersionOf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.isVersionOf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.issued">
+<span class="sig-name descname"><span class="pre">issued</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.issued" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.keyword">
+<span class="sig-name descname"><span class="pre">keyword</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.keyword" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.license">
+<span class="sig-name descname"><span class="pre">license</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.license" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.nextVersion">
+<span class="sig-name descname"><span class="pre">nextVersion</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.nextVersion" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/dataset.html#Dataset.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.preferredVersion">
+<span class="sig-name descname"><span class="pre">preferredVersion</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.preferredVersion" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.previousVersion">
+<span class="sig-name descname"><span class="pre">previousVersion</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.previousVersion" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.processType">
+<span class="sig-name descname"><span class="pre">processType</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.processType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.publisher">
+<span class="sig-name descname"><span class="pre">publisher</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.publisher" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.references">
+<span class="sig-name descname"><span class="pre">references</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.references" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.replaces">
+<span class="sig-name descname"><span class="pre">replaces</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.replaces" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.requires">
+<span class="sig-name descname"><span class="pre">requires</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.requires" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.rights">
+<span class="sig-name descname"><span class="pre">rights</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.rights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.rightsHolder">
+<span class="sig-name descname"><span class="pre">rightsHolder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.rightsHolder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.seriesMember">
+<span class="sig-name descname"><span class="pre">seriesMember</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset"><span class="pre">Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.seriesMember" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.source">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.spatial">
+<span class="sig-name descname"><span class="pre">spatial</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.spatial" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.startDate">
+<span class="sig-name descname"><span class="pre">startDate</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.startDate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.temporalResolution">
+<span class="sig-name descname"><span class="pre">temporalResolution</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.temporalResolution" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.usedSettings">
+<span class="sig-name descname"><span class="pre">usedSettings</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.usedSettings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.version">
+<span class="sig-name descname"><span class="pre">version</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.versionNotes">
+<span class="sig-name descname"><span class="pre">versionNotes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.versionNotes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.wasGeneratedBy">
+<span class="sig-name descname"><span class="pre">wasGeneratedBy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.dataset.Dataset.wasGeneratedBy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-entity-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.</span></span><span class="sig-name descname"><span class="pre">Entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Entity'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/entity.html#Entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/entity.html#Entity.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.entity.Entity.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-license-document-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.</span></span><span class="sig-name descname"><span class="pre">LicenseDocument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'LicenseDocument'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/license_document.html#LicenseDocument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/license_document.html#LicenseDocument.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.license_document.LicenseDocument.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-model-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/model.html#Model.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.model.Model.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-modeling-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.</span></span><span class="sig-name descname"><span class="pre">Modeling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Modeling'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/modeling.html#Modeling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/modeling.html#Modeling.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.modeling.Modeling.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-name-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.</span></span><span class="sig-name descname"><span class="pre">Name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Name'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/name.html#Name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'IdentifiedObject':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'NameType':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'NamingAuthority':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'UniqueIdentifiedObject':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'language':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'mRID':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.IdentifiedObject">
+<span class="sig-name descname"><span class="pre">IdentifiedObject</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.html#VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object.IdentifiedObject" title="VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object.IdentifiedObject"><span class="pre">IdentifiedObject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.IdentifiedObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.NameType">
+<span class="sig-name descname"><span class="pre">NameType</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType"><span class="pre">NameType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.NameType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.NamingAuthority">
+<span class="sig-name descname"><span class="pre">NamingAuthority</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority"><span class="pre">NamingAuthority</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.NamingAuthority" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.UniqueIdentifiedObject">
+<span class="sig-name descname"><span class="pre">UniqueIdentifiedObject</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.html#VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object.IdentifiedObject" title="VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object.IdentifiedObject"><span class="pre">IdentifiedObject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.UniqueIdentifiedObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.language">
+<span class="sig-name descname"><span class="pre">language</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.language" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.mRID">
+<span class="sig-name descname"><span class="pre">mRID</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.mRID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/name.html#Name.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-name-type-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.</span></span><span class="sig-name descname"><span class="pre">NameType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NameType'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/name_type.html#NameType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Name':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'NamingAuthority':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'description':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'mRID':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.Name">
+<span class="sig-name descname"><span class="pre">Name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name"><span class="pre">Name</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.Name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.NamingAuthority">
+<span class="sig-name descname"><span class="pre">NamingAuthority</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority"><span class="pre">NamingAuthority</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.NamingAuthority" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.description">
+<span class="sig-name descname"><span class="pre">description</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.mRID">
+<span class="sig-name descname"><span class="pre">mRID</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.mRID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/name_type.html#NameType.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-naming-authority-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.</span></span><span class="sig-name descname"><span class="pre">NamingAuthority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NamingAuthority'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/naming_authority.html#NamingAuthority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Name':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'NameType':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'description':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'mRID':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.Name">
+<span class="sig-name descname"><span class="pre">Name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name.Name"><span class="pre">Name</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.Name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.NameType">
+<span class="sig-name descname"><span class="pre">NameType</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType" title="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.name_type.NameType"><span class="pre">NameType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.NameType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.description">
+<span class="sig-name descname"><span class="pre">description</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.mRID">
+<span class="sig-name descname"><span class="pre">mRID</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.mRID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/naming_authority.html#NamingAuthority.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.naming_authority.NamingAuthority.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-object-type-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.</span></span><span class="sig-name descname"><span class="pre">ObjectType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ObjectType'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/object_type.html#ObjectType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'IdentifiedObject':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">'type':</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.IdentifiedObject">
+<span class="sig-name descname"><span class="pre">IdentifiedObject</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.html#VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object.IdentifiedObject" title="VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object.IdentifiedObject"><span class="pre">IdentifiedObject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.IdentifiedObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty</span> <span class="pre">object&gt;)</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/object_type.html#ObjectType.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.object_type.ObjectType.type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-quantity-value-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.</span></span><span class="sig-name descname"><span class="pre">QuantityValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'QuantityValue'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/quantity_value.html#QuantityValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/quantity_value.html#QuantityValue.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.quantity_value.QuantityValue.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-rights-statement-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.</span></span><span class="sig-name descname"><span class="pre">RightsStatement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'RightsStatement'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/rights_statement.html#RightsStatement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/rights_statement.html#RightsStatement.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.rights_statement.RightsStatement.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-semantic-asset-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.</span></span><span class="sig-name descname"><span class="pre">SemanticAsset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SemanticAsset'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/semantic_asset.html#SemanticAsset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/semantic_asset.html#SemanticAsset.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.semantic_asset.SemanticAsset.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-supported-profile-collection-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.</span></span><span class="sig-name descname"><span class="pre">SupportedProfileCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SupportedProfileCollection'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/supported_profile_collection.html#SupportedProfileCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/supported_profile_collection.html#SupportedProfileCollection.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.supported_profile_collection.SupportedProfileCollection.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification">
+<span id="veragridengine-io-cim-cgmes-ncp-devices-metadata-verification-module"></span><h2>VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification module<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.</span></span><span class="sig-name descname"><span class="pre">Verification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdfid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Verification'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/verification.html#Verification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.base.Base" title="VeraGridEngine.IO.cim.cgmes.base.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>NCP CGMES extension class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification.CLASS_REGISTERED_PROPERTIES">
+<span class="sig-name descname"><span class="pre">CLASS_REGISTERED_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification.CLASS_REGISTERED_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification.LOCAL_CGMES_PROPERTIES">
+<span class="sig-name descname"><span class="pre">LOCAL_CGMES_PROPERTIES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.IO.cim.cgmes.html#VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty" title="VeraGridEngine.IO.cim.cgmes.cgmes_property.CgmesProperty"><span class="pre">CgmesProperty</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification.LOCAL_CGMES_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification.parse_dict">
+<span class="sig-name descname"><span class="pre">parse_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.data_logger.DataLogger" title="VeraGridEngine.data_logger.DataLogger"><span class="pre">DataLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/cim/cgmes/ncp/devices/metadata/verification.html#Verification.parse_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata.verification.Verification.parse_dict" title="Link to this definition"></a></dt>
+<dd><p>Parse one NCP object property dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGridEngine.IO.cim.cgmes.ncp.devices.metadata" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

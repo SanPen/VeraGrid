@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">CxVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.admittance_matrices</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_admittances</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_power_flow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">helm_coefficients_dY</span><span class="p">,</span>
+                                                                                   <span class="n">helm_preparation_dY</span><span class="p">,</span>
+                                                                                   <span class="n">HelmPreparation</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="calc_V_outage">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies.calc_V_outage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_V_outage</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                  <span class="n">If</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                  <span class="n">Ybus</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
+                  <span class="n">Yf</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
+                  <span class="n">sys_mat_factorization</span><span class="p">,</span>
+                  <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                  <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                  <span class="n">Uini</span><span class="p">,</span>
+                  <span class="n">Xini</span><span class="p">,</span>
+                  <span class="n">Yslack</span><span class="p">,</span>
+                  <span class="n">Vslack</span><span class="p">,</span>
+                  <span class="n">vec_P</span><span class="p">,</span>
+                  <span class="n">vec_Q</span><span class="p">,</span>
+                  <span class="n">Ysh</span><span class="p">,</span>
+                  <span class="n">vec_W</span><span class="p">,</span>
+                  <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                  <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                  <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                  <span class="n">pqpv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                  <span class="n">pqpv_original</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                  <span class="n">pq_original</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                  <span class="n">contingency_br_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the voltage due to outages in a non-linear manner with HELM.</span>
+<span class="sd">    The main novelty is the introduction of s.AY, thus delaying it</span>
+<span class="sd">    Use directly V from HELM, do not go for Pade, may need more time for not much benefit</span>
+<span class="sd">    :param nc: NumericalCircuit instance</span>
+<span class="sd">    :param If: from currents of the initial power flow</span>
+<span class="sd">    :param Ybus: original admittance matrix</span>
+
+<span class="sd">    :param sys_mat_factorization:</span>
+<span class="sd">    :param V0: initial voltage array</span>
+<span class="sd">    :param S0: vector of powers</span>
+<span class="sd">    :param Uini:</span>
+<span class="sd">    :param Xini:</span>
+<span class="sd">    :param Yslack:</span>
+<span class="sd">    :param Vslack:</span>
+<span class="sd">    :param vec_P:</span>
+<span class="sd">    :param vec_Q:</span>
+<span class="sd">    :param Ysh: array of shunt admittances</span>
+<span class="sd">    :param vec_W:</span>
+<span class="sd">    :param pq: set of PQ buses</span>
+<span class="sd">    :param pv: set of PV buses</span>
+<span class="sd">    :param vd: set of slack buses</span>
+<span class="sd">    :param pqpv: set of PQ + PV buses</span>
+<span class="sd">    :param pqpv_original: set of PQ + PV buses in the original order</span>
+<span class="sd">    :param pq_original: set of PQ buses in the original order, considering slack</span>
+<span class="sd">    :param contingency_br_indices: array of branch indices of the contingency</span>
+<span class="sd">    :return: V, Sf, loading, norm_f</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># sys_mat_factorization, Uini, Xini, Yslack, Vslack, \</span>
+    <span class="c1">#     vec_P, vec_Q, Ysh, vec_W, pq_, pv_, pqpv_, \</span>
+    <span class="c1">#     npqpv, n = helm_preparation_dY(Yseries=Yseries, V0=V0, S0=S0,</span>
+    <span class="c1">#                                    Ysh0=Ysh0, pq=pq, pv=pv, sl=vd, pqpv=pqpv)</span>
+
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">get_connectivity_matrices</span><span class="p">()</span>
+
+    <span class="c1"># compute the admittance of the contingency branches</span>
+    <span class="n">con_adm</span> <span class="o">=</span> <span class="n">compute_admittances</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">X</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">G</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">B</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">tap_module</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">vtap_f</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_f</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">vtap_t</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">virtual_tap_t</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">tap_angle</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">Cf</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">Cf</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">,</span> <span class="p">:],</span>
+                                  <span class="n">Ct</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">Ct</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">,</span> <span class="p">:],</span>
+                                  <span class="n">Yshunt_bus</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                  <span class="n">conn</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">conn</span><span class="p">[</span><span class="n">contingency_br_indices</span><span class="p">],</span>
+                                  <span class="n">seq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                  <span class="n">add_windings_phase</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># solve the modified HELM</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">helm_coefficients_dY</span><span class="p">(</span><span class="n">dY</span><span class="o">=</span><span class="n">con_adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span>
+                                           <span class="n">sys_mat_factorization</span><span class="o">=</span><span class="n">sys_mat_factorization</span><span class="p">,</span>
+                                           <span class="n">Uini</span><span class="o">=</span><span class="n">Uini</span><span class="p">,</span>
+                                           <span class="n">Xini</span><span class="o">=</span><span class="n">Xini</span><span class="p">,</span>
+                                           <span class="n">Yslack</span><span class="o">=</span><span class="n">Yslack</span><span class="p">,</span>
+                                           <span class="n">Ysh</span><span class="o">=</span><span class="n">Ysh</span><span class="p">,</span>
+                                           <span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+                                           <span class="n">vec_P</span><span class="o">=</span><span class="n">vec_P</span><span class="p">,</span>
+                                           <span class="n">vec_Q</span><span class="o">=</span><span class="n">vec_Q</span><span class="p">,</span>
+                                           <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                           <span class="n">vec_W</span><span class="o">=</span><span class="n">vec_W</span><span class="p">,</span>
+                                           <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
+                                           <span class="n">Vslack</span><span class="o">=</span><span class="n">Vslack</span><span class="p">,</span>
+                                           <span class="n">pq</span><span class="o">=</span><span class="n">pq</span><span class="p">,</span>
+                                           <span class="n">pv</span><span class="o">=</span><span class="n">pv</span><span class="p">,</span>
+                                           <span class="n">pqpv</span><span class="o">=</span><span class="n">pqpv</span><span class="p">,</span>
+                                           <span class="n">npqpv</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">pqpv</span><span class="p">),</span>
+                                           <span class="n">nbus</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">,</span>
+                                           <span class="n">sl</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+                                           <span class="n">pqpv_original</span><span class="o">=</span><span class="n">pqpv_original</span><span class="p">,</span>
+                                           <span class="n">pq_original</span><span class="o">=</span><span class="n">pq_original</span><span class="p">,</span>
+                                           <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                                           <span class="n">max_coeff</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+    <span class="c1"># compute flows</span>
+    <span class="n">Sf</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Yf</span> <span class="o">@</span> <span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+
+    <span class="c1"># compute contingency loading</span>
+    <span class="n">loading</span> <span class="o">=</span> <span class="n">Sf</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">Sf</span><span class="p">,</span> <span class="n">loading</span><span class="p">,</span> <span class="n">norm_f</span></div>
+
+
+
+<div class="viewcode-block" id="HelmVariations">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies.HelmVariations">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HelmVariations</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to quickly evaluate topological variations based on HELM coefficients</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerical_circuit</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        :param numerical_circuit:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span> <span class="o">=</span> <span class="n">numerical_circuit</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">islands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">preparations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">HelmPreparation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HelmVariations.initialize">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies.HelmVariations.initialize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compose the HVDC power Injections</span>
+        <span class="n">Shvdc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">get_power</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                                                          <span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span><span class="o">.</span><span class="n">nbus</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n_island</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">)):</span>
+                <span class="n">island</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">[</span><span class="n">n_island</span><span class="p">]</span>
+                <span class="n">indices</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_simulation_indices</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># remap global branch indices to island branch indices</span>
+                    <span class="c1"># branch_index_mapping = {i: idx for idx, i in island.original_branch_idx}</span>
+                    <span class="c1"># contingency_br_indices_is = list()</span>
+                    <span class="c1"># for c in contingency_br_indices:</span>
+                    <span class="c1">#     ci = branch_index_mapping.get(c, None)</span>
+                    <span class="c1">#     if ci:</span>
+                    <span class="c1">#         contingency_br_indices_is.append(ci)</span>
+
+                    <span class="n">S0</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_power_injections_pu</span><span class="p">()</span> <span class="o">+</span> <span class="n">Shvdc</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]</span>
+
+                    <span class="n">adms</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_series_admittance_matrices</span><span class="p">()</span>
+
+                    <span class="n">helm_prep</span> <span class="o">=</span> <span class="n">helm_preparation_dY</span><span class="p">(</span><span class="n">Yseries</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yseries</span><span class="p">,</span>
+                                                    <span class="n">V0</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">,</span>
+                                                    <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                                    <span class="n">Ysh0</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yshunt</span><span class="p">,</span>
+                                                    <span class="n">pq</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span>
+                                                    <span class="n">pv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span>
+                                                    <span class="n">sl</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">,</span>
+                                                    <span class="n">pqpv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">preparations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">helm_prep</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HelmVariations.compute_variations">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingencies.HelmVariations.compute_variations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_variations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contingency_br_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a branch contingency</span>
+<span class="sd">        :param contingency_br_indices: array of branch indices to fail</span>
+<span class="sd">        :return: V, Sf, loading</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_br</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span><span class="o">.</span><span class="n">nbr</span>
+        <span class="n">n_bus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerical_circuit</span><span class="o">.</span><span class="n">nbus</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="n">Sf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_br</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="n">loading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_br</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n_island</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">)):</span>
+                <span class="n">island</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">islands</span><span class="p">[</span><span class="n">n_island</span><span class="p">]</span>
+                <span class="n">indices</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_simulation_indices</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># remap global branch indices to island branch indices</span>
+                    <span class="n">branch_index_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">)}</span>
+                    <span class="n">contingency_br_indices_is</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contingency_br_indices</span><span class="p">:</span>
+                        <span class="n">ci</span> <span class="o">=</span> <span class="n">branch_index_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">ci</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">contingency_br_indices_is</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span>
+                    <span class="n">contingency_br_indices_is</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">contingency_br_indices_is</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+                    <span class="n">pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preparations</span><span class="p">[</span><span class="n">n_island</span><span class="p">]</span>
+                    <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+                    <span class="n">Sbus</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_power_injections_pu</span><span class="p">()</span>
+
+                    <span class="n">V_isl</span><span class="p">,</span> <span class="n">Sf_isl</span><span class="p">,</span> <span class="n">loading_isl</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">calc_V_outage</span><span class="p">(</span>
+                        <span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                        <span class="n">If</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                        <span class="n">Ybus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span>
+                        <span class="n">Yf</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yf</span><span class="p">,</span>
+                        <span class="n">sys_mat_factorization</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">sys_mat_factorization</span><span class="p">,</span>
+                        <span class="n">V0</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">,</span>
+                        <span class="n">S0</span><span class="o">=</span><span class="n">Sbus</span><span class="p">,</span>
+                        <span class="n">Uini</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">Uini</span><span class="p">,</span>
+                        <span class="n">Xini</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">Xini</span><span class="p">,</span>
+                        <span class="n">Yslack</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">Yslack</span><span class="p">,</span>
+                        <span class="n">Vslack</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">Vslack</span><span class="p">,</span>
+                        <span class="n">vec_P</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">vec_P</span><span class="p">,</span>
+                        <span class="n">vec_Q</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">vec_Q</span><span class="p">,</span>
+                        <span class="n">Ysh</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">Ysh</span><span class="p">,</span>
+                        <span class="n">vec_W</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">vec_W</span><span class="p">,</span>
+                        <span class="n">pq</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span>
+                        <span class="n">pv</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span>
+                        <span class="n">vd</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">sl</span><span class="p">,</span>
+                        <span class="n">pqpv</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">pqpv</span><span class="p">,</span>
+                        <span class="n">pqpv_original</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">pqpv_original</span><span class="p">,</span>
+                        <span class="n">pq_original</span><span class="o">=</span><span class="n">pre</span><span class="o">.</span><span class="n">pq_original</span><span class="p">,</span>
+                        <span class="n">contingency_br_indices</span><span class="o">=</span><span class="n">contingency_br_indices_is</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># assign objects to the full matrix</span>
+                    <span class="n">V</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">V_isl</span>
+                    <span class="n">Sf</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sf_isl</span>
+                    <span class="n">loading</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">loading_isl</span>
+
+        <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">Sf</span><span class="p">,</span> <span class="n">loading</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

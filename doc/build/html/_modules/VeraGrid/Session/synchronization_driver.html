@@ -1,0 +1,601 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Session.synchronization_driver &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Session.synchronization_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Session.synchronization_driver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">QThread</span><span class="p">,</span> <span class="n">Signal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyncIssueType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.file_open</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileOpen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditableDevice</span><span class="p">,</span> <span class="n">DeviceType</span>
+
+
+<div class="viewcode-block" id="SyncIssue">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SyncIssue</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SyncIssue</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_type</span><span class="p">,</span> <span class="n">issue_type</span><span class="p">:</span> <span class="n">SyncIssueType</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">my_elm</span><span class="p">,</span> <span class="n">their_elm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param device_type:</span>
+<span class="sd">        :param issue_type:</span>
+<span class="sd">        :param property_name:</span>
+<span class="sd">        :param my_elm:</span>
+<span class="sd">        :param their_elm:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">device_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span> <span class="o">=</span> <span class="n">issue_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span> <span class="o">=</span> <span class="n">property_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span> <span class="o">=</span> <span class="n">my_elm</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">their_elm</span> <span class="o">=</span> <span class="n">their_elm</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__accept__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span> <span class="o">==</span> <span class="n">SyncIssueType</span><span class="o">.</span><span class="n">Conflict</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;Mod::&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span> <span class="o">==</span> <span class="n">SyncIssueType</span><span class="o">.</span><span class="n">Added</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;Add::&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">their_elm</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span> <span class="o">==</span> <span class="n">SyncIssueType</span><span class="o">.</span><span class="n">Deleted</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;Del::&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="SyncIssue.accept">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.accept">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__accept__</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SyncIssue.reject">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.reject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__accept__</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="SyncIssue.accepted">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.accepted">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accepted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__accept__</span></div>
+
+
+<div class="viewcode-block" id="SyncIssue.get_my_name">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.get_my_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_my_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SyncIssue.get_my_value">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.get_my_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_my_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="SyncIssue.get_their_value">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.get_their_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_their_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">their_elm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">their_elm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="SyncIssue.accept_change">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.SyncIssue.accept_change">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        process the change</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">their_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_their_value</span><span class="p">()</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_elm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_name</span><span class="p">,</span> <span class="n">their_val</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="compare_devices">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.compare_devices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_devices</span><span class="p">(</span><span class="n">dev1</span><span class="p">:</span> <span class="n">EditableDevice</span><span class="p">,</span> <span class="n">dev2</span><span class="p">:</span> <span class="n">EditableDevice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two devices and return the list of differences</span>
+<span class="sd">    :param dev1: Device 1</span>
+<span class="sd">    :param dev2: Device 2</span>
+<span class="sd">    :return: list of differences [property name, value1, value2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">differences</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">dev1</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">dev2</span><span class="o">.</span><span class="n">device_type</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dev1</span><span class="o">.</span><span class="n">registered_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">val1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dev1</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span>
+            <span class="n">val2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dev2</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">tpe</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">isclose</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+                    <span class="n">differences</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">prop_name</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">val1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val2</span><span class="p">):</span>
+                    <span class="n">differences</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">prop_name</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">differences</span></div>
+
+
+
+<div class="viewcode-block" id="compare_devices_lists">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.compare_devices_lists">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_devices_lists</span><span class="p">(</span><span class="n">dev_list1</span><span class="p">,</span> <span class="n">dev_list2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two devices lists</span>
+<span class="sd">    :param dev_list1: list of devices 1</span>
+<span class="sd">    :param dev_list2: list of devices 2</span>
+<span class="sd">    :return: List of issues</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">items_dict1</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">elm</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">dev_list1</span><span class="p">}</span>
+    <span class="n">items_dict2</span> <span class="o">=</span> <span class="p">{</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">elm</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">dev_list2</span><span class="p">}</span>
+
+    <span class="n">issues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>  <span class="c1"># device type, issue type, property, my value, their value, elm1, elm2</span>
+
+    <span class="c1"># check my buses against the file buses</span>
+    <span class="k">for</span> <span class="n">name1</span><span class="p">,</span> <span class="n">elm1</span> <span class="ow">in</span> <span class="n">items_dict1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">name1</span> <span class="ow">in</span> <span class="n">items_dict2</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="c1"># get the other element</span>
+            <span class="n">elm2</span> <span class="o">=</span> <span class="n">items_dict2</span><span class="p">[</span><span class="n">name1</span><span class="p">]</span>
+
+            <span class="c1"># perform the comparison in the same types, compare</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="n">compare_devices</span><span class="p">(</span><span class="n">elm1</span><span class="p">,</span> <span class="n">elm2</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span> <span class="ow">in</span> <span class="n">ls</span><span class="p">:</span>
+                <span class="n">issue</span> <span class="o">=</span> <span class="n">SyncIssue</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">elm1</span><span class="o">.</span><span class="n">device_type</span><span class="p">,</span>
+                                  <span class="n">issue_type</span><span class="o">=</span><span class="n">SyncIssueType</span><span class="o">.</span><span class="n">Conflict</span><span class="p">,</span>
+                                  <span class="n">property_name</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span>
+                                  <span class="n">my_elm</span><span class="o">=</span><span class="n">elm1</span><span class="p">,</span>
+                                  <span class="n">their_elm</span><span class="o">=</span><span class="n">elm2</span><span class="p">)</span>
+                <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">issue</span><span class="p">)</span>
+
+            <span class="c1"># if this is a bus, then examine the children</span>
+            <span class="k">if</span> <span class="n">elm1</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span>
+
+                <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">elm1</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">elm2</span><span class="o">.</span><span class="n">loads</span><span class="p">)</span>
+                <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">elm1</span><span class="o">.</span><span class="n">generators</span><span class="p">,</span> <span class="n">elm2</span><span class="o">.</span><span class="n">generators</span><span class="p">)</span>
+                <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">elm1</span><span class="o">.</span><span class="n">batteries</span><span class="p">,</span> <span class="n">elm2</span><span class="o">.</span><span class="n">batteries</span><span class="p">)</span>
+                <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">elm1</span><span class="o">.</span><span class="n">static_generators</span><span class="p">,</span> <span class="n">elm2</span><span class="o">.</span><span class="n">static_generators</span><span class="p">)</span>
+                <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">elm1</span><span class="o">.</span><span class="n">shunts</span><span class="p">,</span> <span class="n">elm2</span><span class="o">.</span><span class="n">shunts</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># my element has been deleted</span>
+            <span class="n">issue</span> <span class="o">=</span> <span class="n">SyncIssue</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">elm1</span><span class="o">.</span><span class="n">device_type</span><span class="p">,</span>
+                              <span class="n">issue_type</span><span class="o">=</span><span class="n">SyncIssueType</span><span class="o">.</span><span class="n">Deleted</span><span class="p">,</span>
+                              <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                              <span class="n">my_elm</span><span class="o">=</span><span class="n">elm1</span><span class="p">,</span>
+                              <span class="n">their_elm</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">issue</span><span class="p">)</span>
+
+    <span class="c1"># check the file buses against mine, here we only need to check for disagreements in the existence</span>
+    <span class="k">for</span> <span class="n">name2</span><span class="p">,</span> <span class="n">elm2</span> <span class="ow">in</span> <span class="n">items_dict2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">name2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items_dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># new element added</span>
+            <span class="n">issue</span> <span class="o">=</span> <span class="n">SyncIssue</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="n">elm2</span><span class="o">.</span><span class="n">device_type</span><span class="p">,</span>
+                              <span class="n">issue_type</span><span class="o">=</span><span class="n">SyncIssueType</span><span class="o">.</span><span class="n">Added</span><span class="p">,</span>
+                              <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                              <span class="n">my_elm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">their_elm</span><span class="o">=</span><span class="n">elm2</span><span class="p">)</span>
+            <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">issue</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">issues</span></div>
+
+
+
+<div class="viewcode-block" id="detect_changes_and_conflicts">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.detect_changes_and_conflicts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_changes_and_conflicts</span><span class="p">(</span><span class="n">current_circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">file_circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect changes</span>
+<span class="sd">    :param current_circuit:</span>
+<span class="sd">    :param file_circuit:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">issues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>  <span class="c1"># device name, issue type, property, my value, their value, elm1, elm2</span>
+
+    <span class="c1"># buses</span>
+    <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">dev_list1</span><span class="o">=</span><span class="n">current_circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+                                    <span class="n">dev_list2</span><span class="o">=</span><span class="n">file_circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">)</span>
+
+    <span class="c1"># Branches</span>
+    <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">dev_list1</span><span class="o">=</span><span class="n">current_circuit</span><span class="o">.</span><span class="n">lines</span><span class="p">,</span>
+                                    <span class="n">dev_list2</span><span class="o">=</span><span class="n">file_circuit</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">dev_list1</span><span class="o">=</span><span class="n">current_circuit</span><span class="o">.</span><span class="n">transformers2w</span><span class="p">,</span>
+                                    <span class="n">dev_list2</span><span class="o">=</span><span class="n">file_circuit</span><span class="o">.</span><span class="n">transformers2w</span><span class="p">)</span>
+
+    <span class="n">issues</span> <span class="o">+=</span> <span class="n">compare_devices_lists</span><span class="p">(</span><span class="n">dev_list1</span><span class="o">=</span><span class="n">current_circuit</span><span class="o">.</span><span class="n">hvdc_lines</span><span class="p">,</span>
+                                    <span class="n">dev_list2</span><span class="o">=</span><span class="n">file_circuit</span><span class="o">.</span><span class="n">hvdc_lines</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">issues</span></div>
+
+
+
+<div class="viewcode-block" id="model_check">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.model_check">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_check</span><span class="p">(</span><span class="n">current_circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">file_circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform model check</span>
+<span class="sd">    :param current_circuit:</span>
+<span class="sd">    :param file_circuit:</span>
+<span class="sd">    :return: list of issues</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">issues</span> <span class="o">=</span> <span class="n">detect_changes_and_conflicts</span><span class="p">(</span><span class="n">current_circuit</span><span class="p">,</span> <span class="n">file_circuit</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">current_circuit</span><span class="o">.</span><span class="n">model_version</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">file_circuit</span><span class="o">.</span><span class="n">model_version</span><span class="p">:</span>
+        <span class="c1"># the remote file version is newer.</span>
+        <span class="c1"># The first action is to attempt to merge, looking out for conflict</span>
+        <span class="c1"># to merge, we incorporate the remote file changes and then we save</span>
+
+        <span class="n">version_conflict</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># there is no version conflict, so we just save</span>
+        <span class="n">version_conflict</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">issues</span><span class="p">,</span> <span class="n">version_conflict</span></div>
+
+
+
+<div class="viewcode-block" id="get_issues_tree_view_model">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.get_issues_tree_view_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_issues_tree_view_model</span><span class="p">(</span><span class="n">issues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SyncIssue</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get TreeView model of the issues</span>
+<span class="sd">    :param issues: list of issues</span>
+<span class="sd">    :return: Model for a TreeView</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># structure the issues by issue type and by device type</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
+
+        <span class="c1"># device_type</span>
+        <span class="c1"># issue_type</span>
+        <span class="c1"># prop</span>
+        <span class="c1"># val1</span>
+        <span class="c1"># val2</span>
+        <span class="c1"># elm1</span>
+        <span class="c1"># elm2</span>
+
+        <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">issue_type</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">issue</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">issue</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span><span class="p">][</span><span class="n">issue</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">issue</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">issue</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span><span class="p">][</span><span class="n">issue</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">issue</span><span class="p">)]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">issue</span><span class="o">.</span><span class="n">issue_type</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">issue</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">issue</span><span class="p">)]}</span>
+
+        <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># build the tree</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s1">&#39;Issue #&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;property&#39;</span><span class="p">,</span> <span class="s1">&#39;my value&#39;</span><span class="p">,</span> <span class="s1">&#39;their value&#39;</span><span class="p">,</span> <span class="s1">&#39;Accept theirs&#39;</span><span class="p">])</span>
+
+    <span class="c1"># populate data</span>
+    <span class="k">for</span> <span class="n">issue_name</span><span class="p">,</span> <span class="n">devices</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">parent1</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">issue_name</span><span class="p">)</span>  <span class="c1"># add the issue group</span>
+
+        <span class="k">for</span> <span class="n">device</span><span class="p">,</span> <span class="n">list_of_issues</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">parent2</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># add the device type group</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">issue_item</span> <span class="ow">in</span> <span class="n">list_of_issues</span><span class="p">:</span>  <span class="c1"># add the row of information</span>
+
+                <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">issue_item</span><span class="o">.</span><span class="n">get_my_name</span><span class="p">()))</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="n">issue_item</span><span class="o">.</span><span class="n">property_name</span><span class="p">))</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">issue_item</span><span class="o">.</span><span class="n">get_my_value</span><span class="p">())))</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">issue_item</span><span class="o">.</span><span class="n">get_their_value</span><span class="p">())))</span>
+
+                <span class="n">check</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">issue_item</span><span class="o">.</span><span class="n">__accept__</span><span class="p">))</span>
+                <span class="n">check</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">issue_item</span><span class="o">.</span><span class="n">__accept__</span><span class="p">:</span>
+                    <span class="n">check</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">check</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span>
+
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">check</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">parent2</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+            <span class="n">parent2</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">parent1</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">parent2</span><span class="p">)</span>
+
+        <span class="n">parent1</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">parent1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="FileSyncThread">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.FileSyncThread">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileSyncThread</span><span class="p">(</span><span class="n">QThread</span><span class="p">):</span>
+    <span class="n">progress_signal</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">progress_text</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">done_signal</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+    <span class="n">sync_event</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+    <span class="n">items_processed_event</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">sleep_time</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param circuit: current circuit</span>
+<span class="sd">        :param file_name: name of the file to sync</span>
+<span class="sd">        :param sleep_time: seconds between executions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QThread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span> <span class="o">=</span> <span class="n">sleep_time</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">issues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">version_conflict</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">highest_version</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pause__</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="FileSyncThread.run">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.FileSyncThread.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        run the file save procedure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create class to open the file</span>
+        <span class="n">fopen</span> <span class="o">=</span> <span class="n">FileOpen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pause__</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">):</span>
+
+                    <span class="c1"># load the remote file</span>
+                    <span class="n">file_circuit</span> <span class="o">=</span> <span class="n">fopen</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">text_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_text</span><span class="o">.</span><span class="n">emit</span><span class="p">,</span>
+                                              <span class="n">progress_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">file_circuit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="c1"># sync the models</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_conflict</span> <span class="o">=</span> <span class="n">model_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">file_circuit</span><span class="p">)</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">highest_version</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">model_version</span><span class="p">,</span> <span class="n">file_circuit</span><span class="o">.</span><span class="n">model_version</span><span class="p">)</span>
+
+                        <span class="c1"># notify the external world that we did sync</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sync_event</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># the sync failed because the file was being used by another sync process</span>
+                        <span class="k">pass</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># the file disappeared!</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;File missing for synchronization:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+                <span class="c1"># sleep</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># sleep 1 second to catch other events</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># post events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress_text</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s1">&#39;Done!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FileSyncThread.cancel">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.FileSyncThread.cancel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel the sync checking</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cancel__</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="FileSyncThread.pause">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.FileSyncThread.pause">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pause the sync checking</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pause__</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="FileSyncThread.resume">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.FileSyncThread.resume">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resume the sync checking</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pause__</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="FileSyncThread.process_issues">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGrid.Session.html#VeraGrid.Session.synchronization_driver.FileSyncThread.process_issues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process all the issues</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">items_processed_event</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

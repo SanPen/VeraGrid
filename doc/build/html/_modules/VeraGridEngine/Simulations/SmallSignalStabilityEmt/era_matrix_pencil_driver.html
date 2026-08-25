@@ -1,0 +1,472 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">la</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.lib.stride_tricks</span><span class="w"> </span><span class="kn">import</span> <span class="n">sliding_window_view</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.emt_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.problems.emt_problem_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtProblemTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructuralVectorizedSolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_empty_complex_matrix</span><span class="p">,</span>
+    <span class="n">build_empty_complex_vector</span><span class="p">,</span>
+    <span class="n">build_empty_float_vector</span><span class="p">,</span>
+    <span class="n">extract_matrix_pencil_results_from_data</span><span class="p">,</span>
+    <span class="n">resolve_nominal_frequency_hz</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">EraMatrixPencilOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">EraMatrixPencilResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationTypes</span>
+
+
+<div class="viewcode-block" id="select_dominant_observable">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.select_dominant_observable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_dominant_observable</span><span class="p">(</span><span class="n">y_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Legacy helper that selects one dominant observable by variance.</span>
+
+<span class="sd">    The new engine is fully MIMO and no longer depends on this reduction, but</span>
+<span class="sd">    the function is preserved for backward compatibility with existing callers.</span>
+
+<span class="sd">    :param y_data: Real observation matrix with shape ``(n_samples, n_states)``.</span>
+<span class="sd">    :return: One-dimensional dominant observable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">variances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">y_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">best_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">variances</span><span class="p">))</span>
+    <span class="n">dominant_signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_data</span><span class="p">[:,</span> <span class="n">best_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dominant_signal</span></div>
+
+
+
+<div class="viewcode-block" id="build_hankel_zero_copy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.build_hankel_zero_copy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_hankel_zero_copy</span><span class="p">(</span><span class="n">y_signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">window_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Legacy helper that builds a scalar Hankel view.</span>
+
+<span class="sd">    The new solver uses a MIMO block-Hankel matrix, but the helper is preserved</span>
+<span class="sd">    so older diagnostic scripts can still inspect the scalar construction.</span>
+
+<span class="sd">    :param y_signal: Scalar observation signal.</span>
+<span class="sd">    :param window_length: Hankel window length.</span>
+<span class="sd">    :return: Sliding-window Hankel view.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hankel_view</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">sliding_window_view</span><span class="p">(</span><span class="n">y_signal</span><span class="p">,</span> <span class="n">window_shape</span><span class="o">=</span><span class="n">window_length</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hankel_view</span></div>
+
+
+
+<div class="viewcode-block" id="build_empty_era_results">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.build_empty_era_results">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_empty_era_results</span><span class="p">(</span><span class="n">observable_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EraMatrixPencilResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build an empty public results object.</span>
+
+<span class="sd">    :param observable_names: Optional observable labels.</span>
+<span class="sd">    :return: Empty results object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">names_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">observable_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">names_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">observable_names</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">names_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">EraMatrixPencilResults</span><span class="p">(</span>
+        <span class="n">eigenvalues_s</span><span class="o">=</span><span class="n">build_empty_complex_vector</span><span class="p">(),</span>
+        <span class="n">residues</span><span class="o">=</span><span class="n">build_empty_complex_matrix</span><span class="p">(),</span>
+        <span class="n">modal_energy</span><span class="o">=</span><span class="n">build_empty_float_vector</span><span class="p">(),</span>
+        <span class="n">reconstruction_errors</span><span class="o">=</span><span class="n">build_empty_float_vector</span><span class="p">(),</span>
+        <span class="n">band_low_hz</span><span class="o">=</span><span class="n">build_empty_float_vector</span><span class="p">(),</span>
+        <span class="n">band_high_hz</span><span class="o">=</span><span class="n">build_empty_float_vector</span><span class="p">(),</span>
+        <span class="n">selected_orders</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span>
+        <span class="n">observable_count_per_mode</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span>
+        <span class="n">observable_names</span><span class="o">=</span><span class="n">names_list</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_observable_names">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.extract_observable_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_observable_names</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">EmtProblemTemplate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the ordered state-variable labels from the EMT problem.</span>
+
+<span class="sd">    :param problem: EMT problem definition.</span>
+<span class="sd">    :return: Ordered list of state labels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">names_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">EmtProblemTemplate</span><span class="p">):</span>
+        <span class="n">state_vars</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_state_vars</span><span class="p">()</span>
+        <span class="n">state_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_states</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_vars</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">state_index</span> <span class="o">&lt;</span> <span class="n">n_states</span><span class="p">:</span>
+            <span class="n">names_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">state_vars</span><span class="p">[</span><span class="n">state_index</span><span class="p">]))</span>
+            <span class="n">state_index</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">names_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">names_list</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_emt_state_history">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.simulate_emt_state_history">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_emt_state_history</span><span class="p">(</span><span class="n">solver</span><span class="p">:</span> <span class="n">StructuralVectorizedSolver</span><span class="p">,</span>
+                               <span class="n">n_states</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Mat</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the EMT solver and slice the differential-state block.</span>
+
+<span class="sd">    :param solver: EMT structural solver.</span>
+<span class="sd">    :param n_states: Number of differential states.</span>
+<span class="sd">    :return: Tuple ``(time_vector, state_history)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">time_vector</span><span class="p">:</span> <span class="n">Vec</span>
+    <span class="n">full_state_history</span><span class="p">:</span> <span class="n">Mat</span>
+    <span class="n">derivative_history</span><span class="p">:</span> <span class="n">Mat</span>
+    <span class="n">time_vector</span><span class="p">,</span> <span class="n">full_state_history</span><span class="p">,</span> <span class="n">derivative_history</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">derivative_history</span>
+
+    <span class="k">if</span> <span class="n">n_states</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dense_state_history</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">full_state_history</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_states</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dense_state_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">full_state_history</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">time_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">dense_state_history</span></div>
+
+
+
+<div class="viewcode-block" id="unpack_dense_state_matrix">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.unpack_dense_state_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpack_dense_state_matrix</span><span class="p">(</span><span class="n">y_full_tuples</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                              <span class="n">n_states</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the solver output into one dense real matrix.</span>
+
+<span class="sd">    :param y_full_tuples: Raw solver state history.</span>
+<span class="sd">    :param n_states: Number of differential states.</span>
+<span class="sd">    :return: Dense state matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_full_tuples</span><span class="p">)</span>
+    <span class="n">dense_signal</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_states</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">sample_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># The conversion is explicit because the solver may return either a raw</span>
+    <span class="c1"># vector or a tuple ``(state_vector, extra_data)`` depending on the mode.</span>
+    <span class="k">while</span> <span class="n">sample_index</span> <span class="o">&lt;</span> <span class="n">n_samples</span><span class="p">:</span>
+        <span class="n">current_sample</span> <span class="o">=</span> <span class="n">y_full_tuples</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_sample</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">dense_signal</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">current_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dense_signal</span><span class="p">[</span><span class="n">sample_index</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">current_sample</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="n">sample_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">dense_signal</span></div>
+
+
+
+<div class="viewcode-block" id="extract_matrix_pencil_poles">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.extract_matrix_pencil_poles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_matrix_pencil_poles</span><span class="p">(</span><span class="n">y_signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                <span class="n">max_modes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                <span class="n">tol_deflation</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxVec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compatibility wrapper around the new EMT matrix-pencil engine.</span>
+
+<span class="sd">    The wrapper keeps the legacy scalar API alive while internally using the</span>
+<span class="sd">    refactored MIMO/TLS extraction path on a single observable channel.</span>
+
+<span class="sd">    :param y_signal: Scalar observation signal.</span>
+<span class="sd">    :param dt: Sampling time step.</span>
+<span class="sd">    :param max_modes: Maximum number of retained modes.</span>
+<span class="sd">    :param tol_deflation: Numerical singular-value floor.</span>
+<span class="sd">    :return: Continuous-time pole vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">dt</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">time_data</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">legacy_options</span><span class="p">:</span> <span class="n">EraMatrixPencilOptions</span> <span class="o">=</span> <span class="n">EraMatrixPencilOptions</span><span class="p">(</span>
+            <span class="n">decimation_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">tol_deflation</span><span class="o">=</span><span class="n">tol_deflation</span><span class="p">,</span>
+            <span class="n">max_modes</span><span class="o">=</span><span class="n">max_modes</span><span class="p">,</span>
+            <span class="n">use_notch_filtering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">use_forward_backward</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">maximum_observables</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">nyquist_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">dt</span>
+        <span class="n">legacy_options</span><span class="o">.</span><span class="n">set_analysis_bands</span><span class="p">(((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.95</span> <span class="o">*</span> <span class="n">nyquist_hz</span><span class="p">),))</span>
+        <span class="n">legacy_results</span><span class="p">:</span> <span class="n">EraMatrixPencilResults</span> <span class="o">=</span> <span class="n">extract_matrix_pencil_results_from_data</span><span class="p">(</span>
+            <span class="n">time_data</span><span class="o">=</span><span class="n">time_data</span><span class="p">,</span>
+            <span class="n">y_data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_signal</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="n">era_options</span><span class="o">=</span><span class="n">legacy_options</span><span class="p">,</span>
+            <span class="n">nominal_frequency_hz</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">observable_names</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="s1">&#39;Legacy Observable&#39;</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="n">s_poles</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">legacy_results</span><span class="o">.</span><span class="n">get_eigenvalues</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s_poles</span> <span class="o">=</span> <span class="n">build_empty_complex_vector</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">s_poles</span></div>
+
+
+
+<div class="viewcode-block" id="EraMatrixPencilDriver">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.EraMatrixPencilDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EraMatrixPencilDriver</span><span class="p">(</span><span class="n">DriverTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EMT driver for the frequency-zooming forward-backward TLS matrix pencil.</span>
+
+<span class="sd">    The driver is intentionally thin: it only runs the EMT simulation and then</span>
+<span class="sd">    delegates the modal extraction to the pure stateless core module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_grid&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_problem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_emt_options&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_era_options&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_results&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ERA Matrix Pencil EMT Simulation&#39;</span>
+    <span class="n">tpe</span> <span class="o">=</span> <span class="n">SimulationTypes</span><span class="o">.</span><span class="n">RmsSmallSignal_run</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                 <span class="n">problem</span><span class="p">:</span> <span class="n">EmtProblemTemplate</span><span class="p">,</span>
+                 <span class="n">emt_options</span><span class="p">:</span> <span class="n">EmtOptions</span><span class="p">,</span>
+                 <span class="n">era_options</span><span class="p">:</span> <span class="n">EraMatrixPencilOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the EMT ERA driver.</span>
+
+<span class="sd">        :param grid: Multi-circuit grid model.</span>
+<span class="sd">        :param problem: EMT problem definition.</span>
+<span class="sd">        :param emt_options: EMT simulation options.</span>
+<span class="sd">        :param era_options: Matrix-pencil extraction options.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">DriverTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="p">:</span> <span class="n">MultiCircuit</span> <span class="o">=</span> <span class="n">grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_problem</span><span class="p">:</span> <span class="n">EmtProblemTemplate</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_options</span><span class="p">:</span> <span class="n">EmtOptions</span> <span class="o">=</span> <span class="n">emt_options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="p">:</span> <span class="n">EraMatrixPencilOptions</span> <span class="o">=</span> <span class="n">era_options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="n">EraMatrixPencilResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EraMatrixPencilDriver.get_results">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.EraMatrixPencilDriver.get_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EraMatrixPencilResults</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the latest extraction results.</span>
+
+<span class="sd">        :return: Results object or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span></div>
+
+
+<div class="viewcode-block" id="EraMatrixPencilDriver.run">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.era_matrix_pencil_driver.EraMatrixPencilDriver.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the EMT ringdown simulation and the modal extraction pipeline.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+
+        <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emt_options</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+        <span class="n">ringdown_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="o">.</span><span class="n">get_t_ringdown</span><span class="p">())</span>
+        <span class="n">observable_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_observable_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_problem</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="o">.</span><span class="n">get_verbose</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&gt; Executing EMT transient for frequency-zooming ERA analysis...&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">solver</span><span class="p">:</span> <span class="n">StructuralVectorizedSolver</span> <span class="o">=</span> <span class="n">StructuralVectorizedSolver</span><span class="p">(</span>
+                <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_problem</span><span class="p">,</span>
+                <span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">t_end</span><span class="o">=</span><span class="n">ringdown_time</span><span class="p">,</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">time_step</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_emt_options</span><span class="o">.</span><span class="n">integration_method</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="o">.</span><span class="n">get_verbose</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">time_vector</span><span class="p">:</span> <span class="n">Vec</span>
+            <span class="n">dense_signal</span><span class="p">:</span> <span class="n">Mat</span>
+            <span class="n">time_vector</span><span class="p">,</span> <span class="n">dense_signal</span> <span class="o">=</span> <span class="n">simulate_emt_state_history</span><span class="p">(</span>
+                <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">,</span>
+                <span class="n">n_states</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_problem</span><span class="o">.</span><span class="n">get_states_number</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="n">nominal_frequency_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">resolve_nominal_frequency_hz</span><span class="p">(</span>
+                <span class="n">explicit_nominal_frequency_hz</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="o">.</span><span class="n">get_nominal_frequency_hz</span><span class="p">(),</span>
+                <span class="n">fallback_nominal_frequency_hz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">fBase</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="o">.</span><span class="n">get_verbose</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&gt; Executing multi-band forward-backward TLS matrix pencil...&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">extracted_results</span><span class="p">:</span> <span class="n">EraMatrixPencilResults</span> <span class="o">=</span> <span class="n">extract_matrix_pencil_results_from_data</span><span class="p">(</span>
+                <span class="n">time_data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">time_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+                <span class="n">y_data</span><span class="o">=</span><span class="n">dense_signal</span><span class="p">,</span>
+                <span class="n">era_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_era_options</span><span class="p">,</span>
+                <span class="n">nominal_frequency_hz</span><span class="o">=</span><span class="n">nominal_frequency_hz</span><span class="p">,</span>
+                <span class="n">observable_names</span><span class="o">=</span><span class="n">observable_names</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">extracted_results</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">extracted_results</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">la</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">):</span>
+            <span class="n">empty_results</span><span class="p">:</span> <span class="n">EraMatrixPencilResults</span> <span class="o">=</span> <span class="n">build_empty_era_results</span><span class="p">(</span><span class="n">observable_names</span><span class="o">=</span><span class="n">observable_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">empty_results</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">empty_results</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

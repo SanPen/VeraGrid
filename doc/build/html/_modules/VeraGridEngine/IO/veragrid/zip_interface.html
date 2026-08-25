@@ -1,0 +1,920 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.veragrid.zip_interface &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.veragrid.zip_interface</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.veragrid.zip_interface</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">orjson</span>
+
+    <span class="n">_HAS_ORJSON</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_HAS_ORJSON</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">BufferedReader</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">VERAGRID_FILE_TYPE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.generic_io_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_config_df</span><span class="p">,</span> <span class="n">CustomJSONizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverToSave</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.pack_unpack</span><span class="w"> </span><span class="kn">import</span> <span class="n">gather_model_as_data_frames</span><span class="p">,</span> <span class="n">gather_model_as_jsons</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+
+
+<div class="viewcode-block" id="load_json_from_file_pointer">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.load_json_from_file_pointer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load JSON from a file pointer using orjson if available, falling back to json.</span>
+<span class="sd">    :param file_pointer: File pointer (from zip file or regular file)</span>
+<span class="sd">    :return: Parsed JSON as dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">file_pointer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">_HAS_ORJSON</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_results_in_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_results_in_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_results_in_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
+                        <span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">],</span>
+                        <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param f_zip_ptr:</span>
+<span class="sd">    :param filename_zip:</span>
+<span class="sd">    :param sessions_data:</span>
+<span class="sd">    :param folder:</span>
+<span class="sd">    :param text_func:</span>
+<span class="sd">    :param progress_func:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pre-count the sessions</span>
+    <span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sessions_data</span><span class="p">)</span>
+
+    <span class="c1"># save sessions</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">session_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sessions_data</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">session_data</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># traverse the registered results</span>
+            <span class="k">for</span> <span class="n">arr_name</span><span class="p">,</span> <span class="n">arr_prop</span> <span class="ow">in</span> <span class="n">session_data</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">data_variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">tpe</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">arr_name</span>
+
+                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Flushing &#39;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39; to &#39;</span> <span class="o">+</span> <span class="n">filename_zip</span> <span class="o">+</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+
+                <span class="c1"># get the array</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">session_data</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">arr_name</span><span class="p">)</span>
+
+                <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                    <span class="c1"># pack the array into a DataFrame</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+                            <span class="n">filename</span> <span class="o">+=</span> <span class="s2">&quot;__complex__&quot;</span>
+                            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">arr</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">imag</span><span class="p">])</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+
+                        <span class="c1"># save the buffer to the zip file</span>
+                        <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+
+                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">progress_func</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_items</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># save logger</span>
+        <span class="k">if</span> <span class="n">session_data</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;sessions/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">tpe</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;/logger.parquet&#39;</span>
+            <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                <span class="c1"># save the DataFrame to the buffer, protocol4 is to be compatible with python 3.6</span>
+                <span class="n">session_data</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                <span class="c1"># save the buffer to the zip file</span>
+                <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="save_multiverse_data_to_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_multiverse_data_to_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_multiverse_data_to_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
+                                <span class="n">multiverse</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiVerse</span><span class="p">,</span>
+                                <span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save only the multiverse-specific payload into an already opened VeraGrid archive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multiverse_meta_data</span><span class="p">,</span> <span class="n">multiverse_model_data</span><span class="p">,</span> <span class="n">multiverse_drivers_data</span> <span class="o">=</span> <span class="n">multiverse</span><span class="o">.</span><span class="n">get_save_data</span><span class="p">()</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;multiverse/metadata.json&quot;</span>
+    <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">multiverse_meta_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">grid_idtag</span><span class="p">,</span> <span class="n">diff_grid</span> <span class="ow">in</span> <span class="n">multiverse_model_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">base_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;multiverse/</span><span class="si">{</span><span class="n">grid_idtag</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">gather_model_as_jsons</span><span class="p">(</span><span class="n">diff_grid</span><span class="p">,</span> <span class="n">project_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;model_data&quot;</span><span class="p">:</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.model&quot;</span>
+                <span class="n">sub_folder</span> <span class="o">=</span> <span class="s2">&quot;model_data&quot;</span>
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;symbolic_data&quot;</span><span class="p">:</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.symbolic&quot;</span>
+                <span class="n">sub_folder</span> <span class="o">=</span> <span class="s2">&quot;model_data/symbolic_data&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled data package to save </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">object_type_name</span><span class="p">,</span> <span class="n">object_data</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">sub_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">object_type_name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">object_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">CustomJSONizer</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device_class</span><span class="o">=</span><span class="n">object_type_name</span><span class="p">)</span>
+                    <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">object_type_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">base_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;multiverse/</span><span class="si">{</span><span class="n">grid_idtag</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">multiverse_drivers_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grid_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sessions_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">save_results_in_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
+                                    <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                                    <span class="n">folder</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">sub_folder</span><span class="si">}</span><span class="s2">/sessions&quot;</span><span class="p">,</span>
+                                    <span class="n">sessions_data</span><span class="o">=</span><span class="n">sessions_data</span><span class="p">,</span>
+                                    <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                    <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">diagram</span> <span class="ow">in</span> <span class="n">diff_grid</span><span class="o">.</span><span class="n">diagrams</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">/diagrams/</span><span class="si">{</span><span class="n">diagram</span><span class="o">.</span><span class="n">idtag</span><span class="si">}</span><span class="s2">.diagram&quot;</span>
+            <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">diagram</span><span class="o">.</span><span class="n">get_data_dict</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="save_single_circuit_data_to_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_single_circuit_data_to_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_single_circuit_data_to_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
+                                    <span class="n">circuit</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span>
+                                    <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">],</span>
+                                    <span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                    <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the non-multiverse circuit payload into an already opened VeraGrid archive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">gather_model_as_jsons</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">project_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;model_data&quot;</span><span class="p">:</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.model&quot;</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;symbolic_data&quot;</span><span class="p">:</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.symbolic&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled data package to save </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">object_type_name</span><span class="p">,</span> <span class="n">object_data</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">object_type_name</span> <span class="o">+</span> <span class="n">ext</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">object_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">CustomJSONizer</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device_class</span><span class="o">=</span><span class="n">object_type_name</span><span class="p">)</span>
+                <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">object_type_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">diagram</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">diagrams</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;diagrams/</span><span class="si">{</span><span class="n">diagram</span><span class="o">.</span><span class="n">idtag</span><span class="si">}</span><span class="s2">.diagram&quot;</span>
+        <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">diagram</span><span class="o">.</span><span class="n">get_data_dict</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+
+    <span class="n">save_results_in_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
+                        <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                        <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;sessions&quot;</span><span class="p">,</span>
+                        <span class="n">sessions_data</span><span class="o">=</span><span class="n">sessions_data</span><span class="p">,</span>
+                        <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                        <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_data_to_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_veragrid_data_to_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_data_to_zip</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">circuit</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span>
+                              <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">],</span>
+                              <span class="n">json_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+                              <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a list of DataFrames to a zip file without saving to disk the csv files</span>
+<span class="sd">    :param filename_zip: file name where to save all</span>
+<span class="sd">    :param circuit: MultiCircuit object</span>
+<span class="sd">    :param sessions_data: List of DriverToSave instances, representing the results drivers data</span>
+<span class="sd">    :param json_files: List of configuration json files to save such as gui_config Dict[file_name, dictionary to save]</span>
+<span class="sd">    :param text_func: pointer to function that prints the names</span>
+<span class="sd">    :param progress_func: pointer to function that prints the progress 0~100</span>
+<span class="sd">    :param logger: Logger object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># open zip file for writing</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_zip_ptr</span><span class="p">:</span>
+
+        <span class="c1"># save the config files ----------------------------------------------------------------------------------------</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">json_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+            <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="c1"># save the bulk of the data ------------------------------------------------------------------------------------</span>
+        <span class="n">save_single_circuit_data_to_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
+                                        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                                        <span class="n">sessions_data</span><span class="o">=</span><span class="n">sessions_data</span><span class="p">,</span>
+                                        <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                                        <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                        <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="c1"># gather the dataframes (legacy) -------------------------------------------------------------------------------</span>
+        <span class="n">dfs</span> <span class="o">=</span> <span class="n">gather_model_as_data_frames</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">legacy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># for each DataFrame and name...</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Flushing &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; to &#39;</span> <span class="o">+</span> <span class="n">filename_zip</span> <span class="o">+</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">progress_func</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_prof&#39;</span><span class="p">):</span>
+
+                <span class="c1"># compose the csv file name</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span>
+
+                <span class="c1"># open a string buffer</span>
+                <span class="k">try</span><span class="p">:</span>  <span class="c1"># try parquet file</span>
+                    <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="c1"># save the DataFrame to the buffer, protocol4 is to be compatible with python 3.6</span>
+                        <span class="n">df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                        <span class="c1"># save the buffer to the zip file</span>
+                        <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+
+                <span class="k">except</span><span class="p">:</span>  <span class="c1"># otherwise just use csv</span>
+                    <span class="n">n_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+                    <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># save the DataFrame to the buffer</span>
+                        <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>  <span class="c1"># save the buffer to the zip file</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># compose the csv file name</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+
+                <span class="c1"># open a string buffer</span>
+                <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># save the DataFrame to the buffer</span>
+                    <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>  <span class="c1"># save the buffer to the zip file</span>
+
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">n_failed</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Failed to pickle several profiles, but saved them as csv.</span><span class="se">\n</span><span class="s1">For improved speed install Pandas &gt;= 1.2&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_veragrid_multiverse_data_to_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_veragrid_multiverse_data_to_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_multiverse_data_to_zip</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">json_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+                              <span class="n">multiverse</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiVerse</span><span class="p">,</span>
+                              <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a list of DataFrames to a zip file without saving to disk the csv files</span>
+<span class="sd">    :param filename_zip: file name where to save all</span>
+<span class="sd">    :param json_files: List of configuration json files to save such as gui_config Dict[file_name, dictionary to save]</span>
+<span class="sd">    :param multiverse: MultiVerse object</span>
+<span class="sd">    :param text_func: pointer to function that prints the names</span>
+<span class="sd">    :param progress_func: pointer to function that prints the progress 0~100</span>
+<span class="sd">    :param logger: Logger object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># open zip file for writing</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_zip_ptr</span><span class="p">:</span>
+
+        <span class="c1"># save the config files ----------------------------------------------------------------------------------------</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">json_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+            <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="c1"># save the multicircuit data------------------------------------------------------------------------------------</span>
+        <span class="n">save_multiverse_data_to_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
+                                    <span class="n">multiverse</span><span class="o">=</span><span class="n">multiverse</span><span class="p">,</span>
+                                    <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                                    <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                    <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_failed</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Failed to pickle several profiles, but saved them as csv.</span><span class="se">\n</span><span class="s1">For improved speed install Pandas &gt;= 1.2&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_results_only">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_results_only">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_results_only</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">],</span>
+                      <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the results into a new file</span>
+<span class="sd">    :param filename_zip: name of the zip file</span>
+<span class="sd">    :param sessions_data: Sessions to save</span>
+<span class="sd">    :param text_func: Text progress function</span>
+<span class="sd">    :param progress_func: Numerical progress function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># open zip file for writing</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_zip_ptr</span><span class="p">:</span>
+        <span class="c1"># Save the results into the zip file</span>
+        <span class="n">save_results_in_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
+                            <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                            <span class="n">sessions_data</span><span class="o">=</span><span class="n">sessions_data</span><span class="p">,</span>
+                            <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                            <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_data_frame_from_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.read_data_frame_from_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_data_frame_from_zip</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span>
+                             <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    read DataFrame</span>
+<span class="sd">    :param file_pointer: Pointer to the file within the zip file</span>
+<span class="sd">    :param extension: Extension, just to determine the reader method</span>
+<span class="sd">    :param index_col: Index col (only for config file)</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return: Data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.npy&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.parquet&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.feather&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_feather</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.hdf&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;array&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;EOF error&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bad zip file error&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="get_frames_from_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.get_frames_from_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_frames_from_zip</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">VERAGRID_FILE_TYPE</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open the csv files from a zip file</span>
+<span class="sd">    :param file_name_zip: name of the zip file</span>
+<span class="sd">    :param text_func: pointer to function that prints the names</span>
+<span class="sd">    :param progress_func: pointer to function that prints the progress 0~100</span>
+<span class="sd">    :param logger:</span>
+<span class="sd">    :return: list of DataFrames</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">json_files</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">has_multiverse_data</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># open the zip file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;diagrams&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s1">&#39;model_data&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+            <span class="s1">&#39;symbolic_data&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">json_files</span><span class="p">,</span> <span class="n">has_multiverse_data</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s1">&#39;multiverse/metadata.json&#39;</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;multiverse&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="n">has_multiverse_data</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Loading a multiverse file ------------------------------------------------------------------------------------</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="c1"># for each file in the zip file...</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+
+            <span class="c1"># split the file name into name and extension</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Unpacking &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">file_name_zip</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">progress_func</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+            <span class="c1"># create a buffer to read the file</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;multiverse&quot;</span><span class="p">:</span>
+                <span class="n">model_idtag</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">model_idtag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">]:</span> <span class="c1"># and &quot;.json&quot; not in model_idtag:</span>
+                    <span class="c1"># initialize the dict</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;diagrams&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+                        <span class="s1">&#39;model_data&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+                        <span class="s1">&#39;symbolic_data&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+                    <span class="p">}</span>
+
+                <span class="c1"># model_data = data[&#39;multiverse&#39;][model_idtag]</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;config&quot;</span><span class="p">:</span>
+                        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_config_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+                        <span class="n">json_files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.diagram&#39;</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="s1">&#39;diagrams&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">))</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.model&#39;</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="s1">&#39;model_data&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.symbolic&#39;</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="s1">&#39;symbolic_data&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.npy&#39;</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.parquet&#39;</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;multiverse&#39;</span><span class="p">][</span><span class="n">model_idtag</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;Unsupported file type inside .veragrid&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;EOF error&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bad zip file error&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;config&quot;</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_config_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">json_files</span><span class="p">,</span> <span class="n">has_multiverse_data</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Loading a flat file structure with no multiverse -------------------------------------------------------------</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;diagrams&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s1">&#39;model_data&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+            <span class="s1">&#39;symbolic_data&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="n">has_multiverse_data</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="c1"># for each file in the zip file...</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+
+            <span class="c1"># split the file name into name and extension</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Unpacking &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">file_name_zip</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">progress_func</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+            <span class="c1"># create a buffer to read the file</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;config&quot;</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_config_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+                    <span class="n">json_files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.diagram&#39;</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;diagrams&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.model&#39;</span><span class="p">:</span>
+                    <span class="n">folder</span><span class="p">,</span> <span class="n">object_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_data&#39;</span><span class="p">][</span><span class="n">object_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.symbolic&#39;</span><span class="p">:</span>
+                    <span class="n">folder</span><span class="p">,</span> <span class="n">object_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;symbolic_data&#39;</span><span class="p">][</span><span class="n">object_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.npy&#39;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.parquet&#39;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Upgrading pandas might help.&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s2">&quot;Unsupported file type inside .veragrid&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;EOF error&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Bad zip file error&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">file_pointer</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">json_files</span><span class="p">,</span> <span class="n">has_multiverse_data</span></div>
+
+
+
+<div class="viewcode-block" id="get_session_tree">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.get_session_tree">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session_tree</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the sessions structure</span>
+<span class="sd">    :param file_name_zip:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;sessions&#39;</span><span class="p">:</span>
+
+                <span class="n">session_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">study_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">array_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">session_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">study_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">][</span><span class="n">study_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+                <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">][</span><span class="n">study_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="load_session_driver_objects">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.load_session_driver_objects">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_session_driver_objects</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">session_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">study_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the sessions structure</span>
+<span class="sd">    :param file_name_zip:</span>
+<span class="sd">    :param session_name:</span>
+<span class="sd">    :param study_name:</span>
+<span class="sd">    :return: Dict[str, Union[None, pd.DataFrame]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="c1"># traverse the zip names and pick all those that start with sessions_data/session_name/study_name</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;sessions&#39;</span> <span class="ow">and</span> <span class="n">session_name</span> <span class="o">==</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">study_name</span> <span class="o">==</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                    <span class="c1"># create a buffer to read the file</span>
+                    <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="c1"># split the file name into name and extension</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">arr_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                    <span class="c1"># read the data</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">arr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_data_frame_from_zip</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">extension</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="get_xml_content">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.get_xml_content">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_xml_content</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipExtFile</span> <span class="o">|</span> <span class="n">BufferedReader</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the content of a file</span>
+<span class="sd">    :param file_ptr: File pointer (from file or zip file)</span>
+<span class="sd">    :return: list of text lines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># xml files always have the encoding declared, find it out</span>
+    <span class="n">first_line</span> <span class="o">=</span> <span class="n">file_ptr</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="sa">b</span><span class="s1">&#39;encoding&#39;</span> <span class="ow">in</span> <span class="n">first_line</span><span class="p">:</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">first_line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;?&gt;&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
+
+    <span class="c1"># sequential back to the start</span>
+    <span class="n">file_ptr</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># read all the lines</span>
+    <span class="k">with</span> <span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span> <span class="k">as</span> <span class="n">fle</span><span class="p">:</span>
+        <span class="n">text_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">fle</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">text_lines</span></div>
+
+
+
+<div class="viewcode-block" id="get_xml_from_zip">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.get_xml_from_zip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_xml_from_zip</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the .xml files from a zip file</span>
+<span class="sd">    :param file_name_zip: name of the zip file</span>
+<span class="sd">    :param text_func: pointer to function that prints the names</span>
+<span class="sd">    :param progress_func: pointer to function that prints the progress 0~100</span>
+<span class="sd">    :return: list of xml file contents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># open the zip file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">zip_file_pointer</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_name_zip</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">BadZipFile</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="c1"># for each file in the zip file...</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+
+        <span class="c1"># split the file name into name and extension</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;Unpacking &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">file_name_zip</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">progress_func</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;.xml&#39;</span><span class="p">:</span>
+            <span class="n">file_ptr</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+            <span class="n">text_lines</span> <span class="o">=</span> <span class="n">get_xml_content</span><span class="p">(</span><span class="n">file_ptr</span><span class="p">)</span>
+
+            <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_lines</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

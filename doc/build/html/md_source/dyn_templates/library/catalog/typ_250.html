@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1/sT (parameter input) [signal: rst; param: T/y_min; 1 state; form B] &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="1/sT (parameter input) [signal: rst; param: T/y_max/y_min; 1 state]" href="typ_251.html" />
+    <link rel="prev" title="yi less than or equal C" href="typ_25.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../dynamic_model_library_index.html">📚 Dynamic model library</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamic_model_library_index.html#authoring-models">Authoring models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamic_model_library_index.html#device-templates">Device templates</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../../dynamic_model_library_index.html#reusable-blocks-and-logic">Reusable blocks and logic</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">Dynamic library blocks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../procedural_logic/index.html">Runtime procedural logic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="../../../dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Dynamic library blocks</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Editor block catalogue</a></li>
+      <li class="breadcrumb-item active">1/sT (parameter input) [signal: rst; param: T/y_min; 1 state; form B]</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/md_source/dyn_templates/library/catalog/typ_250.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="st-parameter-input-signal-rst-param-t-y-min-1-state-form-b">
+<h1>1/sT (parameter input) [signal: rst; param: T/y_min; 1 state; form B]<a class="headerlink" href="#st-parameter-input-signal-rst-param-t-y-min-1-state-form-b" title="Link to this heading"></a></h1>
+<p>This is Basic Block Catalog type <code class="docutils literal notranslate"><span class="pre">250</span></code> (<code class="docutils literal notranslate"><span class="pre">1/sT</span> <span class="pre">(p</span></code>). It represents a continuous-time dynamic operation, including any declared internal states.</p>
+<!-- veragrid-block-introduction:start -->
+<p><strong>1/sT (parameter input) [signal: rst; param: T/y_min; 1 state; form B]</strong> implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.</p>
+<section id="typical-use">
+<h2>Typical use<a class="headerlink" href="#typical-use" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use it inside voltage, current, power, speed, excitation, or governor control loops.</p></li>
+<li><p>Coordinate gains, limits, and time constants with the actuator and plant bandwidth.</p></li>
+</ul>
+<!-- veragrid-block-introduction:end -->
+</section>
+<section id="behaviour">
+<h2>Behaviour<a class="headerlink" href="#behaviour" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Library location: <code class="docutils literal notranslate"><span class="pre">Native</span> <span class="pre">/</span> <span class="pre">Continuous</span> <span class="pre">/</span> <span class="pre">Integrators</span> <span class="pre">and</span> <span class="pre">Derivatives</span></code>.</p></li>
+<li><p>Inputs: 2.</p></li>
+<li><p>Outputs: 1.</p></li>
+<li><p>Declared states: 1.</p></li>
+<li><p>Configurable parameters: 2.</p></li>
+<li><p>The imported definition is fully supported by the Dynamic Editor catalogue.</p></li>
+</ul>
+</section>
+<section id="characteristic-equations">
+<h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
+<div class="math">
+<p><span class="math">\frac{d x}{dt} = (proc_{selfix\_0} \cdot \frac{yi}{T} + (1 - proc_{selfix\_0}) \cdot 0)</span></p>
+</div><div class="math">
+<p><span class="math">0 = (yo - (y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - 999999999999) \cdot \Theta\left(x - 999999999999\right)))</span></p>
+</div><div class="math">
+<p><span class="math">1/sT (p_{xinc}(t_0) = x</span></p>
+</div></section>
+<section id="interface-table">
+<h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">yi</span></code></p></td>
+<td><p>Input signal consumed by the block</p></td>
+<td><p>model-dependent</p></td>
+</tr>
+<tr class="row-odd"><td><p>Input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rst</span></code></p></td>
+<td><p>Input signal consumed by the block</p></td>
+<td><p>model-dependent</p></td>
+</tr>
+<tr class="row-even"><td><p>Output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">yo</span></code></p></td>
+<td><p>Output signal produced by the block</p></td>
+<td><p>model-dependent</p></td>
+</tr>
+<tr class="row-odd"><td><p>State</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1/sT</span> <span class="pre">(p__x</span></code></p></td>
+<td><p>Internal dynamic state</p></td>
+<td><p>model-dependent</p></td>
+</tr>
+<tr class="row-even"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T</span></code></p></td>
+<td><p>Configurable model parameter</p></td>
+<td><p>model-dependent</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y_min</span></code></p></td>
+<td><p>Configurable model parameter</p></td>
+<td><p>model-dependent</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="editing-notes">
+<h2>Editing notes<a class="headerlink" href="#editing-notes" title="Link to this heading"></a></h2>
+<p>Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="typ_25.html" class="btn btn-neutral float-left" title="yi less than or equal C" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="typ_251.html" class="btn btn-neutral float-right" title="1/sT (parameter input) [signal: rst; param: T/y_max/y_min; 1 state]" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

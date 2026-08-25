@@ -1,0 +1,992 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.matpower.veragrid_to_matpower &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.matpower.veragrid_to_matpower</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.matpower.veragrid_to_matpower</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">Area</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.external_grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExternalGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.injection_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">InjectionParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BusMode</span><span class="p">,</span> <span class="n">ExternalGridMode</span>
+
+<span class="n">MatpowerScalar</span> <span class="o">=</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span>
+<span class="n">MATPOWER_EXTERNAL_GRID_LIMIT</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+
+
+<div class="viewcode-block" id="MatpowerCaseExport">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.veragrid_to_matpower.MatpowerCaseExport">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MatpowerCaseExport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store one MATPOWER case export in an explicit container.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;base_mva&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_table&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gen_table&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;branch_table&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gencost_table&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bus_names&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_mva</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one empty MATPOWER case container.</span>
+
+<span class="sd">        :param base_mva: Case base power in MVA.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_mva</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_mva</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_table</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_table</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch_table</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gencost_table</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bus_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sanitize_case_name</span><span class="p">(</span><span class="n">case_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one arbitrary file stem into a valid MATLAB function name.</span>
+
+<span class="sd">    :param case_name: Raw case name candidate.</span>
+<span class="sd">    :return: Sanitized MATLAB identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalized_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9A-Za-z_]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">case_name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">normalized_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">normalized_name</span> <span class="o">=</span> <span class="s2">&quot;veragrid_case&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">normalized_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="n">normalized_name</span> <span class="o">=</span> <span class="s2">&quot;veragrid_&quot;</span> <span class="o">+</span> <span class="n">normalized_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">normalized_name</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_escape_matlab_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Escape one string for a MATLAB single-quoted literal.</span>
+
+<span class="sd">    :param value: Raw text.</span>
+<span class="sd">    :return: Escaped text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_numeric_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">MatpowerScalar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format one MATPOWER numeric field.</span>
+
+<span class="sd">    :param value: Numeric value to serialize.</span>
+<span class="sd">    :return: String ready to write to the MATPOWER file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">numeric_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">numeric_value</span><span class="p">):</span>
+        <span class="n">rounded_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">numeric_value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">numeric_value</span> <span class="o">-</span> <span class="n">rounded_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">rounded_value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">numeric_value</span><span class="si">:</span><span class="s2">.12g</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;0&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_scale_power_value</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">InjectionParent</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one device power-like value into MATPOWER MW/MVAr units.</span>
+
+<span class="sd">    :param device: VeraGrid injection device.</span>
+<span class="sd">    :param value: Raw device value.</span>
+<span class="sd">    :return: Value in MATPOWER units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">use_kw</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_group_number_map</span><span class="p">(</span><span class="n">group_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Area</span><span class="p">]</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">Zone</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Area</span> <span class="o">|</span> <span class="n">Zone</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one deterministic positive-integer map for areas or zones.</span>
+
+<span class="sd">    :param group_list: Ordered list of VeraGrid groups.</span>
+<span class="sd">    :return: Object-to-positive-integer mapping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">group_number_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Area</span> <span class="o">|</span> <span class="n">Zone</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_list</span><span class="p">):</span>
+        <span class="n">group_number_map</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">group_number_map</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_missing_group_number</span><span class="p">(</span><span class="n">group_number_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Area</span> <span class="o">|</span> <span class="n">Zone</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">group</span><span class="p">:</span> <span class="n">Area</span> <span class="o">|</span> <span class="n">Zone</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the positive integer associated with one optional area or zone.</span>
+
+<span class="sd">    :param group_number_map: Existing numbering map.</span>
+<span class="sd">    :param group: Area or zone object.</span>
+<span class="sd">    :return: Positive MATPOWER area/zone number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">group_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">group_number_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">group_number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">group_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_number_map</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">group_number_map</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">group_number</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">group_number</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_bus_controller_data</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gather the bus-level control devices that affect MATPOWER bus typing.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :return: Tuple with slack external grids, PV external grids and controlled generators.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">slack_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">pv_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">controlled_generation_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">external_grid</span><span class="p">:</span> <span class="n">ExternalGrid</span>
+    <span class="k">for</span> <span class="n">external_grid</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_external_grids</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">VD</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">slack_external_grid_by_bus</span><span class="p">:</span>
+                <span class="n">slack_external_grid_by_bus</span><span class="p">[</span><span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">external_grid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">PV</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pv_external_grid_by_bus</span><span class="p">:</span>
+                <span class="n">pv_external_grid_by_bus</span><span class="p">[</span><span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">external_grid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">generator</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span>
+    <span class="k">for</span> <span class="n">generator</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_generators</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">generator</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">generator</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">generator</span><span class="o">.</span><span class="n">bus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">controlled_generation_by_bus</span><span class="p">:</span>
+                <span class="n">controlled_generation_by_bus</span><span class="p">[</span><span class="n">generator</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">battery</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span>
+    <span class="k">for</span> <span class="n">battery</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_batteries</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">battery</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">battery</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">battery</span><span class="o">.</span><span class="n">bus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">controlled_generation_by_bus</span><span class="p">:</span>
+                <span class="n">controlled_generation_by_bus</span><span class="p">[</span><span class="n">battery</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">battery</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">slack_external_grid_by_bus</span><span class="p">,</span> <span class="n">pv_external_grid_by_bus</span><span class="p">,</span> <span class="n">controlled_generation_by_bus</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bus_type</span><span class="p">(</span>
+        <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">slack_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span>
+        <span class="n">pv_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span>
+        <span class="n">controlled_generation_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the MATPOWER bus type for one VeraGrid bus.</span>
+
+<span class="sd">    :param bus: Bus to classify.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :param slack_external_grid_by_bus: Slack external-grid lookup.</span>
+<span class="sd">    :param pv_external_grid_by_bus: PV external-grid lookup.</span>
+<span class="sd">    :param controlled_generation_by_bus: Controlled generation lookup.</span>
+<span class="sd">    :return: MATPOWER bus type code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bus</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">4</span>
+    <span class="k">elif</span> <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="ow">or</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">slack_external_grid_by_bus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">pv_external_grid_by_bus</span> <span class="ow">or</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">controlled_generation_by_bus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">BusMode</span><span class="o">.</span><span class="n">PV_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bus_vm_value</span><span class="p">(</span>
+        <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+        <span class="n">slack_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span>
+        <span class="n">pv_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span>
+        <span class="n">controlled_generation_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">],</span>
+        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the MATPOWER bus voltage magnitude seed.</span>
+
+<span class="sd">    :param bus: Bus to export.</span>
+<span class="sd">    :param slack_external_grid_by_bus: Slack external-grid lookup.</span>
+<span class="sd">    :param pv_external_grid_by_bus: PV external-grid lookup.</span>
+<span class="sd">    :param controlled_generation_by_bus: Controlled generation lookup.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :return: Voltage magnitude in p.u.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">slack_external_grid_by_bus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">slack_external_grid_by_bus</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span><span class="o">.</span><span class="n">get_Vm_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">pv_external_grid_by_bus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">pv_external_grid_by_bus</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span><span class="o">.</span><span class="n">get_Vm_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">controlled_generation_by_bus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">controlled_generation_by_bus</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span><span class="o">.</span><span class="n">get_Vset_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Vm0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bus_va_value</span><span class="p">(</span><span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">slack_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">],</span> <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the MATPOWER bus voltage angle seed in degrees.</span>
+
+<span class="sd">    :param bus: Bus to export.</span>
+<span class="sd">    :param slack_external_grid_by_bus: Slack external-grid lookup.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :return: Voltage angle in degrees.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">slack_external_grid_by_bus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">slack_external_grid_by_bus</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span><span class="o">.</span><span class="n">get_Va_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Va0</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_bus_rows</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span><span class="p">,</span>
+        <span class="n">bus_number_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill the MATPOWER bus table and bus-name list.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param case_export: Target case container.</span>
+<span class="sd">    :param bus_number_by_bus: VeraGrid-to-MATPOWER bus-number map.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :param logger: Export logger.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">del</span> <span class="n">logger</span>
+
+    <span class="n">injection_devices_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">InjectionParent</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_injection_devices_grouped_by_bus</span><span class="p">()</span>
+    <span class="n">area_number_by_area</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Area</span> <span class="o">|</span> <span class="n">Zone</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_group_number_map</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">areas</span><span class="p">)</span>
+    <span class="n">zone_number_by_zone</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Area</span> <span class="o">|</span> <span class="n">Zone</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_group_number_map</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">zones</span><span class="p">)</span>
+    <span class="n">slack_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">]</span>
+    <span class="n">pv_external_grid_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">ExternalGrid</span><span class="p">]</span>
+    <span class="n">controlled_generation_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">]</span>
+    <span class="n">slack_external_grid_by_bus</span><span class="p">,</span> <span class="n">pv_external_grid_by_bus</span><span class="p">,</span> <span class="n">controlled_generation_by_bus</span> <span class="o">=</span> <span class="n">_collect_bus_controller_data</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+        <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span>
+    <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">:</span>
+        <span class="n">pd_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">qd_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">gs_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">bs_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">injection_devices_by_type</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">InjectionParent</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">injection_devices_by_bus</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">injection_devices_by_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">injection_device_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InjectionParent</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">injection_device_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="n">grouped_device_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InjectionParent</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">grouped_device_list</span> <span class="ow">in</span> <span class="n">injection_devices_by_type</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">injection_device_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">grouped_device_list</span><span class="p">)</span>
+
+        <span class="n">injection_device</span><span class="p">:</span> <span class="n">InjectionParent</span>
+        <span class="k">for</span> <span class="n">injection_device</span> <span class="ow">in</span> <span class="n">injection_device_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">):</span>
+                <span class="n">pd_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                <span class="n">qd_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                <span class="n">gs_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_G_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                <span class="n">bs_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_B_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">StaticGenerator</span><span class="p">):</span>
+                <span class="n">pd_value</span> <span class="o">-=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                <span class="n">qd_value</span> <span class="o">-=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Shunt</span><span class="p">):</span>
+                <span class="n">gs_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_G_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                <span class="n">bs_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_B_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">ExternalGrid</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">PQ</span><span class="p">:</span>
+                    <span class="n">pd_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                    <span class="n">qd_value</span> <span class="o">+=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">injection_device</span><span class="p">,</span> <span class="n">injection_device</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">area_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_append_missing_group_number</span><span class="p">(</span><span class="n">area_number_by_area</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+        <span class="n">zone_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_append_missing_group_number</span><span class="p">(</span><span class="n">zone_number_by_zone</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">zone</span><span class="p">)</span>
+        <span class="n">bus_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_get_bus_type</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span>
+                                      <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                                      <span class="n">slack_external_grid_by_bus</span><span class="o">=</span><span class="n">slack_external_grid_by_bus</span><span class="p">,</span>
+                                      <span class="n">pv_external_grid_by_bus</span><span class="o">=</span><span class="n">pv_external_grid_by_bus</span><span class="p">,</span>
+                                      <span class="n">controlled_generation_by_bus</span><span class="o">=</span><span class="n">controlled_generation_by_bus</span><span class="p">)</span>
+        <span class="n">vm_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_get_bus_vm_value</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span>
+                                            <span class="n">slack_external_grid_by_bus</span><span class="o">=</span><span class="n">slack_external_grid_by_bus</span><span class="p">,</span>
+                                            <span class="n">pv_external_grid_by_bus</span><span class="o">=</span><span class="n">pv_external_grid_by_bus</span><span class="p">,</span>
+                                            <span class="n">controlled_generation_by_bus</span><span class="o">=</span><span class="n">controlled_generation_by_bus</span><span class="p">,</span>
+                                            <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+        <span class="n">va_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_get_bus_va_value</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span>
+                                            <span class="n">slack_external_grid_by_bus</span><span class="o">=</span><span class="n">slack_external_grid_by_bus</span><span class="p">,</span>
+                                            <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+
+        <span class="n">case_export</span><span class="o">.</span><span class="n">bus_table</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">bus</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">bus_type</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">pd_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">qd_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">gs_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">bs_value</span><span class="p">),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">area_number</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">vm_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">va_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">zone_number</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_Vmax_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">get_Vmin_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+        <span class="p">])</span>
+        <span class="n">case_export</span><span class="o">.</span><span class="n">bus_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_generator_row</span><span class="p">(</span>
+        <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span><span class="p">,</span>
+        <span class="n">bus_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">pg_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">qg_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">qmax_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">qmin_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">vg_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">mbase_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">status_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">pmax_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">pmin_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">startup_cost</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">shutdown_cost</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">cost_2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">cost_1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">cost_0</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Append one generator and one gencost row.</span>
+
+<span class="sd">    :param case_export: Target case container.</span>
+<span class="sd">    :param bus_number: MATPOWER bus number.</span>
+<span class="sd">    :param pg_value: Active power in MW.</span>
+<span class="sd">    :param qg_value: Reactive power in MVAr.</span>
+<span class="sd">    :param qmax_value: Maximum reactive power in MVAr.</span>
+<span class="sd">    :param qmin_value: Minimum reactive power in MVAr.</span>
+<span class="sd">    :param vg_value: Voltage setpoint in p.u.</span>
+<span class="sd">    :param mbase_value: Generator MVA base.</span>
+<span class="sd">    :param status_value: MATPOWER generator status.</span>
+<span class="sd">    :param pmax_value: Maximum active power in MW.</span>
+<span class="sd">    :param pmin_value: Minimum active power in MW.</span>
+<span class="sd">    :param startup_cost: Startup cost.</span>
+<span class="sd">    :param shutdown_cost: Shutdown cost.</span>
+<span class="sd">    :param cost_2: Quadratic cost coefficient.</span>
+<span class="sd">    :param cost_1: Linear cost coefficient.</span>
+<span class="sd">    :param cost_0: Constant cost coefficient.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">case_export</span><span class="o">.</span><span class="n">gen_table</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">bus_number</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">pg_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">qg_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">qmax_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">qmin_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">vg_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">mbase_value</span><span class="p">),</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">status_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">pmax_value</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">pmin_value</span><span class="p">),</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">case_export</span><span class="o">.</span><span class="n">gencost_table</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">startup_cost</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">shutdown_cost</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">,</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">cost_2</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">cost_1</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">cost_0</span><span class="p">),</span>
+    <span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_generator_rows</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span><span class="p">,</span>
+        <span class="n">bus_number_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill the MATPOWER generator and gencost tables.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param case_export: Target case container.</span>
+<span class="sd">    :param bus_number_by_bus: VeraGrid-to-MATPOWER bus-number map.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span>
+    <span class="k">for</span> <span class="n">generator</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_generators</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">generator</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bus_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">generator</span><span class="o">.</span><span class="n">bus</span><span class="p">])</span>
+            <span class="n">mbase_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">Snom</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mbase_value</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">mbase_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">_append_generator_row</span><span class="p">(</span>
+                <span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span>
+                <span class="n">bus_number</span><span class="o">=</span><span class="n">bus_number</span><span class="p">,</span>
+                <span class="n">pg_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qg_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qmax_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_Qmax_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qmin_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_Qmin_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">vg_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">generator</span><span class="o">.</span><span class="n">get_Vset_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">mbase_value</span><span class="o">=</span><span class="n">mbase_value</span><span class="p">,</span>
+                <span class="n">status_value</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">pmax_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_Pmax_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">pmin_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">generator</span><span class="o">.</span><span class="n">get_Pmin_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">startup_cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">generator</span><span class="o">.</span><span class="n">startup_cost</span><span class="p">),</span>
+                <span class="n">shutdown_cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">generator</span><span class="o">.</span><span class="n">shutdown_cost</span><span class="p">),</span>
+                <span class="n">cost_2</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">generator</span><span class="o">.</span><span class="n">get_Cost2_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">cost_1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">generator</span><span class="o">.</span><span class="n">get_Cost_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">cost_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">generator</span><span class="o">.</span><span class="n">get_Cost0_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+            <span class="p">)</span>
+
+    <span class="n">battery</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span>
+    <span class="k">for</span> <span class="n">battery</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_batteries</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">battery</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bus_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">battery</span><span class="o">.</span><span class="n">bus</span><span class="p">])</span>
+            <span class="n">mbase_value</span> <span class="o">=</span> <span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">Snom</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mbase_value</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">mbase_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">Sbase</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">_append_generator_row</span><span class="p">(</span>
+                <span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span>
+                <span class="n">bus_number</span><span class="o">=</span><span class="n">bus_number</span><span class="p">,</span>
+                <span class="n">pg_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qg_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qmax_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_Qmax_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qmin_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_Qmin_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">vg_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">get_Vset_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">mbase_value</span><span class="o">=</span><span class="n">mbase_value</span><span class="p">,</span>
+                <span class="n">status_value</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">pmax_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_Pmax_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">pmin_value</span><span class="o">=</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">battery</span><span class="o">.</span><span class="n">get_Pmin_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">startup_cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">startup_cost</span><span class="p">),</span>
+                <span class="n">shutdown_cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">shutdown_cost</span><span class="p">),</span>
+                <span class="n">cost_2</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">get_Cost2_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">cost_1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">get_Cost_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">cost_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">get_Cost0_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+            <span class="p">)</span>
+
+    <span class="n">external_grid</span><span class="p">:</span> <span class="n">ExternalGrid</span>
+    <span class="k">for</span> <span class="n">external_grid</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_external_grids</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">VD</span> <span class="ow">or</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">PV</span><span class="p">:</span>
+            <span class="n">bus_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">external_grid</span><span class="o">.</span><span class="n">bus</span><span class="p">])</span>
+            <span class="n">_append_generator_row</span><span class="p">(</span>
+                <span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span>
+                <span class="n">bus_number</span><span class="o">=</span><span class="n">bus_number</span><span class="p">,</span>
+                <span class="n">pg_value</span><span class="o">=-</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">external_grid</span><span class="p">,</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qg_value</span><span class="o">=-</span><span class="n">_scale_power_value</span><span class="p">(</span><span class="n">external_grid</span><span class="p">,</span> <span class="n">external_grid</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">qmax_value</span><span class="o">=</span><span class="n">MATPOWER_EXTERNAL_GRID_LIMIT</span><span class="p">,</span>
+                <span class="n">qmin_value</span><span class="o">=-</span><span class="n">MATPOWER_EXTERNAL_GRID_LIMIT</span><span class="p">,</span>
+                <span class="n">vg_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">external_grid</span><span class="o">.</span><span class="n">get_Vm_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span>
+                <span class="n">mbase_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">Sbase</span><span class="p">),</span>
+                <span class="n">status_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">pmax_value</span><span class="o">=</span><span class="n">MATPOWER_EXTERNAL_GRID_LIMIT</span><span class="p">,</span>
+                <span class="n">pmin_value</span><span class="o">=-</span><span class="n">MATPOWER_EXTERNAL_GRID_LIMIT</span><span class="p">,</span>
+                <span class="n">startup_cost</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">shutdown_cost</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">cost_2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">cost_1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">cost_0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_branch_rows</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+        <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span><span class="p">,</span>
+        <span class="n">bus_number_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill the MATPOWER branch table.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param case_export: Target case container.</span>
+<span class="sd">    :param bus_number_by_bus: VeraGrid-to-MATPOWER bus-number map.</span>
+<span class="sd">    :param t_idx: Optional time index.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">branch_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Branch</span><span class="p">]</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">branch</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Branch</span>
+    <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">branch_list</span><span class="p">:</span>
+        <span class="n">rate_a_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">get_rate_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+        <span class="n">contingency_factor_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">get_contingency_factor_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+        <span class="n">protection_factor_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">get_protection_rating_factor_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">rate_a_value</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">rate_b_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">rate_c_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rate_b_value</span> <span class="o">=</span> <span class="n">rate_a_value</span> <span class="o">*</span> <span class="n">contingency_factor_value</span>
+            <span class="n">rate_c_value</span> <span class="o">=</span> <span class="n">rate_a_value</span> <span class="o">*</span> <span class="n">protection_factor_value</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">):</span>
+            <span class="n">tap_ratio_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">get_tap_module_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">))</span>
+            <span class="n">phase_shift_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">get_tap_phase_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tap_ratio_value</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">phase_shift_value</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">case_export</span><span class="o">.</span><span class="n">branch_table</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">R</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">X</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">B</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">rate_a_value</span><span class="p">)</span> <span class="k">if</span> <span class="n">rate_a_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">rate_b_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">rate_c_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">tap_ratio_value</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">phase_shift_value</span><span class="p">),</span>
+            <span class="mi">1</span> <span class="k">if</span> <span class="n">branch</span><span class="o">.</span><span class="n">get_active_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">])</span>
+
+
+<div class="viewcode-block" id="build_matpower_case">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.veragrid_to_matpower.build_matpower_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_matpower_case</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                        <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MatpowerCaseExport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one VeraGrid circuit into a MATPOWER case container.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param t_idx: Optional time index. ``None`` exports the snapshot state.</span>
+<span class="sd">    :param logger: Optional export logger.</span>
+<span class="sd">    :return: MATPOWER case container.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">export_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">logger</span>
+    <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span> <span class="o">=</span> <span class="n">MatpowerCaseExport</span><span class="p">(</span><span class="n">base_mva</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">Sbase</span><span class="p">))</span>
+    <span class="n">bus_number_by_bus</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">bus</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span>
+    <span class="k">for</span> <span class="n">bus_index</span><span class="p">,</span> <span class="n">bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">):</span>
+        <span class="n">bus_number_by_bus</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus_index</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_hvdc_number</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">export_logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;MATPOWER export skips HVDC lines.&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_hvdc_number</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_vsc_number</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">export_logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;MATPOWER export skips VSC devices.&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_vsc_number</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">_append_bus_rows</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                     <span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span>
+                     <span class="n">bus_number_by_bus</span><span class="o">=</span><span class="n">bus_number_by_bus</span><span class="p">,</span>
+                     <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                     <span class="n">logger</span><span class="o">=</span><span class="n">export_logger</span><span class="p">)</span>
+    <span class="n">_append_generator_rows</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                           <span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span>
+                           <span class="n">bus_number_by_bus</span><span class="o">=</span><span class="n">bus_number_by_bus</span><span class="p">,</span>
+                           <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+    <span class="n">_append_branch_rows</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+                        <span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span>
+                        <span class="n">bus_number_by_bus</span><span class="o">=</span><span class="n">bus_number_by_bus</span><span class="p">,</span>
+                        <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">case_export</span></div>
+
+
+
+<div class="viewcode-block" id="build_matpower_case_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.veragrid_to_matpower.build_matpower_case_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_matpower_case_dict</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                             <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]]</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one VeraGrid circuit into a plain MATPOWER dictionary structure.</span>
+
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param t_idx: Optional time index. ``None`` exports the snapshot state.</span>
+<span class="sd">    :param logger: Optional export logger.</span>
+<span class="sd">    :return: Dictionary with MATPOWER case data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span> <span class="o">=</span> <span class="n">build_matpower_case</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">case_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]]</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">case_dict</span><span class="p">[</span><span class="s2">&quot;baseMVA&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_export</span><span class="o">.</span><span class="n">base_mva</span>
+    <span class="n">case_dict</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_export</span><span class="o">.</span><span class="n">bus_table</span>
+    <span class="n">case_dict</span><span class="p">[</span><span class="s2">&quot;gen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_export</span><span class="o">.</span><span class="n">gen_table</span>
+    <span class="n">case_dict</span><span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_export</span><span class="o">.</span><span class="n">branch_table</span>
+    <span class="n">case_dict</span><span class="p">[</span><span class="s2">&quot;gencost&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_export</span><span class="o">.</span><span class="n">gencost_table</span>
+    <span class="n">case_dict</span><span class="p">[</span><span class="s2">&quot;bus_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_export</span><span class="o">.</span><span class="n">bus_names</span>
+    <span class="k">return</span> <span class="n">case_dict</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_serialize_numeric_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]],</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize one numeric MATPOWER matrix body.</span>
+
+<span class="sd">    :param matrix: Numeric rows to serialize.</span>
+<span class="sd">    :param indent: Line indentation.</span>
+<span class="sd">    :return: Serialized lines without surrounding assignment text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serialized_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MatpowerScalar</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">:</span>
+        <span class="n">value_strings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">value</span><span class="p">:</span> <span class="n">MatpowerScalar</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">value_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_format_numeric_value</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="n">serialized_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_strings</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">serialized_lines</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_serialize_bus_name_table</span><span class="p">(</span><span class="n">bus_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize the optional MATPOWER bus-name table.</span>
+
+<span class="sd">    :param bus_names: Ordered bus-name list.</span>
+<span class="sd">    :param indent: Line indentation.</span>
+<span class="sd">    :return: Serialized lines without surrounding assignment text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serialized_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">bus_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="k">for</span> <span class="n">bus_name</span> <span class="ow">in</span> <span class="n">bus_names</span><span class="p">:</span>
+        <span class="n">escaped_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_escape_matlab_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">bus_name</span><span class="p">))</span>
+        <span class="n">serialized_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">escaped_name</span> <span class="o">+</span> <span class="s2">&quot;&#39;;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">serialized_lines</span>
+
+
+<div class="viewcode-block" id="compose_matpower_case_lines">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.veragrid_to_matpower.compose_matpower_case_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compose_matpower_case_lines</span><span class="p">(</span><span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span><span class="p">,</span> <span class="n">case_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compose the full MATPOWER case-file contents.</span>
+
+<span class="sd">    :param case_export: Case container to serialize.</span>
+<span class="sd">    :param case_name: Requested MATLAB function name.</span>
+<span class="sd">    :return: Output text split into lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sanitized_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_sanitize_case_name</span><span class="p">(</span><span class="n">case_name</span><span class="p">)</span>
+    <span class="n">lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;function mpc = </span><span class="si">{</span><span class="n">sanitized_case_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;%</span><span class="si">{</span><span class="n">sanitized_case_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">  VeraGrid export.&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;%   MATPOWER case generated by VeraGrid.&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> MATPOWER Case Format : Version 2&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mpc.version = &#39;2&#39;;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2">-----  Power Flow Data  -----</span><span class="si">%%</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> system MVA base&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mpc.baseMVA = </span><span class="si">{</span><span class="n">_format_numeric_value</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">base_mva</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> bus data&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;%</span><span class="se">\t</span><span class="s2">bus_i</span><span class="se">\t</span><span class="s2">type</span><span class="se">\t</span><span class="s2">Pd</span><span class="se">\t</span><span class="s2">Qd</span><span class="se">\t</span><span class="s2">Gs</span><span class="se">\t</span><span class="s2">Bs</span><span class="se">\t</span><span class="s2">area</span><span class="se">\t</span><span class="s2">Vm</span><span class="se">\t</span><span class="s2">Va</span><span class="se">\t</span><span class="s2">baseKV</span><span class="se">\t</span><span class="s2">zone</span><span class="se">\t</span><span class="s2">Vmax</span><span class="se">\t</span><span class="s2">Vmin&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mpc.bus = [&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_serialize_numeric_matrix</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">bus_table</span><span class="p">))</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;];&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> generator data&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;%</span><span class="se">\t</span><span class="s2">bus</span><span class="se">\t</span><span class="s2">Pg</span><span class="se">\t</span><span class="s2">Qg</span><span class="se">\t</span><span class="s2">Qmax</span><span class="se">\t</span><span class="s2">Qmin</span><span class="se">\t</span><span class="s2">Vg</span><span class="se">\t</span><span class="s2">mBase</span><span class="se">\t</span><span class="s2">status</span><span class="se">\t</span><span class="s2">Pmax</span><span class="se">\t</span><span class="s2">Pmin</span><span class="se">\t</span><span class="s2">Pc1</span><span class="se">\t</span><span class="s2">Pc2</span><span class="se">\t</span><span class="s2">Qc1min</span><span class="se">\t</span><span class="s2">Qc1max</span><span class="se">\t</span><span class="s2">Qc2min</span><span class="se">\t</span><span class="s2">Qc2max</span><span class="se">\t</span><span class="s2">ramp_agc</span><span class="se">\t</span><span class="s2">ramp_10</span><span class="se">\t</span><span class="s2">ramp_30</span><span class="se">\t</span><span class="s2">ramp_q</span><span class="se">\t</span><span class="s2">apf&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mpc.gen = [&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_serialize_numeric_matrix</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">gen_table</span><span class="p">))</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;];&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> branch data&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;%</span><span class="se">\t</span><span class="s2">fbus</span><span class="se">\t</span><span class="s2">tbus</span><span class="se">\t</span><span class="s2">r</span><span class="se">\t</span><span class="s2">x</span><span class="se">\t</span><span class="s2">b</span><span class="se">\t</span><span class="s2">rateA</span><span class="se">\t</span><span class="s2">rateB</span><span class="se">\t</span><span class="s2">rateC</span><span class="se">\t</span><span class="s2">ratio</span><span class="se">\t</span><span class="s2">angle</span><span class="se">\t</span><span class="s2">status</span><span class="se">\t</span><span class="s2">angmin</span><span class="se">\t</span><span class="s2">angmax&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mpc.branch = [&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_serialize_numeric_matrix</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">branch_table</span><span class="p">))</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;];&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> generator cost data&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;%</span><span class="se">\t</span><span class="s2">model</span><span class="se">\t</span><span class="s2">startup</span><span class="se">\t</span><span class="s2">shutdown</span><span class="se">\t</span><span class="s2">n</span><span class="se">\t</span><span class="s2">c(n-1)</span><span class="se">\t</span><span class="s2">...</span><span class="se">\t</span><span class="s2">c0&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mpc.gencost = [&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_serialize_numeric_matrix</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">gencost_table</span><span class="p">))</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;];&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">bus_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%%</span><span class="s2"> bus names&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mpc.bus_name = {&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_serialize_bus_name_table</span><span class="p">(</span><span class="n">case_export</span><span class="o">.</span><span class="n">bus_names</span><span class="p">))</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;};&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">lines</span></div>
+
+
+
+<div class="viewcode-block" id="write_matpower_case_file">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.html#VeraGridEngine.IO.matpower.veragrid_to_matpower.write_matpower_case_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_matpower_case_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                             <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export one VeraGrid circuit into one MATPOWER case file.</span>
+
+<span class="sd">    :param file_name: Target MATPOWER file path.</span>
+<span class="sd">    :param circuit: Circuit to export.</span>
+<span class="sd">    :param t_idx: Optional time index. ``None`` exports the snapshot state.</span>
+<span class="sd">    :param logger: Optional export logger.</span>
+<span class="sd">    :param case_name: Optional explicit MATLAB function name.</span>
+<span class="sd">    :return: Export logger.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">export_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">logger</span>
+    <span class="n">file_root_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">file_extension</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">file_root_name</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">case_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">selected_case_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_root_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">selected_case_name</span> <span class="o">=</span> <span class="n">case_name</span>
+
+    <span class="k">if</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.m&quot;</span><span class="p">,</span> <span class="s2">&quot;.matpower&quot;</span><span class="p">]:</span>
+        <span class="n">normalized_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.m&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">normalized_file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+    <span class="n">case_export</span><span class="p">:</span> <span class="n">MatpowerCaseExport</span> <span class="o">=</span> <span class="n">build_matpower_case</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">export_logger</span><span class="p">)</span>
+    <span class="n">output_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">compose_matpower_case_lines</span><span class="p">(</span><span class="n">case_export</span><span class="o">=</span><span class="n">case_export</span><span class="p">,</span> <span class="n">case_name</span><span class="o">=</span><span class="n">selected_case_name</span><span class="p">)</span>
+    <span class="n">output_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">normalized_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_ptr</span><span class="p">:</span>
+        <span class="n">file_ptr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_text</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">export_logger</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

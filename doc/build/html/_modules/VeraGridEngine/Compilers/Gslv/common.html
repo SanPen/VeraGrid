@@ -1,0 +1,597 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Compilers.Gslv.common &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Compilers.Gslv.common</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Compilers.Gslv.common</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.facility</span><span class="w"> </span><span class="kn">import</span> <span class="n">Facility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.emission_gas</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmissionGas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.fuel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fuel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Associations.technology</span><span class="w"> </span><span class="kn">import</span> <span class="n">Technology</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.controllable_shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ControllableShunt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">Load</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.shunt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shunt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.static_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.shunt_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShuntParent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.activation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">pg</span><span class="p">,</span> <span class="n">tap_module_control_mode_dict</span><span class="p">,</span>
+                                                           <span class="n">tap_phase_control_mode_dict</span><span class="p">,</span> <span class="n">shunt_connection_type_dict</span><span class="p">,</span>
+                                                           <span class="n">GSLV_AVAILABLE</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyProfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="get_gslv_mip_solvers_list">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.get_gslv_mip_solvers_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_gslv_mip_solvers_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get list of available MIP solvers</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">GSLV_AVAILABLE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="convert_tap_module_control_mode_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.convert_tap_module_control_mode_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;pg.TapModuleControl&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to convert a dictionary of TapModuleControl modes to pg.TapModuleControl modes</span>
+<span class="sd">    :param data:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="convert_tap_module_control_mode_lst">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.convert_tap_module_control_mode_lst">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_tap_module_control_mode_lst</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TapModuleControl</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;pg.TapModuleControl&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to convert a list of TapModuleControl modes to pg.TapModuleControl modes</span>
+<span class="sd">    :param data:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="convert_tap_phase_control_mode_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.convert_tap_phase_control_mode_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_tap_phase_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;pg.TapPhaseControl&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to convert a dictionary of TapPhaseControl modes to pg.TapPhaseControl modes</span>
+<span class="sd">    :param data:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">tap_phase_control_mode_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="convert_tap_phase_control_mode_lst">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.convert_tap_phase_control_mode_lst">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_tap_phase_control_mode_lst</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TapPhaseControl</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;pg.TapPhaseControl&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to convert a list of TapPhaseControl modes to pg.TapPhaseControl modes</span>
+<span class="sd">    :param data:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tap_phase_control_mode_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="fill_profile">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.fill_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_profile</span><span class="p">(</span><span class="n">gslv_profile</span><span class="p">:</span> <span class="s2">&quot;pg.Profiledouble|pg.Profilebool|pg.Profileint|pg.Profileuint&quot;</span><span class="p">,</span>
+                 <span class="n">gc_profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">,</span>
+                 <span class="n">use_time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                 <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">default_val</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">TapPhaseControl</span> <span class="o">|</span> <span class="n">TapModuleControl</span> <span class="o">=</span> <span class="mi">0</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pg.Profiledouble|pg.Profilebool|pg.Profileint|pg.Profileuint&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a default time series</span>
+<span class="sd">    :param gslv_profile: Profile from gslv to fill in</span>
+<span class="sd">    :param gc_profile: Profile from veragrid to convert</span>
+<span class="sd">    :param use_time_series: use time series?</span>
+<span class="sd">    :param time_indices: time series indices if any (optional)</span>
+<span class="sd">    :param n_time: number of time steps</span>
+<span class="sd">    :param default_val: Default value</span>
+<span class="sd">    :return: Filled GSLV profile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">use_time_series</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">is_sparse</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">default_value</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_phase_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">get_map</span><span class="p">())</span>
+
+                    <span class="c1"># we pick all the profile</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">tap_phase_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">get_map</span><span class="p">())</span>
+
+                    <span class="c1"># we pick all the profile</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span>
+
+                    <span class="c1"># we pick all the profile</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_indices</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_time</span>
+
+                <span class="c1"># we need a sliced version</span>
+                <span class="n">sp_arr2</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">time_indices</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_phase_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sp_arr2</span><span class="o">.</span><span class="n">get_map</span><span class="p">())</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">tap_phase_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sp_arr2</span><span class="o">.</span><span class="n">get_map</span><span class="p">())</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">sp_arr2</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">,</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># we pick all the profile</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_phase_control_mode_lst</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span>
+
+                <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_dense</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_indices</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_time</span>
+                <span class="c1"># we need a sliced version</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_phase_control_mode_lst</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">]</span>
+
+                <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_dense</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">):</span>
+            <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">tap_phase_control_mode_dict</span><span class="p">[</span><span class="n">default_val</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
+            <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">default_val</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">default_val</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gslv_profile</span></div>
+
+
+<div class="viewcode-block" id="fill_profile_with_array">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.fill_profile_with_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_profile_with_array</span><span class="p">(</span><span class="n">gslv_profile</span><span class="p">:</span> <span class="s2">&quot;pg.Profiledouble&quot;</span><span class="p">,</span>
+                            <span class="n">arr</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                            <span class="n">use_time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                            <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                            <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="n">default_val</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pg.Profiledouble&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate one profile from a dense array.</span>
+
+<span class="sd">    :param gslv_profile: GSLV profile to fill.</span>
+<span class="sd">    :param arr: Dense VeraGrid array.</span>
+<span class="sd">    :param use_time_series: Whether time-series data is being exported.</span>
+<span class="sd">    :param time_indices: Optional time-series selection.</span>
+<span class="sd">    :param n_time: Number of exported time steps.</span>
+<span class="sd">    :param default_val: Scalar fallback value for snapshot exports.</span>
+<span class="sd">    :return: Filled GSLV profile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">use_time_series</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># When there is no slicing request, the entire dense profile is exported.</span>
+            <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_dense</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_indices</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_time</span>
+            <span class="c1"># The time-series export must preserve the selected VeraGrid slice only.</span>
+            <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_dense</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">time_indices</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Snapshot exports collapse the profile to a single scalar value.</span>
+        <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">default_val</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gslv_profile</span></div>
+
+
+
+<div class="viewcode-block" id="set_injection_associations">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.set_injection_associations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_injection_associations</span><span class="p">(</span><span class="n">gslv_elm</span><span class="p">:</span> <span class="s2">&quot;pg.InjectionParent&quot;</span><span class="p">,</span>
+                               <span class="n">elm</span><span class="p">:</span> <span class="n">Load</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">|</span> <span class="n">StaticGenerator</span> <span class="o">|</span> <span class="n">Shunt</span> <span class="o">|</span> <span class="n">ControllableShunt</span><span class="p">,</span>
+                               <span class="n">facility_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Facility</span><span class="p">,</span> <span class="s2">&quot;pg.Facility&quot;</span><span class="p">],</span>
+                               <span class="n">technology_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Technology</span><span class="p">,</span> <span class="s2">&quot;pg.Technology&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Copy common VeraGrid injection associations into one GSLV injection.</span>
+
+<span class="sd">    :param gslv_elm: Target GSLV injection.</span>
+<span class="sd">    :param elm: Source VeraGrid injection.</span>
+<span class="sd">    :param facility_dict: VeraGrid-to-GSLV facility lookup.</span>
+<span class="sd">    :param technology_dict: VeraGrid-to-GSLV technology lookup.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">facility</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">facility</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">Facility</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">facility_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">facility</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">facility</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gslv_elm</span><span class="o">.</span><span class="n">facility</span> <span class="o">=</span> <span class="n">facility</span>
+
+    <span class="k">for</span> <span class="n">association</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">technologies</span><span class="p">:</span>
+        <span class="n">technology</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">Technology</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">technology_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">technology</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gslv_elm</span><span class="o">.</span><span class="n">technologies</span><span class="o">.</span><span class="n">add_object</span><span class="p">(</span><span class="n">api_obj</span><span class="o">=</span><span class="n">technology</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="set_generator_associations">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.set_generator_associations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_generator_associations</span><span class="p">(</span><span class="n">gslv_elm</span><span class="p">:</span> <span class="s2">&quot;pg.Generator&quot;</span><span class="p">,</span>
+                               <span class="n">elm</span><span class="p">:</span> <span class="n">Generator</span><span class="p">,</span>
+                               <span class="n">facility_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Facility</span><span class="p">,</span> <span class="s2">&quot;pg.Facility&quot;</span><span class="p">],</span>
+                               <span class="n">technology_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Technology</span><span class="p">,</span> <span class="s2">&quot;pg.Technology&quot;</span><span class="p">],</span>
+                               <span class="n">fuel_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Fuel</span><span class="p">,</span> <span class="s2">&quot;pg.Fuel&quot;</span><span class="p">],</span>
+                               <span class="n">emission_gas_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">EmissionGas</span><span class="p">,</span> <span class="s2">&quot;pg.EmissionGas&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Copy VeraGrid generator associations into one GSLV generator-like injection.</span>
+
+<span class="sd">    :param gslv_elm: Target GSLV generator or battery.</span>
+<span class="sd">    :param elm: Source VeraGrid generator or battery.</span>
+<span class="sd">    :param facility_dict: VeraGrid-to-GSLV facility lookup.</span>
+<span class="sd">    :param technology_dict: VeraGrid-to-GSLV technology lookup.</span>
+<span class="sd">    :param fuel_dict: VeraGrid-to-GSLV fuel lookup.</span>
+<span class="sd">    :param emission_gas_dict: VeraGrid-to-GSLV emission gas lookup.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">set_injection_associations</span><span class="p">(</span>
+        <span class="n">gslv_elm</span><span class="o">=</span><span class="n">gslv_elm</span><span class="p">,</span>
+        <span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+        <span class="n">facility_dict</span><span class="o">=</span><span class="n">facility_dict</span><span class="p">,</span>
+        <span class="n">technology_dict</span><span class="o">=</span><span class="n">technology_dict</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">association</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">fuels</span><span class="p">:</span>
+        <span class="n">fuel</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">Fuel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">fuel_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fuel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gslv_elm</span><span class="o">.</span><span class="n">fuels</span><span class="o">.</span><span class="n">add_object</span><span class="p">(</span><span class="n">api_obj</span><span class="o">=</span><span class="n">fuel</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">association</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">emissions</span><span class="p">:</span>
+        <span class="n">emission_gas</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">EmissionGas</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">emission_gas_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">emission_gas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gslv_elm</span><span class="o">.</span><span class="n">emissions</span><span class="o">.</span><span class="n">add_object</span><span class="p">(</span><span class="n">api_obj</span><span class="o">=</span><span class="n">emission_gas</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">association</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_single_three_phase_snapshot_index">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.get_single_three_phase_snapshot_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_single_three_phase_snapshot_index</span><span class="p">(</span>
+        <span class="n">use_time_series</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">time_indices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the original VeraGrid snapshot index when one three-phase slice is being exported.</span>
+
+<span class="sd">    :param use_time_series: Whether the conversion uses time-series slicing.</span>
+<span class="sd">    :param time_indices: Requested time indices.</span>
+<span class="sd">    :param n_time: Number of exported time steps.</span>
+<span class="sd">    :return: Original time index when there is exactly one slice, else ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">use_time_series</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">time_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n_time</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="apply_three_phase_load_data">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.apply_three_phase_load_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_three_phase_load_data</span><span class="p">(</span><span class="n">gslv_load</span><span class="p">:</span> <span class="s2">&quot;pg.Load&quot;</span><span class="p">,</span> <span class="n">elm</span><span class="p">:</span> <span class="n">Load</span><span class="p">,</span> <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Copy explicit three-phase load data into one GSLV load object.</span>
+
+<span class="sd">    :param gslv_load: Target GSLV load.</span>
+<span class="sd">    :param elm: Source VeraGrid load.</span>
+<span class="sd">    :param time_index: Source time index when exporting one time slice.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pa</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">pb</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">pc</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">qa</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">qb</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">qc</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">g1</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">g2</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">g3</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">b1</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">b2</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">b3</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ir1</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ir2</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ir3</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ii1</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ii2</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ii3</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="c1"># The GSLV wrapper only exposes scalar three-phase setters, so each export must</span>
+    <span class="c1"># resolve the VeraGrid phase values at one concrete time slice.</span>
+    <span class="k">if</span> <span class="n">time_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Pa</span><span class="p">)</span>
+        <span class="n">pb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Pb</span><span class="p">)</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Pc</span><span class="p">)</span>
+        <span class="n">qa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Qa</span><span class="p">)</span>
+        <span class="n">qb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Qb</span><span class="p">)</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Qc</span><span class="p">)</span>
+        <span class="n">g1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">G1</span><span class="p">)</span>
+        <span class="n">g2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">G2</span><span class="p">)</span>
+        <span class="n">g3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">G3</span><span class="p">)</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">B1</span><span class="p">)</span>
+        <span class="n">b2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">B2</span><span class="p">)</span>
+        <span class="n">b3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">B3</span><span class="p">)</span>
+        <span class="n">ir1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ir1</span><span class="p">)</span>
+        <span class="n">ir2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ir2</span><span class="p">)</span>
+        <span class="n">ir3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ir3</span><span class="p">)</span>
+        <span class="n">ii1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ii1</span><span class="p">)</span>
+        <span class="n">ii2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ii2</span><span class="p">)</span>
+        <span class="n">ii3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ii3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Pa_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">pb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Pb_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Pc_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">qa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Qa_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">qb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Qb_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Qc_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">g1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_G1_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">g2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_G2_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">g3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_G3_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_B1_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">b2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_B2_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">b3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_B3_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ir1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ir1_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ir2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ir2_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ir3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ir3_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ii1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ii1_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ii2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ii2_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ii3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ii3_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+
+    <span class="c1"># The connection enum changes how the solver maps the phase injections.</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">shunt_connection_type_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">conn</span><span class="p">]</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_P1_val</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_P2_val</span><span class="p">(</span><span class="n">pb</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_P3_val</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Q1_val</span><span class="p">(</span><span class="n">qa</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Q2_val</span><span class="p">(</span><span class="n">qb</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Q3_val</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_G1_val</span><span class="p">(</span><span class="n">g1</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_G2_val</span><span class="p">(</span><span class="n">g2</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_G3_val</span><span class="p">(</span><span class="n">g3</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_B1_val</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_B2_val</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_B3_val</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Ir1_val</span><span class="p">(</span><span class="n">ir1</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Ir2_val</span><span class="p">(</span><span class="n">ir2</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Ir3_val</span><span class="p">(</span><span class="n">ir3</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Ii1_val</span><span class="p">(</span><span class="n">ii1</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Ii2_val</span><span class="p">(</span><span class="n">ii2</span><span class="p">)</span>
+    <span class="n">gslv_load</span><span class="o">.</span><span class="n">set_Ii3_val</span><span class="p">(</span><span class="n">ii3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_three_phase_shunt_data">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Compilers.Gslv.html#VeraGridEngine.Compilers.Gslv.common.apply_three_phase_shunt_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_three_phase_shunt_data</span><span class="p">(</span>
+        <span class="n">gslv_shunt</span><span class="p">:</span> <span class="s2">&quot;pg.Shunt | pg.ControllableShunt&quot;</span><span class="p">,</span>
+        <span class="n">elm</span><span class="p">:</span> <span class="n">ShuntParent</span><span class="p">,</span>
+        <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Copy explicit three-phase shunt data into one GSLV shunt-like object.</span>
+
+<span class="sd">    :param gslv_shunt: Target GSLV shunt-like object.</span>
+<span class="sd">    :param elm: Source VeraGrid shunt-like object.</span>
+<span class="sd">    :param time_index: Source time index when exporting one time slice.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ga</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">gb</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">gc</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ba</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">bb</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">bc</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="c1"># The shunt connection and per-phase admittances define the unbalanced branch to neutral.</span>
+    <span class="k">if</span> <span class="n">time_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ga</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ga</span><span class="p">)</span>
+        <span class="n">gb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Gb</span><span class="p">)</span>
+        <span class="n">gc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Gc</span><span class="p">)</span>
+        <span class="n">ba</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Ba</span><span class="p">)</span>
+        <span class="n">bb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Bb</span><span class="p">)</span>
+        <span class="n">bc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">Bc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ga</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ga_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">gb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Gb_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">gc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Gc_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">ba</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Ba_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">bb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Bb_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+        <span class="n">bc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Bc_at</span><span class="p">(</span><span class="n">time_index</span><span class="p">))</span>
+
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">shunt_connection_type_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">conn</span><span class="p">]</span>
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">set_Ga_val</span><span class="p">(</span><span class="n">ga</span><span class="p">)</span>
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">set_Gb_val</span><span class="p">(</span><span class="n">gb</span><span class="p">)</span>
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">set_Gc_val</span><span class="p">(</span><span class="n">gc</span><span class="p">)</span>
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">set_Ba_val</span><span class="p">(</span><span class="n">ba</span><span class="p">)</span>
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">set_Bb_val</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+    <span class="n">gslv_shunt</span><span class="o">.</span><span class="n">set_Bc_val</span><span class="p">(</span><span class="n">bc</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

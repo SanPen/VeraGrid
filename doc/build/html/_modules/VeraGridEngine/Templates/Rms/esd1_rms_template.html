@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Rms.esd1_rms_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Rms.esd1_rms_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Rms.esd1_rms_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+
+
+<div class="viewcode-block" id="get_esd1_rms_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.esd1_rms_template.get_esd1_rms_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_esd1_rms_template</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ESD1 RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ESD1-inspired RMS battery energy storage model.</span>
+
+<span class="sd">    The model provides:</span>
+<span class="sd">    - P/Q setpoint channels (`pref0`, `pext0`, `qref0`)</span>
+<span class="sd">    - SoC-dependent active-power availability (charge/discharge windows)</span>
+<span class="sd">    - Current-command limiting with P/Q priority</span>
+<span class="sd">    - First-order output current dynamics</span>
+<span class="sd">    - SoC dynamic state with charge/discharge efficiencies</span>
+
+<span class="sd">    Sign convention used here:</span>
+<span class="sd">    - `P &gt; 0`: battery discharging (injecting power into AC grid)</span>
+<span class="sd">    - `P &lt; 0`: battery charging (absorbing power from AC grid)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">BatteryDevice</span>
+
+    <span class="n">vm</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Vm&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">)</span>
+    <span class="n">va</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Va&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">)</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">vm</span><span class="p">,</span> <span class="n">va</span><span class="p">]</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;P_esd1&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Q_esd1&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+
+    <span class="n">pref</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pref&quot;</span><span class="p">)</span>
+    <span class="n">pext</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pext&quot;</span><span class="p">)</span>
+    <span class="n">qref</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Qref&quot;</span><span class="p">)</span>
+    <span class="n">p_sum</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;P_sum&quot;</span><span class="p">)</span>
+    <span class="n">q_sum</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Q_sum&quot;</span><span class="p">)</span>
+
+    <span class="n">p_dis_av</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;P_dis_av&quot;</span><span class="p">)</span>
+    <span class="n">p_ch_av</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;P_ch_av&quot;</span><span class="p">)</span>
+
+    <span class="n">ip_cmd</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Ip_cmd&quot;</span><span class="p">)</span>
+    <span class="n">iq_cmd</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Iq_cmd&quot;</span><span class="p">)</span>
+    <span class="n">ip_max</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Ip_max&quot;</span><span class="p">)</span>
+    <span class="n">iq_max</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Iq_max&quot;</span><span class="p">)</span>
+
+    <span class="n">ipout</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Ipout_y&quot;</span><span class="p">)</span>
+    <span class="n">iqout</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Iqout_y&quot;</span><span class="p">)</span>
+    <span class="n">soc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Soc&quot;</span><span class="p">)</span>
+
+    <span class="n">pref0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;pref0&quot;</span><span class="p">)</span>
+    <span class="n">pext0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;pext0&quot;</span><span class="p">)</span>
+    <span class="n">qref0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;qref0&quot;</span><span class="p">)</span>
+
+    <span class="n">p_dis_max</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;p_dis_max&quot;</span><span class="p">)</span>
+    <span class="n">p_ch_max</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;p_ch_max&quot;</span><span class="p">)</span>
+    <span class="n">qmax</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;qmax&quot;</span><span class="p">)</span>
+    <span class="n">qmin</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;qmin&quot;</span><span class="p">)</span>
+
+    <span class="n">soc_min</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;soc_min&quot;</span><span class="p">)</span>
+    <span class="n">soc_max</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;soc_max&quot;</span><span class="p">)</span>
+    <span class="n">soc_db</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;soc_db&quot;</span><span class="p">)</span>
+    <span class="n">soc0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;soc0&quot;</span><span class="p">)</span>
+    <span class="n">ecap_h</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;ecap_h&quot;</span><span class="p">)</span>
+    <span class="n">eta_ch</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;eta_ch&quot;</span><span class="p">)</span>
+    <span class="n">eta_dis</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;eta_dis&quot;</span><span class="p">)</span>
+
+    <span class="n">ialim</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;ialim&quot;</span><span class="p">)</span>
+    <span class="n">pqflag</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;pqflag&quot;</span><span class="p">)</span>
+    <span class="n">tip</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;tip&quot;</span><span class="p">)</span>
+    <span class="n">tiq</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;tiq&quot;</span><span class="p">)</span>
+
+    <span class="n">one</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">zero</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">eps_v</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">eps_i</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-8</span><span class="p">)</span>
+    <span class="n">sec_per_hour</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">3600.0</span><span class="p">)</span>
+
+    <span class="n">vm_eff</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vm</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">)</span>
+    <span class="n">soc_band</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">soc_db</span><span class="p">,</span> <span class="n">eps_i</span><span class="p">)</span>
+
+    <span class="n">g_dis</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">((</span><span class="n">soc</span> <span class="o">-</span> <span class="n">soc_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">soc_band</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="n">one</span><span class="p">)</span>
+    <span class="n">g_ch</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">((</span><span class="n">soc_max</span> <span class="o">-</span> <span class="n">soc</span><span class="p">)</span> <span class="o">/</span> <span class="n">soc_band</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="n">one</span><span class="p">)</span>
+
+    <span class="n">p_dis_av_expr</span> <span class="o">=</span> <span class="n">p_dis_max</span> <span class="o">*</span> <span class="n">g_dis</span>
+    <span class="n">p_ch_av_expr</span> <span class="o">=</span> <span class="n">p_ch_max</span> <span class="o">*</span> <span class="n">g_ch</span>
+
+    <span class="n">pref_expr</span> <span class="o">=</span> <span class="n">pref0</span>
+    <span class="n">pext_expr</span> <span class="o">=</span> <span class="n">pext0</span>
+    <span class="n">qref_expr</span> <span class="o">=</span> <span class="n">qref0</span>
+
+    <span class="n">p_ref</span> <span class="o">=</span> <span class="n">pref_expr</span> <span class="o">+</span> <span class="n">pext_expr</span>
+    <span class="n">p_sum_expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">p_ref</span><span class="p">,</span> <span class="o">-</span><span class="n">p_ch_av_expr</span><span class="p">,</span> <span class="n">p_dis_av_expr</span><span class="p">)</span>
+    <span class="n">q_sum_expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">qref_expr</span><span class="p">,</span> <span class="n">qmin</span><span class="p">,</span> <span class="n">qmax</span><span class="p">)</span>
+
+    <span class="n">ip_unlimited</span> <span class="o">=</span> <span class="n">p_sum_expr</span> <span class="o">/</span> <span class="n">vm_eff</span>
+    <span class="n">iq_unlimited</span> <span class="o">=</span> <span class="n">q_sum_expr</span> <span class="o">/</span> <span class="n">vm_eff</span>
+
+    <span class="n">ip_cap_q</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ialim</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">iq_unlimited</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">eps_i</span><span class="p">))</span>
+    <span class="n">iq_cap_p</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ialim</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">ip_unlimited</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">eps_i</span><span class="p">))</span>
+
+    <span class="n">ip_max_expr</span> <span class="o">=</span> <span class="n">pqflag</span> <span class="o">*</span> <span class="n">ialim</span> <span class="o">+</span> <span class="p">(</span><span class="n">one</span> <span class="o">-</span> <span class="n">pqflag</span><span class="p">)</span> <span class="o">*</span> <span class="n">ip_cap_q</span>
+    <span class="n">iq_max_expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">one</span> <span class="o">-</span> <span class="n">pqflag</span><span class="p">)</span> <span class="o">*</span> <span class="n">ialim</span> <span class="o">+</span> <span class="n">pqflag</span> <span class="o">*</span> <span class="n">iq_cap_p</span>
+
+    <span class="n">ip_cmd_expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">ip_unlimited</span><span class="p">,</span> <span class="o">-</span><span class="n">ip_max_expr</span><span class="p">,</span> <span class="n">ip_max_expr</span><span class="p">)</span>
+    <span class="n">iq_cmd_expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">iq_unlimited</span><span class="p">,</span> <span class="o">-</span><span class="n">iq_max_expr</span><span class="p">,</span> <span class="n">iq_max_expr</span><span class="p">)</span>
+
+    <span class="n">p_dis</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">zero</span><span class="p">)</span>
+    <span class="n">p_ch</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">,</span> <span class="n">zero</span><span class="p">)</span>
+    <span class="n">ecap_sec</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ecap_h</span> <span class="o">*</span> <span class="n">sec_per_hour</span><span class="p">,</span> <span class="n">eps_i</span><span class="p">)</span>
+    <span class="n">soc_dot</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">p_dis</span> <span class="o">/</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">eta_dis</span><span class="p">,</span> <span class="n">eps_i</span><span class="p">)</span> <span class="o">+</span> <span class="n">eta_ch</span> <span class="o">*</span> <span class="n">p_ch</span><span class="p">)</span> <span class="o">/</span> <span class="n">ecap_sec</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">p</span> <span class="o">-</span> <span class="n">vm</span> <span class="o">*</span> <span class="n">ipout</span><span class="p">,</span>
+            <span class="n">q</span> <span class="o">-</span> <span class="n">vm</span> <span class="o">*</span> <span class="n">iqout</span><span class="p">,</span>
+            <span class="n">pref</span> <span class="o">-</span> <span class="n">pref_expr</span><span class="p">,</span>
+            <span class="n">pext</span> <span class="o">-</span> <span class="n">pext_expr</span><span class="p">,</span>
+            <span class="n">qref</span> <span class="o">-</span> <span class="n">qref_expr</span><span class="p">,</span>
+            <span class="n">p_dis_av</span> <span class="o">-</span> <span class="n">p_dis_av_expr</span><span class="p">,</span>
+            <span class="n">p_ch_av</span> <span class="o">-</span> <span class="n">p_ch_av_expr</span><span class="p">,</span>
+            <span class="n">p_sum</span> <span class="o">-</span> <span class="n">p_sum_expr</span><span class="p">,</span>
+            <span class="n">q_sum</span> <span class="o">-</span> <span class="n">q_sum_expr</span><span class="p">,</span>
+            <span class="n">ip_max</span> <span class="o">-</span> <span class="n">ip_max_expr</span><span class="p">,</span>
+            <span class="n">iq_max</span> <span class="o">-</span> <span class="n">iq_max_expr</span><span class="p">,</span>
+            <span class="n">ip_cmd</span> <span class="o">-</span> <span class="n">ip_cmd_expr</span><span class="p">,</span>
+            <span class="n">iq_cmd</span> <span class="o">-</span> <span class="n">iq_cmd_expr</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">p</span><span class="p">,</span>
+            <span class="n">q</span><span class="p">,</span>
+            <span class="n">pref</span><span class="p">,</span>
+            <span class="n">pext</span><span class="p">,</span>
+            <span class="n">qref</span><span class="p">,</span>
+            <span class="n">p_dis_av</span><span class="p">,</span>
+            <span class="n">p_ch_av</span><span class="p">,</span>
+            <span class="n">p_sum</span><span class="p">,</span>
+            <span class="n">q_sum</span><span class="p">,</span>
+            <span class="n">ip_max</span><span class="p">,</span>
+            <span class="n">iq_max</span><span class="p">,</span>
+            <span class="n">ip_cmd</span><span class="p">,</span>
+            <span class="n">iq_cmd</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">ip_cmd</span> <span class="o">-</span> <span class="n">ipout</span><span class="p">)</span> <span class="o">/</span> <span class="n">tip</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">iq_cmd</span> <span class="o">-</span> <span class="n">iqout</span><span class="p">)</span> <span class="o">/</span> <span class="n">tiq</span><span class="p">,</span>
+            <span class="n">soc_dot</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="p">[</span><span class="n">ipout</span><span class="p">,</span> <span class="n">iqout</span><span class="p">,</span> <span class="n">soc</span><span class="p">],</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">pref0</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span>
+            <span class="n">pext0</span><span class="p">:</span> <span class="n">zero</span><span class="p">,</span>
+            <span class="n">qref0</span><span class="p">:</span> <span class="n">q</span><span class="p">,</span>
+            <span class="n">soc</span><span class="p">:</span> <span class="n">soc0</span><span class="p">,</span>
+            <span class="n">pref</span><span class="p">:</span> <span class="n">pref_expr</span><span class="p">,</span>
+            <span class="n">pext</span><span class="p">:</span> <span class="n">pext_expr</span><span class="p">,</span>
+            <span class="n">qref</span><span class="p">:</span> <span class="n">qref_expr</span><span class="p">,</span>
+            <span class="n">p_dis_av</span><span class="p">:</span> <span class="n">p_dis_av_expr</span><span class="p">,</span>
+            <span class="n">p_ch_av</span><span class="p">:</span> <span class="n">p_ch_av_expr</span><span class="p">,</span>
+            <span class="n">p_sum</span><span class="p">:</span> <span class="n">p_sum_expr</span><span class="p">,</span>
+            <span class="n">q_sum</span><span class="p">:</span> <span class="n">q_sum_expr</span><span class="p">,</span>
+            <span class="n">ip_max</span><span class="p">:</span> <span class="n">ip_max_expr</span><span class="p">,</span>
+            <span class="n">iq_max</span><span class="p">:</span> <span class="n">iq_max_expr</span><span class="p">,</span>
+            <span class="n">ip_cmd</span><span class="p">:</span> <span class="n">ip_cmd_expr</span><span class="p">,</span>
+            <span class="n">iq_cmd</span><span class="p">:</span> <span class="n">iq_cmd_expr</span><span class="p">,</span>
+            <span class="n">ipout</span><span class="p">:</span> <span class="n">ip_cmd_expr</span><span class="p">,</span>
+            <span class="n">iqout</span><span class="p">:</span> <span class="n">iq_cmd_expr</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">pref0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">pext0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">qref0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">p_dis_max</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">p_ch_max</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">qmax</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">qmin</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">soc_min</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">soc_max</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.95</span><span class="p">),</span>
+            <span class="n">soc_db</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>
+            <span class="n">soc0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span>
+            <span class="n">ecap_h</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span>
+            <span class="n">eta_ch</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.95</span><span class="p">),</span>
+            <span class="n">eta_dis</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.95</span><span class="p">),</span>
+            <span class="n">ialim</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.3</span><span class="p">),</span>
+            <span class="n">pqflag</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">tip</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>
+            <span class="n">tiq</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">:</span> <span class="n">vm</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">:</span> <span class="n">va</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">q</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">battery_enom_mwh</span><span class="p">:</span> <span class="n">ecap_h</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">battery_soc_0_pu</span><span class="p">:</span> <span class="n">soc0</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">battery_max_soc_pu</span><span class="p">:</span> <span class="n">soc_max</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">battery_min_soc_pu</span><span class="p">:</span> <span class="n">soc_min</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">battery_charge_efficiency_pu</span><span class="p">:</span> <span class="n">eta_ch</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">battery_discharge_efficiency_pu</span><span class="p">:</span> <span class="n">eta_dis</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span>
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QPointF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QCursor</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QBrush</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QGraphicsEllipseItem</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span>
+                               <span class="n">QGraphicsSceneContextMenuEvent</span><span class="p">,</span>
+                               <span class="n">QGraphicsSceneMouseEvent</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_menu_entry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDeviceEditor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">NodeTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">INJECTION_DEVICE_TYPES</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridMapWidget</span>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MapInjectionTemplateGraphicItem</span><span class="p">(</span><span class="n">NodeTemplate</span><span class="p">,</span> <span class="n">QGraphicsEllipseItem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    InjectionTemplateGraphicItem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">api_object</span><span class="p">:</span> <span class="n">INJECTION_DEVICE_TYPES</span><span class="p">,</span>
+                 <span class="n">editor</span><span class="p">:</span> <span class="n">GridMapWidget</span><span class="p">,</span>
+                 <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">lon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+                 <span class="n">draw_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param api_object:</span>
+<span class="sd">        :param editor:</span>
+<span class="sd">        :param lat:</span>
+<span class="sd">        :param lon:</span>
+<span class="sd">        :param size:</span>
+<span class="sd">        :param draw_labels:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Correct way to call multiple inheritance</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Explicitly call QGraphicsRectItem initialization</span>
+        <span class="n">QGraphicsEllipseItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Explicitly call NodeTemplate initialization</span>
+        <span class="n">NodeTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">api_object</span><span class="o">=</span><span class="n">api_object</span><span class="p">,</span>
+                              <span class="n">editor</span><span class="o">=</span><span class="n">editor</span><span class="p">,</span>
+                              <span class="n">draw_labels</span><span class="o">=</span><span class="n">draw_labels</span><span class="p">,</span>
+                              <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+                              <span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span>
+
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">size</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">to_x_y</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span>  <span class="c1"># upper left corner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setRect</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">r2</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">r2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="c1"># Properties of the container:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GraphicsItemFlag</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">GraphicsItemFlag</span><span class="o">.</span><span class="n">ItemIsMovable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCursor</span><span class="p">(</span><span class="n">QCursor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CursorShape</span><span class="o">.</span><span class="n">PointingHandCursor</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_api_object_color</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api_object</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INJECTION_DEVICE_TYPES</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_object</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GridMapWidget</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editor</span>
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.set_api_object_color">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.set_api_object_color">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_api_object_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QColor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets whatever colour is in the API object property</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">color</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">color</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">QBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">brush</span><span class="p">)</span>
+
+        <span class="n">pen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen</span><span class="p">()</span>
+        <span class="n">pen</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">pen</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># set the pen width to 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">color</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.mousePressEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mousePressEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QGraphicsSceneMouseEvent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Event handler for mouse press events.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="c1"># selected_items = self.editor.map.view.selected_items()</span>
+        <span class="c1"># if len(selected_items) &lt; 2:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSelected</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">event</span><span class="o">.</span><span class="n">setAccepted</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">disable_move</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">set_editor_model</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.mouseReleaseEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseReleaseEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QGraphicsSceneMouseEvent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Event handler for mouse release events.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># super().mouseReleaseEvent(event)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">disableMove</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_position_at_the_diagram</span><span class="p">()</span>  <span class="c1"># always update</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.mouseMoveEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseMoveEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QGraphicsSceneMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Event handler for mouse move events.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapToScene</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.update_position_at_the_diagram">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.update_position_at_the_diagram">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_position_at_the_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the element position in the diagram (to save)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lat</span><span class="p">,</span> <span class="n">long</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">to_lat_lon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_xc</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_yc</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lon</span> <span class="o">=</span> <span class="n">long</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">update_diagram_element</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span>
+                                           <span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+                                           <span class="n">longitude</span><span class="o">=</span><span class="n">long</span><span class="p">,</span>
+                                           <span class="n">graphic_object</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.refresh">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.refresh">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QPointF</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function refreshes the x, y coordinates of the graphic item</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setRect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_callbacks</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_position_at_the_diagram</span><span class="p">()</span>  <span class="c1"># always update</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.set_size">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.set_size">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param r: radius in pixels</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>
+            <span class="n">rect</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">rect</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+            <span class="c1"># change the width and height while keeping the same center</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">+</span> <span class="n">r2</span>
+            <span class="n">new_y</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="n">r2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">r</span>
+
+            <span class="c1"># Set the new rectangle with the updated dimensions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setRect</span><span class="p">(</span><span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.recolour_mode">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.recolour_mode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recolour_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the colour according to the system theme</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">recolour_mode</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_api_object_color</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.delete">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove this element</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">deleted</span><span class="p">,</span> <span class="n">delete_from_db_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">delete_with_dialogue</span><span class="p">(</span><span class="n">selected</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">],</span> <span class="n">delete_from_db</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.plot">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot API objects profiles</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># time series object from the last simulation</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">time_profile</span>
+
+        <span class="c1"># plot the profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">plot_profiles</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">ts</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.open_device_editor">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.open_device_editor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_device_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the default map-injection editor.</span>
+
+<span class="sd">        :return: ``True`` when the editor was opened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editor</span><span class="o">.</span><span class="n">circuit</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">TemplateDeviceEditor</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.mouseDoubleClickEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.mouseDoubleClickEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseDoubleClickEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseDoubleClickEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_api_object_color</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_device_editor</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.get_base_context_menu">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_base_context_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QMenu</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the base menu for injections</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">()</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Plot profiles&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/plot.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Editor&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">open_device_editor</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/edit.png&quot;</span><span class="p">)</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Consolidate coordinates&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">consolidate_object_coordinates</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/assign_to_profile.png&quot;</span><span class="p">)</span>
+
+
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span>
+                       <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">,</span>
+                       <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/delete_schematic.png&quot;</span><span class="p">)</span>
+
+
+        <span class="n">ss_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">gen_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">graphic_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">graphic_obj</span><span class="p">,</span> <span class="s1">&#39;api_object&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">graphic_obj</span><span class="o">.</span><span class="n">api_object</span><span class="p">,</span> <span class="s1">&#39;device_type&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">graphic_obj</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SubstationDevice</span><span class="p">:</span>
+                        <span class="n">has_substation</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">ss_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">graphic_obj</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span><span class="p">:</span>
+                        <span class="n">gen_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">ss_counter</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">gen_counter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="n">add_menu_entry</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">,</span>
+                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Change bus connection for the generator&quot;</span><span class="p">,</span>
+                           <span class="n">function_ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">change_generator_bus_connection</span><span class="p">,</span>
+                           <span class="n">icon_path</span><span class="o">=</span><span class="s2">&quot;:/Icons/icons/move_bus.png&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">menu</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.contextMenuEvent">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.contextMenuEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contextMenuEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QGraphicsSceneContextMenuEvent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display context menu</span>
+<span class="sd">        @param event:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_context_menu</span><span class="p">()</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">screenPos</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.get_xc">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_xc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_xc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.get_yc">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.get_yc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="MapInjectionTemplateGraphicItem.consolidate_coordinates">
+<a class="viewcode-back" href="../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Injections.html#VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics.MapInjectionTemplateGraphicItem.consolidate_coordinates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">consolidate_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Consolidate coordinates in to the DB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lat</span><span class="p">,</span> <span class="n">long</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">to_lat_lon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_xc</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_yc</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_object</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">long</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_info_toast</span><span class="p">(</span><span class="s2">&quot;Coordinates consolidated!&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,514 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌁 Structure of VeraGrid &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="📐 Grid Modelling" href="modelling.html" />
+    <link rel="prev" title="🔎 Grid analysis" href="grid_analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">🌁 Structure of VeraGrid</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#snapshot-vs-time-series">Snapshot vs. time series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#from-tables-to-objects-the-entry-level-barrier">From tables to objects: The entry level barrier</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-pandas-as-the-main-structure">Using Pandas as the main structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-the-results-in-the-inputs">Writing the results in the inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#choosing-the-units">Choosing the units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-multicircuit">The MultiCircuit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-numericalcircuit">The NumericalCircuit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-driver">The Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-results-object">The Results object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inputsanalysisresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">InputsAnalysisResults</span></code> registered properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">🌁 Structure of VeraGrid</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/structure.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="structure-of-veragrid">
+<h1>🌁 Structure of VeraGrid<a class="headerlink" href="#structure-of-veragrid" title="Link to this heading"></a></h1>
+<p>VeraGrid is arranged in three packages:</p>
+<ul class="simple">
+<li><p>VeraGridEngine: A package with the database and calculations logic.</p></li>
+<li><p>VeraGridServer: A package that serves an API-rest to use VeraGridEngine remotely.</p></li>
+<li><p>VeraGrid: A package that contains the Graphical User Interface (GUI) and operates with <code class="docutils literal notranslate"><span class="pre">VeraGridEngine</span></code> and
+<code class="docutils literal notranslate"><span class="pre">VeraGridServer</span></code> seamlessly.</p></li>
+</ul>
+<p><img alt="" src="../_images/Packages.png" /></p>
+<p>The information in VeraGrid is stored in objects, arranged in a database (<code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>) that gets compiled into
+simpler  structures (<code class="docutils literal notranslate"><span class="pre">NumericalCircuit</span></code>) that contains arrays ready for calculation.
+All simulations in VeraGridEngine are managed by simulation “drivers”. The structure is as follows:</p>
+<p><img alt="" src="../_images/DataModelSimulation.png" /></p>
+<p>Any driver is fed with the data model (<code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> object), the respective driver options, and often another
+object relative to specific inputs for that driver. The driver is run, storing the driver results object.
+Although this may seem overly complicated, it has proven to be maintainable and very convenient.</p>
+<section id="snapshot-vs-time-series">
+<h2>Snapshot vs. time series<a class="headerlink" href="#snapshot-vs-time-series" title="Link to this heading"></a></h2>
+<p>VeraGrid has a dual structure to handle legacy cases (snapshot), as well as cases with many variations (time series)</p>
+<ul class="simple">
+<li><p>A <strong>snapshot</strong> is the grid for a particular moment in time.
+This includes the infrastructure plus the variable values of that infrastructure
+such as the load, the generation, the rating, etc.</p></li>
+<li><p>The <strong>time series</strong> record the variations of the magnitudes that can vary. These are applied along with
+the infrastructure definition.</p></li>
+</ul>
+<p>In VeraGrid, the inputs do not get modified by the simulation results. This very important concept, helps
+to maintain the independence of the inputs and outputs, allowing the replicability of the results.
+This key feature is not true for other open-source of commercial programs.</p>
+<p>A snapshot or any point of the time series, may be compiled to a <code class="docutils literal notranslate"><span class="pre">NumericalCircuit</span></code>. This object holds the
+numerical arrays and matrices of a time step, ready for the numerical methods.
+For those simulations that require many time steps, a collection of <code class="docutils literal notranslate"><span class="pre">NumericalCircuit</span></code> is compiled and used.</p>
+<p><img alt="" src="../_images/DataModel.png" /></p>
+<p>It may seem that this extra step is redundant. However, the compilation step is composed by mere copy operations,
+which are fast. This steps benefits greatly the efficiency of the numerical calculations since the arrays are
+aligned in memory. The VeraGrid data model is object-oriented, while the numerical circuit is array-oriented
+(despite being packed into objects)</p>
+<p>Over the years, we have observed that the number one thing that prevents the usage of VeraGrid
+among power systems researchers is the usage of an object-oriented design. Incidentally,
+this is exactly why people with formal programming background love it. This section
+explains the design of VeraGrid departing from a table-based design which is how it started,
+until reaching the multidimensional object-oriented design of today.</p>
+</section>
+<section id="from-tables-to-objects-the-entry-level-barrier">
+<h2>From tables to objects: The entry level barrier<a class="headerlink" href="#from-tables-to-objects-the-entry-level-barrier" title="Link to this heading"></a></h2>
+<p>All of us have used a table based power system simulator during our formative years.
+Usually, each table represents a type of object (Bus, branch, Load, Generator, …)
+This simplicity makes it straight forward to start working. The tables live directly
+in the software library, and we don’t need to think too much about it. We fill the tables,
+run a power flow, and go back to the tables to see the results. Easy.</p>
+<p>To continue with the simplicity, we see ourselves in the need to link tables with
+each other; For instance, to Buses table with the Branches table we might think
+using numerical indices is the easiest way:</p>
+<p>Buses:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>I</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>V</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Bus 1</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Bus 2</p></td>
+<td><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Bus 3</p></td>
+<td><p>45</p></td>
+</tr>
+</tbody>
+</table>
+<p>Branches:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>F</p></th>
+<th class="head"><p>T</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Rate</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>Line 1-2</p></td>
+<td><p>30</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>Line 1-3</p></td>
+<td><p>35</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>Line 2-3</p></td>
+<td><p>20</p></td>
+</tr>
+</tbody>
+</table>
+<p>It is very easy to construct these tables, and anyone could immediately get
+into modifying them.</p>
+<section id="using-pandas-as-the-main-structure">
+<h3>Using Pandas as the main structure<a class="headerlink" href="#using-pandas-as-the-main-structure" title="Link to this heading"></a></h3>
+<p>In python, the Pandas library is synonymous with table. Hence, it is only natural
+that when adopting a table based structure, one shall immediately think of pandas
+to implement the structure. Furthermore, a dictionary of tables seems to be the
+most flexible.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;buses&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+  <span class="s2">&quot;branches&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+  <span class="s2">&quot;loads&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+  <span class="s2">&quot;generators&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+  <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>VeraGrid started like this; Using tables with a simple indexing and using Pandas.
+In the next sections we will show how these decisions are objectively harmful in
+the long term.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Design errors here:
+
+- Using numerical indices to identify elements.
+- Using a third party library as the center of your design.
+- Using dictionaries to store the data structures.
+- Using strings (or simply dynamic properties) to define the properties.
+</pre></div>
+</div>
+</section>
+<section id="writing-the-results-in-the-inputs">
+<h3>Writing the results in the inputs<a class="headerlink" href="#writing-the-results-in-the-inputs" title="Link to this heading"></a></h3>
+<p>All these table-based power system software write the results back in the inputs.
+In informatics class back in school I was taught that functions messing the inputs
+was of bad manners. After 20+ years, I’ll add that it is also a great way to shoot
+yourself in the foot. Lets examine why.</p>
+<p><strong>Reason #1: Replicability</strong></p>
+<p>Imagine you have a set of inputs in your nice tables. One of those inputs is the
+voltage solution. After running the power flow, the voltage solution is overwritten
+with the new one, seeding the next power flow in a different way. Hence, to replicate
+the first power flow you’ll have to reload the initial solution somehow. From disk?
+Smelly.</p>
+<p><strong>Reason #2: Expandability</strong></p>
+<p>What if I want to run a power flow and then an optimal power flow. Will the OPF
+smash my PF results? What if I want to store many results coming from a time series?
+I already need to start thinking hard about that…</p>
+<p><strong>Reason #3: Expensive parallelism</strong></p>
+<p>What if I want to run that time series in parallel? If every parallel power flow
+instance is going to write the results in the inputs, I get a good old data race.
+To do it properly I’ll have to take all my input tables and make a memory copy
+per thread. Expensive.</p>
+<blockquote>
+<div><p>Design errors here:</p>
+<ul class="simple">
+<li><p>Not having a proper control of the results origin.</p></li>
+<li><p>Changing the initial point of operation.</p></li>
+<li><p>Making parallelism prohibitively expensive.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="choosing-the-units">
+<h3>Choosing the units<a class="headerlink" href="#choosing-the-units" title="Link to this heading"></a></h3>
+<p>When designing what information should represent the devices, it is
+only fair that we departure from the engineering design magnitudes. For instance,
+it is logical and natural that we choose Ohms for the impedance and other nameplate
+characteristics for the devices. However, when you go in the world and observe
+the data available, most of it is available in the so-called per-unit system.</p>
+<p>The per unit compatible system of units is the following:</p>
+<ul class="simple">
+<li><p>Active power: MW</p></li>
+<li><p>Reactive Power: MVAr</p></li>
+<li><p>Impedances: Per-unit in the system base (Sbase=100)</p></li>
+<li><p>Voltage: kV</p></li>
+<li><p>Current: kA</p></li>
+</ul>
+<p>Why are these units compatible? Because roughly speaking, kV times kA is MVA.
+And if you divide the MW by the impedances base, all clicks.</p>
+<p>On the other hand, if we were representing the values in V, A, W and Ohm,
+things would not match so easily, and we would require some calculations every time
+we would like to run a simulation since numerical simulations require the
+per-unit system. Furthermore, we discovered that using the compatible units
+as input does not forbid to provide the design units trough extra functions or design focused parameters.
+We can have the cake and eat it too.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">elm</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Line 1,</span>
+           <span class="n">r</span><span class="o">=</span><span class="n">resistance</span> <span class="ow">in</span> <span class="n">per</span> <span class="n">unit</span><span class="p">,</span>
+           <span class="n">x</span><span class="o">=</span><span class="n">reactance</span> <span class="ow">in</span> <span class="n">per</span> <span class="n">unit</span><span class="p">,</span>
+           <span class="n">b</span><span class="o">=</span><span class="n">shunt</span> <span class="n">susceptance</span> <span class="ow">in</span> <span class="n">per</span><span class="o">-</span><span class="n">unit</span><span class="p">,</span>
+           <span class="n">rate</span><span class="o">=</span><span class="n">rating</span> <span class="ow">in</span> <span class="n">MVA</span><span class="p">)</span>
+
+<span class="c1"># Now, we overwrite the values with new parameters</span>
+<span class="n">elm</span><span class="o">.</span><span class="n">fill_design_properties</span><span class="p">(</span>
+    <span class="n">r_ohm</span><span class="o">=</span><span class="n">resistance</span> <span class="ow">in</span> <span class="n">ohms</span><span class="p">,</span>
+    <span class="n">x_ohm</span><span class="o">=</span><span class="n">reactance</span> <span class="ow">in</span> <span class="n">ohms</span><span class="p">,</span>
+    <span class="n">c_nf</span><span class="o">=</span><span class="n">capacity</span> <span class="ow">in</span> <span class="n">nano</span> <span class="n">farads</span><span class="p">,</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">length</span> <span class="ow">in</span> <span class="n">km</span><span class="p">,</span>
+    <span class="n">Imax</span><span class="o">=</span><span class="n">maximum</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">kA</span><span class="p">,</span>
+    <span class="n">freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">Sbase</span><span class="o">=</span><span class="mi">100</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>We chose that the default data input be made using the per-unit compatible units because
+of the legacy data. It is also way more efficient to do that since the only data
+modification required is dividing the power by Sbase.</p>
+<blockquote>
+<div><p>Design errors here:</p>
+<ul class="simple">
+<li><p>Thinking there is no legacy data.</p></li>
+<li><p>Forcing yourself into expensive unit conversion pre-processing.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="the-multicircuit">
+<h3>The MultiCircuit<a class="headerlink" href="#the-multicircuit" title="Link to this heading"></a></h3>
+<p>By VeraGrid v2 everything was migrated from tables to lists of objects living in
+another object called the <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>. You may think of the `MultiCircuit as a database.
+The benefits of this were apparent pretty soon.</p>
+<p>Compared to tables, now we are able to:</p>
+<ul class="simple">
+<li><p>Have easier CRUD (Create, Read, Update, Delete) management of the data. This is specially
+important since VeraGrid has an interactive user interface.</p></li>
+<li><p>Easier handling of the objects evolution over time; Yes code evolves!</p></li>
+<li><p>We could have objects within objects. In table terms, this would be equivalent to having a table inside a cell.
+For instance, it is natural to have a tap changer object inside the transformer object.
+Achieving that with a table is close to impossible.</p></li>
+<li><p>The use of objects allows to reference an object from another object.
+For instance a line will have pointers to the “from” and “to” buses that it connects.</p></li>
+<li><p>Because objects within objects are possible, we can store the profiles of properties within the object.
+In VeraGrid, the loads active power is P and P_prof is the property that stores the active power profile.
+That is far easier, cleaner, maintainable and extensible than having a P table with the profiles somewhere.
+It is however, less evident for people accustomed to tables.</p></li>
+</ul>
+<blockquote>
+<div><p>Design errors avoided:</p>
+<ul class="simple">
+<li><p>The data management is easier, both for the user and the developer.</p></li>
+<li><p>Handling complex relationships is possible without tricks or bad practice.</p></li>
+<li><p>Time is a first class citizen, not an afterthought.</p></li>
+<li><p>References are maintained properly, as opposed to using number or other referencing method.</p></li>
+</ul>
+</div></blockquote>
+<p>However, the MultiCircuit proposes another challenge; Traversing lists of objects for numerical
+computations is very slow. Practice (and common sense) shows that all those papers claiming
+object oriented power flows are nothing but a waste of computational power. What shall we do?</p>
+</section>
+<section id="the-numericalcircuit">
+<h3>The NumericalCircuit<a class="headerlink" href="#the-numericalcircuit" title="Link to this heading"></a></h3>
+<p>In order to feed the numerical processes with arrays for very fast execution, we created
+the <code class="docutils literal notranslate"><span class="pre">NumericalCircuit</span></code>.
+A NumericalCircuit is a snapshot of the MultiCircuit data for calculation at a particular time step.</p>
+<p>There were many iterations of this design until reaching the current stage. We tried with structures with 2D arrays,
+but those proved to be extremely hard to maintain and operate properly since the number of calculation
+nodes changes with time. So we settled for a collection of classes containing 1D arrays inside.</p>
+<p>This allows for a number of amenities:</p>
+<ul class="simple">
+<li><p>We can decouple the inputs, while making them blazing fast for execution.</p></li>
+<li><p>We can have many of them decoupled from the inputs: Parallelism is trivial and safe.</p></li>
+<li><p>The numerical processes get what they need.</p></li>
+<li><p>We can tweak the numerical circuits how we need; For instance,
+we can split by island into more NumericalCircuits.</p></li>
+<li><p>Furthermore, we can modify the NumericalCircuit with topological processing effortlessly.</p></li>
+</ul>
+<blockquote>
+<div><p>Design errors avoided:</p>
+<ul class="simple">
+<li><p>Effective decoupling of the inputs from the processes.</p></li>
+<li><p>Enables trivial parallelism.</p></li>
+<li><p>Enables topology processing without messing with the inputs.</p></li>
+</ul>
+</div></blockquote>
+<p>The numerical circuit is constructed by what we call the compilation step:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">my_grid</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="the-driver">
+<h3>The Driver<a class="headerlink" href="#the-driver" title="Link to this heading"></a></h3>
+<p>A driver in VeraGrid is the central mechanism that orchestrates simulations.
+There is a driver for each simulation type.
+A Driver is responsible for preparing the inputs, executing the calculations, and providing
+the necessary configurations to run a specific analysis. Think of the driver
+as the engine of the process, where it takes the user’s specifications, performs
+the heavy lifting, and prepares the outputs for further use in a coherent manner.</p>
+<p>This allows:</p>
+<ul class="simple">
+<li><p>Modularity: Each driver is tailored to a specific type of analysis (e.g., load flow,
+short-circuit analysis, contingency simulations). This modular design ensures that
+each driver is optimized for its task.</p></li>
+<li><p>Abstraction: The driver abstracts the complexity of the underlying calculations,
+allowing users to focus on configuring their analyses without worrying about the
+mathematical intricacies.</p></li>
+<li><p>Reusability: Drivers can be reused across multiple scenarios, reducing duplication
+of effort and enabling consistent workflows.</p></li>
+</ul>
+<p>The Driver objects simplify simulation workflows by encapsulating all the steps needed to perform an analysis.
+It ensures consistency and repeatability by standardizing how simulations are executed.
+It makes the framework extensible, as new types of analyses can be introduced by
+adding, combining or modifying drivers.</p>
+<p>Each driver produces a result object;</p>
+</section>
+<section id="the-results-object">
+<h3>The Results object<a class="headerlink" href="#the-results-object" title="Link to this heading"></a></h3>
+<p>The result object is the product of the execution of a driver. It captures and organizes the
+the simulation outputs in a structured and accessible format (1D or 2D arrays).</p>
+<p>Each result includes contextual metadata, such as simulation parameters, timestamps, or names,
+making it easy to understand the origin and context of the results data.</p>
+<p>It removes the limitations of traditional table-based outputs by allowing
+users to explore and manipulate results programmatically.</p>
+<p>It enhances clarity by organizing data in ways that reflect the
+underlying network structure (e.g., by bus or branch).</p>
+<p>It provides flexibility for advanced analyses, such as comparing results
+across multiple scenarios or extracting specific performance metrics.
+Furthermore, the results object provides a unified structure to access all results
+in a coherent manner from the GUI, providing specialized functions where needed
+like grouping per area or zone or special plots.</p>
+</section>
+<section id="conclusion">
+<h3>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h3>
+<p>Let’s recapitulate the design mistakes avoided:</p>
+<ul class="simple">
+<li><p>Using numerical indices to identify elements.</p></li>
+<li><p>Using a third party library as the center of your design.</p></li>
+<li><p>Using dictionaries to store the data structures.</p></li>
+<li><p>Using strings (or simply dynamic properties) to define the properties.</p></li>
+<li><p>Not having a proper control of the results’ origin.</p></li>
+<li><p>Changing the initial point of operation.</p></li>
+<li><p>Making parallelism prohibitively expensive or simply unsafe.</p></li>
+<li><p>Thinking there is no legacy data.</p></li>
+<li><p>Forcing yourself into expensive unit conversion pre-processing.</p></li>
+</ul>
+<p>This is just an initial list, because there are plenty of design errors that
+come from using tables not as a storage means but as the software structure.</p>
+<p>In order to avoid those design pitfalls, VeraGrid’s internals have undergone
+significant refactoring over the past decade. This iterative process
+has been essential for ensuring the software’s ability to evolve and incorporate
+new features without compromising maintainability. By adhering to a principled
+development approach, we can focus on delivering a robust and scalable solution
+without cutting corners.</p>
+<p>This commitment has allowed VeraGrid to grow from a humble beginning into a
+professional-grade tool trusted by experts worldwide for critical real-world
+applications—all while remaining open source.</p>
+<p>And now you understand why it’s not so simple.</p>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="inputsanalysisresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">InputsAnalysisResults</span></code> registered properties<a class="headerlink" href="#inputsanalysisresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The inputs-analysis result currently has no registered persisted properties.</p>
+<p>This result object currently does not register persisted result properties.</p>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="grid_analysis.html" class="btn btn-neutral float-left" title="🔎 Grid analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modelling.html" class="btn btn-neutral float-right" title="📐 Grid Modelling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

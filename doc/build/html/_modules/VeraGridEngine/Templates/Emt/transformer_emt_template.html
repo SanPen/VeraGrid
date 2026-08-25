@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Emt.transformer_emt_template &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Emt.transformer_emt_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Emt.transformer_emt_template</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BlockType</span><span class="p">,</span>
+    <span class="n">DeviceType</span><span class="p">,</span>
+    <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span>
+    <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span>
+    <span class="n">WindingType</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.template_definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDefinition</span><span class="p">,</span> <span class="n">TemplateProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Emt.load_RLC_emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_grounding_link_emt_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_transformer_editor_connection_child</span><span class="p">(</span><span class="n">var</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span> <span class="n">is_input</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one visual-only connection child used by ``Edit Hierarchy``.</span>
+
+<span class="sd">    :param var: Shared root-port variable.</span>
+<span class="sd">    :param is_input: True for one input connector.</span>
+<span class="sd">    :param name: Child block name.</span>
+<span class="sd">    :return: Lightweight block exposing the shared port variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">child_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_input</span><span class="p">:</span>
+        <span class="n">child_block</span><span class="o">.</span><span class="n">out_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">child_block</span><span class="o">.</span><span class="n">in_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">child_block</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_attach_transformer_editor_diagram</span><span class="p">(</span><span class="n">root_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                                       <span class="n">input_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span>
+                                       <span class="n">output_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span>
+                                       <span class="n">grounding_pairs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Block</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attach one persisted minimal editor diagram for an EMT transformer block.</span>
+
+<span class="sd">    :param root_block: Transformer root block.</span>
+<span class="sd">    :param input_vars: Public input variables.</span>
+<span class="sd">    :param output_vars: Public output variables.</span>
+<span class="sd">    :param grounding_pairs: Pairs ``(neutral_input_var, grounding_link_block)``.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_blocks_by_name</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">input_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">output_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">grounding_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">input_var</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="n">output_var</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="n">grounding_pair</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">input_index</span><span class="p">,</span> <span class="n">input_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_vars</span><span class="p">):</span>
+        <span class="n">input_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_create_transformer_editor_connection_child</span><span class="p">(</span>
+            <span class="n">var</span><span class="o">=</span><span class="n">input_var</span><span class="p">,</span>
+            <span class="n">is_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">input_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">root_block</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">input_block</span><span class="p">)</span>
+        <span class="n">root_block</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">input_block</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="mf">80.0</span> <span class="o">+</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">input_index</span><span class="p">),</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">BlockType</span><span class="o">.</span><span class="n">INPUT_CONN</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">device_uid</span><span class="o">=</span><span class="n">input_block</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">input_blocks_by_name</span><span class="p">[</span><span class="n">input_var</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_block</span>
+
+    <span class="k">for</span> <span class="n">output_index</span><span class="p">,</span> <span class="n">output_var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_vars</span><span class="p">):</span>
+        <span class="n">output_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_create_transformer_editor_connection_child</span><span class="p">(</span>
+            <span class="n">var</span><span class="o">=</span><span class="n">output_var</span><span class="p">,</span>
+            <span class="n">is_input</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">output_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">root_block</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">output_block</span><span class="p">)</span>
+        <span class="n">root_block</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">output_block</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mf">640.0</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="mf">80.0</span> <span class="o">+</span> <span class="mf">50.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">output_index</span><span class="p">),</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">BlockType</span><span class="o">.</span><span class="n">OUTPUT_CONN</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">device_uid</span><span class="o">=</span><span class="n">output_block</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">grounding_index</span><span class="p">,</span> <span class="n">grounding_pair</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grounding_pairs</span><span class="p">):</span>
+        <span class="n">neutral_input_var</span><span class="p">,</span> <span class="n">grounding_link_block</span> <span class="o">=</span> <span class="n">grounding_pair</span>
+        <span class="n">root_block</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">grounding_link_block</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mf">340.0</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="mf">180.0</span> <span class="o">+</span> <span class="mf">140.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">grounding_index</span><span class="p">),</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">BlockType</span><span class="o">.</span><span class="n">GROUNDING_LINK_EMT</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">device_uid</span><span class="o">=</span><span class="n">grounding_link_block</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">neutral_input_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">input_blocks_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">neutral_input_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">neutral_input_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">root_block</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">add_branch</span><span class="p">(</span>
+                <span class="n">connectionitem_uid</span><span class="o">=</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">int</span><span class="p">,</span>
+                <span class="n">device_uid_from</span><span class="o">=</span><span class="n">neutral_input_block</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                <span class="n">device_uid_to</span><span class="o">=</span><span class="n">grounding_link_block</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                <span class="n">port_number_from</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">port_number_to</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#587291&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+
+
+<div class="viewcode-block" id="get_transformer_emt_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.transformer_emt_template.get_transformer_emt_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_transformer_emt_template</span><span class="p">(</span>
+    <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">conn_f</span><span class="p">:</span> <span class="n">WindingType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">conn_t</span><span class="p">:</span> <span class="n">WindingType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;transformer_emt_template&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a linear two-winding transformer EMT template using coupled winding currents</span>
+<span class="sd">    as state variables.</span>
+
+<span class="sd">    This simplified version keeps only the series coupled-winding model and omits the</span>
+<span class="sd">    primary shunt branch from the EMT equations. The total voltage ratio is exposed</span>
+<span class="sd">    through api_obj_mapping and is used to initialize the primary winding current from</span>
+<span class="sd">    the secondary-side port current in a way that is consistent with the external port</span>
+<span class="sd">    convention.</span>
+
+<span class="sd">    Assumptions:</span>
+<span class="sd">    - `l1`, `l2`, and `m12` already represent the physical transformer model in the</span>
+<span class="sd">      chosen winding coordinates.</span>
+<span class="sd">    - branch currents are positive when leaving the connected bus.</span>
+<span class="sd">    - `if_act` and `it_act` are externally initialized by the EMT framework from the</span>
+<span class="sd">      power-flow solution through `external_mapping`.</span>
+
+<span class="sd">    :param vf: EMT variable factory.</span>
+<span class="sd">    :param conn_f: Optional from-side winding connection.</span>
+<span class="sd">    :param conn_t: Optional to-side winding connection.</span>
+<span class="sd">    :param name: Symbolic model name.</span>
+<span class="sd">    :return: EMT transformer model template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;transformer_emt_template&quot;</span>
+
+    <span class="n">templ</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">EmtModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+
+    <span class="k">if</span> <span class="n">conn_f</span> <span class="ow">in</span> <span class="p">{</span><span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span><span class="p">,</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">NeutralStar</span><span class="p">}:</span>
+        <span class="n">from_has_neutral_port</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">from_has_neutral_port</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">conn_t</span> <span class="ow">in</span> <span class="p">{</span><span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span><span class="p">,</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">NeutralStar</span><span class="p">}:</span>
+        <span class="n">to_has_neutral_port</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">to_has_neutral_port</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">c_eps</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-12</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Static parameters injected from the API object</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">r1</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_r1&quot;</span><span class="p">)</span>
+    <span class="n">r2</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_r2&quot;</span><span class="p">)</span>
+    <span class="n">l1</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_l1&quot;</span><span class="p">)</span>
+    <span class="n">l2</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_l2&quot;</span><span class="p">)</span>
+    <span class="n">m12</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_m&quot;</span><span class="p">)</span>
+    <span class="n">gm</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_gm&quot;</span><span class="p">)</span>  <span class="c1"># kept for compatibility, unused here</span>
+    <span class="n">total_voltage_ratio</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trafo_tap_ratio&quot;</span><span class="p">)</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_winding1_resistance_pu</span><span class="p">]</span> <span class="o">=</span> <span class="n">r1</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_winding2_resistance_pu</span><span class="p">]</span> <span class="o">=</span> <span class="n">r2</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_winding1_inductance_pu_s</span><span class="p">]</span> <span class="o">=</span> <span class="n">l1</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_winding2_inductance_pu_s</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_mutual_inductance_pu_s</span><span class="p">]</span> <span class="o">=</span> <span class="n">m12</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_magnetizing_conductance_pu</span><span class="p">]</span> <span class="o">=</span> <span class="n">gm</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_total_voltage_ratio</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_voltage_ratio</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Terminal voltages</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">vf_n</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">vt_n</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">from_ground_current</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">to_ground_current</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">from_grounding_link_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">to_grounding_link_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">from_has_neutral_port</span><span class="p">:</span>
+        <span class="n">vf_n</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vf_N&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_N</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">to_has_neutral_port</span><span class="p">:</span>
+        <span class="n">vt_n</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vt_N&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_N</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">conn_f</span> <span class="o">==</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span> <span class="ow">and</span> <span class="n">vf_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">from_grounding_link_template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">get_grounding_link_emt_template</span><span class="p">(</span>
+            <span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span>
+            <span class="n">include_r</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">include_l</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">include_c</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">solid_connection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">nested</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_from_grounding_link&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">from_grounding_link_template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">,</span> <span class="p">[</span><span class="n">vf_n</span><span class="p">])</span>
+        <span class="n">from_ground_current</span> <span class="o">=</span> <span class="n">from_grounding_link_template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">from_grounding_link_block</span> <span class="o">=</span> <span class="n">from_grounding_link_template</span><span class="o">.</span><span class="n">block</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">from_grounding_link_block</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">conn_t</span> <span class="o">==</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span> <span class="ow">and</span> <span class="n">vt_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">to_grounding_link_template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">get_grounding_link_emt_template</span><span class="p">(</span>
+            <span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span>
+            <span class="n">include_r</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">include_l</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">include_c</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">solid_connection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">nested</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_to_grounding_link&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span><span class="n">to_grounding_link_template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">,</span> <span class="p">[</span><span class="n">vt_n</span><span class="p">])</span>
+        <span class="n">to_ground_current</span> <span class="o">=</span> <span class="n">to_grounding_link_template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">to_grounding_link_block</span> <span class="o">=</span> <span class="n">to_grounding_link_template</span><span class="o">.</span><span class="n">block</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">to_grounding_link_block</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">vf_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vf_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_A</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vf_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_B</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vf_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_C</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">vt_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vt_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_A</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vt_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_B</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;vt_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_C</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Internal winding-current states</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">i_f</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_f_A&quot;</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_f_B&quot;</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_f_C&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">i_t</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_t_A&quot;</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_t_B&quot;</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_t_C&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">di_f</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_f_A&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_f_B&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_f_C&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+    <span class="p">]</span>
+    <span class="n">di_t</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_t_A&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_t</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_t_B&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_t</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;di_t_C&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">i_t</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># External branch-port currents</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">if_act</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;if_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_A</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;if_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_B</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;if_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_C</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">it_act</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;it_A&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_A</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;it_B&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_B</span><span class="p">),</span>
+        <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;it_C&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_C</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">if_n_act</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;if_N&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_N</span><span class="p">)</span> <span class="k">if</span> <span class="n">from_has_neutral_port</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">it_n_act</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;it_N&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_N</span><span class="p">)</span> <span class="k">if</span> <span class="n">to_has_neutral_port</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">input_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">vf_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">input_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vf_n</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">input_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">vf_vars</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vt_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">input_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vt_n</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">input_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">vt_vars</span><span class="p">)</span>
+
+    <span class="n">algebraic_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">if_act</span> <span class="o">+</span> <span class="n">it_act</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">if_n_act</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">if_n_act</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">it_n_act</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it_n_act</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">input_vars</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="n">i_f</span> <span class="o">+</span> <span class="n">i_t</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="n">di_f</span> <span class="o">+</span> <span class="n">di_t</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="n">algebraic_vars</span>
+
+    <span class="n">v_f_term</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">v_t_term</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">vf_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">v_f_term</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vf_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">vf_n</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v_f_term</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vf_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">vt_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">v_t_term</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vt_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">vt_n</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v_t_term</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vt_vars</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Coupled winding dynamics</span>
+    <span class="c1">#</span>
+    <span class="c1"># [l1  m12] [di_f/dt] = [vf - r1*i_f]</span>
+    <span class="c1"># [m12 l2 ] [di_t/dt]   [vt - r2*i_t]</span>
+    <span class="c1">#</span>
+    <span class="c1"># Inverting the inductance matrix gives negative signs in the cross terms.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">state_eqs_f</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">state_eqs_t</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">det_l</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">l1</span> <span class="o">*</span> <span class="n">l2</span> <span class="o">-</span> <span class="n">m12</span> <span class="o">*</span> <span class="n">m12</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">primary_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_f_term</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">r1</span> <span class="o">*</span> <span class="n">i_f</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">secondary_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_t_term</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">r2</span> <span class="o">*</span> <span class="n">i_t</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">state_eqs_f</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">l2</span> <span class="o">*</span> <span class="n">primary_rhs</span> <span class="o">-</span> <span class="n">m12</span> <span class="o">*</span> <span class="n">secondary_rhs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">det_l</span> <span class="o">+</span> <span class="n">c_eps</span><span class="p">))</span>
+        <span class="n">state_eqs_t</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">l1</span> <span class="o">*</span> <span class="n">secondary_rhs</span> <span class="o">-</span> <span class="n">m12</span> <span class="o">*</span> <span class="n">primary_rhs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">det_l</span> <span class="o">+</span> <span class="n">c_eps</span><span class="p">))</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="n">state_eqs_f</span> <span class="o">+</span> <span class="n">state_eqs_t</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Port-current algebraic equations</span>
+    <span class="c1">#</span>
+    <span class="c1"># In this simplified EMT model, the port currents are exactly the series</span>
+    <span class="c1"># winding currents. The primary-side shunt branch is intentionally omitted.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">alg_eqs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">if_act</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">i_f</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">gm</span> <span class="o">*</span> <span class="n">v_f_term</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it_act</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">i_t</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">if_n_act</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">neutral_from_kcl</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">if_n_act</span> <span class="o">+</span> <span class="n">if_act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">if_act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">if_act</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">from_ground_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">neutral_from_kcl</span> <span class="o">=</span> <span class="n">neutral_from_kcl</span> <span class="o">+</span> <span class="n">from_ground_current</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neutral_from_kcl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">it_n_act</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">neutral_to_kcl</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">it_n_act</span> <span class="o">+</span> <span class="n">it_act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">it_act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">it_act</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">to_ground_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">neutral_to_kcl</span> <span class="o">=</span> <span class="n">neutral_to_kcl</span> <span class="o">+</span> <span class="n">to_ground_current</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">alg_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neutral_to_kcl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">alg_eqs</span>
+    <span class="n">output_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">if_n_act</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">if_n_act</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">output_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">if_act</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">it_n_act</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it_n_act</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">output_vars</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">it_act</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">output_vars</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># External mapping for network stamping / PF seeding</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_N</span><span class="p">:</span> <span class="n">if_n_act</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_A</span><span class="p">:</span> <span class="n">if_act</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_B</span><span class="p">:</span> <span class="n">if_act</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">if_C</span><span class="p">:</span> <span class="n">if_act</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_N</span><span class="p">:</span> <span class="n">it_n_act</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_A</span><span class="p">:</span> <span class="n">it_act</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_B</span><span class="p">:</span> <span class="n">it_act</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">it_C</span><span class="p">:</span> <span class="n">it_act</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">})</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_N</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf_n</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_N</span><span class="p">]</span> <span class="o">=</span> <span class="n">vt_n</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_A</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_B</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vf_C</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_A</span><span class="p">]</span> <span class="o">=</span> <span class="n">vt_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_B</span><span class="p">]</span> <span class="o">=</span> <span class="n">vt_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">vt_C</span><span class="p">]</span> <span class="o">=</span> <span class="n">vt_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># State initialization</span>
+    <span class="c1">#</span>
+    <span class="c1"># Since the EMT model omits the shunt branch, initialize the secondary</span>
+    <span class="c1"># winding current directly from the secondary port current and initialize</span>
+    <span class="c1"># the primary winding current from the secondary current referred through</span>
+    <span class="c1"># the total voltage ratio.</span>
+    <span class="c1">#</span>
+    <span class="c1"># With branch currents positive when leaving the bus:</span>
+    <span class="c1">#   primary series current ~= -(secondary port current) / total_voltage_ratio</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">i_f</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">if_act</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">gm</span> <span class="o">*</span> <span class="n">v_f_term</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">init_eqs</span><span class="p">[</span><span class="n">i_t</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">it_act</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="n">init_eqs</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Derivative initialization aligned with runtime dynamics</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">diff_init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">primary_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_f_term</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">r1</span> <span class="o">*</span> <span class="n">i_f</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">secondary_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">v_t_term</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">r2</span> <span class="o">*</span> <span class="n">i_t</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">di_f</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">l2</span> <span class="o">*</span> <span class="n">primary_rhs</span> <span class="o">-</span> <span class="n">m12</span> <span class="o">*</span> <span class="n">secondary_rhs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">det_l</span> <span class="o">+</span> <span class="n">c_eps</span><span class="p">)</span>
+        <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">di_t</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">l1</span> <span class="o">*</span> <span class="n">secondary_rhs</span> <span class="o">-</span> <span class="n">m12</span> <span class="o">*</span> <span class="n">primary_rhs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">det_l</span> <span class="o">+</span> <span class="n">c_eps</span><span class="p">)</span>
+
+    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="n">diff_init_eqs</span>
+
+    <span class="n">grounding_pairs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Block</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">vf_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">from_grounding_link_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grounding_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">vf_n</span><span class="p">,</span> <span class="n">from_grounding_link_block</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">vt_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">to_grounding_link_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grounding_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">vt_n</span><span class="p">,</span> <span class="n">to_grounding_link_block</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">_attach_transformer_editor_diagram</span><span class="p">(</span>
+        <span class="n">root_block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
+        <span class="n">input_vars</span><span class="o">=</span><span class="n">input_vars</span><span class="p">,</span>
+        <span class="n">output_vars</span><span class="o">=</span><span class="n">output_vars</span><span class="p">,</span>
+        <span class="n">grounding_pairs</span><span class="o">=</span><span class="n">grounding_pairs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<div class="viewcode-block" id="TransformerEmtTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.transformer_emt_template.TransformerEmtTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformerEmtTemplate</span><span class="p">(</span><span class="n">TemplateDefinition</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vf</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">vf</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;conn_f&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;From-side winding connection.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">WindingType</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;conn_t&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;To-side winding connection.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">WindingType</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">TemplateProp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="o">=</span><span class="s2">&quot;Name of the emt model.&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;transformer_emt_template&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="TransformerEmtTemplate.eval">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Emt.html#VeraGridEngine.Templates.Emt.transformer_emt_template.TransformerEmtTemplate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtModelTemplate</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_transformer_emt_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vf</span><span class="p">,</span>
+            <span class="n">conn_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;conn_f&quot;</span><span class="p">),</span>
+            <span class="n">conn_t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;conn_t&quot;</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

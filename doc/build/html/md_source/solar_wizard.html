@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>☀️ Solar power wizard &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="💥 Contingency analysis" href="contingency_analysis.html" />
+    <link rel="prev" title="🌘 Sigma analysis" href="sigma_analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">☀️ Solar power wizard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage-from-the-graphical-interface">Usage from the graphical interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-python-code">Example Python code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-wizard-generates">What the wizard generates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#realistic-profiles-and-limitations">Realistic profiles and limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quality-checks">Quality checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-result-is-all-nan">The result is all <code class="docutils literal notranslate"><span class="pre">NaN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pvgis-request-fails">PVGIS request fails</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-profile-is-too-smooth">The profile is too smooth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-generated-power-is-too-high-or-too-low">The generated power is too high or too low</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">☀️ Solar power wizard</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/solar_wizard.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="solar-power-wizard">
+<h1>☀️ Solar power wizard<a class="headerlink" href="#solar-power-wizard" title="Link to this heading"></a></h1>
+<p>The solar power wizard creates an active power time profile for a generator from the bus coordinates, generator peak
+power and the circuit time profile. It is intended for planning studies where a weather-based photovoltaic production
+profile is needed but no measured plant profile is available.</p>
+<p>The wizard is available from the generator context menu in the schematic and map editors. It requires an existing
+circuit time profile because the generated photovoltaic power is written into the generator active power profile
+(<code class="docutils literal notranslate"><span class="pre">P_prof</span></code>).</p>
+<section id="usage-from-the-graphical-interface">
+<h2>Usage from the graphical interface<a class="headerlink" href="#usage-from-the-graphical-interface" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Create or import the circuit time profile.</p></li>
+<li><p>Place a generator at a bus.</p></li>
+<li><p>Set the bus latitude and longitude.</p></li>
+<li><p>Set the generator maximum active power (<code class="docutils literal notranslate"><span class="pre">Pmax</span></code>) in MW.</p></li>
+<li><p>Right-click the generator.</p></li>
+<li><p>Select the solar photovoltaic wizard.</p></li>
+<li><p>Check or edit the latitude, longitude and power values.</p></li>
+<li><p>Press <strong>Generate</strong>.</p></li>
+<li><p>Inspect the resulting <code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">(MW)</span></code> profile.</p></li>
+<li><p>Press <strong>Accept</strong> to write the generated profile into the generator <code class="docutils literal notranslate"><span class="pre">P_prof</span></code>.</p></li>
+</ol>
+<p>The generated profile must have the same length as the circuit time profile. If the lengths differ, the wizard rejects
+the result.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Valid range</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Latitude</p></td>
+<td><p>Geographic latitude of the site</p></td>
+<td><p>degrees</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-90</span></code> to <code class="docutils literal notranslate"><span class="pre">90</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Longitude</p></td>
+<td><p>Geographic longitude of the site</p></td>
+<td><p>degrees</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-180</span></code> to <code class="docutils literal notranslate"><span class="pre">180</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Power</p></td>
+<td><p>Generator photovoltaic peak power</p></td>
+<td><p>MW</p></td>
+<td><p>greater than zero</p></td>
+</tr>
+<tr class="row-odd"><td><p>Time profile</p></td>
+<td><p>Circuit timestamps to align the photovoltaic profile to</p></td>
+<td><p>datetime</p></td>
+<td><p>sorted oldest to newest</p></td>
+</tr>
+</tbody>
+</table>
+<p>The wizard maps the requested circuit timestamps to a PVGIS-compatible historical year range, downloads the PVGIS hourly
+photovoltaic production data, and interpolates the result to the exact circuit timestamps.</p>
+<p>An internet connection is required when generating the profile because the weather and photovoltaic calculation data are
+requested from PVGIS through <code class="docutils literal notranslate"><span class="pre">pvlib</span></code>.</p>
+</section>
+<section id="example-python-code">
+<h2>Example Python code<a class="headerlink" href="#example-python-code" title="Link to this heading"></a></h2>
+<p>The lower-level helper can be called directly from Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_pv_lib_weather_df</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a photovoltaic profile using the same helper used by the GUI wizard.</span>
+
+<span class="sd">    :return: Nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2026</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">time_array</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span><span class="p">):</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">time_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+
+    <span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">32.2</span>
+    <span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">110.9</span>
+    <span class="n">peak_power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span>
+
+    <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">ok</span><span class="p">,</span> <span class="n">data_frame</span> <span class="o">=</span> <span class="n">get_pv_lib_weather_df</span><span class="p">(</span><span class="n">time_array</span><span class="o">=</span><span class="n">time_array</span><span class="p">,</span>
+                                           <span class="n">latitude</span><span class="o">=</span><span class="n">latitude</span><span class="p">,</span>
+                                           <span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span>
+                                           <span class="n">peak_power</span><span class="o">=</span><span class="n">peak_power</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">power_mw</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1e6</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">power_mw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The photovoltaic profile could not be generated&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The PVGIS field <code class="docutils literal notranslate"><span class="pre">P</span></code> is returned in W by <code class="docutils literal notranslate"><span class="pre">pvlib</span></code>. VeraGrid converts it to MW before storing it in the generator profile:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">power_mw</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1e6</span>
+</pre></div>
+</div>
+</section>
+<section id="what-the-wizard-generates">
+<h2>What the wizard generates<a class="headerlink" href="#what-the-wizard-generates" title="Link to this heading"></a></h2>
+<p>The wizard generates a weather-based modeled photovoltaic production profile. It is not a clear-sky theoretical curve
+unless the selected data source and conditions effectively behave that way. PVGIS uses historical or typical
+meteorological information and a photovoltaic performance model, so the result normally includes day-night behavior,
+seasonal variation and weather-driven variability.</p>
+<p>The result should be interpreted as a planning profile, not as measured production from a real plant.</p>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>Photovoltaic active power depends mainly on irradiance, module temperature, system rating and losses. A simplified
+model can be written as:</p>
+<div class="math">
+<p><span class="math">P_{dc}(t) = P_{rated} \cdot \frac{G_{poa}(t)}{G_{stc}} \cdot f_T(t) \cdot f_{loss}</span></p>
+</div><p>Where:</p>
+<ul class="simple">
+<li><p><span class="math">P_{dc}(t)</span> is the DC photovoltaic power at time <span class="math">t</span>.</p></li>
+<li><p><span class="math">P_{rated}</span> is the rated photovoltaic peak power.</p></li>
+<li><p><span class="math">G_{poa}(t)</span> is the plane-of-array irradiance.</p></li>
+<li><p><span class="math">G_{stc}</span> is the standard test condition irradiance, commonly <span class="math">1000\ \text{W}/\text{m}^2</span>.</p></li>
+<li><p><span class="math">f_T(t)</span> is the module temperature correction factor.</p></li>
+<li><p><span class="math">f_{loss}</span> is the aggregate loss factor.</p></li>
+</ul>
+<p>The final AC power also depends on inverter behavior:</p>
+<div class="math">
+<p><span class="math">P_{ac}(t) = \eta_{inv}(t) \cdot P_{dc}(t)</span></p>
+</div><p>In practice, PVGIS and <code class="docutils literal notranslate"><span class="pre">pvlib</span></code> handle these calculations with more detailed assumptions than the equations above.
+The important point for VeraGrid is that the resulting time series is an active power injection profile in MW.</p>
+</section>
+<section id="realistic-profiles-and-limitations">
+<h2>Realistic profiles and limitations<a class="headerlink" href="#realistic-profiles-and-limitations" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pvlib</span></code> is a physical photovoltaic modeling library. By itself, it does not make production data real. The realism comes
+from the weather data, site data and model assumptions used as inputs.</p>
+<p>The wizard currently uses PVGIS through <code class="docutils literal notranslate"><span class="pre">pvlib</span></code>, so the result is a realistic estimate when:</p>
+<ul class="simple">
+<li><p>the latitude and longitude are correct,</p></li>
+<li><p>the generator peak power is correct,</p></li>
+<li><p>the circuit time profile is valid and sorted,</p></li>
+<li><p>the PVGIS data source covers the selected location,</p></li>
+<li><p>the default PVGIS assumptions are acceptable for the study.</p></li>
+</ul>
+<p>The generated profile does not automatically know:</p>
+<ul class="simple">
+<li><p>local shading from buildings, terrain or vegetation,</p></li>
+<li><p>exact panel tilt and azimuth,</p></li>
+<li><p>exact module and inverter model,</p></li>
+<li><p>soiling, snow, dust or degradation,</p></li>
+<li><p>outages, curtailment or maintenance events,</p></li>
+<li><p>measured local microclimate effects below the PVGIS resolution.</p></li>
+</ul>
+<p>For operational studies or validation work, prefer measured production profiles when available. For planning studies,
+PVGIS-based profiles are usually appropriate if their assumptions are documented and the annual energy and capacity
+factor are checked.</p>
+</section>
+<section id="quality-checks">
+<h2>Quality checks<a class="headerlink" href="#quality-checks" title="Link to this heading"></a></h2>
+<p>After generating a profile, inspect the following:</p>
+<ul class="simple">
+<li><p>The profile contains no <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values.</p></li>
+<li><p>Night values are close to zero.</p></li>
+<li><p>The maximum value does not exceed the generator peak power.</p></li>
+<li><p>The profile has visible daily and seasonal structure.</p></li>
+<li><p>Cloudy or weather-variable periods are not represented as identical clear-sky curves.</p></li>
+<li><p>The annual capacity factor is plausible for the location.</p></li>
+</ul>
+<p>The capacity factor can be estimated as:</p>
+<div class="math">
+<p><span class="math">CF = \frac{\sum_t P(t)\Delta t}{P_{rated} \cdot T}</span></p>
+</div><p>Where <span class="math">T</span> is the total simulated time in hours and <span class="math">\Delta t</span> is the time-step duration in hours.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="the-result-is-all-nan">
+<h3>The result is all <code class="docutils literal notranslate"><span class="pre">NaN</span></code><a class="headerlink" href="#the-result-is-all-nan" title="Link to this heading"></a></h3>
+<p>This usually means the PVGIS timestamps were not aligned correctly with the circuit timestamps. The wizard aligns by
+interpolating over the union of PVGIS timestamps and requested circuit timestamps. If this still occurs, check that the
+time profile is sorted, valid and within the supported span.</p>
+</section>
+<section id="pvgis-request-fails">
+<h3>PVGIS request fails<a class="headerlink" href="#pvgis-request-fails" title="Link to this heading"></a></h3>
+<p>Check the internet connection, coordinates and PVGIS service availability. Some locations or date ranges may not be
+available from the selected PVGIS source.</p>
+</section>
+<section id="the-profile-is-too-smooth">
+<h3>The profile is too smooth<a class="headerlink" href="#the-profile-is-too-smooth" title="Link to this heading"></a></h3>
+<p>The data may represent typical meteorological conditions or the selected source may not capture local cloud variability.
+Use measured production or higher-resolution weather data if the study requires site-specific variability.</p>
+</section>
+<section id="the-generated-power-is-too-high-or-too-low">
+<h3>The generated power is too high or too low<a class="headerlink" href="#the-generated-power-is-too-high-or-too-low" title="Link to this heading"></a></h3>
+<p>Check the generator <code class="docutils literal notranslate"><span class="pre">Pmax</span></code>, site coordinates and assumptions. A complete photovoltaic model should include tilt,
+azimuth, losses, module temperature and inverter behavior. If those are important for the study, document the PVGIS
+defaults or use a more detailed external profile.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sigma_analysis.html" class="btn btn-neutral float-left" title="🌘 Sigma analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contingency_analysis.html" class="btn btn-neutral float-right" title="💥 Contingency analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+# Shaft i-J-k
+
+This is Basic Block Catalog type `420` (`Shaft i-J-k`). It represents a mechanical or drive-train relation used by rotating-machine models.
+
+<!-- veragrid-block-introduction:start -->
+**Shaft i-J-k** belongs to an electromechanical machine or prime-mover model. It links electrical torque and flux with rotor speed, angle, mechanical power, or actuator dynamics, making it central to frequency, voltage, and rotor-angle stability studies.
+
+## Typical use
+
+- Use it when electrical transients must interact with rotating mass or machine controls.
+- Initialize torque, power, flux, and speed consistently with the solved power flow.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Mechanical / Drive Train`.
+- Inputs: 3.
+- Outputs: 2.
+- Declared states: 0.
+- Configurable parameters: 6.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+xdtheta_{jk}(t_0) = (\frac{1}{K_{jk}} \cdot (torque_{ij} - D_{jj} \cdot omega_{j}))
+$$
+
+$$
+xomega_{j}(t_0) = omega_{k}
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `omega_k` | Input signal consumed by the block | model-dependent |
+| Input | `omega_i` | Input signal consumed by the block | model-dependent |
+| Input | `torque_ij` | Input signal consumed by the block | model-dependent |
+| Output | `omega_j` | Output signal produced by the block | model-dependent |
+| Output | `torque_jk` | Output signal produced by the block | model-dependent |
+| Parameter | `K_jk` | Configurable model parameter | model-dependent |
+| Parameter | `D_jk` | Configurable model parameter | model-dependent |
+| Parameter | `D_ij` | Configurable model parameter | model-dependent |
+| Parameter | `D_jj` | Configurable model parameter | model-dependent |
+| Parameter | `H_j` | Configurable model parameter | model-dependent |
+| Parameter | `fnom` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

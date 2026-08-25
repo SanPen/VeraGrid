@@ -1,0 +1,1265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.results_table &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.results_table</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.results_table</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.backend_bases</span><span class="w"> </span><span class="kn">import</span> <span class="n">MouseEvent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultTypes</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">ResultTablePlotType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrVec</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
+
+
+<div class="viewcode-block" id="ComplexPointHoverHandler">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ComplexPointHoverHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComplexPointHoverHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display the identity and coordinates of a complex point under the cursor.</span>
+
+<span class="sd">    The callable object is registered directly with Matplotlib so the callback</span>
+<span class="sd">    registry retains it for the complete lifetime of the figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span> <span class="s2">&quot;annotation&quot;</span><span class="p">,</span> <span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="s2">&quot;axes&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">scatter</span><span class="p">:</span> <span class="n">PathCollection</span><span class="p">,</span>
+                 <span class="n">annotation</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span>
+                 <span class="n">figure</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span>
+                 <span class="n">axes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
+                 <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the complex-point hover handler.</span>
+
+<span class="sd">        :param scatter: Scatter artist containing the complex points.</span>
+<span class="sd">        :param annotation: Annotation updated when the cursor reaches a point.</span>
+<span class="sd">        :param figure: Figure containing the scatter artist.</span>
+<span class="sd">        :param axes: Axes containing the scatter artist.</span>
+<span class="sd">        :param labels: Display label associated with every scatter point.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="p">:</span> <span class="n">PathCollection</span> <span class="o">=</span> <span class="n">scatter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="p">:</span> <span class="n">Annotation</span> <span class="o">=</span> <span class="n">annotation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">:</span> <span class="n">Figure</span> <span class="o">=</span> <span class="n">figure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">labels</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">MouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the visible annotation for one Matplotlib mouse event.</span>
+
+<span class="sd">        :param event: Mouse event emitted by the figure canvas.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
+            <span class="n">contains_point</span><span class="p">:</span> <span class="nb">bool</span>
+            <span class="n">point_details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
+            <span class="n">contains_point</span><span class="p">,</span> <span class="n">point_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">contains_point</span><span class="p">:</span>
+                <span class="n">point_indices_object</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">point_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ind&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">point_indices_object</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">point_indices_object</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">point_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">point_indices_object</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">point_position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="o">.</span><span class="n">get_offsets</span><span class="p">()[</span><span class="n">point_index</span><span class="p">]</span>
+                    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">point_index</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">xy</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">point_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">point_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="se">\n</span><span class="s2">Re=</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">point_position</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Im=</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">point_position</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">get_visible</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">get_visible</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="ResultsTable">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResultsTable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to populate a Qt table view with data from the results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;data_c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cols_c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;index_c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;editable&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;editable_min_idx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;palette&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;x_label&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;y_label&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;units&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;isDate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;decimals&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;format_string&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;formatter&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cols_device_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;idx_device_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_col_devices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_idx_devices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;plot_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;damping_ratio_boundary&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;plot_title&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;complex_plot_x_column&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;complex_plot_y_columns&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;complex_plot_y_scales&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mat</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span>
+                 <span class="n">columns</span><span class="p">:</span> <span class="n">StrVec</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">StrVec</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">,</span>
+                 <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">cols_device_type</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+                 <span class="n">idx_device_type</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+                 <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">editable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">palette</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">editable_min_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+                 <span class="n">plot_type</span><span class="p">:</span> <span class="n">ResultTablePlotType</span> <span class="o">=</span> <span class="n">ResultTablePlotType</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span>
+                 <span class="n">damping_ratio_boundary</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">plot_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">complex_plot_x_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">complex_plot_y_columns</span><span class="p">:</span> <span class="n">StrVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">complex_plot_y_scales</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ResultsTable constructor</span>
+<span class="sd">        :param data:</span>
+<span class="sd">        :param columns:</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :param palette:</span>
+<span class="sd">        :param title:</span>
+<span class="sd">        :param xlabel:</span>
+<span class="sd">        :param ylabel:</span>
+<span class="sd">        :param editable:</span>
+<span class="sd">        :param editable_min_idx:</span>
+<span class="sd">        :param decimals:</span>
+<span class="sd">        :param plot_type: Graphical representation used when plotting this table.</span>
+<span class="sd">        :param damping_ratio_boundary: Optional damping-ratio guide for complex-point plots.</span>
+<span class="sd">        :param plot_title: Optional title used only by the plot representation.</span>
+<span class="sd">        :param complex_plot_x_column: Column name used as the real coordinate.</span>
+<span class="sd">        :param complex_plot_y_columns: Allowed imaginary-coordinate column names.</span>
+<span class="sd">        :param complex_plot_y_scales: Overlay scales corresponding to the allowed imaginary columns.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># assert compatible dimensions</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># assert compatible dimensions</span>
+            <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unsupported number of dimensions </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span> <span class="o">=</span> <span class="n">columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">editable</span> <span class="o">=</span> <span class="n">editable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editable_min_idx</span> <span class="o">=</span> <span class="n">editable_min_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">palette</span> <span class="o">=</span> <span class="n">palette</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_label</span> <span class="o">=</span> <span class="n">xlabel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_label</span> <span class="o">=</span> <span class="n">ylabel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isDate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isDate</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">decimals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format_string</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_string</span> <span class="o">%</span> <span class="n">x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols_device_type</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">cols_device_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_device_type</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">idx_device_type</span>
+
+        <span class="c1"># list of devices that match the columns or rows for filtering</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_devices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_devices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="c1"># Plot semantics travel with the data so filtering and slicing retain</span>
+        <span class="c1"># the same graphical interpretation as the source result.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span><span class="p">:</span> <span class="n">ResultTablePlotType</span> <span class="o">=</span> <span class="n">plot_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">damping_ratio_boundary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">plot_title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">complex_plot_x_column</span>
+        <span class="k">if</span> <span class="n">complex_plot_y_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span><span class="p">:</span> <span class="n">StrVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">complex_plot_y_columns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">complex_plot_y_scales</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">complex_plot_y_scales</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Complex plot Y columns and scales must have the same length.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Backward-compatible alias for the table numeric payload.</span>
+
+<span class="sd">        :return: Table data array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">col_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_devices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx_devices</span>
+
+<div class="viewcode-block" id="ResultsTable.set_col_devices">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.set_col_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_col_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devices_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the list of devices that matches the results for filtering</span>
+<span class="sd">        :param devices_list:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_devices</span> <span class="o">=</span> <span class="n">devices_list</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.set_idx_devices">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.set_idx_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_idx_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devices_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the list of devices that matches the results for filtering</span>
+<span class="sd">        :param devices_list:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_devices</span> <span class="o">=</span> <span class="n">devices_list</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.transpose">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.transpose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transpose the results in-place</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_col_devices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx_devices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx_devices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_devices</span>
+
+        <span class="c1"># Structured complex plots assign semantic roles to rows and columns.</span>
+        <span class="c1"># Transposition changes those roles, so the transformed table reverts</span>
+        <span class="c1"># explicitly to the ordinary series representation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span> <span class="o">=</span> <span class="n">ResultTablePlotType</span><span class="o">.</span><span class="n">SERIES</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.sort_column">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.sort_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sort_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_to_min</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param c:</span>
+<span class="sd">        :param max_to_min:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sorting_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[:,</span> <span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not a float column...&quot;</span><span class="p">)</span>
+            <span class="n">sorting_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[:,</span> <span class="n">c</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">max_to_min</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">sorting_arr</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">sorting_arr</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.slice_cols">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.slice_cols">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slice_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ResultsTable&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make column slicing</span>
+<span class="sd">        :param col_idx: indices of the columns</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sliced_model</span> <span class="o">=</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[:,</span> <span class="n">col_idx</span><span class="p">],</span>
+                                    <span class="n">columns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">col_idx</span><span class="p">]),</span>
+                                    <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">),</span>
+                                    <span class="n">palette</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                                    <span class="n">xlabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span>
+                                    <span class="n">ylabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span>
+                                    <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+                                    <span class="n">editable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editable</span><span class="p">,</span>
+                                    <span class="n">editable_min_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editable_min_idx</span><span class="p">,</span>
+                                    <span class="n">decimals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decimals</span><span class="p">,</span>
+                                    <span class="n">cols_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_device_type</span><span class="p">,</span>
+                                    <span class="n">idx_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_device_type</span><span class="p">,</span>
+                                    <span class="n">plot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span><span class="p">,</span>
+                                    <span class="n">damping_ratio_boundary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span><span class="p">,</span>
+                                    <span class="n">plot_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span><span class="p">,</span>
+                                    <span class="n">complex_plot_x_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span><span class="p">,</span>
+                                    <span class="n">complex_plot_y_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span><span class="p">,</span>
+                                    <span class="n">complex_plot_y_scales</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sliced_model</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.slice_rows">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.slice_rows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slice_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ResultsTable&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make rows slicing</span>
+<span class="sd">        :param idx: indices of the columns</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sliced_model</span> <span class="o">=</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
+                                    <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">,</span>
+                                    <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]),</span>
+                                    <span class="n">palette</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                                    <span class="n">xlabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span>
+                                    <span class="n">ylabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span>
+                                    <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+                                    <span class="n">editable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editable</span><span class="p">,</span>
+                                    <span class="n">editable_min_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editable_min_idx</span><span class="p">,</span>
+                                    <span class="n">decimals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decimals</span><span class="p">,</span>
+                                    <span class="n">cols_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_device_type</span><span class="p">,</span>
+                                    <span class="n">idx_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_device_type</span><span class="p">,</span>
+                                    <span class="n">plot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span><span class="p">,</span>
+                                    <span class="n">damping_ratio_boundary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span><span class="p">,</span>
+                                    <span class="n">plot_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span><span class="p">,</span>
+                                    <span class="n">complex_plot_x_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span><span class="p">,</span>
+                                    <span class="n">complex_plot_y_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span><span class="p">,</span>
+                                    <span class="n">complex_plot_y_scales</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sliced_model</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.slice_all">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.slice_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slice_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ResultsTable&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make rows slicing</span>
+<span class="sd">        :param row_idx: indices of the rows</span>
+<span class="sd">        :param col_idx: indices of the columns</span>
+<span class="sd">        :return: ResultsTable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sliced_model</span> <span class="o">=</span> <span class="n">ResultsTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">col_idx</span><span class="p">],</span>
+                                    <span class="n">columns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">col_idx</span><span class="p">]),</span>
+                                    <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row_idx</span><span class="p">]),</span>
+                                    <span class="n">palette</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                                    <span class="n">xlabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span>
+                                    <span class="n">ylabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span>
+                                    <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+                                    <span class="n">editable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editable</span><span class="p">,</span>
+                                    <span class="n">editable_min_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editable_min_idx</span><span class="p">,</span>
+                                    <span class="n">decimals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decimals</span><span class="p">,</span>
+                                    <span class="n">cols_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_device_type</span><span class="p">,</span>
+                                    <span class="n">idx_device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_device_type</span><span class="p">,</span>
+                                    <span class="n">plot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span><span class="p">,</span>
+                                    <span class="n">damping_ratio_boundary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span><span class="p">,</span>
+                                    <span class="n">plot_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span><span class="p">,</span>
+                                    <span class="n">complex_plot_x_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span><span class="p">,</span>
+                                    <span class="n">complex_plot_y_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span><span class="p">,</span>
+                                    <span class="n">complex_plot_y_scales</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sliced_model</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.search_in_columns">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.search_in_columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_in_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search stuff</span>
+<span class="sd">        :param txt:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">txt2</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">txt2</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice_cols</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.search_in_rows">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.search_in_rows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_in_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search stuff</span>
+<span class="sd">        :param txt:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">txt2</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">txt2</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice_rows</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.copy_to_column">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.copy_to_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_to_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copies one value to all the column</span>
+<span class="sd">        @param row: Row of the value</span>
+<span class="sd">        @param col: Column of the value</span>
+<span class="sd">        @return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.is_complex">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.is_complex">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_complex</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Is the data complex?</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">complex</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.get_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.get_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns: index, columns, data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># gather values</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">):</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="o">.</span><span class="n">values</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ResultTypes</span><span class="p">):</span>
+                        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">]</span>
+
+            <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># there are no elements</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">,</span> <span class="nb">list</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.convert_to_cdf">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.convert_to_cdf">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the data in-place to CDF based</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># calculate the proportional values of samples</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_label</span> <span class="o">=</span> <span class="s1">&#39;Probability of value&lt;=x&#39;</span>
+
+        <span class="c1"># Independent column sorting destroys complex coordinate pairs and</span>
+        <span class="c1"># eigenvector component relationships.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span> <span class="o">=</span> <span class="n">ResultTablePlotType</span><span class="o">.</span><span class="n">SERIES</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.convert_to_abs">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.convert_to_abs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_abs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the data to abs</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">)</span>
+
+            <span class="c1"># Magnitudes no longer contain a real-imaginary plane, so their</span>
+            <span class="c1"># natural representation is the existing series plot.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span> <span class="o">=</span> <span class="n">ResultTablePlotType</span><span class="o">.</span><span class="n">SERIES</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Could not convert to abs :/&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.to_df">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.to_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.save_to_excel">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.save_to_excel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_excel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save data to excel</span>
+<span class="sd">        :param file_name:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.save_to_csv">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.save_to_csv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save data to csv</span>
+<span class="sd">        :param file_name:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.get_data_frame">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.get_data_frame">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save data to csv</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_complex_point_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                       <span class="n">selected_col_idx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the configured real and imaginary columns for a complex plot.</span>
+
+<span class="sd">        With no complete-column selection, the first configured imaginary</span>
+<span class="sd">        column is the default. Selecting columns explicitly requires exactly</span>
+<span class="sd">        the configured real column and one allowed imaginary representation.</span>
+
+<span class="sd">        :param selected_col_idx: Optional complete-column selection from the table view.</span>
+<span class="sd">        :return: Real column index, imaginary column index, and damping-guide scale.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_x_column</span>
+        <span class="n">y_column_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_columns</span>
+        <span class="k">if</span> <span class="n">x_column_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y_column_names</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This table does not define complex-plane coordinate columns.&quot;</span><span class="p">)</span>
+
+        <span class="n">selected_y_column_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">if</span> <span class="n">selected_col_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">selected_y_column_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">y_column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">selected_columns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_col_idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">selected_columns</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Select exactly two complete columns: Real and one Imaginary representation.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">selected_column_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)[</span><span class="n">selected_columns</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">selected_column_names</span> <span class="o">==</span> <span class="n">x_column_name</span><span class="p">)):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The complex-plane X coordinate must be &#39;</span><span class="si">{</span><span class="n">x_column_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+            <span class="n">matching_y_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">configured_y_name</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="k">for</span> <span class="n">configured_y_name</span> <span class="ow">in</span> <span class="n">y_column_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">selected_column_names</span> <span class="o">==</span> <span class="n">configured_y_name</span><span class="p">)):</span>
+                    <span class="n">matching_y_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">configured_y_name</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_y_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">selected_y_column_name</span> <span class="o">=</span> <span class="n">matching_y_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">allowed_y_columns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">y_column_names</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Select Real together with one of these columns: &quot;</span> <span class="o">+</span> <span class="n">allowed_y_columns</span>
+                <span class="p">)</span>
+
+        <span class="n">visible_column_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+        <span class="n">x_matches</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">visible_column_names</span> <span class="o">==</span> <span class="n">x_column_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y_matches</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">visible_column_names</span> <span class="o">==</span> <span class="n">selected_y_column_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">scale_matches</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_column_names</span> <span class="o">==</span> <span class="n">selected_y_column_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">x_matches</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">y_matches</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">scale_matches</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The selected results no longer contain a complete complex coordinate pair.&quot;</span><span class="p">)</span>
+
+        <span class="n">x_column_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">y_column_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">imaginary_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complex_plot_y_scales</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">scale_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+        <span class="k">return</span> <span class="n">x_column_index</span><span class="p">,</span> <span class="n">y_column_index</span><span class="p">,</span> <span class="n">imaginary_scale</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_complex_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                             <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">selected_col_idx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">selected_rows</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot rows containing paired real and imaginary coordinates.</span>
+
+<span class="sd">        Row selection chooses modes. An optional complete-column selection</span>
+<span class="sd">        chooses one of the explicitly configured imaginary representations.</span>
+
+<span class="sd">        :param ax: Matplotlib axes that will contain the complex-plane plot.</span>
+<span class="sd">        :param selected_col_idx: Optional complete-column coordinate selection.</span>
+<span class="sd">        :param selected_rows: Optional indices of the result rows to plot.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_column_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">y_column_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">imaginary_scale</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="n">x_column_index</span><span class="p">,</span> <span class="n">y_column_index</span><span class="p">,</span> <span class="n">imaginary_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_complex_point_columns</span><span class="p">(</span>
+            <span class="n">selected_col_idx</span><span class="o">=</span><span class="n">selected_col_idx</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Use every visible mode when the user has not selected specific rows.</span>
+        <span class="n">row_indices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="k">if</span> <span class="n">selected_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">row_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">row_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_rows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">row_indices</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There are no visible modes to plot in the complex plane.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># A filtered coordinate pair is valid only when both components remain</span>
+        <span class="c1"># finite; incomplete points cannot be placed in the complex plane.</span>
+        <span class="n">coordinate_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span>
+                    <span class="n">row_indices</span><span class="p">,</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_column_index</span><span class="p">,</span> <span class="n">y_column_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">finite_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">coordinate_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">coordinate_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">finite_points</span><span class="p">)):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The selected modes do not contain finite Real and Imaginary coordinates.&quot;</span><span class="p">)</span>
+
+        <span class="n">real_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">coordinate_data</span><span class="p">[</span><span class="n">finite_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">imaginary_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">coordinate_data</span><span class="p">[</span><span class="n">finite_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">selected_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)[</span><span class="n">row_indices</span><span class="p">]</span>
+        <span class="n">point_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">selected_labels</span><span class="p">[</span><span class="n">finite_points</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">figure</span><span class="p">:</span> <span class="n">Figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">plot_axes</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_axes</span> <span class="o">=</span> <span class="n">ax</span>
+            <span class="n">figure</span> <span class="o">=</span> <span class="n">plot_axes</span><span class="o">.</span><span class="n">figure</span>
+
+        <span class="c1"># Restore the original S-domain colour definition: the winter map is</span>
+        <span class="c1"># driven by the normalized distance of each mode from the imaginary axis.</span>
+        <span class="n">real_distances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">real_points</span><span class="p">))</span>
+        <span class="n">maximum_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">real_distances</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">maximum_distance</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">point_colours</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="o">-</span><span class="n">real_distances</span> <span class="o">/</span> <span class="n">maximum_distance</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">point_colours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">real_distances</span><span class="p">)</span>
+        <span class="n">scatter</span><span class="p">:</span> <span class="n">PathCollection</span> <span class="o">=</span> <span class="n">plot_axes</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">real_points</span><span class="p">,</span>
+            <span class="n">imaginary_points</span><span class="p">,</span>
+            <span class="n">c</span><span class="o">=</span><span class="n">point_colours</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;winter&quot;</span><span class="p">,</span>
+            <span class="n">s</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">real_span</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">real_points</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">real_points</span><span class="p">))</span>
+        <span class="n">imaginary_span</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">imaginary_points</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">imaginary_points</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">real_span</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">real_margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">real_span</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">real_margin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">real_points</span><span class="p">)))</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">imaginary_span</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">imaginary_margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">imaginary_span</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">imaginary_margin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">imaginary_points</span><span class="p">)))</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">x_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">real_points</span><span class="p">)</span> <span class="o">-</span> <span class="n">real_margin</span><span class="p">)</span>
+        <span class="n">x_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">real_points</span><span class="p">)</span> <span class="o">+</span> <span class="n">real_margin</span><span class="p">)</span>
+        <span class="n">y_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">imaginary_points</span><span class="p">)</span> <span class="o">-</span> <span class="n">imaginary_margin</span><span class="p">)</span>
+        <span class="n">y_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">imaginary_points</span><span class="p">)</span> <span class="o">+</span> <span class="n">imaginary_margin</span><span class="p">)</span>
+
+        <span class="c1"># Draw the optional constant-damping guides in the coordinates already</span>
+        <span class="c1"># supplied by the table, which also supports the Hz-scaled view.</span>
+        <span class="n">damping_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">damping_ratio_boundary</span>
+        <span class="k">if</span> <span class="n">damping_ratio</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">damping_ratio</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">x_min</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">negative_x_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">negative_x_max</span> <span class="o">&gt;</span> <span class="n">x_min</span><span class="p">:</span>
+                <span class="n">damping_x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">negative_x_max</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+                <span class="n">damping_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">damping_ratio</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">damping_ratio</span><span class="p">)</span>
+                <span class="n">damping_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="o">-</span><span class="n">damping_x</span> <span class="o">*</span> <span class="n">damping_slope</span> <span class="o">*</span> <span class="n">imaginary_scale</span>
+                <span class="p">)</span>
+                <span class="n">plot_axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">damping_x</span><span class="p">,</span>
+                    <span class="n">damping_y</span><span class="p">,</span>
+                    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ζ = </span><span class="si">{</span><span class="n">damping_ratio</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">plot_axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">damping_x</span><span class="p">,</span>
+                    <span class="o">-</span><span class="n">damping_y</span><span class="p">,</span>
+                    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">plot_axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">displayed_plot_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">displayed_plot_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_title</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">displayed_plot_title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">[</span><span class="n">x_column_index</span><span class="p">]),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">[</span><span class="n">y_column_index</span><span class="p">]),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">)</span>
+        <span class="n">plot_axes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="c1"># Hover text carries the mode identity that was previously missing</span>
+        <span class="c1"># from the S-domain plot annotation.</span>
+        <span class="n">annotation</span><span class="p">:</span> <span class="n">Annotation</span> <span class="o">=</span> <span class="n">plot_axes</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mf">16.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">),</span>
+            <span class="n">textcoords</span><span class="o">=</span><span class="s2">&quot;offset points&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">annotation</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">hover_handler</span><span class="p">:</span> <span class="n">ComplexPointHoverHandler</span> <span class="o">=</span> <span class="n">ComplexPointHoverHandler</span><span class="p">(</span>
+            <span class="n">scatter</span><span class="o">=</span><span class="n">scatter</span><span class="p">,</span>
+            <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
+            <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span>
+            <span class="n">axes</span><span class="o">=</span><span class="n">plot_axes</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">point_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;motion_notify_event&quot;</span><span class="p">,</span> <span class="n">hover_handler</span><span class="p">)</span>
+        <span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_complex_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">selected_col_idx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">selected_rows</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot selected complex table columns as normalized mode-shape vectors.</span>
+
+<span class="sd">        Each selected column receives one subplot. Its finite row components</span>
+<span class="sd">        are phase-aligned to the dominant component and drawn as arrows in the</span>
+<span class="sd">        real-imaginary plane.</span>
+
+<span class="sd">        :param ax: Matplotlib axes whose figure will host the subplot grid.</span>
+<span class="sd">        :param selected_col_idx: Optional indices of the mode columns to plot.</span>
+<span class="sd">        :param selected_rows: Optional indices of the state rows to plot.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode_indices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="k">if</span> <span class="n">selected_col_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mode_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mode_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_col_idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="n">state_indices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="k">if</span> <span class="n">selected_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">selected_rows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mode_indices</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Select at least one right-eigenvector column to plot.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state_indices</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There are no visible state components to plot.&quot;</span><span class="p">)</span>
+
+        <span class="n">number_of_modes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mode_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">number_of_columns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">number_of_modes</span><span class="p">)</span>
+        <span class="n">number_of_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">number_of_modes</span> <span class="o">/</span> <span class="n">number_of_columns</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">figure</span><span class="p">:</span> <span class="n">Figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">5.5</span> <span class="o">*</span> <span class="n">number_of_columns</span><span class="p">,</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">number_of_rows</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">figure</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">axes_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">number_of_rows</span><span class="p">,</span> <span class="n">number_of_columns</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">flat_axes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">axes_matrix</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">state_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="n">plot_position</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">mode_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">plot_position</span><span class="p">,</span> <span class="n">mode_index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mode_indices</span><span class="p">):</span>
+            <span class="n">mode_axes</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Axes</span><span class="p">,</span> <span class="n">flat_axes</span><span class="p">[</span><span class="n">plot_position</span><span class="p">])</span>
+            <span class="n">mode_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_c</span><span class="p">[</span><span class="n">state_indices</span><span class="p">,</span> <span class="n">mode_index</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">finite_components</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mode_values</span><span class="o">.</span><span class="n">real</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mode_values</span><span class="o">.</span><span class="n">imag</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">visible_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">mode_values</span><span class="p">[</span><span class="n">finite_components</span><span class="p">]</span>
+            <span class="n">visible_state_indices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">state_indices</span><span class="p">[</span><span class="n">finite_components</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">visible_values</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">magnitudes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">visible_values</span><span class="p">)</span>
+                <span class="n">reference_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">))</span>
+                <span class="n">reference_magnitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">[</span><span class="n">reference_position</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">reference_magnitude</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">reference_phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">visible_values</span><span class="p">[</span><span class="n">reference_position</span><span class="p">]))</span>
+                    <span class="n">aligned_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">visible_values</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">reference_phase</span><span class="p">)</span> <span class="o">/</span> <span class="n">reference_magnitude</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">aligned_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">visible_values</span><span class="p">)</span>
+
+                <span class="c1"># Every state is an arrow from the common origin, making both</span>
+                <span class="c1"># relative magnitude and relative phase directly observable.</span>
+                <span class="n">component_position</span><span class="p">:</span> <span class="nb">int</span>
+                <span class="n">state_index</span><span class="p">:</span> <span class="nb">int</span>
+                <span class="k">for</span> <span class="n">component_position</span><span class="p">,</span> <span class="n">state_index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">visible_state_indices</span><span class="p">):</span>
+                    <span class="n">component</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">aligned_values</span><span class="p">[</span><span class="n">component_position</span><span class="p">])</span>
+                    <span class="n">component_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">component_position</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">mode_axes</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span>
+                        <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">component</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                        <span class="n">component</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                        <span class="n">width</span><span class="o">=</span><span class="mf">0.006</span><span class="p">,</span>
+                        <span class="n">length_includes_head</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="n">component_color</span><span class="p">,</span>
+                        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">mode_axes</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                        <span class="n">component</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="mf">1.04</span><span class="p">,</span>
+                        <span class="n">component</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="mf">1.04</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">state_names</span><span class="p">[</span><span class="n">state_index</span><span class="p">]),</span>
+                        <span class="n">color</span><span class="o">=</span><span class="n">component_color</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mode_axes</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="s2">&quot;No finite components&quot;</span><span class="p">,</span>
+                    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">transform</span><span class="o">=</span><span class="n">mode_axes</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">unit_circle_angles</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">361</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">unit_circle_angles</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">unit_circle_angles</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Real&quot;</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Imaginary&quot;</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols_c</span><span class="p">[</span><span class="n">mode_index</span><span class="p">]),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">mode_axes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="c1"># Unused grid cells are hidden so selecting two or five modes does not</span>
+        <span class="c1"># leave distracting empty coordinate systems in the figure.</span>
+        <span class="k">for</span> <span class="n">plot_position</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_modes</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">flat_axes</span><span class="o">.</span><span class="n">size</span><span class="p">)):</span>
+            <span class="n">unused_axes</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Axes</span><span class="p">,</span> <span class="n">flat_axes</span><span class="p">[</span><span class="n">plot_position</span><span class="p">])</span>
+            <span class="n">unused_axes</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+        <span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.96</span><span class="p">))</span>
+
+<div class="viewcode-block" id="ResultsTable.plot">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">selected_col_idx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">selected_rows</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">stacked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the data model</span>
+<span class="sd">        :param ax: Matplotlib axis</span>
+<span class="sd">        :param selected_col_idx: list of selected column indices</span>
+<span class="sd">        :param selected_rows: list of rows to plot</span>
+<span class="sd">        :param stacked: Stack plot?</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span> <span class="o">==</span> <span class="n">ResultTablePlotType</span><span class="o">.</span><span class="n">COMPLEX_POINTS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plot_complex_points</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                <span class="n">selected_col_idx</span><span class="o">=</span><span class="n">selected_col_idx</span><span class="p">,</span>
+                <span class="n">selected_rows</span><span class="o">=</span><span class="n">selected_rows</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_type</span> <span class="o">==</span> <span class="n">ResultTablePlotType</span><span class="o">.</span><span class="n">COMPLEX_VECTORS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plot_complex_vectors</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                <span class="n">selected_col_idx</span><span class="o">=</span><span class="n">selected_col_idx</span><span class="p">,</span>
+                <span class="n">selected_rows</span><span class="o">=</span><span class="n">selected_rows</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">selected_col_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">selected_col_idx</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">selected_col_idx</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">selected_rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">selected_rows</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;voltage&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nan&#39;</span>  <span class="c1"># to avoid plotting the zeros</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="n">plot_legend</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_legend</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stacked</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># --- 1. Filter Out Columns That Are Entirely Zero ---</span>
+            <span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">(</span><span class="n">df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># Convert the filtered DataFrame to a NumPy array</span>
+            <span class="n">n_series</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># --- 2. Prepare the Positive and Negative Parts ---</span>
+            <span class="c1"># For positive plotting: keep positive values and set non-positive ones to 0.</span>
+            <span class="n">data_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># For negative plotting: keep negative values and set non-negative ones to 0.</span>
+            <span class="n">data_neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># --- 3. Compute Cumulative Sums Along the Series Axis ---</span>
+            <span class="n">cum_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">data_pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">cum_neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">data_neg</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># --- 4. Plot Using Matplotlib&#39;s fill_between ---</span>
+            <span class="c1"># Use a colormap to generate distinct colors for each series.</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_series</span><span class="p">))</span>
+
+            <span class="c1"># x-axis will use the DataFrame&#39;s DatetimeIndex.</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">index</span>
+
+            <span class="c1"># Plot the positive areas for each series.</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_series</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cum_pos</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cum_pos</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">df_filtered</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cum_pos</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cum_pos</span><span class="p">[:,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">cum_pos</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">df_filtered</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Plot the negative areas for each series.</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_series</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cum_neg</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cum_neg</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">df_filtered</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cum_neg</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cum_neg</span><span class="p">[:,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">cum_neg</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">df_filtered</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Add legend and labels for clarity</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;small&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">plot_legend</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No numeric data to plot...&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultsTable.plot_device">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable.plot_device">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the data model</span>
+<span class="sd">        :param ax: Matplotlib axis</span>
+<span class="sd">        :param device_idx: list of selected column indices</span>
+<span class="sd">        :param stacked: Stack plot?</span>
+<span class="sd">        :param title: Title of the plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+        <span class="c1"># columns = [columns[device_idx]]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">]</span> <span class="k">if</span> <span class="n">title</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="p">[</span><span class="n">title</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">device_idx</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;voltage&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nan&#39;</span>  <span class="c1"># to avoid plotting the zeros</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="n">plot_legend</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_legend</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">plot_legend</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="n">stacked</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No numeric data to plot...&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

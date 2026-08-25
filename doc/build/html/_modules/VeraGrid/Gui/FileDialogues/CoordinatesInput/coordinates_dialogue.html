@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_input_gui</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_Dialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExcelDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.general_dialogues</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogsDialogue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">error_msg</span>
+
+
+<div class="viewcode-block" id="get_list_model">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.get_list_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_list_model</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get Qt list model from a simple iterable</span>
+<span class="sd">    :param iterable: </span>
+<span class="sd">    :return: List model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">iterable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+            <span class="c1"># for the list model</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">list_model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">list_model</span></div>
+
+
+
+<div class="viewcode-block" id="find_duplicates">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.find_duplicates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_duplicates</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find duplicates in an array</span>
+<span class="sd">    :param arr: original array</span>
+<span class="sd">    :return: unique, duplicates</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="n">duplicates</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">seen</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">duplicates</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociation">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoordinatesInputAssociation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Association</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param name:</span>
+<span class="sd">        :param code:</span>
+<span class="sd">        :param x:</span>
+<span class="sd">        :param y:</span>
+<span class="sd">        :param latitude:</span>
+<span class="sd">        :param longitude:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">latitude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">longitude</span>
+
+<div class="viewcode-block" id="CoordinatesInputAssociation.get_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociation.get_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get association at index</span>
+<span class="sd">        :param idx:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span>
+        <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+        <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span>
+        <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoordinatesInputAssociations</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractTableModel</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractTableModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CoordinatesInputAssociation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Code&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.update">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        update table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutAboutToBeChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.append">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.append">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">CoordinatesInputAssociation</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.set_x_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.set_x_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_x_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.set_y_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.set_y_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_y_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.set_latitude_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.set_latitude_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_latitude_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.set_longitude_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.set_longitude_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_longitude_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.get_name_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.get_name_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_name_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.get_code_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.get_code_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_code_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">code</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.get_x_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.get_x_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_x_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.get_y_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.get_y_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_y_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.get_latitude_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.get_latitude_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_latitude_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">latitude</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.get_longitude_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.get_longitude_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_longitude_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">longitude</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.clear_at">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.clear_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.rowCount">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.rowCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.columnCount">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.columnCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__headers</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.data">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()]</span><span class="o">.</span><span class="n">get_at</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputAssociations.headerData">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputAssociations.headerData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">section</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                   <span class="n">orientation</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="p">,</span>
+                   <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemDataRole</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">Vertical</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">section</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoordinatesInputGUI</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CoordinatesInputGUI</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">list_of_objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parent:</span>
+<span class="sd">            list_of_objects: List of objects to which set a profile to</span>
+<span class="sd">            list_of_objects: list ob object to modify</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">list_of_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">list_of_objects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_Dialog</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Coordinates import dialogue&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_directory</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assigned_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># dataFrame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># initialize the objectives list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_of_objects</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">associations</span> <span class="o">=</span> <span class="n">CoordinatesInputAssociations</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">list_of_objects</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CoordinatesInputAssociation</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">longitude</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_associations</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accepted_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;.xlsx&#39;</span><span class="p">,</span> <span class="s1">&#39;.xls&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">setStretchFactor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">setStretchFactor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+        <span class="c1"># click</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">open_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">import_profile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">do_it</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">refreshButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assign</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CoordinatesInputGUI.msg">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.msg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Warning&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Message box</span>
+<span class="sd">        :param text: Text to display</span>
+<span class="sd">        :param title: Name of the window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">Information</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="c1"># msg.setInformativeText(&quot;This is additional information&quot;)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="c1"># msg.setDetailedText(&quot;The details are as follows:&quot;)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.dropEvent">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.dropEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Drop file on the GUI, the default behaviour is to load the file</span>
+<span class="sd">        :param event: event containing all the information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">urls</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="n">file_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+                    <span class="n">file_name</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">toLocalFile</span><span class="p">()</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accepted_extensions</span><span class="p">:</span>
+                        <span class="n">file_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;The file type &#39;</span> <span class="o">+</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; is not accepted :(&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># Just open the file</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">open_file_now</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">file_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.display_associations">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.display_associations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_associations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">assignation_table</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.set_combo_boxes">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.set_combo_boxes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_combo_boxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the options</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">get_list_model</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">nameComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">codeComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">xComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">yComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">latitudeComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">longitudeComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>  <span class="c1"># names are already in lowercase</span>
+
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;xpos&#39;</span><span class="p">,</span> <span class="s1">&#39;x_pos&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">xComboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">xCheckBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;ypos&#39;</span><span class="p">,</span> <span class="s1">&#39;y_pos&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">yComboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">yCheckBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">latitudeComboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">latitudeCheckBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">longitudeComboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">longitudeCheckBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.assign">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.assign">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign the loaded values to the correspondance table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">nameComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">code_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">codeComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">x_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">xComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">y_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">yComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">lat_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">latitudeComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">lon_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">longitudeComboBox</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">nameRadioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">name_idx</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                        <span class="n">dat_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">name_idx</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">dat_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">name_idx</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">codeRadioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">code_idx</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                        <span class="n">dat_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">code_idx</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">dat_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">code_idx</span><span class="p">])</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dat_name</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span>
+
+                <span class="c1"># search in the buses</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">nameRadioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">get_name_at</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">codeRadioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">get_code_at</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+
+                    <span class="c1"># if the search criteria match...</span>
+                    <span class="k">if</span> <span class="n">dat_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">xCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">set_x_at</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">x_idx</span><span class="p">])</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">yCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">set_y_at</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">])</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">longitudeCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">set_longitude_at</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">lon_idx</span><span class="p">])</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">latitudeCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">set_latitude_at</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">lat_idx</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_associations</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">assigned_count</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.import_profile">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.import_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">import_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select a file to be loaded</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># declare the allowed file types</span>
+        <span class="n">files_types</span> <span class="o">=</span> <span class="s2">&quot;Formats (*.xlsx *.xls *.csv)&quot;</span>
+        <span class="c1"># call dialog to select the file</span>
+        <span class="c1"># filename, type_selected = QFileDialog.getOpenFileNameAndFilter(self, &#39;Save file&#39;, &#39;&#39;, files_types)</span>
+
+        <span class="c1"># call dialog to select the file</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">type_selected</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Open file&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">files_types</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_file_now</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.open_file_now">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.open_file_now">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_file_now</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opena file</span>
+<span class="sd">        :param filename: path of the file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># get the filename extension</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+            <span class="c1"># Depending on the extension load the file</span>
+            <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.xlsx&#39;</span><span class="p">,</span> <span class="s1">&#39;.xls&#39;</span><span class="p">]:</span>
+
+                <span class="c1"># select the sheet from the file</span>
+                <span class="n">excel_window</span> <span class="o">=</span> <span class="n">ExcelDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="n">excel_window</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                <span class="n">sheet_index</span> <span class="o">=</span> <span class="n">excel_window</span><span class="o">.</span><span class="n">excel_sheet</span>
+
+                <span class="k">if</span> <span class="n">sheet_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_index</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span>
+
+            <span class="c1"># check for duplicates</span>
+            <span class="n">unique_hdr</span><span class="p">,</span> <span class="n">duplicate_hdr</span> <span class="o">=</span> <span class="n">find_duplicates</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">duplicate_hdr</span><span class="p">):</span>
+                <span class="c1"># notify</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">hdr</span> <span class="ow">in</span> <span class="n">duplicate_hdr</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Duplicated header&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">hdr</span><span class="p">)</span>
+
+                <span class="n">logs_dialogue</span> <span class="o">=</span> <span class="n">LogsDialogue</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Duplicated headers&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">expand_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">logs_dialogue</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+                <span class="c1"># filter the headers</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_frame</span><span class="p">[</span><span class="n">unique_hdr</span><span class="p">]</span>
+
+            <span class="c1"># set the profile names list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_combo_boxes</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_associations</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assigned_count</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="CoordinatesInputGUI.do_it">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGrid.Gui.FileDialogues.CoordinatesInput.html#VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue.CoordinatesInputGUI.do_it">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">do_it</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close. The data has to be queried later to the object by the parent by calling get_association_data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">assigned_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># maybe the user clicked on accept without assigning, so assign as a last resort</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign</span><span class="p">()</span>
+
+        <span class="c1"># assign the values back</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">xCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">get_x_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">yCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">get_y_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">longitudeCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">get_longitude_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="o">.</span><span class="n">longitude</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">longitude</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">latitudeCheckBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">associations</span><span class="o">.</span><span class="n">get_latitude_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="o">.</span><span class="n">latitude</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">latitude</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="c1"># if __name__ == &quot;__main__&quot;:</span>
+<span class="c1">#     app = QtWidgets.QApplication(sys.argv)</span>
+<span class="c1">#</span>
+<span class="c1">#     class TestObj:</span>
+<span class="c1">#         def __init__(self, name, code, x=0, y=0, latitude=0, longitude=0):</span>
+<span class="c1">#             self.name = name</span>
+<span class="c1">#             self.code = code</span>
+<span class="c1">#             self.x = x</span>
+<span class="c1">#             self.y = y</span>
+<span class="c1">#             self.latitude = latitude</span>
+<span class="c1">#             self.longitude = longitude</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#     window = CoordinatesInputGUI(list_of_objects=[TestObj(&#39;Test object&#39;, &#39;code&#39;)] * 10)</span>
+<span class="c1">#     window.resize(1.61 * 700.0, 600.0)  # golden ratio</span>
+<span class="c1">#     window.show()</span>
+<span class="c1">#     sys.exit(app.exec())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

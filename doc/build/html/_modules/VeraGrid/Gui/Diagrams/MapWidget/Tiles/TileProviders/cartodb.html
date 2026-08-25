@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb</h1><div class="highlight"><pre>
+<span></span><span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018 Ross Wilson</span>
+<span class="c1"># Copyright (c) 2024, Santiago Peñate Vera</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A tile source that serves OpenStreetMap tiles from server(s).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span>  <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Tiles.tiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tiles</span>
+
+
+<div class="viewcode-block" id="CartoDbTiles">
+<a class="viewcode-back" href="../../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.html#VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb.CartoDbTiles">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CartoDbTiles</span><span class="p">(</span><span class="n">Tiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An object to source server tiles for pySlipQt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tiles_dir</span><span class="o">=</span><span class="s1">&#39;open_street_map_tiles&#39;</span><span class="p">,</span>
+                 <span class="n">http_proxy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">tile_servers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">url_path</span><span class="o">=</span><span class="s1">&#39;/</span><span class="si">{Z}</span><span class="s1">/</span><span class="si">{X}</span><span class="s1">/</span><span class="si">{Y}</span><span class="s1">.png&#39;</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Carto positron&#39;</span><span class="p">,</span>
+                 <span class="n">tile_set_short_name</span><span class="o">=</span><span class="s1">&#39;CartoDb Dark Matter&#39;</span><span class="p">,</span>
+                 <span class="n">tile_set_version</span><span class="o">=</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span>
+                 <span class="n">attribution</span><span class="o">=</span><span class="s2">&quot;© CARTO, © OpenStreetMap contributors&quot;</span><span class="p">,</span>
+                 <span class="n">min_zoom</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">max_zoom</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">22</span><span class="p">,</span>
+                 <span class="n">tile_width</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+                 <span class="n">tile_height</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override the base class for these tiles.</span>
+<span class="sd">        Basically, just fill in the BaseTiles class with values from above</span>
+<span class="sd">        and provide the Geo2Tile() and Tile2Geo() methods.</span>
+<span class="sd">        :param tiles_dir: Tiles directory</span>
+<span class="sd">        :param http_proxy: Proxy URL</span>
+<span class="sd">        :param tile_servers: List of tile servers</span>
+<span class="sd">        :param url_path: extra path to query the tiles</span>
+<span class="sd">        :param name: Name of the tile set</span>
+<span class="sd">        :param tile_set_short_name: Short name of the tile set</span>
+<span class="sd">        :param tile_set_version: Version of the tile set</span>
+<span class="sd">        :param attribution: Attribution string of the tile set</span>
+<span class="sd">        :param min_zoom: Minimal zoom</span>
+<span class="sd">        :param max_zoom: Maximum zoom (+1)</span>
+<span class="sd">        :param tile_width: Width of the tile (px)</span>
+<span class="sd">        :param tile_height: Height of the tile (px)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tile_set_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">tile_set_short_name</span><span class="o">=</span><span class="n">tile_set_short_name</span><span class="p">,</span>
+                         <span class="n">tile_set_version</span><span class="o">=</span><span class="n">tile_set_version</span><span class="p">,</span>
+                         <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="n">z</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_zoom</span><span class="p">,</span> <span class="n">max_zoom</span><span class="p">)],</span>
+                         <span class="n">tile_width</span><span class="o">=</span><span class="n">tile_width</span><span class="p">,</span>
+                         <span class="n">tile_height</span><span class="o">=</span><span class="n">tile_height</span><span class="p">,</span>
+                         <span class="n">tiles_dir</span><span class="o">=</span><span class="n">tiles_dir</span><span class="p">,</span>
+                         <span class="n">servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;https://basemaps.cartocdn.com/dark_all/&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">tile_servers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">tile_servers</span><span class="p">,</span>
+                         <span class="n">url_path</span><span class="o">=</span><span class="n">url_path</span><span class="p">,</span>
+                         <span class="n">max_server_requests</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                         <span class="n">max_lru</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                         <span class="n">http_proxy</span><span class="o">=</span><span class="n">http_proxy</span><span class="p">,</span>
+                         <span class="n">attribution</span><span class="o">=</span><span class="n">attribution</span><span class="p">)</span>
+
+        <span class="c1"># get tile information into instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_tiles_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_tiles_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppd_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppd_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CartoDbTiles.copy">
+<a class="viewcode-back" href="../../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.html#VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb.CartoDbTiles.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;CartoDbTiles&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copy of this object</span>
+<span class="sd">        :return: CartoDbTiles</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cpy</span> <span class="o">=</span> <span class="n">CartoDbTiles</span><span class="p">(</span><span class="n">tiles_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tiles_dir</span><span class="p">,</span>
+                           <span class="n">http_proxy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">http_proxy</span><span class="p">,</span>
+                           <span class="n">tile_servers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">servers</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                           <span class="n">url_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">url_path</span><span class="p">,</span>
+                           <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_set_name</span><span class="p">,</span>
+                           <span class="n">tile_set_short_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_set_short_name</span><span class="p">,</span>
+                           <span class="n">tile_set_version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_set_version</span><span class="p">,</span>
+                           <span class="n">attribution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attribution_string</span><span class="p">,</span>
+                           <span class="n">min_zoom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_level</span><span class="p">,</span>
+                           <span class="n">max_zoom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                           <span class="n">tile_width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_width</span><span class="p">,</span>
+                           <span class="n">tile_height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_height</span>
+                           <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cpy</span></div>
+
+
+<div class="viewcode-block" id="CartoDbTiles.Geo2Tile">
+<a class="viewcode-back" href="../../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.html#VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb.CartoDbTiles.Geo2Tile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Geo2Tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert geo to tile fractional coordinates for level in use.</span>
+<span class="sd">        geo  tuple of geo coordinates (longitude, latitude)</span>
+<span class="sd">        Note that we assume the point *is* on the map!</span>
+<span class="sd">        Code taken from [https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames]</span>
+
+<span class="sd">        Lon./lat. to tile numbers:</span>
+<span class="sd">        n = 2 ^ zoom</span>
+<span class="sd">        x_tile = n * ((lon_deg + 180) / 360)</span>
+<span class="sd">        y_tile = n * (1 - (log(tan(lat_rad) + sec(lat_rad)) / π)) / 2</span>
+
+<span class="sd">        :return: This code returns the coordinate of the upper left point of the tile. (x_tile, y_tile)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lat_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+        <span class="n">x_tile</span> <span class="o">=</span> <span class="p">(</span><span class="n">longitude</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">360.0</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="n">y_tile</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)))</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span>
+
+        <span class="k">return</span> <span class="n">x_tile</span><span class="p">,</span> <span class="n">y_tile</span></div>
+
+
+<div class="viewcode-block" id="CartoDbTiles.Tile2Geo">
+<a class="viewcode-back" href="../../../../../../../rst_source/api/auto/VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.html#VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb.CartoDbTiles.Tile2Geo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Tile2Geo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_tile</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y_tile</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert tile fractional coordinates to geo for level in use.</span>
+<span class="sd">        tile  a tuple (x_tile, y_tile) of tile fractional coordinates</span>
+<span class="sd">        Note that we assume the point *is* on the map!</span>
+<span class="sd">        Code taken from [https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames]</span>
+
+<span class="sd">        n = 2 ^ zoom</span>
+<span class="sd">        lon_deg = x_tile / n * 360.0 - 180.0</span>
+<span class="sd">        lat_rad = arctan(sinh(π * (1 - 2 * y_tile / n)))</span>
+<span class="sd">        lat_deg = lat_rad * 180.0 / π</span>
+
+<span class="sd">        This returns the NW-corner of the square.</span>
+<span class="sd">        Use the function with x_tile+1 and/or y_tile+1 to get the other corners.</span>
+<span class="sd">        With x_tile+0.5 &amp; y_tile+0.5 it will return the center of the tile.</span>
+
+<span class="sd">        :return: This code returns the coordinate of the upper left point of the tile. (longitude, latitude)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span>
+        <span class="n">longitude</span> <span class="o">=</span> <span class="n">x_tile</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="mf">180.0</span>
+        <span class="n">y_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y_tile</span> <span class="o">/</span> <span class="n">n</span><span class="p">)))</span>
+        <span class="n">latitude</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">y_rad</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">latitude</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

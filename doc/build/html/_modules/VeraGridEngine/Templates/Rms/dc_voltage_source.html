@@ -1,0 +1,552 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Templates.Rms.dc_voltage_source &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Templates.Rms.dc_voltage_source</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Templates.Rms.dc_voltage_source</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">symbolic</span> <span class="k">as</span> <span class="n">sym</span>
+
+
+<div class="viewcode-block" id="DCVoltageSource">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCVoltageSource">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCVoltageSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds an RMS model template for a DC voltage source with capacitive filtering.</span>
+<span class="sd">    </span>
+<span class="sd">    Models a DC voltage source (e.g., photovoltaic array, battery) connected through</span>
+<span class="sd">    a DC-link capacitor and series resistance. The model captures the DC-side dynamics</span>
+<span class="sd">    and power injection into the AC grid.</span>
+<span class="sd">    </span>
+<span class="sd">    The circuit consists of:</span>
+<span class="sd">    - DC voltage source (Vpv) with internal resistance (Rpv)</span>
+<span class="sd">    - DC-link capacitor (C) for energy storage and ripple filtering</span>
+<span class="sd">    - DC current (Idc) and power (Pdc) output to the converter</span>
+<span class="sd">    </span>
+<span class="sd">    The differential-algebraic equations governing the system:</span>
+<span class="sd">        - Algebraic: Pdc = Idc * Vdc (power balance)</span>
+<span class="sd">        - Algebraic: Vpv = Vpv0 (source voltage)</span>
+<span class="sd">        - Differential: C*dVdc/dt + Idc = (Vpv - Vdc)/Rpv (capacitor dynamics)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        Vdc: DC voltage variable (pu)</span>
+<span class="sd">        name (str): Name of the DC voltage source model</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RmsModelTemplate: Configured RMS model template for DC voltage source simulation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+
+    <span class="c1"># Vars:</span>
+    <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
+    <span class="n">Pdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pdc&#39;</span><span class="p">)</span>
+    <span class="n">Vpv</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vpv&#39;</span><span class="p">)</span>
+    <span class="n">dVdcdt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="s1">&#39;dVdcdt&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">Vdc</span><span class="p">)</span>
+
+    <span class="c1"># Parameters</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="n">Rpv</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Rpv&#39;</span><span class="p">)</span>
+    <span class="n">Vpv0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vpv0&#39;</span><span class="p">)</span>
+
+    <span class="n">event_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">C</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+        <span class="n">Rpv</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.001</span><span class="p">),</span>
+        <span class="n">Vpv0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">dc_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Pdc</span> <span class="o">-</span> <span class="n">Idc</span> <span class="o">*</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Vpv</span> <span class="o">-</span> <span class="n">Vpv0</span><span class="p">,</span>
+            <span class="n">dVdcdt</span> <span class="o">*</span> <span class="n">C</span> <span class="o">+</span> <span class="n">Idc</span> <span class="o">-</span> <span class="p">(</span><span class="n">Vpv</span> <span class="o">-</span> <span class="n">Vdc</span><span class="p">)</span> <span class="o">/</span> <span class="n">Rpv</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Idc</span><span class="p">,</span> <span class="n">Pdc</span><span class="p">,</span> <span class="n">Vpv</span><span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dVdcdt</span><span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Pdc</span><span class="p">,</span> <span class="n">Idc</span><span class="p">],</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">Idc</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Vpv0</span><span class="p">:</span> <span class="n">Vdc</span> <span class="o">+</span> <span class="n">Rpv</span> <span class="o">*</span> <span class="p">(</span><span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">),</span>
+            <span class="n">Vpv</span><span class="p">:</span> <span class="n">Vpv0</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">Pdc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">:</span> <span class="n">Idc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">:</span> <span class="n">Vdc</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+<div class="viewcode-block" id="DCCurrentSource">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCCurrentSource">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCCurrentSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds an RMS model template for a DC current source with capacitive filtering.</span>
+
+<span class="sd">    Models a DC current source (e.g., fuel cell, grid-connected inverter) connected through</span>
+<span class="sd">    a DC-link capacitor and series resistance. The model captures the DC-side dynamics</span>
+<span class="sd">    and power injection into the AC grid.</span>
+<span class="sd">    </span>
+<span class="sd">    The circuit consists of:</span>
+<span class="sd">    - DC voltage source (Vpv) with internal resistance (Rpv)</span>
+<span class="sd">    - DC-link capacitor (C) for energy storage and ripple filtering</span>
+<span class="sd">    - DC current (Idc) and power (Pdc) output to the converter</span>
+<span class="sd">    </span>
+<span class="sd">    The differential-algebraic equations governing the system:</span>
+<span class="sd">        - Algebraic: Pdc = Idc * Vdc (power balance)</span>
+<span class="sd">        - Algebraic: Vpv = Vpv0 (source voltage)</span>
+<span class="sd">        - Differential: C*dVdc/dt + Idc = (Vpv - Vdc)/Rpv (capacitor dynamics)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        Vdc: DC voltage variable (pu)</span>
+<span class="sd">        name (str): Name of the DC voltage source model</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RmsModelTemplate: Configured RMS model template for DC voltage source simulation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+
+    <span class="c1"># Vars:</span>
+    <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
+    <span class="n">Idc_src</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc_src&#39;</span><span class="p">)</span>
+    <span class="n">Pdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pdc&#39;</span><span class="p">)</span>
+    <span class="n">Idc_src0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc_src0&#39;</span><span class="p">)</span>
+    <span class="n">dVdcdt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="s1">&#39;dVdcdt&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">Vdc</span><span class="p">)</span>
+
+    <span class="c1"># Parameters</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="n">Rpv</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Rpv&#39;</span><span class="p">)</span>
+    <span class="n">Vpv0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vpv0&#39;</span><span class="p">)</span>
+
+    <span class="n">event_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">C</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>
+        <span class="n">Rpv</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.005</span><span class="p">),</span>
+        <span class="n">Vpv0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">Idc_src0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">dc_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Pdc</span> <span class="o">-</span> <span class="n">Idc</span> <span class="o">*</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Idc_src</span> <span class="o">-</span> <span class="n">Idc_src0</span><span class="p">,</span>
+            <span class="n">dVdcdt</span> <span class="o">*</span> <span class="n">C</span> <span class="o">+</span> <span class="n">Idc</span> <span class="o">-</span> <span class="n">Idc_src</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Idc</span><span class="p">,</span> <span class="n">Pdc</span><span class="p">,</span> <span class="n">Idc_src</span><span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dVdcdt</span><span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Pdc</span><span class="p">,</span> <span class="n">Idc</span><span class="p">],</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">Idc</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Idc_src0</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Idc_src</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Vpv0</span><span class="p">:</span> <span class="n">Vdc</span> <span class="o">+</span> <span class="n">Rpv</span> <span class="o">*</span> <span class="p">(</span><span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">Pdc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">:</span> <span class="n">Idc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">:</span> <span class="n">Vdc</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<div class="viewcode-block" id="DCPowerLimitedSource">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCPowerLimitedSource">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCPowerLimitedSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RMS DC source driven by a power reference with saturation.</span>
+
+<span class="sd">    This model injects a commanded DC power into the DC-link while limiting</span>
+<span class="sd">    the requested power with hard saturation:</span>
+
+<span class="sd">        P_cmd = hard_sat(Pdc_ref0, -Pmax, Pmax)</span>
+<span class="sd">        Idc_src = P_cmd / (Vdc + eps_v)</span>
+
+<span class="sd">    DC-link dynamics are then:</span>
+
+<span class="sd">        C * dVdc/dt + Idc - Idc_src = 0</span>
+
+<span class="sd">    where Pdc = Idc * Vdc is the converter-side DC power variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+
+    <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
+    <span class="n">Idc_src</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc_src&#39;</span><span class="p">)</span>
+    <span class="n">Pdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pdc&#39;</span><span class="p">)</span>
+    <span class="n">dVdcdt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="s1">&#39;dVdcdt&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">Vdc</span><span class="p">)</span>
+
+    <span class="n">C</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="n">Pdc_ref0</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pdc_ref0&#39;</span><span class="p">)</span>
+    <span class="n">Pmax</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pmax&#39;</span><span class="p">)</span>
+    <span class="n">eps_v</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;eps_v&#39;</span><span class="p">)</span>
+
+    <span class="n">p_cmd</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">Pdc_ref0</span><span class="p">,</span> <span class="o">-</span><span class="n">Pmax</span><span class="p">,</span> <span class="n">Pmax</span><span class="p">)</span>
+
+    <span class="n">event_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">C</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>
+        <span class="n">Pdc_ref0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">Pmax</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span>
+        <span class="n">eps_v</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">dc_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Pdc</span> <span class="o">-</span> <span class="n">Idc</span> <span class="o">*</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Idc_src</span> <span class="o">-</span> <span class="n">p_cmd</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vdc</span> <span class="o">+</span> <span class="n">eps_v</span><span class="p">),</span>
+            <span class="n">dVdcdt</span> <span class="o">*</span> <span class="n">C</span> <span class="o">+</span> <span class="n">Idc</span> <span class="o">-</span> <span class="n">Idc_src</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Idc</span><span class="p">,</span> <span class="n">Pdc</span><span class="p">,</span> <span class="n">Idc_src</span><span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dVdcdt</span><span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Pdc</span><span class="p">,</span> <span class="n">Idc</span><span class="p">],</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">Idc</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vdc</span> <span class="o">+</span> <span class="n">eps_v</span><span class="p">),</span>
+            <span class="n">Idc_src</span><span class="p">:</span> <span class="n">Idc</span><span class="p">,</span>
+            <span class="n">Pdc_ref0</span><span class="p">:</span> <span class="n">Pdc</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">Pdc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">:</span> <span class="n">Idc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">:</span> <span class="n">Vdc</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<div class="viewcode-block" id="DCPVSourceAveraged">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCPVSourceAveraged">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCPVSourceAveraged</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Averaged PV source with MPPT-like voltage reference and DC-link capacitor.</span>
+
+<span class="sd">    Model structure:</span>
+<span class="sd">    - Irradiance/temperature dependent available PV current (Ipv_av)</span>
+<span class="sd">    - MPPT voltage reference set to estimated Vmp</span>
+<span class="sd">    - Averaged boost relation to inject DC current into the link</span>
+<span class="sd">    - DC-link capacitor dynamics: Cdc * dVdc/dt + Idc - Idc_src = 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+
+    <span class="c1"># Variables</span>
+    <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
+    <span class="n">Idc_src</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc_src&#39;</span><span class="p">)</span>
+    <span class="n">Pdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Pdc&#39;</span><span class="p">)</span>
+    <span class="n">Ipv_av</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ipv_av&#39;</span><span class="p">)</span>
+    <span class="n">Vmp_est</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vmp_est&#39;</span><span class="p">)</span>
+    <span class="n">Vpv_ref</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vpv_ref&#39;</span><span class="p">)</span>
+    <span class="n">duty</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;duty&#39;</span><span class="p">)</span>
+    <span class="n">dVdcdt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="s1">&#39;dVdcdt&#39;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">Vdc</span><span class="p">)</span>
+
+    <span class="c1"># Parameters</span>
+    <span class="n">Cdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Cdc&#39;</span><span class="p">)</span>
+    <span class="n">eta_boost</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;eta_boost&#39;</span><span class="p">)</span>
+    <span class="n">Isc_stc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Isc_stc&#39;</span><span class="p">)</span>
+    <span class="n">Vmp_stc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Vmp_stc&#39;</span><span class="p">)</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+    <span class="n">G_stc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;G_stc&#39;</span><span class="p">)</span>
+    <span class="n">T_stc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;T_stc&#39;</span><span class="p">)</span>
+    <span class="n">alpha_isc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;alpha_isc&#39;</span><span class="p">)</span>
+    <span class="n">beta_vmp</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;beta_vmp&#39;</span><span class="p">)</span>
+    <span class="n">duty_min</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;duty_min&#39;</span><span class="p">)</span>
+    <span class="n">duty_max</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;duty_max&#39;</span><span class="p">)</span>
+    <span class="n">eps_v</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;eps_v&#39;</span><span class="p">)</span>
+
+    <span class="n">event_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">Cdc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+        <span class="n">eta_boost</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">Isc_stc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">Vmp_stc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+        <span class="n">G</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span>
+        <span class="n">G_stc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
+        <span class="n">T_stc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span>
+        <span class="n">alpha_isc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0005</span><span class="p">),</span>
+        <span class="n">beta_vmp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0025</span><span class="p">),</span>
+        <span class="n">duty_min</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">duty_max</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.999</span><span class="p">),</span>
+        <span class="n">eps_v</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">duty_unsat</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Vpv_ref</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vdc</span> <span class="o">+</span> <span class="n">eps_v</span><span class="p">)</span>
+    <span class="n">duty_limited</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">duty_min</span><span class="p">,</span> <span class="n">duty_unsat</span><span class="p">)</span>
+
+    <span class="n">dc_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Pdc</span> <span class="o">-</span> <span class="n">Idc</span> <span class="o">*</span> <span class="n">Vdc</span><span class="p">,</span>
+            <span class="n">Ipv_av</span> <span class="o">-</span> <span class="n">Isc_stc</span> <span class="o">*</span> <span class="p">(</span><span class="n">G</span> <span class="o">/</span> <span class="n">G_stc</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha_isc</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">T_stc</span><span class="p">)),</span>
+            <span class="n">Vmp_est</span> <span class="o">-</span> <span class="n">Vmp_stc</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">beta_vmp</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">T_stc</span><span class="p">)),</span>
+            <span class="n">Vpv_ref</span> <span class="o">-</span> <span class="n">Vmp_est</span><span class="p">,</span>
+            <span class="n">duty</span> <span class="o">-</span> <span class="n">duty_limited</span><span class="p">,</span>
+            <span class="n">Idc_src</span> <span class="o">-</span> <span class="n">eta_boost</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">duty</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ipv_av</span><span class="p">,</span>
+            <span class="n">dVdcdt</span> <span class="o">*</span> <span class="n">Cdc</span> <span class="o">+</span> <span class="n">Idc</span> <span class="o">-</span> <span class="n">Idc_src</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Idc</span><span class="p">,</span> <span class="n">Pdc</span><span class="p">,</span> <span class="n">Ipv_av</span><span class="p">,</span> <span class="n">Vmp_est</span><span class="p">,</span> <span class="n">Vpv_ref</span><span class="p">,</span> <span class="n">duty</span><span class="p">,</span> <span class="n">Idc_src</span><span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span><span class="n">dVdcdt</span><span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span><span class="n">Pdc</span><span class="p">,</span> <span class="n">Idc</span><span class="p">],</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">Ipv_av</span><span class="p">:</span> <span class="n">Isc_stc</span> <span class="o">*</span> <span class="p">(</span><span class="n">G</span> <span class="o">/</span> <span class="n">G_stc</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha_isc</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">T_stc</span><span class="p">)),</span>
+            <span class="n">Vmp_est</span><span class="p">:</span> <span class="n">Vmp_stc</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">beta_vmp</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">T_stc</span><span class="p">)),</span>
+            <span class="n">Vpv_ref</span><span class="p">:</span> <span class="n">Vmp_est</span><span class="p">,</span>
+            <span class="n">duty</span><span class="p">:</span> <span class="n">duty_limited</span><span class="p">,</span>
+            <span class="n">Idc_src</span><span class="p">:</span> <span class="n">eta_boost</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">duty</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ipv_av</span><span class="p">,</span>
+            <span class="n">Idc</span><span class="p">:</span> <span class="n">Idc_src</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">Pdc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">:</span> <span class="n">Idc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">:</span> <span class="n">Vdc</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+
+<div class="viewcode-block" id="DCSimpleSourceAveraged">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCSimpleSourceAveraged">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCSimpleSourceAveraged</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simplified averaged DC source with a DC-link capacitor.</span>
+
+<span class="sd">    Model structure:</span>
+<span class="sd">    - A controlled or fixed DC current source injects current into the DC link.</span>
+<span class="sd">    - The converter extracts active power from the DC link.</span>
+<span class="sd">    - A parallel DC resistance models losses/damping.</span>
+<span class="sd">    - The DC-link capacitor defines the Vdc dynamic state.</span>
+
+<span class="sd">    The core equation is:</span>
+
+<span class="sd">        Cdc * dVdc/dt = Idc_src - Idc_conv - Vdc / Rdc</span>
+
+<span class="sd">    with:</span>
+
+<span class="sd">        Pdc = Vdc * Idc_conv</span>
+
+<span class="sd">    Sign convention:</span>
+<span class="sd">    - Idc_src &gt; 0 injects current into the DC link.</span>
+<span class="sd">    - Idc_conv &gt; 0 means the converter extracts power from the DC link.</span>
+<span class="sd">    - Pdc &gt; 0 means active power is delivered from DC side to AC side.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Variables</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">Idc_conv</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Idc_conv&quot;</span><span class="p">)</span>
+    <span class="n">Idc_src</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Idc_src&quot;</span><span class="p">)</span>
+    <span class="n">Idc_loss</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Idc_loss&quot;</span><span class="p">)</span>
+    <span class="n">Pdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pdc&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Vdc is the actual state variable. dVdcdt is the derivative variable linked</span>
+    <span class="c1"># to Vdc through the dynamic framework.</span>
+    <span class="n">dVdcdt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="s2">&quot;dVdcdt&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">Vdc</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Parameters</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">Cdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Cdc&quot;</span><span class="p">)</span>
+    <span class="n">Rdc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Rdc&quot;</span><span class="p">)</span>
+    <span class="n">Idc_src_ref</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Idc_src_ref&quot;</span><span class="p">)</span>
+    <span class="n">eps_v</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;eps_v&quot;</span><span class="p">)</span>
+
+    <span class="n">event_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">Cdc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+        <span class="n">Rdc</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">Idc_src_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">eps_v</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">Vdc_init</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Rdc</span> <span class="o">*</span> <span class="n">Idc_src_ref</span>
+        <span class="o">+</span> <span class="p">((</span><span class="n">Rdc</span> <span class="o">*</span> <span class="n">Idc_src_ref</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">Rdc</span> <span class="o">*</span> <span class="n">Pdc</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Algebraic and differential equations</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="n">dc_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+            <span class="c1"># The source current is directly imposed. Later this can be replaced</span>
+            <span class="c1"># by a controller, PV law, battery law, or DC network equation.</span>
+            <span class="n">Idc_src</span> <span class="o">-</span> <span class="n">Idc_src_ref</span><span class="p">,</span>
+            <span class="n">Pdc</span> <span class="o">-</span> <span class="n">Vdc</span> <span class="o">*</span> <span class="n">Idc_conv</span><span class="p">,</span>
+            <span class="n">Idc_loss</span> <span class="o">-</span> <span class="n">Vdc</span> <span class="o">/</span> <span class="n">Rdc</span><span class="p">,</span>
+
+            <span class="c1"># DC-link capacitor dynamic balance.</span>
+            <span class="c1"># Cdc * dVdc/dt = Idc_src - Idc_conv - Idc_loss</span>
+            <span class="n">Cdc</span> <span class="o">*</span> <span class="n">dVdcdt</span> <span class="o">-</span> <span class="n">Idc_src</span> <span class="o">+</span> <span class="n">Idc_conv</span> <span class="o">+</span> <span class="n">Idc_loss</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Idc_src</span><span class="p">,</span>
+            <span class="n">Idc_conv</span><span class="p">,</span>
+            <span class="n">Idc_loss</span><span class="p">,</span>
+            <span class="n">Pdc</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">diff_vars</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dVdcdt</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Pdc</span><span class="p">,</span>
+            <span class="n">Idc_conv</span><span class="p">,</span>
+            <span class="n">Idc_src</span><span class="p">,</span>
+            <span class="n">Idc_loss</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">Idc_src</span><span class="p">:</span> <span class="n">Idc_src_ref</span><span class="p">,</span>
+            <span class="n">Vdc</span><span class="p">:</span> <span class="n">Vdc_init</span><span class="p">,</span>
+            <span class="n">Idc_loss</span><span class="p">:</span> <span class="n">Vdc</span> <span class="o">/</span> <span class="n">Rdc</span><span class="p">,</span>
+            <span class="n">Idc_conv</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="p">(</span><span class="n">Vdc</span> <span class="o">+</span> <span class="n">eps_v</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">Pdc</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">:</span> <span class="n">Idc_conv</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vdc</span><span class="p">:</span> <span class="n">Vdc</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+
+    <span class="k">return</span> <span class="n">templ</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

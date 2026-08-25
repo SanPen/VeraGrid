@@ -1,0 +1,574 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Parents.dynamic_bus_parent &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Parents.dynamic_bus_parent</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Parents.dynamic_bus_parent</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.physical_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhysicalDevice</span><span class="p">,</span> <span class="n">GCProp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DeviceType</span><span class="p">,</span> <span class="n">BuildStatus</span><span class="p">,</span> <span class="n">SubObjectType</span><span class="p">,</span> <span class="n">PrpCat</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="EmtBusConnectionSide">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectionSide">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmtBusConnectionSide</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerate the semantic side by which one EMT model is attached to one bus.</span>
+
+<span class="sd">    The bus-local reconnect algorithm must know whether one device consumes the</span>
+<span class="sd">    bus shell as a single-bus injection, a branch ``from`` terminal, or a branch</span>
+<span class="sd">    ``to`` terminal. Using one enum keeps the registry explicit and refactorable.</span>
+
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BUS</span> <span class="o">=</span> <span class="s2">&quot;bus&quot;</span>
+    <span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;from&quot;</span>
+    <span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;to&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EmtBusConnectedModelRecord">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectedModelRecord">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmtBusConnectedModelRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store one materialized EMT model endpoint connected to one bus.</span>
+
+<span class="sd">    The bus EMT shell can be recreated when the required phase layout expands.</span>
+<span class="sd">    When that happens, the bus must reconnect every already-connected EMT model</span>
+<span class="sd">    using the correct side-specific helper. This light record stores the exact</span>
+<span class="sd">    metadata needed for that deterministic rebinding.</span>
+
+<span class="sd">    :param device: Owning device of the EMT model.</span>
+<span class="sd">    :param model: Materialized EMT model block.</span>
+<span class="sd">    :param side: Semantic side by which the model is attached to the bus.</span>
+<span class="sd">    :param device_tpe: Device type used to select the proper reconnect helper.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_device&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_side&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_device_tpe&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                 <span class="n">model</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                 <span class="n">side</span><span class="p">:</span> <span class="n">EmtBusConnectionSide</span><span class="p">,</span>
+                 <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one explicit bus-to-model EMT connection record.</span>
+
+<span class="sd">        :param device: Owning device of the EMT model.</span>
+<span class="sd">        :param model: Materialized EMT model block.</span>
+<span class="sd">        :param side: Semantic side by which the model is attached to the bus.</span>
+<span class="sd">        :param device_tpe: Device type used to select the proper reconnect helper.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_side</span><span class="p">:</span> <span class="n">EmtBusConnectionSide</span> <span class="o">=</span> <span class="n">side</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">device_tpe</span>
+
+<div class="viewcode-block" id="EmtBusConnectedModelRecord.get_device">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectedModelRecord.get_device">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the owner device associated to this bus endpoint.</span>
+
+<span class="sd">        :return: Owning EMT device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span></div>
+
+
+<div class="viewcode-block" id="EmtBusConnectedModelRecord.get_model">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectedModelRecord.get_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the materialized EMT model block registered on the bus.</span>
+
+<span class="sd">        :return: EMT model block.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span></div>
+
+
+<div class="viewcode-block" id="EmtBusConnectedModelRecord.set_model">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectedModelRecord.set_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace the stored EMT model block for this bus endpoint.</span>
+
+<span class="sd">        Replacing the model is required when the device assigns a fresh EMT</span>
+<span class="sd">        template block and the bus registry must stop referencing the stale one.</span>
+
+<span class="sd">        :param model: New materialized EMT model block.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="EmtBusConnectedModelRecord.get_side">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectedModelRecord.get_side">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_side</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmtBusConnectionSide</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the semantic bus side represented by this record.</span>
+
+<span class="sd">        :return: Bus connection side.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_side</span></div>
+
+
+<div class="viewcode-block" id="EmtBusConnectedModelRecord.get_device_tpe">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.EmtBusConnectedModelRecord.get_device_tpe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_device_tpe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the device type stored in this record.</span>
+
+<span class="sd">        :return: Device type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_tpe</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="DynamicBusDevice">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicBusDevice</span><span class="p">(</span><span class="n">PhysicalDevice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parent class for devices with dynamic models</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_var_factory&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_rms_model&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_emt_model&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_pending_emt_devices&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;_emt_models_connected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_grid_synchronized_emt_model&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;rms_model&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">DaeBlockType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;RMS dynamic model&#39;</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">RMS</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;emt_model&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">SubObjectType</span><span class="o">.</span><span class="n">DaeBlockType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;EMT dynamic model&#39;</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">EMT</span><span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">device_type</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+                 <span class="n">build_status</span><span class="p">:</span> <span class="n">BuildStatus</span> <span class="o">=</span> <span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param name:</span>
+<span class="sd">        :param idtag:</span>
+<span class="sd">        :param code:</span>
+<span class="sd">        :param device_type:</span>
+<span class="sd">        :param build_status:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">PhysicalDevice</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                                <span class="n">build_status</span><span class="o">=</span><span class="n">build_status</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_var_factory</span><span class="p">:</span> <span class="n">VarFactory</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rms_model</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_model</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_emt_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EmtBusConnectedModelRecord</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid_synchronized_emt_model</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="DynamicBusDevice.set_var_factory">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.set_var_factory">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_var_factory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the shared variable factory used by RMS and EMT symbolic blocks.</span>
+
+<span class="sd">        :param val: Shared variable factory.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">VarFactory</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_factory</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VarFactory cannot accept </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rms_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the RMS model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rms_model</span>
+
+    <span class="nd">@rms_model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rms_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rms_model</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMS model cannot accept </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emt_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the EMT model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_model</span>
+
+    <span class="nd">@emt_model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emt_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_model</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_grid_synchronized_emt_model</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_emt_model</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EMT model cannot accept </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynamicBusDevice.mark_emt_model_grid_synchronized">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.mark_emt_model_grid_synchronized">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mark_emt_model_grid_synchronized</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mark the current EMT shell as managed by grid-topology synchronization.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid_synchronized_emt_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_model</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.is_emt_model_grid_synchronized">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.is_emt_model_grid_synchronized">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_emt_model_grid_synchronized</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the current EMT shell is the last grid-managed shell.</span>
+
+<span class="sd">        Replacing ``emt_model`` explicitly clears the marker, allowing</span>
+<span class="sd">        reconciliation to distinguish an external shell contract from one that</span>
+<span class="sd">        should follow later grid-topology changes.</span>
+
+<span class="sd">        :return: ``True`` when the current shell was synchronized from the grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_synchronized_emt_model</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_model</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.add_pending_emt_device">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.add_pending_emt_device">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_pending_emt_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store one single-bus device whose EMT model must wait for a bus shell.</span>
+
+<span class="sd">        :param device: Device waiting for one EMT bus shell.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_emt_devices</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pending_emt_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.remove_pending_emt_device">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.remove_pending_emt_device">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_pending_emt_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove one single-bus device from the pending EMT connection queue.</span>
+
+<span class="sd">        :param device: Device that no longer needs deferred EMT bus connection.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filtered_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">pending_device</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="k">for</span> <span class="n">pending_device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_emt_devices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pending_device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+                <span class="n">filtered_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pending_device</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_emt_devices</span> <span class="o">=</span> <span class="n">filtered_devices</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.get_pending_emt_devices">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.get_pending_emt_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pending_emt_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the devices waiting for deferred EMT bus connection.</span>
+
+<span class="sd">        :return: Copy of the pending EMT device list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_emt_devices</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.add_or_replace_emt_model_connected">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.add_or_replace_emt_model_connected">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_or_replace_emt_model_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                           <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                                           <span class="n">emt_model</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+                                           <span class="n">side</span><span class="p">:</span> <span class="n">EmtBusConnectionSide</span><span class="p">,</span>
+                                           <span class="n">device_tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add or replace one connected EMT endpoint in the bus-local registry.</span>
+
+<span class="sd">        The registry key is the pair ``(device, side)`` because one device can</span>
+<span class="sd">        only expose one endpoint per bus side. When the same device assigns a new</span>
+<span class="sd">        EMT model block, the existing record must be replaced instead of appended.</span>
+
+<span class="sd">        :param device: Owning device of the EMT model.</span>
+<span class="sd">        :param emt_model: EMT model block connected to this bus.</span>
+<span class="sd">        :param side: Semantic side of the connection relative to this bus.</span>
+<span class="sd">        :param device_tpe: Device type used for later reconnect dispatch.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">record</span><span class="p">:</span> <span class="n">EmtBusConnectedModelRecord</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span> <span class="ow">is</span> <span class="n">device</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">get_side</span><span class="p">()</span> <span class="o">==</span> <span class="n">side</span><span class="p">:</span>
+                    <span class="n">record</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="n">emt_model</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">EmtBusConnectedModelRecord</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                       <span class="n">model</span><span class="o">=</span><span class="n">emt_model</span><span class="p">,</span>
+                                       <span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="p">,</span>
+                                       <span class="n">device_tpe</span><span class="o">=</span><span class="n">device_tpe</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.remove_emt_model_connected_for_device">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.remove_emt_model_connected_for_device">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_emt_model_connected_for_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                              <span class="n">device</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                                              <span class="n">side</span><span class="p">:</span> <span class="n">EmtBusConnectionSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove connected EMT registry entries associated to one device.</span>
+
+<span class="sd">        Removing by device is the primary cleanup path because one device can</span>
+<span class="sd">        replace or clear its EMT model while still representing the same logical</span>
+<span class="sd">        bus endpoint.</span>
+
+<span class="sd">        :param device: Owning device whose entries must be removed.</span>
+<span class="sd">        :param side: Optional side filter when only one endpoint must be removed.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filtered_records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EmtBusConnectedModelRecord</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">record</span><span class="p">:</span> <span class="n">EmtBusConnectedModelRecord</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span><span class="p">:</span>
+            <span class="n">keep_record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span> <span class="ow">is</span> <span class="n">device</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">side</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">keep_record</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">get_side</span><span class="p">()</span> <span class="o">==</span> <span class="n">side</span><span class="p">:</span>
+                        <span class="n">keep_record</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">keep_record</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">keep_record</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">keep_record</span><span class="p">:</span>
+                <span class="n">filtered_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span> <span class="o">=</span> <span class="n">filtered_records</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.remove_emt_model_connected_for_model">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.remove_emt_model_connected_for_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_emt_model_connected_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emt_model</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove connected EMT registry entries associated to one concrete model block.</span>
+
+<span class="sd">        This cleanup path is useful when one stale block instance must be removed</span>
+<span class="sd">        explicitly regardless of which device currently owns it.</span>
+
+<span class="sd">        :param emt_model: Concrete EMT model block to remove.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filtered_records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EmtBusConnectedModelRecord</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">record</span><span class="p">:</span> <span class="n">EmtBusConnectedModelRecord</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">emt_model</span><span class="p">:</span>
+                <span class="n">filtered_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span> <span class="o">=</span> <span class="n">filtered_records</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.get_emt_models_connected">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.get_emt_models_connected">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_emt_models_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EmtBusConnectedModelRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the connected EMT endpoint registry for this bus.</span>
+
+<span class="sd">        :return: Copy of the connected EMT endpoint list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DynamicBusDevice.clear_emt_models_connected">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.dynamic_bus_parent.DynamicBusDevice.clear_emt_models_connected">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_emt_models_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear the connected EMT endpoint registry for this bus.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models_connected</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,802 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.IO.others.helper_pow2pp &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.IO.others.helper_pow2pp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.IO.others.helper_pow2pp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># import pandapower</span>
+<span class="c1"># import pypowsybl</span>
+<span class="c1"># from pypowsybl import PyPowsyblError</span>
+<span class="c1"># from pypowsybl.network import Network</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+
+<span class="n">IDENTIFIER_COLUMN_NAME</span> <span class="o">=</span> <span class="s2">&quot;uuid&quot;</span>
+<span class="c1"># empty_net = pandapower.create_empty_network()</span>
+<span class="n">EXPECTED_COLUMNS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="catch_exceptions">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.catch_exceptions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">catch_exceptions</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;An unexpected exception occurred in function </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="drop_irrelevant_columns">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.drop_irrelevant_columns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">drop_irrelevant_columns</span><span class="p">(</span>
+        <span class="n">element_table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">element_type</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">element_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EXPECTED_COLUMNS</span><span class="p">:</span>
+        <span class="c1"># keep all columns if in doubt</span>
+        <span class="k">return</span> <span class="n">element_table</span>
+    <span class="n">expected_columns</span> <span class="o">=</span> <span class="n">EXPECTED_COLUMNS</span><span class="p">[</span><span class="n">element_type</span><span class="p">]</span>
+    <span class="n">columns_to_keep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">element_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">expected_columns</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">element_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns_to_keep</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_switches">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.create_switches">[docs]</a>
+<span class="nd">@catch_exceptions</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_switches</span><span class="p">(</span>
+        <span class="n">pandapower_net</span><span class="p">:</span> <span class="s2">&quot;pandapower.pandapowerNet&quot;</span><span class="p">,</span> <span class="n">powsybl_net</span><span class="p">:</span> <span class="s2">&quot;Network&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pandapower_net</span>
+<span class="sd">    powsybl_net</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kind (DISCONNECTOR, BREAKER) --&gt; type (CB, LBS, DS)</span>
+<span class="sd">    open --&gt; not closed</span>
+<span class="sd">    retained</span>
+<span class="sd">    voltage_level_id</span>
+<span class="sd">    bus_breaker_bus1_id</span>
+<span class="sd">    bus_breaker_bus2_id</span>
+<span class="sd">    node1 --&gt; bus</span>
+<span class="sd">    node2 --&gt; element + et</span>
+<span class="sd">    fictitious</span>
+
+<span class="sd">    missing:</span>
+<span class="sd">    in_ka</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">switches</span> <span class="o">=</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_switches</span><span class="p">(</span><span class="n">all_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">switches</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="c1"># add identifier column</span>
+        <span class="n">pandapower_net</span><span class="p">[</span><span class="s2">&quot;switch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="s2">&quot;switch&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">pandapower_net</span><span class="p">[</span><span class="s2">&quot;switch&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">set_index_as_column</span><span class="p">(</span><span class="n">switches</span><span class="p">)</span>
+
+    <span class="n">translation_switch_types</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;BREAKER&quot;</span><span class="p">:</span> <span class="s2">&quot;CB&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DISCONNECTOR&quot;</span><span class="p">:</span> <span class="s2">&quot;DS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LOAD_BREAK_SWITCH&quot;</span><span class="p">:</span> <span class="s2">&quot;LBS&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;closed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="n">switches</span><span class="p">[</span><span class="s2">&quot;open&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">switch_type</span><span class="p">:</span> <span class="n">translation_switch_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">switch_type</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;z_ohm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span>
+
+    <span class="c1"># assign_buses_and_elements_switches(pandapower_net, powsybl_net, switches)</span>
+    <span class="n">switches_with_assigned_buses</span> <span class="o">=</span> <span class="n">create_and_match_buses_for_switches</span><span class="p">(</span>
+        <span class="n">pandapower_net</span><span class="p">,</span> <span class="n">powsybl_net</span>
+    <span class="p">)</span>
+    <span class="n">switches_without_connections</span> <span class="o">=</span> <span class="o">~</span><span class="n">switches</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+        <span class="n">switches_with_assigned_buses</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># switches_without_connections = set(switches.index.values).difference(</span>
+    <span class="c1">#     switches_with_assigned_buses[IDENTIFIER_COLUMN_NAME].values</span>
+    <span class="c1"># )</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">switches_without_connections</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;For </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">switches_without_connections</span><span class="p">)</span><span class="si">}</span><span class="s2"> no connections were assigned.&quot;</span><span class="p">)</span>
+    <span class="n">switches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">switches_with_assigned_buses</span><span class="p">,</span>
+        <span class="n">switches</span><span class="p">,</span>
+        <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span>
+        <span class="n">on</span><span class="o">=</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># if not switches.loc[:, [&quot;bus_breaker_bus1_id&quot;, &quot;bus_breaker_bus2_id&quot;]].isna().all(axis=None):</span>
+    <span class="c1">#     bus_breaker_mask = ~switches.loc[:, [&quot;bus_breaker_bus1_id&quot;, &quot;bus_breaker_bus2_id&quot;]].isna().any(axis=1).values</span>
+    <span class="c1">#     switches_bus_breaker = switches.loc[bus_breaker_mask, :]</span>
+    <span class="c1"># ToDo: no powerflow results for switches in powsybl</span>
+    <span class="n">pandapower_net</span><span class="o">.</span><span class="n">switch</span> <span class="o">=</span> <span class="n">drop_irrelevant_columns</span><span class="p">(</span><span class="n">switches</span><span class="p">,</span> <span class="s2">&quot;switch&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_and_match_buses_for_switches">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.create_and_match_buses_for_switches">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_and_match_buses_for_switches</span><span class="p">(</span><span class="n">pandapower_net</span><span class="p">,</span> <span class="n">powsybl_net</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pandapower_net</span>
+<span class="sd">    powsybl_net</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    pandapower only allows two types of switches: bus-bus switches and bus-element switches.</span>
+<span class="sd">    In the first case, a switch is connected to two pandapower-buses, in the second case, a switch is connected to a</span>
+<span class="sd">    pandapower-bus and an element from another pandapower-net-table. Only lines 2w-transformers and 3w-transformers are</span>
+<span class="sd">    allowed as elements for a bus-element-switch.</span>
+
+<span class="sd">    powsybl models switches differently:</span>
+<span class="sd">    The connections between switches and elements are defined by nodes. Either switches share nodes with other switches</span>
+<span class="sd">    or elements or they share a connection via another node.</span>
+
+<span class="sd">    There are three cases:</span>
+<span class="sd">    1. A switch shares a node with an element.</span>
+<span class="sd">        a. In this case, if the element is a transformer or a line, the element-index</span>
+<span class="sd">        will be referenced in the column &#39;element&#39; of table switch and the element type in the column &#39;et&#39;.</span>
+<span class="sd">        b. If the element is not a transformer or a line, we need to create a new bus between the element and the</span>
+<span class="sd">        switch.</span>
+<span class="sd">        The index of this new bus will then be referenced in the column &#39;element&#39; and the entry in column &#39;et&#39; will</span>
+<span class="sd">        be &#39;b&#39;.</span>
+<span class="sd">    2. Two switches share a node. In this case, we need to create a new bus between the switches. It will be referenced</span>
+<span class="sd">    in either the &#39;bus&#39;- or the &#39;element&#39;-column.</span>
+<span class="sd">    3. The nodes of two switches have an internal connection via another node. In this case, for each of these nodes not</span>
+<span class="sd">    directly referenced by any switch, we create a new bus. The new bus will be referenced by the switches in either the</span>
+<span class="sd">    &#39;bus&#39;- or the &#39;element&#39;-column.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pypowsybl</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyPowsyblError</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">new_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;et&quot;</span><span class="p">,</span> <span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span>
+    <span class="n">all_switches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">new_columns</span><span class="p">)</span>
+    <span class="n">elements_connected_to_switches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;bus_id&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">])</span>
+
+    <span class="c1"># check wether we have a node-breaker- or a bus-breaker-topology:</span>
+    <span class="n">voltage_levels</span> <span class="o">=</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">node_breaker_topology</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voltage_levels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_node_breaker_topology</span><span class="p">(</span><span class="n">voltage_levels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="n">PyPowsyblError</span><span class="p">:</span>
+            <span class="n">node_breaker_topology</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">voltage_level</span> <span class="ow">in</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">()</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">node_breaker_topology</span><span class="p">:</span>
+            <span class="n">all_switches</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">create_and_match_buses_for_switches_per_voltage_level_node_breaker</span><span class="p">(</span>
+                    <span class="n">all_switches</span><span class="p">,</span> <span class="n">pandapower_net</span><span class="p">,</span> <span class="n">powsybl_net</span><span class="p">,</span> <span class="n">voltage_level</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_switches</span><span class="p">,</span> <span class="n">elements_connected_to_switches</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">create_and_match_buses_for_switches_per_voltage_level_bus_breaker</span><span class="p">(</span>
+                    <span class="n">all_switches</span><span class="p">,</span>
+                    <span class="n">elements_connected_to_switches</span><span class="p">,</span>
+                    <span class="n">pandapower_net</span><span class="p">,</span>
+                    <span class="n">powsybl_net</span><span class="p">,</span>
+                    <span class="n">voltage_level</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">node_breaker_topology</span><span class="p">:</span>
+        <span class="n">connect_elements_to_switches_node_breaker</span><span class="p">(</span><span class="n">all_switches</span><span class="p">,</span> <span class="n">pandapower_net</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">connect_elements_to_switches_bus_breaker</span><span class="p">(</span>
+            <span class="n">all_switches</span><span class="p">,</span> <span class="n">elements_connected_to_switches</span><span class="p">,</span> <span class="n">pandapower_net</span>
+        <span class="p">)</span>
+
+    <span class="c1"># check validity of switches:</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;bus&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">subset_with_nan_entries</span> <span class="o">=</span> <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+            <span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The following </span><span class="si">{</span><span class="n">subset_with_nan_entries</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> switches have a nan-entry in column&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">subset_with_nan_entries</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_switches</span> <span class="o">=</span> <span class="n">all_switches</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="n">column</span><span class="p">:</span> <span class="nb">int</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">all_switches</span></div>
+
+
+
+<div class="viewcode-block" id="connect_elements_to_switches_bus_breaker">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.connect_elements_to_switches_bus_breaker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">connect_elements_to_switches_bus_breaker</span><span class="p">(</span>
+        <span class="n">all_switches</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">elements_connected_to_switches</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">pandapower_net</span><span class="p">:</span> <span class="s2">&quot;pandapower.pandapowerNet&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># 1. map bus-breaker-ids to bus-indices</span>
+    <span class="n">bus_breaker_id_to_bus_index</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">bus_id</span><span class="p">:</span> <span class="n">bus_int</span>
+        <span class="k">for</span> <span class="n">bus_int</span><span class="p">,</span> <span class="n">bus_id</span> <span class="ow">in</span> <span class="n">pandapower_net</span><span class="o">.</span><span class="n">bus</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span>
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="n">elements_connected_to_switches</span><span class="p">[</span><span class="s2">&quot;bus_int&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements_connected_to_switches</span><span class="p">[</span>
+        <span class="s2">&quot;bus_id&quot;</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">bus_breaker_id_to_bus_index</span><span class="p">)</span>
+    <span class="n">powsybl_table_name_to_pandapower_table_name</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;TWO_WINDINGS_TRANSFORMER&quot;</span><span class="p">:</span> <span class="s2">&quot;trafo&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;THREE_WINDINGS_TRANSFORMER&quot;</span><span class="p">:</span> <span class="s2">&quot;trafo3w&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DANGLING_LINE&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LINE&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LOAD&quot;</span><span class="p">:</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SHUNT_COMPENSATOR&quot;</span><span class="p">:</span> <span class="s2">&quot;shunt&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">powsybl_table_name</span> <span class="ow">in</span> <span class="n">elements_connected_to_switches</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">powsybl_table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">powsybl_table_name_to_pandapower_table_name</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">pandapower_table_name</span> <span class="o">=</span> <span class="n">powsybl_table_name_to_pandapower_table_name</span><span class="p">[</span>
+            <span class="n">powsybl_table_name</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">pandapower_table_name</span> <span class="o">==</span> <span class="s2">&quot;trafo&quot;</span><span class="p">:</span>
+            <span class="n">side_to_bus</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ONE&quot;</span><span class="p">:</span> <span class="s2">&quot;hv_bus&quot;</span><span class="p">,</span> <span class="s2">&quot;TWO&quot;</span><span class="p">:</span> <span class="s2">&quot;lv_bus&quot;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">pandapower_table_name</span> <span class="o">==</span> <span class="s2">&quot;trafo3w&quot;</span><span class="p">:</span>
+            <span class="n">side_to_bus</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ONE&quot;</span><span class="p">:</span> <span class="s2">&quot;hv_bus&quot;</span><span class="p">,</span> <span class="s2">&quot;TWO&quot;</span><span class="p">:</span> <span class="s2">&quot;mv_bus&quot;</span><span class="p">,</span> <span class="s2">&quot;THREE&quot;</span><span class="p">:</span> <span class="s2">&quot;lv_bus&quot;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">pandapower_table_name</span> <span class="o">==</span> <span class="s2">&quot;line&quot;</span><span class="p">:</span>
+            <span class="n">side_to_bus</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ONE&quot;</span><span class="p">:</span> <span class="s2">&quot;from_bus&quot;</span><span class="p">,</span> <span class="s2">&quot;TWO&quot;</span><span class="p">:</span> <span class="s2">&quot;to_bus&quot;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">side_to_bus</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;bus&quot;</span><span class="p">}</span>
+
+        <span class="n">subset_of_elements</span> <span class="o">=</span> <span class="n">elements_connected_to_switches</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s2">&quot;type==@powsybl_table_name&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">powsybl_table_name</span> <span class="o">==</span> <span class="s2">&quot;DANGLING_LINE&quot;</span><span class="p">:</span>
+            <span class="n">element_id_to_int</span> <span class="o">=</span> <span class="n">subset_of_elements</span><span class="p">[</span><span class="s2">&quot;bus_int&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="n">new_from_buses</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="o">.</span><span class="n">line</span><span class="p">[</span><span class="s2">&quot;dangling_line1_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="n">element_id_to_int</span>
+            <span class="p">)</span>
+            <span class="n">new_to_buses</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="o">.</span><span class="n">line</span><span class="p">[</span><span class="s2">&quot;dangling_line2_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="n">element_id_to_int</span>
+            <span class="p">)</span>
+            <span class="n">pandapower_net</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;from_bus&quot;</span><span class="p">:</span> <span class="n">new_from_buses</span><span class="p">,</span> <span class="s2">&quot;to_bus&quot;</span><span class="p">:</span> <span class="n">new_to_buses</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">subset_of_elements</span><span class="p">[</span><span class="s2">&quot;side&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="n">side_subset</span> <span class="o">=</span> <span class="n">subset_of_elements</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;side==@side&quot;</span><span class="p">)</span>
+            <span class="n">new_buses</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="n">pandapower_table_name</span><span class="p">][</span>
+                <span class="n">IDENTIFIER_COLUMN_NAME</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">side_subset</span><span class="p">[</span><span class="s2">&quot;bus_int&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+            <span class="n">pandapower_net</span><span class="p">[</span><span class="n">pandapower_table_name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">side_to_bus</span><span class="p">[</span><span class="n">side</span><span class="p">]:</span> <span class="n">new_buses</span><span class="p">})</span>
+
+    <span class="n">all_switches</span><span class="p">[</span><span class="s2">&quot;et&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">drop_irrelevant_columns</span><span class="p">(</span>
+            <span class="n">element_table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">element_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EXPECTED_COLUMNS</span><span class="p">:</span>
+            <span class="c1"># keep all columns if in doubt</span>
+            <span class="k">return</span> <span class="n">element_table</span>
+        <span class="n">expected_columns</span> <span class="o">=</span> <span class="n">EXPECTED_COLUMNS</span><span class="p">[</span><span class="n">element_type</span><span class="p">]</span>
+        <span class="n">columns_to_keep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">element_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">expected_columns</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">element_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns_to_keep</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_voltage_levels">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.find_voltage_levels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_voltage_levels</span><span class="p">(</span>
+        <span class="n">element_table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">powsybl_net</span><span class="p">:</span> <span class="s2">&quot;Network&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pypowsybl</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyPowsyblError</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span>
+
+
+    <span class="k">if</span> <span class="s2">&quot;voltage_level_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">element_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">PyPowsyblError</span><span class="p">(</span>
+            <span class="s2">&quot;Column voltage_level_id is not defined in provided element-table!&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">voltage_levels_of_elements</span> <span class="o">=</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_voltage_levels</span><span class="p">()[</span>
+        <span class="p">[</span><span class="s2">&quot;nominal_v&quot;</span><span class="p">,</span> <span class="s2">&quot;high_voltage_limit&quot;</span><span class="p">,</span> <span class="s2">&quot;low_voltage_limit&quot;</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">element_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">element_table</span><span class="p">,</span>
+        <span class="n">voltage_levels_of_elements</span><span class="p">,</span>
+        <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;voltage_level_id&quot;</span><span class="p">,</span>
+        <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span>  <span class="c1"># voltage levels should all be present in &quot;voltage_levels&quot;</span>
+        <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;_vl&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">element_table</span> <span class="o">=</span> <span class="n">element_table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;nominal_v&quot;</span><span class="p">:</span> <span class="s2">&quot;vn_kv&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;high_voltage_limit&quot;</span><span class="p">:</span> <span class="s2">&quot;max_vm_pu&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;low_voltage_limit&quot;</span><span class="p">:</span> <span class="s2">&quot;min_vm_pu&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">element_table</span><span class="p">[</span><span class="s2">&quot;max_vm_pu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">element_table</span><span class="p">[</span><span class="s2">&quot;max_vm_pu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+        <span class="n">element_table</span><span class="p">[</span><span class="s2">&quot;vn_kv&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">element_table</span><span class="p">[</span><span class="s2">&quot;min_vm_pu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">element_table</span><span class="p">[</span><span class="s2">&quot;min_vm_pu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+        <span class="n">element_table</span><span class="p">[</span><span class="s2">&quot;vn_kv&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">element_table</span></div>
+
+
+
+<div class="viewcode-block" id="set_index_as_column">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.set_index_as_column">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_index_as_column</span><span class="p">(</span><span class="n">dataframe</span><span class="p">):</span>
+    <span class="n">dataframe</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span></div>
+
+
+
+<div class="viewcode-block" id="create_and_match_buses_for_switches_per_voltage_level_bus_breaker">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.create_and_match_buses_for_switches_per_voltage_level_bus_breaker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_and_match_buses_for_switches_per_voltage_level_bus_breaker</span><span class="p">(</span>
+        <span class="n">all_switches</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">elements_connected_to_switches</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">pandapower_net</span><span class="p">:</span> <span class="s2">&quot;pandapower.pandapowerNet&quot;</span><span class="p">,</span>
+        <span class="n">powsybl_net</span><span class="p">:</span> <span class="s2">&quot;pypowsybl.network.Network&quot;</span><span class="p">,</span>
+        <span class="n">voltage_level</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_bus_breaker_topology</span><span class="p">(</span><span class="n">voltage_level</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bb</span><span class="o">.</span><span class="n">switches</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">all_switches</span><span class="p">,</span> <span class="n">elements_connected_to_switches</span>
+    <span class="c1"># create all switches in voltage-level and buses connected to them:</span>
+    <span class="n">buses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bb</span><span class="o">.</span><span class="n">switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;bus1_id&quot;</span><span class="p">,</span> <span class="s2">&quot;bus2_id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+    <span class="n">highest_bus_index</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">new_buses</span><span class="p">,</span> <span class="n">highest_bus_index</span> <span class="o">=</span> <span class="n">create_new_buses</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">buses</span><span class="p">),</span> <span class="n">highest_bus_index</span><span class="p">)</span>
+    <span class="n">new_buses_dict</span> <span class="o">=</span> <span class="n">new_buses</span><span class="p">[</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">switches_vl</span> <span class="o">=</span> <span class="n">initialise_new_columns</span><span class="p">(</span><span class="n">bb</span><span class="o">.</span><span class="n">switches</span><span class="p">)</span>
+    <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;bus1_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">new_buses_dict</span><span class="p">)</span>
+    <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;bus2_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">new_buses_dict</span><span class="p">)</span>
+
+    <span class="n">all_switches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">all_switches</span><span class="p">,</span> <span class="n">switches_vl</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">elements_connected_to_switches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">elements_connected_to_switches</span><span class="p">,</span> <span class="n">bb</span><span class="o">.</span><span class="n">elements</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="c1"># add new buses to pandapower-net:</span>
+    <span class="n">add_new_buses_to_pandapower_net</span><span class="p">(</span>
+        <span class="n">new_buses</span><span class="p">,</span> <span class="n">pandapower_net</span><span class="p">,</span> <span class="n">voltage_level</span><span class="p">,</span> <span class="n">assign_id_column_if_not_set</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_switches</span><span class="p">,</span> <span class="n">elements_connected_to_switches</span></div>
+
+
+
+<div class="viewcode-block" id="create_and_match_buses_for_switches_per_voltage_level_node_breaker">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.create_and_match_buses_for_switches_per_voltage_level_node_breaker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_and_match_buses_for_switches_per_voltage_level_node_breaker</span><span class="p">(</span>
+        <span class="n">all_switches</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">pandapower_net</span><span class="p">:</span> <span class="s2">&quot;pandapower.pandapowerNet&quot;</span><span class="p">,</span>
+        <span class="n">powsybl_net</span><span class="p">:</span> <span class="s2">&quot;pypowsybl.network.Network&quot;</span><span class="p">,</span>
+        <span class="n">voltage_level</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">powsybl_net</span><span class="o">.</span><span class="n">get_node_breaker_topology</span><span class="p">(</span><span class="n">voltage_level</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># create all switches and buses:</span>
+    <span class="n">all_nodes_connected_to_switches</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;node1&quot;</span><span class="p">,</span> <span class="s2">&quot;node2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">all_nodes_in_internal_connections</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;node1&quot;</span><span class="p">,</span> <span class="s2">&quot;node2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="c1"># we need to create a bus for every node connected to a switch except for those in internal-connections; here we</span>
+    <span class="c1"># create a bus for each internal connection (to not end up with two buses between two switches)</span>
+    <span class="n">highest_bus_index</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">new_buses</span><span class="p">,</span> <span class="n">highest_bus_index</span> <span class="o">=</span> <span class="n">create_new_buses</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span>
+            <span class="n">all_nodes_connected_to_switches</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span>
+                <span class="n">all_nodes_in_internal_connections</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">highest_bus_index</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">nodes_to_buses</span> <span class="o">=</span> <span class="n">new_buses</span><span class="p">[</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="n">map_nodes_to_elements</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">connectable_id</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;connectable_id&quot;</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="c1"># topology might look like this:</span>
+        <span class="c1"># nb.switches: id       node1   node2</span>
+        <span class="c1">#              switch1  20      21</span>
+        <span class="c1">#              switch2  36      37</span>
+        <span class="c1"># nb.nodes: node    connectable_id</span>
+        <span class="c1">#           ...</span>
+        <span class="c1">#           38      element</span>
+        <span class="c1"># nb.internal_connections: node1   node2</span>
+        <span class="c1">#                          21      8</span>
+        <span class="c1">#                          36      8</span>
+        <span class="c1">#                          37      9</span>
+        <span class="c1">#                          38      9</span>
+        <span class="c1"># 20 switch1 21 8 36 switch2 37 9 38 element</span>
+        <span class="c1"># for each switch-switch-connection or switch-element-connection we only want to model one bus.</span>
+        <span class="c1"># but the following model is also possible:</span>
+        <span class="c1"># 20 switch1 21 switch2 37 element</span>
+        <span class="c1"># in this case internal_connections would be empty.</span>
+        <span class="n">all_nodes_connected_to_elements</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s2">&quot;connectable_id!=&#39;&#39;&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">all_nodes_only_in_internal_connections</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">all_nodes_in_internal_connections</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span>
+                <span class="n">all_nodes_connected_to_switches</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">all_nodes_connected_to_elements</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">new_buses_internal_connections</span><span class="p">,</span> <span class="n">highest_bus_index</span> <span class="o">=</span> <span class="n">create_new_buses</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">all_nodes_only_in_internal_connections</span><span class="p">),</span> <span class="n">highest_bus_index</span>
+        <span class="p">)</span>
+        <span class="n">nodes_to_buses</span> <span class="o">=</span> <span class="n">new_buses_internal_connections</span><span class="p">[</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">new_buses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">new_buses</span><span class="p">,</span> <span class="n">new_buses_internal_connections</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>  <span class="c1"># ToDo: FutureWarning</span>
+        <span class="c1"># map new buses to internal connections to also map buses to node2</span>
+        <span class="n">internal_connections_mapped_to_bus</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span>
+        <span class="n">internal_connections_mapped_to_bus</span><span class="p">[</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">internal_connections_mapped_to_bus</span><span class="p">[</span><span class="s2">&quot;node1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nodes_to_buses</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">buses_mapped_to_node2</span> <span class="o">=</span> <span class="n">internal_connections_mapped_to_bus</span><span class="p">[</span><span class="s2">&quot;node2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">nodes_to_buses</span>
+        <span class="p">)</span>
+        <span class="n">internal_connections_mapped_to_bus</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">:</span> <span class="n">buses_mapped_to_node2</span><span class="p">})</span>
+
+        <span class="n">nodes_to_buses</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="o">**</span><span class="n">internal_connections_mapped_to_bus</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;node1&quot;</span><span class="p">)[</span>
+                    <span class="s2">&quot;mapped_bus&quot;</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+                <span class="o">**</span><span class="n">internal_connections_mapped_to_bus</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;node2&quot;</span><span class="p">)[</span>
+                    <span class="s2">&quot;mapped_bus&quot;</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="c1"># elements might have nodes which are either directly referenced by switches or are connected via</span>
+        <span class="c1"># internal-connections to a switch. In the following we assume that node2 in internal-nodes is always the</span>
+        <span class="c1"># &quot;internal node&quot; which is not referenced by any elements but only referenced in internal_connections.</span>
+        <span class="c1"># direct references: map node1 to connectable-id</span>
+
+        <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="p">[</span><span class="s2">&quot;connectable_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="p">[</span>
+            <span class="s2">&quot;node1&quot;</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;connectable_id&quot;</span><span class="p">])</span>
+        <span class="c1"># indirect references: map connectable-id to every row which has the same node2 as the connectable-id</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;connectable_id&quot;</span><span class="p">:</span> <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="p">[</span><span class="s2">&quot;node2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;node2&quot;</span><span class="p">)[</span>
+                        <span class="s2">&quot;connectable_id&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="n">map_nodes_to_elements</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">nb</span><span class="o">.</span><span class="n">internal_connections</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;node1&quot;</span><span class="p">)[</span><span class="s2">&quot;connectable_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="c1"># match buses with switches:</span>
+    <span class="n">switches_vl</span> <span class="o">=</span> <span class="n">initialise_new_columns</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">switches</span><span class="p">)</span>
+    <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;node1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nodes_to_buses</span><span class="p">)</span>
+    <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;node2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nodes_to_buses</span><span class="p">)</span>
+
+    <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;connectable_id1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;node1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_nodes_to_elements</span><span class="p">)</span>
+    <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;connectable_id2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches_vl</span><span class="p">[</span><span class="s2">&quot;node2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_nodes_to_elements</span><span class="p">)</span>
+
+    <span class="n">all_switches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">all_switches</span><span class="p">,</span> <span class="n">switches_vl</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># add new buses to pandapower-net:</span>
+    <span class="n">add_new_buses_to_pandapower_net</span><span class="p">(</span>
+        <span class="n">new_buses</span><span class="p">,</span> <span class="n">pandapower_net</span><span class="p">,</span> <span class="n">voltage_level</span><span class="p">,</span> <span class="n">assign_id_column_if_not_set</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">all_switches</span></div>
+
+
+
+<div class="viewcode-block" id="connect_elements_to_switches_node_breaker">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.connect_elements_to_switches_node_breaker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">connect_elements_to_switches_node_breaker</span><span class="p">(</span>
+        <span class="n">all_switches</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pandapower_net</span><span class="p">:</span> <span class="s2">&quot;pandapower.pandapowerNet&quot;</span>
+<span class="p">):</span>
+    <span class="n">conn1_to_bus</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">all_switches</span><span class="o">.</span><span class="n">connectable_id1</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="o">~</span><span class="n">all_switches</span><span class="o">.</span><span class="n">connectable_id1</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span>
+                <span class="p">],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;connectable_id1&quot;</span><span class="p">)[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span>
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">conn2_to_bus</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">all_switches</span><span class="o">.</span><span class="n">connectable_id2</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="o">~</span><span class="n">all_switches</span><span class="o">.</span><span class="n">connectable_id2</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span>
+                <span class="p">],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;connectable_id2&quot;</span><span class="p">)[</span><span class="s2">&quot;element&quot;</span><span class="p">]</span>
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">unique_keys</span> <span class="o">=</span> <span class="n">conn1_to_bus</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">|</span> <span class="n">conn2_to_bus</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="c1"># all elements which are referenced in both dicts are elements of type trafo/trafo3w or line (or other elements</span>
+    <span class="c1"># with two ends)</span>
+    <span class="n">conn_to_bus</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">conn_to_bus</span> <span class="ow">in</span> <span class="p">[</span><span class="n">conn1_to_bus</span><span class="p">,</span> <span class="n">conn2_to_bus</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">conn_to_bus</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">unique_keys</span>
+    <span class="p">}</span>
+
+    <span class="n">bus_target_column</span> <span class="o">=</span> <span class="s2">&quot;bus&quot;</span>
+    <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="s2">&quot;gen&quot;</span><span class="p">,</span> <span class="s2">&quot;sgen&quot;</span><span class="p">,</span> <span class="s2">&quot;ext_grid&quot;</span><span class="p">,</span> <span class="s2">&quot;busbarsection&quot;</span><span class="p">,</span> <span class="s2">&quot;shunt&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span>
+                <span class="n">table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pandapower_net</span>
+                <span class="ow">or</span> <span class="n">IDENTIFIER_COLUMN_NAME</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span>
+        <span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">new_buses</span> <span class="o">=</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">conn_to_bus</span><span class="p">)</span>
+        <span class="c1"># update leaves orignal value when the corresponding entry in new_buses is nan</span>
+        <span class="n">pandapower_net</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">bus_target_column</span><span class="p">:</span> <span class="n">new_buses</span><span class="p">})</span>
+
+    <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">element_type</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;trafo&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;trafo3w&quot;</span><span class="p">,</span> <span class="s2">&quot;t3&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">)]:</span>
+        <span class="k">if</span> <span class="p">(</span>
+                <span class="n">table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pandapower_net</span>
+                <span class="ow">or</span> <span class="n">IDENTIFIER_COLUMN_NAME</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span>
+        <span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="c1"># These elements can be connected by referencing the element-index in column &#39;element&#39; and  setting the correct</span>
+        <span class="c1"># element-type in column &#39;et&#39;. For these elements, the created buses can be removed again, they are not needed.</span>
+        <span class="n">id_to_index</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">v</span><span class="p">:</span> <span class="n">k</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">new_bus_entry</span> <span class="o">=</span> <span class="n">all_switches</span><span class="p">[</span><span class="s2">&quot;connectable_id1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">id_to_index</span><span class="p">)</span>
+        <span class="n">new_element_entry</span> <span class="o">=</span> <span class="n">all_switches</span><span class="p">[</span><span class="s2">&quot;connectable_id2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">id_to_index</span><span class="p">)</span>
+        <span class="c1"># switch entries in bus and element-col and their connectable-ids if the entry is in new_bus_entry</span>
+        <span class="n">switch_bus_element</span> <span class="o">=</span> <span class="o">~</span><span class="n">new_bus_entry</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+        <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">switch_bus_element</span><span class="p">,</span>
+            <span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;connectable_id1&quot;</span><span class="p">,</span> <span class="s2">&quot;connectable_id2&quot;</span><span class="p">,</span> <span class="s2">&quot;node1&quot;</span><span class="p">,</span> <span class="s2">&quot;node2&quot;</span><span class="p">],</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">switch_bus_element</span><span class="p">,</span>
+            <span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;connectable_id2&quot;</span><span class="p">,</span> <span class="s2">&quot;connectable_id1&quot;</span><span class="p">,</span> <span class="s2">&quot;node2&quot;</span><span class="p">,</span> <span class="s2">&quot;node1&quot;</span><span class="p">],</span>
+        <span class="p">]</span>
+        <span class="n">new_element_entry</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_bus_entry</span><span class="p">)</span>
+        <span class="n">old_buses</span> <span class="o">=</span> <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">new_element_entry</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="s2">&quot;element&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="n">all_switches</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="n">new_element_entry</span><span class="p">})</span>
+        <span class="n">all_switches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">new_element_entry</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="s2">&quot;et&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">element_type</span>
+        <span class="n">pandapower_net</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">old_buses</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;res_bus&quot;</span> <span class="ow">in</span> <span class="n">pandapower_net</span><span class="p">:</span>
+            <span class="n">pandapower_net</span><span class="p">[</span><span class="s2">&quot;res_bus&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">old_buses</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span>
+            <span class="p">)</span>
+    <span class="n">all_switches</span><span class="p">[</span><span class="s2">&quot;et&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_switches</span><span class="p">[</span><span class="s2">&quot;et&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="initialise_new_columns">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.initialise_new_columns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialise_new_columns</span><span class="p">(</span><span class="n">switches</span><span class="p">):</span>
+    <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">switches</span><span class="p">[</span><span class="s2">&quot;et&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">switches</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">switches</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">switches</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;bus&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;et&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="create_new_buses">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.create_new_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_new_buses</span><span class="p">(</span>
+        <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">highest_bus_index</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">buses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">],</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">+</span> <span class="n">highest_bus_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">buses</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">buses</span><span class="p">,</span> <span class="n">highest_bus_index</span>
+    <span class="k">return</span> <span class="n">buses</span><span class="p">,</span> <span class="n">buses</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="add_new_buses_to_pandapower_net">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.helper_pow2pp.add_new_buses_to_pandapower_net">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_new_buses_to_pandapower_net</span><span class="p">(</span>
+        <span class="n">new_buses</span><span class="p">,</span>
+        <span class="n">pandapower_net</span><span class="p">,</span>
+        <span class="n">voltage_level</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">assign_id_column_if_not_set</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">new_buses</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="c1"># add new buses to pandapower-network:</span>
+    <span class="n">new_buses</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">voltage_level</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">n</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">new_buses</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="p">]</span>
+    <span class="c1"># new_buses can either contain a list of nodes or a list of bus-breaker-ids</span>
+    <span class="k">if</span> <span class="n">assign_id_column_if_not_set</span><span class="p">:</span>
+        <span class="n">new_buses</span><span class="p">[</span><span class="n">IDENTIFIER_COLUMN_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_buses</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+    <span class="n">new_buses</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;mapped_bus&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">new_buses</span><span class="p">[</span><span class="s2">&quot;vn_kv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">voltage_level</span><span class="p">[</span><span class="s2">&quot;nominal_v&quot;</span><span class="p">]</span>
+    <span class="n">new_buses</span><span class="p">[</span><span class="s2">&quot;in_service&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">pandapower_net</span><span class="o">.</span><span class="n">bus</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pandapower_net</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span> <span class="n">new_buses</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;res_bus&quot;</span> <span class="ow">in</span> <span class="n">pandapower_net</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pandapower_net</span><span class="p">[</span><span class="s2">&quot;res_bus&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="n">pandapower_net</span><span class="o">.</span><span class="n">res_bus</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pandapower_net</span><span class="o">.</span><span class="n">res_bus</span><span class="p">,</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">new_buses</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">pandapower_net</span><span class="o">.</span><span class="n">res_bus</span><span class="o">.</span><span class="n">columns</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

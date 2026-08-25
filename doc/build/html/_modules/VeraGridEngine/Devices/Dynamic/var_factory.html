@@ -1,0 +1,1164 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Devices.Dynamic.var_factory &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Devices.Dynamic.var_factory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Devices.Dynamic.var_factory</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditableDevice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">SharedVarReferenceType</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_new_uid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate one fresh integer uid.</span>
+
+<span class="sd">    :return: New unique integer identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">int</span>
+
+
+<div class="viewcode-block" id="find_var_by_persisted_identity">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.find_var_by_persisted_identity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_var_by_persisted_identity</span><span class="p">(</span><span class="n">var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
+                                   <span class="n">persisted_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve a variable from either stable identity or legacy mutable UID.</span>
+
+<span class="sd">    :param var_dict: Variable dictionary keyed by stable identity.</span>
+<span class="sd">    :param persisted_uid: Identifier read from a persisted property.</span>
+<span class="sd">    :return: Matching variable or ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">direct_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">candidate_var</span><span class="p">:</span> <span class="n">Var</span>
+
+    <span class="k">if</span> <span class="n">persisted_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">direct_var</span> <span class="o">=</span> <span class="n">var_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">persisted_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">direct_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">direct_var</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Files written before stable references were used store the mutable UID.</span>
+    <span class="c1"># Keep that format readable while all new writes use non_mutable_uid.</span>
+    <span class="k">for</span> <span class="n">candidate_var</span> <span class="ow">in</span> <span class="n">var_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">candidate_var</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">persisted_uid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">candidate_var</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="build_persisted_identity_lookup">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.build_persisted_identity_lookup">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_persisted_identity_lookup</span><span class="p">(</span><span class="n">var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one constant-time lookup for stable and legacy mutable identities.</span>
+
+<span class="sd">    Stable dictionary keys remain authoritative when a mutable UID collides</span>
+<span class="sd">    with another variable&#39;s stable identity. This preserves the current</span>
+<span class="sd">    connection semantics while avoiding a full dictionary scan for every</span>
+<span class="sd">    symbolic leaf in legacy expression archives.</span>
+
+<span class="sd">    :param var_dict: Variables keyed by their stable non-mutable identity.</span>
+<span class="sd">    :return: Lookup containing stable identities and non-conflicting mutable UID aliases.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">identity_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
+    <span class="n">candidate_var</span><span class="p">:</span> <span class="n">Var</span>
+
+    <span class="k">for</span> <span class="n">candidate_var</span> <span class="ow">in</span> <span class="n">var_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">candidate_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">identity_lookup</span><span class="p">:</span>
+            <span class="n">identity_lookup</span><span class="p">[</span><span class="n">candidate_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">candidate_var</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">identity_lookup</span></div>
+
+
+<div class="viewcode-block" id="Connection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.Connection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Connection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lightweight saved description of one propagated variable connection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;non_mutable_uid&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;uid&#39;</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the identity required to restore one detached variable.</span>
+
+<span class="sd">        :param non_mutable_uid: Stable uid of the connected variable.</span>
+<span class="sd">        :param name: Variable name to restore after disconnection.</span>
+<span class="sd">        :param uid: Mutable uid to restore after disconnection.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Preserve the stable symbolic identity used to match the connection</span>
+        <span class="c1"># entry during later remove operations.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="o">=</span> <span class="n">non_mutable_uid</span>
+        <span class="c1"># Preserve the pre-connection variable name so the symbolic variable</span>
+        <span class="c1"># returns to its original label when the edge is removed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c1"># Preserve the pre-connection uid so the symbolic variable returns to</span>
+        <span class="c1"># the exact original identity when the edge is removed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span></div>
+
+
+
+<div class="viewcode-block" id="VarFactory">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VarFactory</span><span class="p">(</span><span class="n">EditableDevice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    VarFactory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_var_dict&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_const_dict&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_diff_var_dict&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_vars_info&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_references_dict&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_vars_references_dict&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_vars_connected_dict&#39;</span><span class="p">,</span>
+
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">idtag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Var Factory&quot;</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        VarFactory</span>
+<span class="sd">        :param idtag: String. Element unique identifier</span>
+<span class="sd">        :param name: String. Contingency name</span>
+<span class="sd">        :param code: String. Contingency code name</span>
+<span class="sd">        :param comment: Comment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">EditableDevice</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                <span class="n">idtag</span><span class="o">=</span><span class="n">idtag</span><span class="p">,</span>
+                                <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">VarFactory</span><span class="p">,</span>
+                                <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SharedVarReferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># self._vars_connected_dict: Dict[int, Dict[str, List[Var] | Dict[int, str] | Dict[int, int]]] = dict()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vars_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_info</span>
+
+<div class="viewcode-block" id="VarFactory.get_vars_to_save">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_vars_to_save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_vars_to_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">dev</span><span class="p">:</span><span class="n">Any</span><span class="p">,</span>
+                         <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this function returns a list of variables which names are in names</span>
+<span class="sd">        :param dev:</span>
+<span class="sd">        :type dev:</span>
+<span class="sd">        :param names:</span>
+<span class="sd">        :type names:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_info</span><span class="p">[</span><span class="n">dev</span><span class="p">]</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.add_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.add_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">network_conn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">shared_reference</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">SharedVarReferenceType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+
+                <span class="n">diff_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">base_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Var</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a ver to the class</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param shared_reference:</span>
+<span class="sd">        :param reference:</span>
+<span class="sd">        :param network_conn:</span>
+<span class="sd">        :param non_mutable_uid:</span>
+<span class="sd">        :param uid:</span>
+<span class="sd">        :param diff_var:</span>
+<span class="sd">        :param base_var:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shared_reference</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_reference</span><span class="p">(</span><span class="n">shared_reference</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">shared_reference</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="n">v</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">shared_reference</span><span class="p">],</span> <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">network_conn</span><span class="o">=</span><span class="n">network_conn</span><span class="p">,</span> <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">diff_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_var_in_vars_references_dict</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">shared_reference</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">network_conn</span><span class="o">=</span><span class="n">network_conn</span><span class="p">,</span>
+                    <span class="n">shared_reference</span><span class="o">=</span><span class="n">shared_reference</span><span class="p">,</span> <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">diff_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">shared_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_var_in_vars_references_dict</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">return</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.add_shared_ref_to_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.add_shared_ref_to_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_shared_ref_to_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span> <span class="n">shared_reference</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SharedVarReferenceType</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shared_reference</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_reference</span><span class="p">(</span><span class="n">shared_reference</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">shared_reference</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="n">v</span><span class="o">.</span><span class="n">shared_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">shared_reference</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_var_in_vars_references_dict</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">shared_reference</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span><span class="o">.</span><span class="n">shared_ref</span> <span class="o">=</span> <span class="n">shared_reference</span>
+            <span class="k">if</span> <span class="n">shared_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_var_in_vars_references_dict</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="VarFactory.save_var_in_vars_references_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.save_var_in_vars_references_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_var_in_vars_references_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span><span class="n">Var</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.create_reference">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.create_reference">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">reference_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">SharedVarReferenceType</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">reference_name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VarFactory.get_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a Var from the class</span>
+<span class="sd">        :param uid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">found_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+                <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">,</span>
+                <span class="n">persisted_uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">found_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">found_var</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Preserve the historical KeyError contract for truly missing</span>
+                <span class="c1"># variable references after both lookup formats are exhausted.</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.add_diff_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.add_diff_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_diff_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">network_conn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">shared_reference</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">SharedVarReferenceType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">diff_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">base_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Var</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a Diff ver to the class</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param shared_reference:</span>
+<span class="sd">        :param non_mutable_uid:</span>
+<span class="sd">        :param network_conn:</span>
+<span class="sd">        :param uid:</span>
+<span class="sd">        :param diff_var:</span>
+<span class="sd">        :param base_var:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shared_reference</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_reference</span><span class="p">(</span><span class="n">shared_reference</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">shared_reference</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="n">v</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">shared_reference</span><span class="p">],</span> <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+                    <span class="n">network_conn</span><span class="o">=</span><span class="n">network_conn</span><span class="p">,</span> <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">diff_var</span><span class="o">=</span><span class="n">diff_var</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_var_in_vars_references_dict</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">shared_reference</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">network_conn</span><span class="o">=</span><span class="n">network_conn</span><span class="p">,</span>
+                    <span class="n">shared_reference</span><span class="o">=</span><span class="n">shared_reference</span><span class="p">,</span> <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">diff_var</span><span class="o">=</span><span class="n">diff_var</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">return</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_connection_source_non_mutable_uid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_connection_source_non_mutable_uid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connection_source_non_mutable_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                              <span class="n">variable_non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the upstream owner of one connected variable identity.</span>
+
+<span class="sd">        The saved connection graph is directional from an incoming source to</span>
+<span class="sd">        substituted targets. A rename can originate from either endpoint in</span>
+<span class="sd">        the editor, so it must first walk the reverse relation and then replay</span>
+<span class="sd">        the existing forward propagation from the canonical source.</span>
+
+<span class="sd">        :param variable_non_mutable_uid: Stable identity selected by the user.</span>
+<span class="sd">        :return: Stable identity of the upstream connection owner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">variable_non_mutable_uid</span>
+        <span class="n">visited_non_mutable_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">source_non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+        <span class="n">owner_non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">connection_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Connection</span><span class="p">]</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Connection</span>
+
+        <span class="k">while</span> <span class="n">current_non_mutable_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited_non_mutable_uids</span><span class="p">:</span>
+            <span class="n">visited_non_mutable_uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">current_non_mutable_uid</span><span class="p">)</span>
+            <span class="n">source_non_mutable_uid</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Find the unique incoming owner without changing the established</span>
+            <span class="c1"># source-to-target storage layout used by connect/disconnect.</span>
+            <span class="k">for</span> <span class="n">owner_non_mutable_uid</span><span class="p">,</span> <span class="n">connection_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connection_list</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="o">==</span> <span class="n">current_non_mutable_uid</span><span class="p">:</span>
+                        <span class="n">source_non_mutable_uid</span> <span class="o">=</span> <span class="n">owner_non_mutable_uid</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">source_non_mutable_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">source_non_mutable_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">current_non_mutable_uid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_non_mutable_uid</span> <span class="o">=</span> <span class="n">source_non_mutable_uid</span>
+
+        <span class="c1"># A malformed cycle has no unique root. Returning the first repeated</span>
+        <span class="c1"># identity keeps rename propagation finite and consistent with the</span>
+        <span class="c1"># existing cycle guard in connect_variables_by_uid().</span>
+        <span class="k">return</span> <span class="n">current_non_mutable_uid</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_diff_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_diff_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_diff_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Var</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a Diff Var from the class</span>
+<span class="sd">        :param uid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">found_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+            <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">,</span>
+            <span class="n">persisted_uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">found_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">found_var</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Preserve the historical KeyError for a genuinely absent entry.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.add_const">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.add_const">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_const</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">Const</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a Cont to the class</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :param uid:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_dict</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.connect_variables_by_uid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.connect_variables_by_uid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_variables_by_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">var_to_subs_non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                 <span class="n">incoming_var_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                 <span class="n">incoming_var_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">visited_non_mutable_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Propagate one incoming variable identity through the saved connection graph.</span>
+
+<span class="sd">        The connection registry can contain cycles when editor-side EMT models</span>
+<span class="sd">        reconnect root mapping vars that already alias back into the same live</span>
+<span class="sd">        symbolic chain. Track visited stable uids during one propagation walk so</span>
+<span class="sd">        the alias update remains finite even when the graph contains loops.</span>
+
+<span class="sd">        :param var_to_subs_non_mutable_uid: Stable uid of the variable to rewrite.</span>
+<span class="sd">        :param incoming_var_uid: Mutable uid that should be propagated.</span>
+<span class="sd">        :param incoming_var_name: Variable name that should be propagated.</span>
+<span class="sd">        :param visited_non_mutable_uids: Stable uids already processed in this walk.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">next_visited_non_mutable_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Connection</span>
+
+        <span class="k">if</span> <span class="n">visited_non_mutable_uids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">next_visited_non_mutable_uids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_visited_non_mutable_uids</span> <span class="o">=</span> <span class="n">visited_non_mutable_uids</span>
+
+        <span class="k">if</span> <span class="n">var_to_subs_non_mutable_uid</span> <span class="ow">in</span> <span class="n">next_visited_non_mutable_uids</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_visited_non_mutable_uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var_to_subs_non_mutable_uid</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">var_to_subs_non_mutable_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">var_to_subs_non_mutable_uid</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">incoming_var_uid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">var_to_subs_non_mutable_uid</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">incoming_var_name</span>
+        <span class="k">elif</span> <span class="n">var_to_subs_non_mutable_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">:</span>
+            <span class="c1"># Differential variables are stored in the dedicated diff-variable</span>
+            <span class="c1"># registry. Updating the wrong dictionary leaves the propagated</span>
+            <span class="c1"># symbolic identity stale and breaks later validation against the</span>
+            <span class="c1"># live bus variables.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">var_to_subs_non_mutable_uid</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">incoming_var_uid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">var_to_subs_non_mutable_uid</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">incoming_var_name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># recursitity for previous connected vars</span>
+        <span class="k">if</span> <span class="n">var_to_subs_non_mutable_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">[</span><span class="n">var_to_subs_non_mutable_uid</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connect_variables_by_uid</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+                                              <span class="n">incoming_var_uid</span><span class="p">,</span>
+                                              <span class="n">incoming_var_name</span><span class="p">,</span>
+                                              <span class="n">next_visited_non_mutable_uids</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.add_connection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.add_connection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_to_subs</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span> <span class="n">incoming_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register and propagate one directed symbolic-variable connection.</span>
+
+<span class="sd">        Reopening an editor and running dynamic preflight can request the same</span>
+<span class="sd">        bus-to-device edge repeatedly. Keep one restoration record per stable</span>
+<span class="sd">        target while still replaying the current incoming UID and name.</span>
+
+<span class="sd">        :param var_to_subs: Target variable whose effective identity is replaced.</span>
+<span class="sd">        :param incoming_var: Source variable providing the effective identity.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Connection</span><span class="p">]</span>
+        <span class="n">existing_connection</span><span class="p">:</span> <span class="n">Connection</span>
+
+        <span class="k">if</span> <span class="n">incoming_var</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">[</span><span class="n">incoming_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">connections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">[</span><span class="n">incoming_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">existing_connection</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">existing_connection</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="o">==</span> <span class="n">var_to_subs</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connect_variables_by_uid</span><span class="p">(</span><span class="n">var_to_subs</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+                                              <span class="n">incoming_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                                              <span class="n">incoming_var</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">var_to_subs</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">var_to_subs</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">var_to_subs</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_variables_by_uid</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">incoming_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">incoming_var</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.remove_connection">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.remove_connection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_to_disconnect</span><span class="p">:</span> <span class="n">Var</span><span class="p">,</span> <span class="n">outgoing_var</span><span class="p">:</span> <span class="n">Var</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove one saved variable connection if it still exists.</span>
+
+<span class="sd">        :param var_to_disconnect: Variable that should be detached from the outgoing source.</span>
+<span class="sd">        :param outgoing_var: Source variable that owns the propagated connection list.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Connection</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">outgoing_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">connection_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Connection</span>
+
+        <span class="c1"># The editor can request a connection removal after the backing</span>
+        <span class="c1"># connection registry was already pruned by a previous editor action.</span>
+        <span class="c1"># In that case there is nothing left to remove and the state is already</span>
+        <span class="c1"># consistent, so the function must exit quietly.</span>
+        <span class="k">if</span> <span class="n">connections</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">connection_index</span><span class="p">,</span> <span class="n">connection</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">connections</span><span class="p">):</span>
+            <span class="c1"># Restore the disconnected variable identity before removing the</span>
+            <span class="c1"># propagated connection record so downstream references stop using</span>
+            <span class="c1"># the outgoing variable metadata.</span>
+            <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="o">==</span> <span class="n">var_to_disconnect</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connect_variables_by_uid</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span> <span class="n">connection</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">connection</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">connections</span><span class="p">[</span><span class="n">connection_index</span><span class="p">]</span>
+
+                <span class="c1"># Drop the now-empty registry entry to keep the connection map</span>
+                <span class="c1"># aligned with the actual set of active propagated links.</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">connections</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">[</span><span class="n">outgoing_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># No matching propagated connection was present. The requested state is</span>
+        <span class="c1"># therefore already reached and no extra action is necessary.</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.add_connections">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.add_connections">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vars_to_subs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span> <span class="n">incoming_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]):</span>
+        <span class="n">pairs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">vars_to_subs</span><span class="p">,</span> <span class="n">incoming_vars</span><span class="p">))</span>
+        <span class="n">var_to_subs</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="n">incoming_var</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="k">for</span> <span class="n">var_to_subs</span><span class="p">,</span> <span class="n">incoming_var</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_connection</span><span class="p">(</span><span class="n">var_to_subs</span><span class="p">,</span> <span class="n">incoming_var</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VarFactory.get_const">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_const">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_const</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Const</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a Cont from the class</span>
+<span class="sd">        :param uid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_const_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_const_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_const_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_const_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_const_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_vars_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_vars_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_vars_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_diff_var_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_diff_var_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_diff_var_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_references_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_references_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_references_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SharedVarReferenceType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_connections_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_connections_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connections_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Connection</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.get_unique_template_name">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.get_unique_template_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_unique_template_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return one template name that does not collide with existing symbols.</span>
+
+<span class="sd">        Some EMT builders reserve their symbolic namespace at the template level</span>
+<span class="sd">        before any variables are created. When the requested name is still free,</span>
+<span class="sd">        this helper returns it unchanged. Otherwise it appends an integer suffix.</span>
+
+<span class="sd">        :param name: Requested template name.</span>
+<span class="sd">        :return: Collision-free template name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">existing_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">existing_names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">candidate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">while</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">existing_names</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">candidate</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">candidate</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.parse_const_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.parse_const_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_const_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param data_list:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+
+            <span class="n">t</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;Const&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;complex&quot;</span><span class="p">:</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+                    <span class="n">obj</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="nb">complex</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                <span class="n">uid</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">obj</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
+                                <span class="n">uid</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled symbolic primitive </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># at this point we can store the object</span>
+            <span class="n">obj_dict</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_dict</span> <span class="o">=</span> <span class="n">obj_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.parse_var_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.parse_var_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_var_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param data_list:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+            <span class="n">data_tpe</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data_tpe</span> <span class="o">!=</span> <span class="s2">&quot;Var&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># Older persisted symbolic models may not store the power-flow</span>
+            <span class="c1"># reference field, so keep loading those files by defaulting to None.</span>
+            <span class="n">key_ref</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">ref_data_dict</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shared_ref&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ref_data_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_data_name</span> <span class="o">=</span> <span class="n">ref_data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">ref_data_uid</span> <span class="o">=</span> <span class="n">ref_data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">key_ref</span><span class="p">:</span> <span class="n">SharedVarReferenceType</span> <span class="o">|</span> <span class="kc">None</span>
+
+                <span class="k">if</span> <span class="n">ref_data_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_data_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ref_data_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">:</span>
+                        <span class="n">key_ref</span> <span class="o">=</span> <span class="n">SharedVarReferenceType</span><span class="p">(</span><span class="n">ref_data_name</span><span class="p">,</span> <span class="n">ref_data_uid</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key_ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">ref_data_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_ref</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">key_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">ref_data_name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">key_ref</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">ref_power_flow_data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">key_power_flow_ref</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">ref_power_flow_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">key_power_flow_ref</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">(</span><span class="n">ref_power_flow_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key_power_flow_ref</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># obj = Var(name=data[&quot;name&quot;], uid=data[&quot;uid&quot;], shared_reference=key_ref, reference=key_power_flow_ref, non_mutable_uid=data[&quot;non_mutable_uid&quot;])</span>
+            <span class="n">obj_name</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">obj_uid</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">obj_non_mutable_uid</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;non_mutable_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># Legacy symbolic entries can miss one of the identity keys. Reuse</span>
+            <span class="c1"># the surviving identifier so the rest of the dynamic block payload</span>
+            <span class="c1"># can still be reconstructed.</span>
+            <span class="k">if</span> <span class="n">obj_uid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">obj_non_mutable_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">obj_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">obj_uid</span> <span class="o">=</span> <span class="n">obj_non_mutable_uid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">obj_non_mutable_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">obj_non_mutable_uid</span> <span class="o">=</span> <span class="n">obj_uid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">obj_name</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">obj_uid</span><span class="p">,</span> <span class="n">shared_reference</span><span class="o">=</span><span class="n">key_ref</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">key_power_flow_ref</span><span class="p">,</span>
+                      <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">obj_non_mutable_uid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ref_data_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_data_uid</span> <span class="o">=</span> <span class="n">ref_data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ref_data_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ref_data_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref_data_uid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref_data_uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref_data_uid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+            <span class="c1"># at this point we can store the object</span>
+            <span class="n">obj_dict</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span> <span class="o">=</span> <span class="n">obj_dict</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.parse_diff_var_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.parse_diff_var_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_diff_var_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">data_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse persisted differential symbolic variables into the factory.</span>
+
+<span class="sd">        The loader must rebuild each differential variable using the exact</span>
+<span class="sd">        symbolic metadata stored in the ``.veragrid`` payload. In particular,</span>
+<span class="sd">        the power-flow reference has to be converted back to the</span>
+<span class="sd">        ``VarPowerFlowReferenceType`` enum so downstream EMT connection logic</span>
+<span class="sd">        can distinguish branch terminal references such as ``vf_A`` and</span>
+<span class="sd">        ``vt_A`` from bus references such as ``v_A``.</span>
+
+<span class="sd">        :param data_list: Serialized differential variable records.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+            <span class="n">data_tpe</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data_tpe</span> <span class="o">!=</span> <span class="s2">&quot;DiffVar&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            lst.append({</span>
+<span class="sd">                    &quot;type&quot;: &quot;DiffVar&quot;,</span>
+<span class="sd">                    &quot;name&quot;: expr.name,</span>
+<span class="sd">                    &quot;uid&quot;: expr.uid,</span>
+<span class="sd">                    &quot;base_var&quot;: _expr_to_dict(expr=expr.base_var, obj_dict=obj_dict),</span>
+<span class="sd">                })</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Recover the base variable first because differential variables</span>
+            <span class="c1"># are linked to the already reconstructed algebraic/differential</span>
+            <span class="c1"># chain. This preserves the original derivative hierarchy.</span>
+            <span class="n">base_var_uid</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_var&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">base_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+                <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">,</span>
+                <span class="n">persisted_uid</span><span class="o">=</span><span class="n">base_var_uid</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">base_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">base_var</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+                    <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">,</span>
+                    <span class="n">persisted_uid</span><span class="o">=</span><span class="n">base_var_uid</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">base_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">base_var</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+                    <span class="n">var_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">,</span>
+                    <span class="n">persisted_uid</span><span class="o">=</span><span class="n">base_var_uid</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">base_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># Older persisted symbolic models may not store the power-flow</span>
+            <span class="c1"># reference field on differential variables either.</span>
+            <span class="n">key_ref</span><span class="p">:</span> <span class="n">SharedVarReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">ref_data_dict</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shared_ref&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ref_data_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_data_name</span> <span class="o">=</span> <span class="n">ref_data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">ref_data_uid</span> <span class="o">=</span> <span class="n">ref_data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">ref_data_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_data_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ref_data_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">:</span>
+                        <span class="n">key_ref</span> <span class="o">=</span> <span class="n">SharedVarReferenceType</span><span class="p">(</span><span class="n">ref_data_name</span><span class="p">,</span> <span class="n">ref_data_uid</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key_ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">ref_data_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_ref</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">key_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">ref_data_name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">key_ref</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># Convert the persisted textual reference back to the enum object.</span>
+            <span class="c1"># Keeping the enum identity is required so EMT topology validation</span>
+            <span class="c1"># can still recognize branch-side references after reopening files.</span>
+            <span class="n">reference_power_flow_data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">reference_power_flow</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">reference_power_flow_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">reference_power_flow</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">(</span><span class="n">reference_power_flow_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reference_power_flow</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">obj_name</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">obj_uid</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">obj_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">obj_uid</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;non_mutable_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">obj_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">obj_name</span><span class="p">,</span>
+                      <span class="n">uid</span><span class="o">=</span><span class="n">obj_uid</span><span class="p">,</span>
+                      <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;non_mutable_uid&quot;</span><span class="p">,</span> <span class="n">obj_uid</span><span class="p">),</span>
+                      <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">,</span>
+                      <span class="n">shared_reference</span><span class="o">=</span><span class="n">key_ref</span><span class="p">,</span>
+                      <span class="n">reference</span><span class="o">=</span><span class="n">reference_power_flow</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">ref_data_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_data_uid</span> <span class="o">=</span> <span class="n">ref_data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ref_data_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ref_data_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref_data_uid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref_data_uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref_data_uid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># at this point we can store the object</span>
+            <span class="n">obj_dict</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span> <span class="o">=</span> <span class="n">obj_dict</span></div>
+
+
+   
+
+<div class="viewcode-block" id="VarFactory.parse_references_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.parse_references_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_references_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datalist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse references list into _references_dict and _vars_references_dict.</span>
+
+<span class="sd">        :param datalist: List of dicts with &quot;type&quot;, &quot;name&quot;, &quot;uid&quot; for share_reference.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">datalist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;share_reference&quot;</span><span class="p">:</span>
+                <span class="n">ref</span> <span class="o">=</span> <span class="n">SharedVarReferenceType</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">uid</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_references_dict</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ref</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vars_references_dict</span><span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.parse_connections_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.parse_connections_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_connections_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datalist</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse serialized connections and replay their runtime alias state.</span>
+
+<span class="sd">        The saved connection table stores the graph that links one incoming</span>
+<span class="sd">        variable to one or more substituted variables through their stable</span>
+<span class="sd">        non-mutable identities. Rebuilding only the graph is not sufficient for</span>
+<span class="sd">        the runtime symbolic system, because fresh GUI-created models also apply</span>
+<span class="sd">        UID/name aliasing immediately when the connection is created. The load</span>
+<span class="sd">        path must therefore reconstruct the graph first and then replay the same</span>
+<span class="sd">        alias propagation so reopened symbolic models behave like newly created</span>
+<span class="sd">        ones.</span>
+
+<span class="sd">        :param datalist: List of dicts with block_uid -&gt; list of connection dicts.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uid_key</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">connections_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+        <span class="n">conn_data</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">connections_list</span> <span class="ow">in</span> <span class="n">datalist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">uid_key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">uid_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">[</span><span class="n">uid_key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">for</span> <span class="n">conn_data</span> <span class="ow">in</span> <span class="n">connections_list</span><span class="p">:</span>
+                <span class="n">conn_tpe</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">conn_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">conn_tpe</span> <span class="o">==</span> <span class="s2">&quot;Connection&quot;</span><span class="p">:</span>
+                    <span class="n">conn_non_mutable_uid</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">conn_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;non_mutable_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">conn_name</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">conn_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">conn_uid</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">conn_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">conn_non_mutable_uid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">conn_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                    <span class="n">conn</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span>
+                        <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">conn_non_mutable_uid</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">conn_name</span><span class="p">,</span>
+                        <span class="n">uid</span><span class="o">=</span><span class="n">conn_uid</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="p">[</span><span class="n">uid_key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="c1"># Replay the alias propagation only after the full graph has been</span>
+        <span class="c1"># reconstructed. This mirrors the live connection workflow while also</span>
+        <span class="c1"># ensuring recursive downstream links can be traversed during replay.</span>
+        <span class="n">incoming_non_mutable_uid</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">connection_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Connection</span><span class="p">]</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Connection</span>
+        <span class="k">for</span> <span class="n">incoming_non_mutable_uid</span><span class="p">,</span> <span class="n">connection_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_connected_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">incoming_non_mutable_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">:</span>
+                <span class="n">incoming_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">incoming_non_mutable_uid</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">incoming_non_mutable_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">:</span>
+                <span class="n">incoming_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">incoming_non_mutable_uid</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">incoming_var</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">incoming_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connection_list</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">connect_variables_by_uid</span><span class="p">(</span>
+                        <span class="n">connection</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+                        <span class="n">incoming_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                        <span class="n">incoming_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.register_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.register_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev</span><span class="p">:</span><span class="n">Any</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span><span class="n">Var</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Associate a variable with a device</span>
+<span class="sd">        :param dev: Device</span>
+<span class="sd">        :param var: Variable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">var_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">var_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vars_info</span><span class="p">[</span><span class="n">dev</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">var_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VarFactory.find_var_or_diff_var">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.var_factory.VarFactory.find_var_or_diff_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_var_or_diff_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">var_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_vars_dict</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_var</span><span class="p">(</span><span class="n">var_uid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">var_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_diff_var</span><span class="p">(</span><span class="n">var_uid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">var_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Var with uid:</span><span class="si">{</span><span class="n">var_uid</span><span class="si">}</span><span class="s2"> not added in VarFactory as var or diff_var.&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

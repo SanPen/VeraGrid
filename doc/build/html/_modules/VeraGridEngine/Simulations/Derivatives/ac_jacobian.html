@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.Derivatives.ac_jacobian &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.Derivatives.ac_jacobian</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.Derivatives.ac_jacobian</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">jit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">float64</span><span class="p">,</span> <span class="n">int32</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">csc_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Derivatives.csr_derivatives</span><span class="w"> </span><span class="kn">import</span> <span class="n">dSbus_dV_numba_sparse_csr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Derivatives.csc_derivatives</span><span class="w"> </span><span class="kn">import</span> <span class="n">dSbus_dV_numba_sparse_csc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">CxVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_lookup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc2</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSC</span>
+
+
+<div class="viewcode-block" id="create_J_csr">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Derivatives.html#VeraGridEngine.Simulations.Derivatives.ac_jacobian.create_J_csr">[docs]</a>
+<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_J_csr</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dS_dVm_x</span><span class="p">,</span> <span class="n">dS_dVa_x</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">Yj</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">Jx</span><span class="p">,</span> <span class="n">Jj</span><span class="p">,</span> <span class="n">Jp</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates Jacobian in CSR format.</span>
+<span class="sd">    :param nbus:</span>
+<span class="sd">    :param dS_dVm_x:</span>
+<span class="sd">    :param dS_dVa_x:</span>
+<span class="sd">    :param Yp:</span>
+<span class="sd">    :param Yj:</span>
+<span class="sd">    :param pvpq:</span>
+<span class="sd">    :param pq:</span>
+<span class="sd">    :param Jx:</span>
+<span class="sd">    :param Jj:</span>
+<span class="sd">    :param Jp:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+
+<span class="sd">    Input: dS_dVa and dS_dVm in CSR sparse form (Yx = data, Yp = indptr, Yj = indices), pvpq, pq from pypower</span>
+
+<span class="sd">    ** The values Yp and Yj are the internal structures of Y in CSC format!</span>
+
+<span class="sd">    OUTPUT:  data from CSR form of Jacobian (Jx, Jj, Jp) and number of non zeros (nnz)</span>
+
+<span class="sd">    @author: Florian Schaefer</span>
+
+<span class="sd">    Calculate Jacobian entries</span>
+
+<span class="sd">    J11 = dS_dVa[array([pvpq]).T, pvpq].real</span>
+<span class="sd">    J12 = dS_dVm[array([pvpq]).T, pq].real</span>
+<span class="sd">    J21 = dS_dVa[array([pq]).T, pvpq].imag</span>
+<span class="sd">    J22 = dS_dVm[array([pq]).T, pq].imag</span>
+
+<span class="sd">    Explanation of code:</span>
+<span class="sd">    To understand the concept the CSR storage method should be known. See:</span>
+<span class="sd">    https://de.wikipedia.org/wiki/Compressed_Row_Storage</span>
+
+<span class="sd">    J has the shape</span>
+<span class="sd">    </span>
+<span class="sd">            pvpq      pq</span>
+<span class="sd">    pvpq | dP_dVa | dP_dVm | </span>
+<span class="sd">      pq | dQ_dVa | dQ_dVm | </span>
+<span class="sd">    </span>
+<span class="sd">          pvpq   pq</span>
+<span class="sd">    pvpq | J11 | J12 | </span>
+<span class="sd">      pq | J21 | J22 | </span>
+
+<span class="sd">    We first iterate the rows of J11 and J12 (for r in range lpvpq) and add the entries which are stored in dS_dV</span>
+<span class="sd">    Then we iterate the rows of J21 and J22 (for r in range lpq) and add the entries from dS_dV</span>
+
+<span class="sd">    Note: The row and column pointer of of dVm and dVa are the same as the one from Ybus</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pvpq_lookup</span> <span class="o">=</span> <span class="n">make_lookup</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">)</span>
+
+    <span class="c1"># get length of vectors</span>
+    <span class="n">npvpq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvpq</span><span class="p">)</span>
+    <span class="n">npq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq</span><span class="p">)</span>
+    <span class="n">npv</span> <span class="o">=</span> <span class="n">npvpq</span> <span class="o">-</span> <span class="n">npq</span>
+
+    <span class="c1"># nonzeros in J</span>
+    <span class="n">nnz</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># iterate rows of J</span>
+    <span class="c1"># first iterate pvpq (J11 and J12) (dP_dVa, dP_dVm)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npvpq</span><span class="p">):</span>
+
+        <span class="c1"># nnzStar is necessary to calculate nonzeros per row</span>
+        <span class="n">nnzStart</span> <span class="o">=</span> <span class="n">nnz</span>
+
+        <span class="c1"># iterate columns of J11 = dS_dVa.real at positions in pvpq</span>
+        <span class="c1"># check entries in row pvpq[r] of dS_dV</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">pvpq</span><span class="p">[</span><span class="n">r</span><span class="p">]],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">pvpq</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+            <span class="c1"># check if column Yj is in pvpq</span>
+            <span class="n">cc</span> <span class="o">=</span> <span class="n">pvpq_lookup</span><span class="p">[</span><span class="n">Yj</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span>
+
+            <span class="c1"># entries for J11 and J12</span>
+            <span class="k">if</span> <span class="n">pvpq</span><span class="p">[</span><span class="n">cc</span><span class="p">]</span> <span class="o">==</span> <span class="n">Yj</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                <span class="c1"># entry found</span>
+                <span class="c1"># equals entry of J11: J[r,cc] = dS_dVa[c].real</span>
+                <span class="n">Jx</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVa_x</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">Jj</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># if entry is found in the &quot;pq part&quot; of pvpq = add entry of J12</span>
+                <span class="k">if</span> <span class="n">cc</span> <span class="o">&gt;=</span> <span class="n">npv</span><span class="p">:</span>
+                    <span class="n">Jx</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVm_x</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                    <span class="n">Jj</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span> <span class="o">+</span> <span class="n">npq</span>
+                    <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Jp: number of nonzeros per row = nnz - nnzStart (nnz at begging of loop - nnz at end of loop)</span>
+        <span class="n">Jp</span><span class="p">[</span><span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span> <span class="o">-</span> <span class="n">nnzStart</span> <span class="o">+</span> <span class="n">Jp</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+
+    <span class="c1"># second: iterate pq (J21 and J22) (dQ_dVa, dQ_dVm)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npq</span><span class="p">):</span>
+        <span class="n">nnzStart</span> <span class="o">=</span> <span class="n">nnz</span>
+        <span class="c1"># iterate columns of J21 = dS_dVa.imag at positions in pvpq</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">pq</span><span class="p">[</span><span class="n">r</span><span class="p">]],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">pq</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+            <span class="n">cc</span> <span class="o">=</span> <span class="n">pvpq_lookup</span><span class="p">[</span><span class="n">Yj</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">pvpq</span><span class="p">[</span><span class="n">cc</span><span class="p">]</span> <span class="o">==</span> <span class="n">Yj</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                <span class="c1"># entry found</span>
+                <span class="c1"># equals entry of J21: J[r + lpvpq, cc] = dS_dVa[c].imag</span>
+                <span class="n">Jx</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVa_x</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                <span class="n">Jj</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">cc</span> <span class="o">&gt;=</span> <span class="n">npv</span><span class="p">:</span>
+                    <span class="c1"># if entry is found in the &quot;pq part&quot; of pvpq = Add entry of J22</span>
+                    <span class="n">Jx</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVm_x</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                    <span class="n">Jj</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span> <span class="o">+</span> <span class="n">npq</span>
+                    <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Jp: number of nonzeros per row = nnz - nnzStart (nnz at begging of loop - nnz at end of loop)</span>
+        <span class="n">Jp</span><span class="p">[</span><span class="n">r</span> <span class="o">+</span> <span class="n">npvpq</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span> <span class="o">-</span> <span class="n">nnzStart</span> <span class="o">+</span> <span class="n">Jp</span><span class="p">[</span><span class="n">r</span> <span class="o">+</span> <span class="n">npvpq</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="AC_jacobian_csr">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Derivatives.html#VeraGridEngine.Simulations.Derivatives.ac_jacobian.AC_jacobian_csr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">AC_jacobian_csr</span><span class="p">(</span><span class="n">Ybus</span><span class="p">:</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csc_matrix</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the AC Jacobian function with no embedded controls</span>
+<span class="sd">    :param Ybus: Ybus matrix in CSC format</span>
+<span class="sd">    :param V: Voltages vector</span>
+<span class="sd">    :param pvpq: array of pv|pq bus indices</span>
+<span class="sd">    :param pq: array of pq indices</span>
+<span class="sd">    :return: Jacobian Matrix in CSR format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">nbus</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># create Jacobian from fast calc of dS_dV</span>
+    <span class="n">dS_dVm</span><span class="p">,</span> <span class="n">dS_dVa</span> <span class="o">=</span> <span class="n">dSbus_dV_numba_sparse_csr</span><span class="p">(</span><span class="n">Ybus</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">V</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
+
+    <span class="c1"># data in J, space pre-allocated is bigger than actual Jx -&gt; will be reduced later on</span>
+    <span class="n">Jx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dS_dVm</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="c1"># row pointer, dimension = pvpq.shape[0] + pq.shape[0] + 1</span>
+    <span class="n">Jp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">pvpq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">pq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int32</span><span class="p">)</span>
+
+    <span class="c1"># indices, same with the pre-allocated space (see Jx)</span>
+    <span class="n">Jj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dS_dVm</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int32</span><span class="p">)</span>
+
+    <span class="c1"># fill Jx, Jj and Jp in CSR order</span>
+    <span class="n">create_J_csr</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dS_dVm</span><span class="p">,</span> <span class="n">dS_dVa</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">,</span> <span class="n">Jx</span><span class="p">,</span> <span class="n">Jj</span><span class="p">,</span> <span class="n">Jp</span><span class="p">)</span>
+
+    <span class="c1"># resize before generating the scipy sparse matrix</span>
+    <span class="n">Jx</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">Jp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">refcheck</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Jj</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">Jp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">refcheck</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># generate scipy sparse matrix</span>
+    <span class="n">nj</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvpq</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">Jx</span><span class="p">,</span> <span class="n">Jj</span><span class="p">,</span> <span class="n">Jp</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">nj</span><span class="p">,</span> <span class="n">nj</span><span class="p">))</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="create_J_csc">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Derivatives.html#VeraGridEngine.Simulations.Derivatives.ac_jacobian.create_J_csc">[docs]</a>
+<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_J_csc</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">Yx</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Yp</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Yi</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates Jacobian in CSC format.</span>
+
+<span class="sd">    J has the shape</span>
+
+<span class="sd">            pvpq      pq</span>
+<span class="sd">    pvpq | dP_dVa | dP_dVm |</span>
+<span class="sd">      pq | dQ_dVa | dQ_dVm |</span>
+
+<span class="sd">    :param nbus:</span>
+<span class="sd">    :param Yx:</span>
+<span class="sd">    :param Yp:</span>
+<span class="sd">    :param Yi:</span>
+<span class="sd">    :param V:</span>
+<span class="sd">    :param pvpq:</span>
+<span class="sd">    :param pq:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create Jacobian from fast calc of dS_dV</span>
+    <span class="n">dS_dVm_x</span><span class="p">,</span> <span class="n">dS_dVa_x</span> <span class="o">=</span> <span class="n">dSbus_dV_numba_sparse_csc</span><span class="p">(</span><span class="n">Yx</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
+
+    <span class="n">nj</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvpq</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq</span><span class="p">)</span>
+    <span class="n">nnz_estimate</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">dS_dVm_x</span><span class="p">)</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">CSC</span><span class="p">(</span><span class="n">nj</span><span class="p">,</span> <span class="n">nj</span><span class="p">,</span> <span class="n">nnz_estimate</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Note: The row and column pointer of of dVm and dVa are the same as the one from Ybus</span>
+
+    <span class="n">lookup_dP</span> <span class="o">=</span> <span class="n">make_lookup</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">)</span>
+    <span class="n">lookup_dQ</span> <span class="o">=</span> <span class="n">make_lookup</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+
+    <span class="c1"># get length of vectors</span>
+    <span class="n">npvpq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvpq</span><span class="p">)</span>
+
+    <span class="c1"># nonzeros in J</span>
+    <span class="n">nnz</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+
+    <span class="c1"># J1 and J3 -----------------------------------------------------------------------------------------</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">pvpq</span><span class="p">:</span>  <span class="c1"># columns</span>
+
+        <span class="c1"># J1</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">pvpq</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVa_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># J3</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dQ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">pq</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVa_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span> <span class="o">+</span> <span class="n">npvpq</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+
+    <span class="c1"># J2 and J4 -----------------------------------------------------------------------------------------</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">pq</span><span class="p">:</span>  <span class="c1"># columns</span>
+
+        <span class="c1"># J2</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">pvpq</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVm_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># J4</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dQ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">pq</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVm_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span> <span class="o">+</span> <span class="n">npvpq</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+
+    <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+    <span class="n">J</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">nnz</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">J</span></div>
+
+
+
+<div class="viewcode-block" id="AC_jacobian">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Derivatives.html#VeraGridEngine.Simulations.Derivatives.ac_jacobian.AC_jacobian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">AC_jacobian</span><span class="p">(</span><span class="n">Ybus</span><span class="p">:</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the AC Jacobian function with no embedded controls</span>
+<span class="sd">    :param Ybus: Ybus matrix in CSC format</span>
+<span class="sd">    :param V: Voltages vector</span>
+<span class="sd">    :param pvpq: array of pv|pq bus indices</span>
+<span class="sd">    :param pq: array of pq indices</span>
+<span class="sd">    :return: Jacobian Matrix in CSC format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s1">&#39;csc&#39;</span><span class="p">:</span>
+        <span class="n">Ybus</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span>
+
+    <span class="n">nbus</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Create J in CSC order</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">create_J_csc</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">J</span></div>
+
+
+
+<div class="viewcode-block" id="create_J_vc_csc">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Derivatives.html#VeraGridEngine.Simulations.Derivatives.ac_jacobian.create_J_vc_csc">[docs]</a>
+<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_J_vc_csc</span><span class="p">(</span><span class="n">nbus</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Yx</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Yp</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Yi</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                    <span class="n">idx_dtheta</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dP</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates Jacobian in CSC format.</span>
+
+<span class="sd">    J has the shape</span>
+
+<span class="sd">              idx_dtheta      idx_dVm</span>
+<span class="sd">    idx_dP  | dP_dVa        | dP_dVm |</span>
+<span class="sd">    idx_dQ  | dQ_dVa        | dQ_dVm |</span>
+
+<span class="sd">    :param nbus:</span>
+<span class="sd">    :param Yx:</span>
+<span class="sd">    :param Yp:</span>
+<span class="sd">    :param Yi:</span>
+<span class="sd">    :param V:</span>
+<span class="sd">    :param idx_dtheta: pv, pq, p, pqv</span>
+<span class="sd">    :param idx_dVm: pq, p</span>
+<span class="sd">    :param idx_dP: pv, pq, p, pqv</span>
+<span class="sd">    :param idx_dQ: pq, pqv</span>
+<span class="sd">    :return: Jacobina matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create Jacobian from fast calc of dS_dV</span>
+    <span class="n">dS_dVm_x</span><span class="p">,</span> <span class="n">dS_dVa_x</span> <span class="o">=</span> <span class="n">dSbus_dV_numba_sparse_csc</span><span class="p">(</span><span class="n">Yx</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
+
+    <span class="n">nj</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dtheta</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dVm</span><span class="p">)</span>
+    <span class="n">nnz_estimate</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">dS_dVm_x</span><span class="p">)</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">CSC</span><span class="p">(</span><span class="n">nj</span><span class="p">,</span> <span class="n">nj</span><span class="p">,</span> <span class="n">nnz_estimate</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Note: The row and column pointer of dVm and dVa are the same as the one from Ybus</span>
+    <span class="n">lookup_dP</span> <span class="o">=</span> <span class="n">make_lookup</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">idx_dP</span><span class="p">)</span>
+    <span class="n">lookup_dQ</span> <span class="o">=</span> <span class="n">make_lookup</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">)</span>
+
+    <span class="c1"># get length of vectors</span>
+    <span class="n">n_no_slack</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_dtheta</span><span class="p">)</span>
+
+    <span class="c1"># nonzeros in J</span>
+    <span class="n">nnz</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+
+    <span class="c1"># J1 and J3 -----------------------------------------------------------------------------------------</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idx_dtheta</span><span class="p">:</span>  <span class="c1"># columns</span>
+
+        <span class="c1"># J1</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">idx_dtheta</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVa_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># J3</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dQ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">idx_dQ</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVa_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span> <span class="o">+</span> <span class="n">n_no_slack</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+
+    <span class="c1"># J2 and J4 -----------------------------------------------------------------------------------------</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idx_dVm</span><span class="p">:</span>  <span class="c1"># columns</span>
+
+        <span class="c1"># J2</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>  <span class="c1"># row at Y</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">idx_dtheta</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVm_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># J4</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Yp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Yp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>  <span class="c1"># rows</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">Yi</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">lookup_dQ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">idx_dQ</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">dS_dVm_x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">nnz</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span> <span class="o">+</span> <span class="n">n_no_slack</span>
+                <span class="n">nnz</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+
+    <span class="n">J</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">nnz</span>
+    <span class="n">J</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">nnz</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">J</span></div>
+
+
+
+<div class="viewcode-block" id="AC_jacobianVc">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.Derivatives.html#VeraGridEngine.Simulations.Derivatives.ac_jacobian.AC_jacobianVc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">AC_jacobianVc</span><span class="p">(</span><span class="n">Ybus</span><span class="p">:</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the AC Jacobian function with no embedded controls</span>
+<span class="sd">    :param Ybus: Ybus matrix in CSC format</span>
+<span class="sd">    :param V: Voltages vector</span>
+<span class="sd">    :param idx_dtheta: pv, pq, p, pqv</span>
+<span class="sd">    :param idx_dVm: pq, p</span>
+<span class="sd">    :param idx_dQ: pq, pqv</span>
+<span class="sd">    :return: Jacobian Matrix in CSC format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s1">&#39;csc&#39;</span><span class="p">:</span>
+        <span class="n">Ybus</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span>
+
+    <span class="n">nbus</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Create J in CSC order</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">create_J_vc_csc</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dVm</span><span class="p">,</span> <span class="n">idx_dtheta</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">J</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

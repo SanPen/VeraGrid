@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse.csgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">connected_components</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.sparse_solve</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_sparse_type</span><span class="p">,</span> <span class="n">get_linear_solver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericPowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">BoolVec</span><span class="p">,</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConverterControlType</span>
+
+<span class="n">linear_solver</span> <span class="o">=</span> <span class="n">get_linear_solver</span><span class="p">()</span>
+<span class="n">sparse</span> <span class="o">=</span> <span class="n">get_sparse_type</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="linear_pf">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.linear_pf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">linear_pf</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+              <span class="n">Ybus</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span> <span class="n">Bpqpv</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span> <span class="n">Bref</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span> <span class="n">Bf</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
+              <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">I0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Y0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+              <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">no_slack</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NumericPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves a linear-DC power flow.</span>
+<span class="sd">    :param nc: NumericalCircuit instance</span>
+<span class="sd">    :param Ybus: Normal circuit admittance matrix</span>
+<span class="sd">    :param Bpqpv: Susceptance matrix reduced</span>
+<span class="sd">    :param Bref: Susceptance matrix sliced for the slack node</span>
+<span class="sd">    :param Bf: Susceptance matrix of the Branches to nodes (used to include the phase shifters)</span>
+<span class="sd">    :param S0: Complex power Injections at all the nodes</span>
+<span class="sd">    :param I0: Complex current Injections at all the nodes</span>
+<span class="sd">    :param Y0: Complex admittance Injections at all the nodes</span>
+<span class="sd">    :param V0: Array of complex seed voltage (it contains the ref voltages)</span>
+<span class="sd">    :param tau: Array of branch angles</span>
+<span class="sd">    :param vd: array of the indices of the slack nodes</span>
+<span class="sd">    :param no_slack: array of the indices of the non-slack nodes</span>
+<span class="sd">    :param pq: array of the indices of the pq nodes</span>
+<span class="sd">    :param pv: array of the indices of the pv nodes</span>
+<span class="sd">    :return: NumericPowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">npq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq</span><span class="p">)</span>
+    <span class="n">npv</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">npq</span> <span class="o">+</span> <span class="n">npv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Decompose the voltage in angle and magnitude</span>
+        <span class="n">Va_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V0</span><span class="p">[</span><span class="n">vd</span><span class="p">])</span>  <span class="c1"># we only need the angles at the slack nodes</span>
+        <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+
+        <span class="c1"># initialize result vector</span>
+        <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">V0</span><span class="p">))</span>
+
+        <span class="c1"># Compute the power injection at the flat voltage this model assumes. </span>
+        <span class="c1"># Evaluating the ZIP at the seeded voltages would mix unused input data with a</span>
+        <span class="c1"># model that treats every magnitude as 1 p.u. everywhere else.</span>
+        <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Vm</span><span class="p">))</span>
+
+        <span class="c1"># compose the reduced power injections (Pinj)</span>
+        <span class="c1"># Since we have removed the slack nodes, we must account their influence as Injections Bref * Va_ref</span>
+        <span class="c1"># We also need to account for the effect of the phase shifters (Pps)</span>
+        <span class="n">Pps</span> <span class="o">=</span> <span class="n">Bf</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">tau</span>
+        <span class="n">Pinj</span> <span class="o">=</span> <span class="n">Sbus</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="p">(</span><span class="n">Bref</span> <span class="o">@</span> <span class="n">Va_ref</span><span class="p">)</span> <span class="o">*</span> <span class="n">Vm</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span> <span class="o">+</span> <span class="n">Pps</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span>  <span class="c1"># TODO: add G from shunts</span>
+
+        <span class="c1"># update angles for non-reference buses</span>
+        <span class="n">Va</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span> <span class="o">=</span> <span class="n">linear_solver</span><span class="p">(</span><span class="n">Bpqpv</span><span class="p">,</span> <span class="n">Pinj</span><span class="p">)</span>
+        <span class="n">Va</span><span class="p">[</span><span class="n">vd</span><span class="p">]</span> <span class="o">=</span> <span class="n">Va_ref</span>
+
+        <span class="c1"># re assemble the voltage</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">polar_to_rect</span><span class="p">(</span><span class="n">Vm</span><span class="p">,</span> <span class="n">Va</span><span class="p">)</span>
+
+        <span class="c1"># compute the calculated power injection and the error of the voltage solution</span>
+        <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+
+        <span class="c1"># compute the power mismatch between the specified power Sbus and the calculated power Scalc</span>
+        <span class="n">mismatch</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">S0</span><span class="p">,</span> <span class="n">no_slack</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+
+        <span class="c1"># check for convergence</span>
+        <span class="n">norm_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mismatch</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">norm_f</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span>
+        <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+    <span class="n">Sf</span><span class="p">,</span> <span class="n">St</span><span class="p">,</span> <span class="n">If</span><span class="p">,</span> <span class="n">It</span><span class="p">,</span> <span class="n">Vbranch</span><span class="p">,</span> <span class="n">loading</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">power_flow_post_process_linear</span><span class="p">(</span>
+        <span class="n">Sbus</span><span class="o">=</span><span class="n">Scalc</span><span class="p">,</span>
+        <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+        <span class="n">X</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+        <span class="n">tap_module</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">,</span>
+        <span class="n">tap_angle</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">,</span>
+        <span class="n">F</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+        <span class="n">T</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">branch_rates</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span><span class="p">,</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                   <span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                   <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf</span><span class="o">=</span><span class="n">Sf</span><span class="p">,</span>
+                                   <span class="n">St</span><span class="o">=</span><span class="n">St</span><span class="p">,</span>
+                                   <span class="n">If</span><span class="o">=</span><span class="n">If</span><span class="p">,</span>
+                                   <span class="n">It</span><span class="o">=</span><span class="n">It</span><span class="p">,</span>
+                                   <span class="n">loading</span><span class="o">=</span><span class="n">loading</span><span class="p">,</span>
+                                   <span class="n">losses</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+                                   <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">norm_f</span><span class="o">=</span><span class="n">norm_f</span><span class="p">,</span>
+                                   <span class="n">converged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VscLinearModel">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.VscLinearModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VscLinearModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear (DC) representation of the VSC converters.</span>
+
+<span class="sd">    A converter moves power from its DC bus to its AC bus, and how much it moves is decided</span>
+<span class="sd">    by its control mode, never by an impedance. Three behaviours cover every mode:</span>
+
+<span class="sd">    - scheduled: it holds a P_dc or P_ac set point</span>
+<span class="sd">    - droop (P-mode 3): it follows ``P = P0 + k · (theta_ctrl - theta_ac)``</span>
+<span class="sd">    - DC slack: it controls the DC voltage, so it has no schedule of its own and instead</span>
+<span class="sd">      closes the power balance of its DC subgrid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;is_droop&quot;</span><span class="p">,</span> <span class="s2">&quot;is_dc_slack&quot;</span><span class="p">,</span> <span class="s2">&quot;p_set&quot;</span><span class="p">,</span> <span class="s2">&quot;k_droop&quot;</span><span class="p">,</span> <span class="s2">&quot;ctrl_bus&quot;</span><span class="p">,</span> <span class="s2">&quot;dc_island&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_vsc</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param n_vsc: number of converters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_droop</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_vsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_vsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_set</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_vsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># p.u. (droop base power for droop converters)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_droop</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_vsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># p.u./rad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_vsc</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dc_island</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_vsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_vsc_linear_model">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.build_vsc_linear_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_vsc_linear_model</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VscLinearModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Classify every converter for the linear power flow and label the DC subgrid it belongs</span>
+<span class="sd">    to, so that the converter that fixes the DC voltage can later close that subgrid&#39;s</span>
+<span class="sd">    power balance.</span>
+
+<span class="sd">    :param nc: NumericalCircuit</span>
+<span class="sd">    :return: VscLinearModel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">VscLinearModel</span><span class="p">(</span><span class="n">n_vsc</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">model</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># there are converters to classify</span>
+
+    <span class="c1"># label the DC subgrids through the DC branches</span>
+    <span class="n">dc_adjacency</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">,</span> <span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">t</span><span class="p">]:</span>
+            <span class="n">dc_adjacency</span><span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">dc_adjacency</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># not an active DC branch</span>
+    <span class="n">n_dc_islands</span><span class="p">,</span> <span class="n">dc_label</span> <span class="o">=</span> <span class="n">connected_components</span><span class="p">(</span><span class="n">dc_adjacency</span><span class="o">.</span><span class="n">tocsr</span><span class="p">(),</span> <span class="n">directed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">droop_code</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pdc_angle_droop</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+    <span class="n">vm_dc_code</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+    <span class="n">pdc_code</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pdc</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+    <span class="n">pac_code</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pac</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">dc_island</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dc_label</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="n">m</span><span class="p">])])</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_int</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2_int</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m</span><span class="p">]:</span>
+            <span class="k">pass</span>  <span class="c1"># an inactive converter moves no power</span>
+
+        <span class="k">elif</span> <span class="n">c1</span> <span class="o">==</span> <span class="n">droop_code</span> <span class="ow">or</span> <span class="n">c2</span> <span class="o">==</span> <span class="n">droop_code</span><span class="p">:</span>
+            <span class="c1"># P-mode 3: the droop constant is given in MW/deg and is needed in p.u./rad.</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">is_droop</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">k_droop</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_val</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">*</span> <span class="mf">57.295779513</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2_val</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_bus_idx</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">c1</span> <span class="o">==</span> <span class="n">vm_dc_code</span> <span class="ow">or</span> <span class="n">c2</span> <span class="o">==</span> <span class="n">vm_dc_code</span><span class="p">:</span>
+            <span class="c1"># it fixes the DC voltage, so it closes the DC balance</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Scheduled converter. The model works with the power that leaves the DC bus</span>
+            <span class="c1"># towards the AC bus, which is the &quot;from&quot; side.</span>
+            <span class="k">if</span> <span class="n">c1</span> <span class="o">==</span> <span class="n">pdc_code</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_val</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="k">elif</span> <span class="n">c2</span> <span class="o">==</span> <span class="n">pdc_code</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2_val</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="k">elif</span> <span class="n">c1</span> <span class="o">==</span> <span class="n">pac_code</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_val</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="k">elif</span> <span class="n">c2</span> <span class="o">==</span> <span class="n">pac_code</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2_val</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># no power control at all, it moves nothing</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="add_vsc_linear_terms">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.add_vsc_linear_terms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_vsc_linear_terms</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                         <span class="n">model</span><span class="p">:</span> <span class="n">VscLinearModel</span><span class="p">,</span>
+                         <span class="n">A</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">,</span>
+                         <span class="n">pinned</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add the converter behaviour to the linear (DC) power flow system.</span>
+
+<span class="sd">    :param nc: NumericalCircuit</span>
+<span class="sd">    :param model: VscLinearModel with the classification</span>
+<span class="sd">    :param A: system matrix being mounted, modified in place</span>
+<span class="sd">    :param pinned: per converter forced power in p.u., NaN where the converter is free.</span>
+<span class="sd">                   A droop converter is pinned once it reaches its rating.</span>
+<span class="sd">    :return: constant power injections caused by the converters, in p.u.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_vsc</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m</span><span class="p">]:</span>
+            <span class="k">pass</span>  <span class="c1"># inactive, or the DC slack that is handled by the closure below</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+            <span class="n">to</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+            <span class="n">free_droop</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">is_droop</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">free_droop</span><span class="p">:</span>
+                <span class="n">ctrl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">k_droop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">k_droop</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">p_vsc</span><span class="p">[</span><span class="n">fr</span><span class="p">]</span> <span class="o">-=</span> <span class="n">p0</span>
+                <span class="n">p_vsc</span><span class="p">[</span><span class="n">to</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p0</span>
+                <span class="n">A</span><span class="p">[</span><span class="n">fr</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k_droop</span>
+                <span class="n">A</span><span class="p">[</span><span class="n">fr</span><span class="p">,</span> <span class="n">to</span><span class="p">]</span> <span class="o">-=</span> <span class="n">k_droop</span>
+                <span class="n">A</span><span class="p">[</span><span class="n">to</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">]</span> <span class="o">-=</span> <span class="n">k_droop</span>
+                <span class="n">A</span><span class="p">[</span><span class="n">to</span><span class="p">,</span> <span class="n">to</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k_droop</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p_fixed</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">p_vsc</span><span class="p">[</span><span class="n">fr</span><span class="p">]</span> <span class="o">-=</span> <span class="n">p_fixed</span>
+                <span class="n">p_vsc</span><span class="p">[</span><span class="n">to</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p_fixed</span>
+
+    <span class="c1"># The DC voltage controlling converter of each subgrid delivers to</span>
+    <span class="c1"># its AC bus whatever the other converters of that same subgrid inject into the DC side</span>
+    <span class="k">for</span> <span class="n">m_slack</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m_slack</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m_slack</span><span class="p">]:</span>
+            <span class="n">fr_slack</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="n">m_slack</span><span class="p">])</span>
+            <span class="n">to_slack</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">m_slack</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">m_other</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+
+                <span class="n">same_island</span> <span class="o">=</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span>
+                               <span class="ow">and</span> <span class="n">m_other</span> <span class="o">!=</span> <span class="n">m_slack</span>
+                               <span class="ow">and</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span>
+                               <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">dc_island</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">dc_island</span><span class="p">[</span><span class="n">m_slack</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">same_island</span><span class="p">:</span>
+                    <span class="n">free_droop</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">is_droop</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span>
+                                  <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span>
+                                  <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">p0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span>
+                    <span class="n">p_vsc</span><span class="p">[</span><span class="n">fr_slack</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p0</span>
+                    <span class="n">p_vsc</span><span class="p">[</span><span class="n">to_slack</span><span class="p">]</span> <span class="o">-=</span> <span class="n">p0</span>
+
+                    <span class="k">if</span> <span class="n">free_droop</span><span class="p">:</span>
+                        <span class="n">ctrl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span>
+                        <span class="n">to_other</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span>
+                        <span class="n">k_droop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">k_droop</span><span class="p">[</span><span class="n">m_other</span><span class="p">])</span>
+                        <span class="n">A</span><span class="p">[</span><span class="n">fr_slack</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">]</span> <span class="o">-=</span> <span class="n">k_droop</span>
+                        <span class="n">A</span><span class="p">[</span><span class="n">fr_slack</span><span class="p">,</span> <span class="n">to_other</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k_droop</span>
+                        <span class="n">A</span><span class="p">[</span><span class="n">to_slack</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k_droop</span>
+                        <span class="n">A</span><span class="p">[</span><span class="n">to_slack</span><span class="p">,</span> <span class="n">to_other</span><span class="p">]</span> <span class="o">-=</span> <span class="n">k_droop</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>  <span class="c1"># a fixed power converter only contributes the constant part</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># a converter of another DC subgrid, or the slack itself</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># not a DC voltage controlling converter</span>
+
+    <span class="k">return</span> <span class="n">p_vsc</span></div>
+
+
+
+<div class="viewcode-block" id="compute_vsc_powers">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.compute_vsc_powers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_vsc_powers</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                       <span class="n">model</span><span class="p">:</span> <span class="n">VscLinearModel</span><span class="p">,</span>
+                       <span class="n">va</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                       <span class="n">pinned</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate the power that every converter moves from its DC bus to its AC bus, given the</span>
+<span class="sd">    solved bus angles.</span>
+
+<span class="sd">    :param nc: NumericalCircuit</span>
+<span class="sd">    :param model: VscLinearModel with the classification</span>
+<span class="sd">    :param va: solved bus angles in radians</span>
+<span class="sd">    :param pinned: per converter forced power in p.u., NaN where the converter is free</span>
+<span class="sd">    :return: converter powers in p.u.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">powers</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m</span><span class="p">]:</span>
+            <span class="k">pass</span>  <span class="c1"># the DC slack is resolved by the closure below</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m</span><span class="p">]):</span>
+            <span class="n">powers</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pinned</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">model</span><span class="o">.</span><span class="n">is_droop</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ctrl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ctrl_bus</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+            <span class="n">to</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+            <span class="n">powers</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">k_droop</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">va</span><span class="p">[</span><span class="n">ctrl</span><span class="p">]</span> <span class="o">-</span> <span class="n">va</span><span class="p">[</span><span class="n">to</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">powers</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">p_set</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+
+    <span class="c1"># the DC slack converter carries what the rest of its DC subgrid injects</span>
+    <span class="k">for</span> <span class="n">m_slack</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m_slack</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m_slack</span><span class="p">]:</span>
+            <span class="n">island_total</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">m_other</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span> <span class="ow">and</span> <span class="n">m_other</span> <span class="o">!=</span> <span class="n">m_slack</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">is_dc_slack</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span>
+                        <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">dc_island</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">dc_island</span><span class="p">[</span><span class="n">m_slack</span><span class="p">]):</span>
+                    <span class="n">island_total</span> <span class="o">+=</span> <span class="n">powers</span><span class="p">[</span><span class="n">m_other</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># another subgrid, or the slack itself</span>
+            <span class="n">powers</span><span class="p">[</span><span class="n">m_slack</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">island_total</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># not a DC voltage controlling converter</span>
+
+    <span class="k">return</span> <span class="n">powers</span></div>
+
+
+
+<div class="viewcode-block" id="acdc_lin_pf">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.acdc_lin_pf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">acdc_lin_pf</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                <span class="n">Bbus</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span> <span class="n">Bf</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
+                <span class="n">Gbus</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span> <span class="n">Gf</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
+                <span class="n">ac</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">dc</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">I0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Y0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NumericPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves a linear-ACDC power flow.</span>
+<span class="sd">    :param nc:</span>
+<span class="sd">    :param Bbus:</span>
+<span class="sd">    :param Bf:</span>
+<span class="sd">    :param Gbus:</span>
+<span class="sd">    :param Gf:</span>
+<span class="sd">    :param ac:</span>
+<span class="sd">    :param dc:</span>
+<span class="sd">    :param vd:</span>
+<span class="sd">    :param pv:</span>
+<span class="sd">    :param S0:</span>
+<span class="sd">    :param I0:</span>
+<span class="sd">    :param Y0:</span>
+<span class="sd">    :param V0:</span>
+<span class="sd">    :param tau:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    :param nc: NumericalCircuit instance</span>
+<span class="sd">    :param Ybus: Normal circuit admittance matrix</span>
+<span class="sd">    :param Bpqpv: Susceptance matrix reduced</span>
+<span class="sd">    :param Bref: Susceptane matrix sliced for the slack node</span>
+<span class="sd">    :param Bf: Susceptance matrix of the Branches to nodes (used to include the phase shifters)</span>
+<span class="sd">    :param S0: Complex power Injections at all the nodes</span>
+<span class="sd">    :param I0: Complex current Injections at all the nodes</span>
+<span class="sd">    :param Y0: Complex admittance Injections at all the nodes</span>
+<span class="sd">    :param V0: Array of complex seed voltage (it contains the ref voltages)</span>
+<span class="sd">    :param tau: Array of branch angles</span>
+<span class="sd">    :param vd: array of the indices of the slack nodes</span>
+<span class="sd">    :param no_slack: array of the indices of the non-slack nodes</span>
+<span class="sd">    :param pq: array of the indices of the pq nodes</span>
+<span class="sd">    :param pv: array of the indices of the pv nodes</span>
+<span class="sd">    :return: NumericPowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">nbus</span>
+
+    <span class="c1"># Decompose the voltage in angle and magnitude</span>
+    <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+    <span class="n">Vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+
+    <span class="c1"># mount the base matrix</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="n">Af</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+    <span class="c1"># per branch susceptance, kept to build the phase shift term of the flows later</span>
+    <span class="n">ys_arr</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">t</span><span class="p">]:</span>
+            <span class="c1"># this is a dc branch</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">t</span><span class="p">]:</span>
+            <span class="c1"># this is an ac branch</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># this is an error</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The branch </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is nether fully AC not fully DC :(&quot;</span><span class="p">)</span>
+
+        <span class="n">ys_arr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ys</span>
+        <span class="n">Af</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">ys</span>
+        <span class="n">Af</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">ys</span>
+
+        <span class="n">A</span><span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ys</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ys</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ys</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ys</span>
+
+    <span class="c1"># Copy because of the droop saturation loop</span>
+    <span class="n">A_branches</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">vsc_model</span><span class="p">:</span> <span class="n">VscLinearModel</span> <span class="o">=</span> <span class="n">build_vsc_linear_model</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+    <span class="n">vsc_pinned</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">p_vsc</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">add_vsc_linear_terms</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">vsc_model</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">pinned</span><span class="o">=</span><span class="n">vsc_pinned</span><span class="p">)</span>
+
+    <span class="c1"># detect how to slice</span>
+    <span class="n">no_slack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">dc_sl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">ac_sl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_vm_controlled</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">dc_sl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">no_slack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_vm_controlled</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_va_controlled</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">ac_sl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">no_slack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">Ared</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">no_slack</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">no_slack</span><span class="p">]</span>
+
+    <span class="c1"># Compute the power injection at the flat voltage this model assumes, for the same</span>
+    <span class="c1"># reason as in linear_pf</span>
+    <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_zip_power</span><span class="p">(</span><span class="n">S0</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Vm</span><span class="p">))</span>
+
+    <span class="c1"># compose the reduced power injections (Pinj)</span>
+    <span class="c1"># Since we have removed the slack nodes, we must account their influence as Injections Bref * Va_ref</span>
+    <span class="c1"># We also need to account for the effect of the phase shifters (Pps)</span>
+    <span class="n">Pps</span> <span class="o">=</span> <span class="n">Bf</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">tau</span>
+
+    <span class="n">Bref</span> <span class="o">=</span> <span class="n">Bbus</span><span class="p">[:,</span> <span class="n">vd</span><span class="p">]</span>
+    <span class="n">Pref</span> <span class="o">=</span> <span class="p">(</span><span class="n">Bref</span> <span class="o">@</span> <span class="n">Va</span><span class="p">[</span><span class="n">vd</span><span class="p">])</span> <span class="o">*</span> <span class="n">Vm</span>
+
+    <span class="c1"># the part of the injections that does not depend on the converters</span>
+    <span class="n">P_base</span> <span class="o">=</span> <span class="n">Sbus</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">Pref</span> <span class="o">+</span> <span class="n">Pps</span>
+
+    <span class="n">P</span> <span class="o">=</span> <span class="n">P_base</span> <span class="o">+</span> <span class="n">p_vsc</span>
+    <span class="n">Pred</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span>
+
+    <span class="n">zm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">spsolve</span><span class="p">(</span><span class="n">Ared</span><span class="o">.</span><span class="n">tocsc</span><span class="p">(),</span> <span class="n">Pred</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">sp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">MatrixRankWarning</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># logger.add_error(&quot;ACDC PTDF singular matrix. Does each subgrid have a slack?&quot;)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="n">norm_f</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">Pf</span> <span class="o">=</span> <span class="n">zm</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span>
+
+            <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                           <span class="n">Scalc</span><span class="o">=</span><span class="n">S0</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                           <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Sf</span><span class="o">=</span><span class="n">Pf</span><span class="p">,</span>
+                                           <span class="n">St</span><span class="o">=-</span><span class="n">Pf</span><span class="p">,</span>
+                                           <span class="n">If</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                           <span class="n">It</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                           <span class="n">loading</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                           <span class="n">losses</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                           <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">norm_f</span><span class="o">=</span><span class="n">norm_f</span><span class="p">,</span>
+                                           <span class="n">converged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                           <span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">Va</span><span class="p">,</span> <span class="n">Vm</span><span class="p">]</span>
+
+    <span class="c1"># Assign because the reduced system already returns the absolute angles</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+
+    <span class="c1"># update angles for non-reference buses</span>
+    <span class="n">Va</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span>
+    <span class="n">Vm</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">]</span>
+
+    <span class="c1"># Droop saturation: a P-mode 3 converter follows its droop law only up to its rating,</span>
+    <span class="c1"># beyond that it holds the rating.</span>
+    <span class="n">vsc_rates_pu</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">rates</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+    <span class="n">max_saturation_passes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vsc_model</span><span class="o">.</span><span class="n">is_droop</span><span class="p">))</span>
+    <span class="n">saturation_pass</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">saturating</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">max_saturation_passes</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">saturating</span> <span class="ow">and</span> <span class="n">saturation_pass</span> <span class="o">&lt;</span> <span class="n">max_saturation_passes</span><span class="p">:</span>
+
+        <span class="n">vsc_powers</span> <span class="o">=</span> <span class="n">compute_vsc_powers</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">vsc_model</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="n">Va</span><span class="p">,</span> <span class="n">pinned</span><span class="o">=</span><span class="n">vsc_pinned</span><span class="p">)</span>
+        <span class="n">newly_pinned</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">nelm</span><span class="p">):</span>
+            <span class="n">over_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">vsc_model</span><span class="o">.</span><span class="n">is_droop</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+                         <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vsc_pinned</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                         <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vsc_powers</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">vsc_rates_pu</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">over_rate</span><span class="p">:</span>
+                <span class="n">vsc_pinned</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">vsc_powers</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">*</span> <span class="n">vsc_rates_pu</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">newly_pinned</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># this converter is inside its rating, or already pinned</span>
+
+        <span class="k">if</span> <span class="n">newly_pinned</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">saturating</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># every converter respects its rating, the solution stands</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">A_it</span> <span class="o">=</span> <span class="n">A_branches</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">p_vsc</span> <span class="o">=</span> <span class="n">add_vsc_linear_terms</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">vsc_model</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="n">A_it</span><span class="p">,</span> <span class="n">pinned</span><span class="o">=</span><span class="n">vsc_pinned</span><span class="p">)</span>
+            <span class="n">Va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">Va</span><span class="p">[</span><span class="n">vd</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">V0</span><span class="p">[</span><span class="n">vd</span><span class="p">])</span>
+            <span class="n">Va</span><span class="p">[</span><span class="n">no_slack</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">spsolve</span><span class="p">(</span><span class="n">A_it</span><span class="p">[</span><span class="n">no_slack</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">no_slack</span><span class="p">]</span><span class="o">.</span><span class="n">tocsc</span><span class="p">(),</span>
+                                             <span class="p">(</span><span class="n">P_base</span> <span class="o">+</span> <span class="n">p_vsc</span><span class="p">)[</span><span class="n">no_slack</span><span class="p">])</span>
+
+        <span class="n">saturation_pass</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">vsc_powers</span> <span class="o">=</span> <span class="n">compute_vsc_powers</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">vsc_model</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="n">Va</span><span class="p">,</span> <span class="n">pinned</span><span class="o">=</span><span class="n">vsc_pinned</span><span class="p">)</span>
+
+    <span class="c1"># re assemble the voltage</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">polar_to_rect</span><span class="p">(</span><span class="n">Vm</span><span class="p">,</span> <span class="n">Va</span><span class="p">)</span>
+
+    <span class="c1"># Compute the flows from angles instead of complex voltages</span>
+    <span class="n">Pf</span> <span class="o">=</span> <span class="p">(</span><span class="n">Af</span> <span class="o">@</span> <span class="n">Va</span> <span class="o">-</span> <span class="n">ys_arr</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+
+    <span class="c1"># check for convergence</span>
+    <span class="n">norm_f</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Sf, St, If, It, Vbranch, loading, losses, Sbus = cf.power_flow_post_process_linear(</span>
+    <span class="c1">#     Sbus=S0,</span>
+    <span class="c1">#     V=V,</span>
+    <span class="c1">#     active=nc.passive_branch_data.active,</span>
+    <span class="c1">#     X=nc.passive_branch_data.X,</span>
+    <span class="c1">#     tap_module=nc.active_branch_data.tap_module,</span>
+    <span class="c1">#     tap_angle=nc.active_branch_data.tap_angle,</span>
+    <span class="c1">#     F=nc.passive_branch_data.F,</span>
+    <span class="c1">#     T=nc.passive_branch_data.T,</span>
+    <span class="c1">#     branch_rates=nc.passive_branch_data.rates,</span>
+    <span class="c1">#     Sbase=nc.Sbase</span>
+    <span class="c1"># )</span>
+
+    <span class="n">loading</span> <span class="o">=</span> <span class="n">Pf</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                   <span class="n">Scalc</span><span class="o">=</span><span class="n">S0</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                   <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf</span><span class="o">=</span><span class="n">Pf</span><span class="p">,</span>
+                                   <span class="n">St</span><span class="o">=-</span><span class="n">Pf</span><span class="p">,</span>
+                                   <span class="n">If</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                   <span class="n">It</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                   <span class="n">loading</span><span class="o">=</span><span class="n">loading</span><span class="p">,</span>
+                                   <span class="n">losses</span><span class="o">=</span><span class="n">zm</span><span class="p">,</span>
+                                   <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">vsc_powers</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                   <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">loading_vsc</span><span class="o">=</span><span class="n">vsc_powers</span> <span class="o">/</span> <span class="p">(</span><span class="n">vsc_rates_pu</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">),</span>
+                                   <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">norm_f</span><span class="o">=</span><span class="n">norm_f</span><span class="p">,</span>
+                                   <span class="n">converged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lacpf">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow.lacpf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lacpf</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+          <span class="n">Ybus</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Yf</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Yt</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Ys</span><span class="p">:</span> <span class="n">CscMat</span><span class="p">,</span> <span class="n">Yshunt_bus</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+          <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">pv</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">vd</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+          <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NumericPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linearized AC Load Flow</span>
+
+<span class="sd">    form the article:</span>
+
+<span class="sd">    Linearized AC Load Flow Applied to Analysis in Electric Power Systems</span>
+<span class="sd">        by: P. Rossoni, W. M da Rosa and E. A. Belati</span>
+<span class="sd">    :param nc: NumericalCircuit instance</span>
+<span class="sd">    :param Ybus: Admittance matrix</span>
+<span class="sd">    :param Yf: Admittance from matrix</span>
+<span class="sd">    :param Yt: Admittance to matrix</span>
+<span class="sd">    :param Ys: Admittance matrix of the series elements</span>
+<span class="sd">    :param Yshunt_bus: Admittance vector of the series elements per bus</span>
+<span class="sd">    :param S0: Power Injections vector of all the nodes</span>
+<span class="sd">    :param V0: Set voltages of all the nodes (used for the slack and PV nodes)</span>
+<span class="sd">    :param pq: list of indices of the pq nodes</span>
+<span class="sd">    :param pv: list of indices of the pv nodes</span>
+<span class="sd">    :param vd: Array with the indices of the slack buses</span>
+<span class="sd">    :param logger: Logger</span>
+<span class="sd">    :return: NumericPowerFlowResults</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">pvpq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pv</span><span class="p">,</span> <span class="n">pq</span><span class="p">]</span>
+    <span class="n">npq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq</span><span class="p">)</span>
+    <span class="n">npv</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span>
+    <span class="n">npqpv</span> <span class="o">=</span> <span class="n">npq</span> <span class="o">+</span> <span class="n">npv</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">npq</span> <span class="o">+</span> <span class="n">npv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># compose the system matrix</span>
+        <span class="c1"># G = Y.real</span>
+        <span class="c1"># B = Y.imag</span>
+        <span class="c1"># Gp = Ys.real</span>
+        <span class="c1"># Bp = Ys.imag</span>
+
+        <span class="n">A11</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ys</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">pvpq</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">)]</span>
+        <span class="n">A12</span> <span class="o">=</span> <span class="n">Ybus</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)]</span>
+        <span class="n">A21</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ys</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">pq</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">)]</span>
+        <span class="n">A22</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ybus</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">pq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)]</span>
+
+        <span class="n">Asys</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">sp</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">A11</span><span class="p">,</span> <span class="n">A12</span><span class="p">]),</span>
+                          <span class="n">sp</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">A21</span><span class="p">,</span> <span class="n">A22</span><span class="p">])],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;csc&quot;</span><span class="p">)</span>
+
+        <span class="c1"># compose the right hand side (power vectors)</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">S0</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="n">pvpq</span><span class="p">],</span> <span class="n">S0</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="n">pq</span><span class="p">]]</span>
+
+        <span class="c1"># solve the linear system</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">linear_solver</span><span class="p">(</span><span class="n">Asys</span><span class="p">,</span> <span class="o">-</span><span class="n">rhs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span>
+            <span class="c1"># Calculate the error and check the convergence</span>
+            <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+            <span class="n">mismatch</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">Sbus</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span> <span class="n">idx_dP</span><span class="o">=</span><span class="n">pvpq</span><span class="p">,</span> <span class="n">idx_dQ</span><span class="o">=</span><span class="n">pq</span><span class="p">)</span>
+            <span class="n">norm_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">mismatch</span><span class="p">)</span>
+
+            <span class="c1"># check for convergence</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Failed linear system solution&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="s2">&quot;Linear power flow with voltage modules&quot;</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                           <span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                           <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Sf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">St</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">If</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">It</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">loading</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">norm_f</span><span class="o">=</span><span class="n">norm_f</span><span class="p">,</span>
+                                           <span class="n">converged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                           <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                           <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">)</span>
+
+        <span class="c1"># compose the results vector</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1">#  set the pv voltages</span>
+        <span class="n">va_pv</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npv</span><span class="p">]</span>
+        <span class="n">vm_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V0</span><span class="p">[</span><span class="n">pv</span><span class="p">])</span>
+        <span class="n">V</span><span class="p">[</span><span class="n">pv</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">polar_to_rect</span><span class="p">(</span><span class="n">vm_pv</span><span class="p">,</span> <span class="n">va_pv</span><span class="p">)</span>
+
+        <span class="c1"># set the PQ voltages</span>
+        <span class="n">va_pq</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">npv</span><span class="p">:</span><span class="n">npv</span> <span class="o">+</span> <span class="n">npq</span><span class="p">]</span>
+        <span class="n">vm_pq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">npq</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">npv</span> <span class="o">+</span> <span class="n">npq</span><span class="p">::]</span>
+        <span class="n">V</span><span class="p">[</span><span class="n">pq</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">polar_to_rect</span><span class="p">(</span><span class="n">vm_pq</span><span class="p">,</span> <span class="n">va_pq</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the error and check the convergence</span>
+        <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">mismatch</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx</span><span class="p">(</span><span class="n">Scalc</span><span class="p">,</span> <span class="n">S0</span><span class="p">,</span> <span class="n">pvpq</span><span class="p">,</span> <span class="n">pq</span><span class="p">)</span>
+        <span class="n">norm_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">mismatch</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">norm_f</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">V0</span>
+        <span class="n">Scalc</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+    <span class="c1"># Compute the Branches power and the slack buses power</span>
+    <span class="n">Sf</span><span class="p">,</span> <span class="n">St</span><span class="p">,</span> <span class="n">If</span><span class="p">,</span> <span class="n">It</span><span class="p">,</span> <span class="n">Vbranch</span><span class="p">,</span> <span class="n">loading</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">Sbus</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">power_flow_post_process_nonlinear</span><span class="p">(</span>
+        <span class="n">Sbus</span><span class="o">=</span><span class="n">Scalc</span><span class="p">,</span>
+        <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+        <span class="n">F</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+        <span class="n">T</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">pv</span><span class="o">=</span><span class="n">pv</span><span class="p">,</span>
+        <span class="n">vd</span><span class="o">=</span><span class="n">vd</span><span class="p">,</span>
+        <span class="n">Ybus</span><span class="o">=</span><span class="n">Ybus</span><span class="p">,</span>
+        <span class="n">Yf</span><span class="o">=</span><span class="n">Yf</span><span class="p">,</span>
+        <span class="n">Yt</span><span class="o">=</span><span class="n">Yt</span><span class="p">,</span>
+        <span class="n">Yshunt_bus</span><span class="o">=</span><span class="n">Yshunt_bus</span><span class="p">,</span>
+        <span class="n">branch_rates</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span><span class="p">,</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+                                   <span class="n">Scalc</span><span class="o">=</span><span class="n">Scalc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+                                   <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">tau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf</span><span class="o">=</span><span class="n">Sf</span><span class="p">,</span>
+                                   <span class="n">St</span><span class="o">=</span><span class="n">St</span><span class="p">,</span>
+                                   <span class="n">If</span><span class="o">=</span><span class="n">If</span><span class="p">,</span>
+                                   <span class="n">It</span><span class="o">=</span><span class="n">It</span><span class="p">,</span>
+                                   <span class="n">loading</span><span class="o">=</span><span class="n">loading</span><span class="p">,</span>
+                                   <span class="n">losses</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+                                   <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                   <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                   <span class="n">norm_f</span><span class="o">=</span><span class="n">norm_f</span><span class="p">,</span>
+                                   <span class="n">converged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

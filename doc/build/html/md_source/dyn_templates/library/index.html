@@ -1,0 +1,926 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic library blocks &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="abs -&gt; p.u. (par)" href="abs-to-pu-par.html" />
+    <link rel="prev" title="ZIP load" href="../EMT/zip_load_abc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../dynamic_model_library_index.html">📚 Dynamic model library</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#authoring-models">Authoring models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#device-templates">Device templates</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../dynamic_model_library_index.html#reusable-blocks-and-logic">Reusable blocks and logic</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Dynamic library blocks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../procedural_logic/index.html">Runtime procedural logic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+      <li class="breadcrumb-item active">Dynamic library blocks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/md_source/dyn_templates/library/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="dynamic-library-blocks">
+<h1>Dynamic library blocks<a class="headerlink" href="#dynamic-library-blocks" title="Link to this heading"></a></h1>
+<p>These reusable blocks are the building units for dynamic device models and the RMS and EMT graphical model editors.</p>
+<section id="documented-blocks">
+<h2>Documented blocks<a class="headerlink" href="#documented-blocks" title="Link to this heading"></a></h2>
+<p>The pages in this section describe the library blocks by name, including signal-processing, control, electrical, lookup, limiter, switching, and unit-conversion blocks.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="abs-to-pu-par.html">abs -&gt; p.u. (par)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abs-to-pu-sig.html">abs -&gt; p.u. (sig)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="absolute_value.html">Absolute value</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analog-flip-flop.html">Analog flip-flop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arbitrary_waveform_current_source_emt.html">Arbitrary waveform current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arbitrary_waveform_voltage_source_emt.html">Arbitrary waveform voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backlash.html">Backlash</a></li>
+<li class="toctree-l1"><a class="reference internal" href="balanced.html">balanced</a></li>
+<li class="toctree-l1"><a class="reference internal" href="balanced_3ph_current_source_emt.html">Balanced 3-phase current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="balanced_3ph_voltage_source_emt.html">Balanced 3-phase voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="battery_emt.html">Battery EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bias.html">Bias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c_load_emt.html">C load EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cigre_surge_current_source_emt.html">CIGRE surge current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clarke_transform.html">Clarke transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clarke_transform_power_invariant.html">Clarke transform (power invariant)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="constant.html">Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controlled_balanced_3ph_current_source_emt.html">Controlled balanced 3-phase current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controlled_balanced_3ph_voltage_source_emt.html">Controlled balanced 3-phase voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controlled_current_source_emt.html">Controlled current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controlled_dc_current_source_emt.html">Controlled DC current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controlled_dc_voltage_source_emt.html">Controlled DC voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controlled_voltage_source_emt.html">Controlled voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="current_source_emt.html">Current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_current_source_emt.html">DC current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_voltage_source_emt.html">DC voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband.html">Deadband</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-bypass.html">Deadband (bypass)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-discontinuous.html">Deadband discontinuous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-offset-bypass.html">Deadband offset (bypass)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-offset-parameter.html">Deadband offset (parameter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-parameter.html">Deadband (parameter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-stepped-bypass.html">Deadband stepped (bypass)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deadband-stepped-parameter.html">Deadband stepped (parameter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deg-to-rad.html">deg -&gt; rad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="delay.html">Delay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="double_exponential_current_source_emt.html">Double exponential current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="el-power.html">El. Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="emt-thevenin-eq-generator-template.html">emt thevenin eq generator template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exp_load_emt.html">Exponential load EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flip_flop.html">Flip-flop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="from_goto.html">Signal Pair</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gain.html">Gain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic.html">Generic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gradient-limiter-constant.html">Gradient limiter (constant)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ground_emt.html">Ground EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grounding_link_emt.html">Grounding link EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heidler_current_source_emt.html">Heidler current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hz-to-pu.html">Hz -&gt; p.u.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inverse-lookup-array-object-linear.html">Inverse Lookup array object (linear)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inverse_clarke_transform.html">Inverse Clarke transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inverse_clarke_transform_power_invariant.html">Inverse Clarke transform (power invariant)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inverse_park_transform_dq.html">Inverse Park transform (dq)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inverse_park_transform_dq0.html">Inverse Park transform (dq0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="l_load_emt.html">L load EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="last-value-form-a.html">Last value [form A]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lim.html">lim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lim-const.html">lim const</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit.html">Limit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-3-parameter-inputs.html">Limit (3 parameter inputs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-3-parameter-inputs-complex-with-prio.html">Limit (3 parameter inputs)] (complex with prio)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-lower-parameter.html">Limit lower (parameter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-complex.html">Limit (parameter) (complex)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-eps.html">Limit (parameter) eps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-eps-y-max-y-min.html">Limit (parameter) [param: eps/y_max/y_min]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-eps-y-min.html">Limit (parameter) [param: eps/y_min]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-using-min-max.html">Limit (parameter) (using min/max)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-y-lim.html">Limit (parameter) [param: y_lim]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-parameter-y-max-y-min.html">Limit (parameter) [param: y_max/y_min]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-signal.html">Limit (signal) [signal: y_max/y_min]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-signal-eps.html">Limit (signal) [signal: y_max/y_min; param: eps]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-signal-plus-parameter-input.html">Limit (signal + parameter input)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limit-upper.html">Limit upper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-1x3-linear-fixed.html">Lookup array 1x3 (linear fixed)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-1x3-linear-variable.html">Lookup array 1x3 (linear variable)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-1x4-linear-fixed.html">Lookup array 1x4 (linear fixed)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-1x4-linear-variable.html">Lookup array 1x4 (linear variable)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-linear-noclipping.html">Lookup array (linear noclipping)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-object-linear.html">Lookup array object (linear)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-object-linear-noclipping.html">Lookup array object (linear noclipping)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-array-object-spline.html">Lookup array object (spline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-matrix-linear.html">Lookup matrix (linear)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-matrix-object-linear.html">Lookup matrix object (linear)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-matrix-object-spline.html">Lookup matrix object (spline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup-matrix-spline.html">Lookup matrix (spline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup_array.html">Lookup array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup_matrix.html">Lookup matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moving_average.html">Moving average</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nm-to-pu.html">Nm -&gt; p.u.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nonlinear_resistor_emt.html">Nonlinear resistor EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="park_transform_dq.html">Park transform (dq)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="park_transform_dq0.html">Park transform (dq0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phase_locked_loop.html">Phase locked loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pi.html">pi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pi-droop.html">PI droop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pi-droop-constant.html">PI droop (constant)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pi_controller.html">PI controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pi_current_controller.html">PI current controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pi_power_controller.html">PI power controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pll_transformer.html">PLL transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power-base.html">Power base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pq-calculator.html">PQ Calculator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product.html">Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pu-to-abs-par.html">p.u. -&gt; abs (par)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pu-to-abs-sig.html">p.u. -&gt; abs (sig)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pu-to-hz.html">p.u. -&gt; Hz</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pu-to-rpm.html">p.u. -&gt; rpm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r_load_emt.html">R load EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rad-s-to-rpm.html">rad/s -&gt; rpm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rad-to-deg.html">rad -&gt; deg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp_current_source_emt.html">Ramp current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp_voltage_source_emt.html">Ramp voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter.html">Rate limiter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-base.html">Rate limiter base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-base-parameter-base-grd.html">Rate limiter base (parameter) [param: base/grd]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-base-parameter-base-grd-down.html">Rate limiter base (parameter) [param: base/grd_down]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-base-parameter-base-grd-up-grd-down.html">Rate limiter base (parameter) [param: base/grd_up/grd_down]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-parameter-grd.html">Rate limiter (parameter) [param: grd]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-parameter-grd-down.html">Rate limiter (parameter) [param: grd_down]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-parameter-grd-up-grd-down.html">Rate limiter (parameter) [param: grd_up/grd_down]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate-limiter-signal.html">Rate limiter (signal)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rlc_combo_emt.html">RLC Combo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rms_value.html">RMS value</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpm-to-pu.html">rpm -&gt; p.u.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpm-to-rad-s.html">rpm -&gt; rad/s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scaling_block.html">Scaling block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="select.html">Select</a></li>
+<li class="toctree-l1"><a class="reference internal" href="select_const.html">Select const</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selector.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selector-constant.html">Selector (constant)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selfix.html">Selfix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selfix_const.html">Selfix const</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set-if-condition.html">Set if condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set-if-condition-constant.html">Set if condition (constant)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="step_current_source_emt.html">Step current source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="step_voltage_source_emt.html">Step voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sum.html">Sum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-par-1-to-1-by-par.html">Switch par 1-&gt;1 by par</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-par-1-to-1-by-par-fixed.html">Switch par 1-&gt;1 by par (fixed)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-par-1-to-2-by-par.html">Switch par 1-&gt;2 by par</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-par-1-to-2-by-sig.html">Switch par 1-&gt;2 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-par-2-to-1-by-par.html">Switch par 2-&gt;1 by par</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-par-2-to-1-by-sig.html">Switch par 2-&gt;1 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-1-to-1-by-sig.html">Switch sig 1-&gt;1 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-1-to-1-by-sig-fixed.html">Switch sig 1-&gt;1 by sig (fixed)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-1-to-2-by-par.html">Switch sig 1-&gt;2 by par</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-1-to-2-by-par-bool.html">Switch sig 1-&gt;2 by par (bool)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-1-to-2-by-sig.html">Switch sig 1-&gt;2 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-2-to-1-by-par.html">Switch sig 2-&gt;1 by par</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-2-to-1-by-par-bool.html">Switch sig 2-&gt;1 by par (bool)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-2-to-1-by-sig.html">Switch sig 2-&gt;1 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-2-to-1-by-sig-bool.html">Switch sig 2-&gt;1 by sig (bool)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-2-to-1-by-sig-fixed.html">Switch sig 2-&gt;1 by sig (fixed)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-2-to-1-not-eq-k-by-s-p.html">Switch sig 2-&gt;1 (NOT EQ K) by s/p</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-3-to-1-by-sig.html">Switch sig 3-&gt;1 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sig-4-to-1-by-sig.html">Switch sig 4-&gt;1 by sig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sw-equal-c-2s-to-1s.html">Switch sw equal C 2s-&gt;1s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sw-greater-than-c-2s-to-1s.html">Switch sw greater than C 2s-&gt;1s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sw-greater-than-or-equal-c-2s-to-1s.html">Switch sw greater than or equal C 2s-&gt;1s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sw-not-equal-c-2s-to-1s.html">Switch sw not equal C 2s-&gt;1s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sw-smaller-than-c-2s-to-1s.html">Switch sw smaller than C 2s-&gt;1s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch-sw-smaller-than-or-equal-c-2s-to-1s.html">Switch sw smaller than or equal C 2s-&gt;1s</a></li>
+<li class="toctree-l1"><a class="reference internal" href="switch_emt.html">Switch EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time.html">time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timer.html">Timer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timer-reset.html">Timer (reset)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timer-reset-hold-reset-t0-reset-incfw.html">Timer (reset/hold reset/t0) (reset) incfw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trafo_emt.html">Transformer EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voltage_source_emt.html">Voltage source EMT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xfmr_transformer.html">XFMR Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-equals-c.html">yi equals C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-greater-than-c.html">yi greater than C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-greater-than-c-eps.html">yi greater than C eps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-greater-than-or-equal-c.html">yi greater than or equal C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-less-than-c.html">yi less than C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-less-than-c-eps.html">yi less than C eps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-less-than-or-equal-c.html">yi less than or equal C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi-not-equals-c.html">yi not equals C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-equals-yi2.html">yi1 equals yi2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-greater-than-or-equal-yi2.html">yi1 greater than or equal yi2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-greater-than-yi2.html">yi1 greater than yi2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-greater-than-yi2-eps.html">yi1 greater than yi2 eps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-less-or-equal-than-yi2.html">yi1 less or equal than yi2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-less-than-yi2.html">yi1 less than yi2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-less-than-yi2-eps.html">yi1 less than yi2 eps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yi1-not-equals-yi2.html">yi1 not equals yi2</a></li>
+</ul>
+</div>
+</section>
+<section id="editor-block-catalogue">
+<h2>Editor block catalogue<a class="headerlink" href="#editor-block-catalogue" title="Link to this heading"></a></h2>
+<p>The editor catalogue is generated from the block descriptors used by VeraGrid. It exposes the precise symbolic interface and characteristic equations for every editor-ready catalogue entry.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="catalog/index.html">Editor block catalogue</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_10.html">Lookup array 1x3 (linear fixed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_100.html">Pade approximant R12 (forward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_101.html">e^-s0.01 (forward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_102.html">e^-sT (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_103.html">e^-sT (bypass) incbackward</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_104.html">e^-sT (bypass) incforward</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_105.html">e^-sT (backward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_106.html">e^-sT (forward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_107.html">lastvalue (backward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_108.html">lastvalue (forward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_109.html">Last value [form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_11.html">Lookup array 1x3 (linear variable)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_110.html">s/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_111.html">sK/(1+0.01s)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_112.html">sK/(1+sT) (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_113.html">sK/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_114.html">El. Power</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_115.html">PQ Calculator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_116.html">Power base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_117.html">(H0w0/Q)s/(w0^2+sw0/Q+s^2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_118.html">s/(w0^2+s^2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_119.html">-sT/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_12.html">Lookup array 1x4 (linear fixed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_120.html">-sT/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_121.html">sKT/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_122.html">sKTd/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_123.html">sT/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_124.html">sT/(1+sT) (enable)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_125.html">sTb/(1+sTa) (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_126.html">sTld/(1+sTlg) (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_127.html">(1-K)/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_128.html">(1-K)/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_129.html">1/(1+sT) (parameter) [param: T/y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_13.html">Lookup array 1x4 (linear variable)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_130.html">1/(1+sT) (parameter input) [1 input; param: T/y_max/r_max+2; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_131.html">1/(1+sT) (signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_132.html">1/(1+sT) (signal input) [signal: y_max/y_min; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_133.html">1/(1+sT) (parameter input) [1 input; param: T/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_134.html">1/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_135.html">1/(1+sT) (enable)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_136.html">1/(1+sT) and sx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_137.html">1/(1+sT) (parameter) [param: T/rup/rdown; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_138.html">1/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_139.html">1/(1+sT/2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_14.html">Lookup array object (linear)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_140.html">1/(K+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_141.html">1/(K+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_142.html">1/K(T1/T2-1)(1/(1+sT2))</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_143.html">1/K/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_144.html">Butterworth 2nd order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_145.html">Butterworth 3rd order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_146.html">K/(1+sT) (parameter input) [signal: y_max; param: K/T/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_147.html">K/(1+sT) (signal input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_148.html">K/(1+sT) (sp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_149.html">K/(1+sT) (parameter input) [1 input; param: K/T/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_15.html">Lookup array object (linear noclipping)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_150.html">K/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_151.html">K/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_152.html">K1 + K2/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_153.html">KT/(1+sT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_154.html">1/(1+sT) (parameter) (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_155.html">1/(1+sT) (parameter input) [signal: hold/rst; param: T/y_max/r_max+2; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_156.html">1/(1+sT) (signal) (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_157.html">1/(1+sT) (signal input) [signal: hold/y_max/rst+1; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_158.html">1/(1+sT) (parameter input) [signal: hold/rst; param: T/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_159.html">1/(1+sT) (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_16.html">Lookup array object (spline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_160.html">Butterworth 2nd order (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_161.html">Butterworth 3rd order (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_162.html">1/(1+sT) (parameter) (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_163.html">1/(1+sT) (parameter input) [signal: hold/x_rst/rst; param: T/y_max/r_max+2; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_164.html">1/(1+sT) (signal) (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_165.html">1/(1+sT) (signal input) [signal: hold/x_rst/y_max+2; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_166.html">1/(1+sT) (parameter input) [signal: hold/x_rst/rst; param: T/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_167.html">1/(1+sT) (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_168.html">Multiply (-1)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_169.html">Multiply (-K)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_17.html">Lookup matrix (linear)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_170.html">Multiply (1-K)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_171.html">Multiply (1-K1-K2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_172.html">Multiply 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_173.html">Multiply 1/K (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_174.html">Multiply 1/K</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_175.html">Multiply 1/K1K2 (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_176.html">Multiply 1/SQRT2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_177.html">Multiply 1/SQRT3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_178.html">Multiply K (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_179.html">Multiply K</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_18.html">Lookup matrix (spline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_180.html">Multiply K1 K2 / K3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_181.html">Multiply K1 K2 K3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_182.html">Multiply K1 K2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_183.html">Multiply K1/K2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_184.html">Multiply PI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_185.html">Multiply SQRT(2/3)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_186.html">Multiply SQRT(3/2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_187.html">Multiply SQRT(K1/K2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_188.html">Multiply SQRT2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_189.html">Multiply SQRT3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_19.html">Lookup matrix object (linear)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_190.html">(1+B1s+B2ss)/(1+A1s+A2ss) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_191.html">(1+KsTc)/((1+sTa)(1+sTb)(1+sTc)) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_192.html">(1+b1s+b2ss)/(1+a1s+a2ss)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_193.html">(1+sT3)/(1+sT1+ssT1T2) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_194.html">(1+sT3+ssT4)/(1+sT1+ssT2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_195.html">(1+sTb)(sTa)^2/(1+sTa)^4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_196.html">(1+ssT3)/(1+sT1+ssT2) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_197.html">(A0+sA1+ssA2)/(B0+sB1+ssB2) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_198.html">(ss)/(Ass+Bs+1) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_199.html">(ss+ww)/(ss+sB+ww) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_2.html">a(x-c1)(x-c2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_20.html">Lookup matrix object (spline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_200.html">1/(1+s(2 x zeta)/wc+ ss/(wc x wc))</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_201.html">1/(1+sT1+ssT2) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_202.html">K(1+sT1)(1+sT2)/(s(1+sT3)) (parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_203.html">K(1+sTd)/((1+sTa)(1+sTb)s) (parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_204.html">e(-sTd)/((1+sT1)(1+sT1))</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_205.html">s^2K/(1+sT)^2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_206.html">1/s (parameter input) [1 input; param: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_207.html">1/s (signal input) [signal: hold/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_208.html">1/s (parameter) [1 input; param: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_209.html">1/s (parameter) [1 input; param: y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_21.html">yi equals C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_210.html">1/s (signal) [signal: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_211.html">1/s (signal) [signal: y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_212.html">1/s (enable)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_213.html">1/s (freeze)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_214.html">1/s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_215.html">1/sT (parameter) (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_216.html">1/sT (parameter) [1 input; param: T/y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_217.html">1/sT (parameter input) [1 input; param: T/y_min; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_218.html">1/sT (parameter input) [1 input; param: T/y_min; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_219.html">1/sT (parameter input) [1 input; param: T/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_22.html">yi greater than C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_220.html">1/sT (parameter input) [signal: y_max; param: T/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_221.html">1/sT (2 parameter inputs) [1 input; param: T/K/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_222.html">1/sT (signal input) [signal: y_min; param: T/y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_223.html">1/sT (signal input) [signal: y_max/y_min; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_224.html">1/sT [1 input; param: T/y_max; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_225.html">1/sT [1 input; param: T/y_max; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_226.html">1/sT [1 input; param: T/y_max; 1 state; form C]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_227.html">1/sT [1 input; param: T/y_max; 1 state; form D]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_228.html">1/sT (parameter) [1 input; param: T/y_min; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_229.html">1/sT (parameter) [1 input; param: T/y_min; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_23.html">yi greater than or equal C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_230.html">1/sT (bypass) incfreeze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_231.html">1/sT (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_232.html">1/sT (freeze)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_233.html">1/sT [1 input; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_234.html">K/s (parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_235.html">K/s [(s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_236.html">K/s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_237.html">1/s (parameter input) [signal: rst; param: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_238.html">1/s (signal input) [signal: hold/rst/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_239.html">1/s (parameter) [signal: rst; param: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_24.html">yi less than C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_240.html">1/s (parameter) (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_241.html">1/s (signal) [signal: rst/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_242.html">1/s (signal) (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_243.html">1/s (enable) reset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_244.html">1/s (freeze) (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_245.html">1/s (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_246.html">1/sT (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_247.html">1/sT (parameter) (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_248.html">1/sT (parameter) (feedback) reset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_249.html">1/sT (parameter input) [signal: rst; param: T/y_min; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_25.html">yi less than or equal C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_250.html">1/sT (parameter input) [signal: rst; param: T/y_min; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_251.html">1/sT (parameter input) [signal: rst; param: T/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_252.html">1/sT (parameter input) [signal: rst/y_max; param: T/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_253.html">1/sT (2 parameter inputs) [signal: rst; param: T/K/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_254.html">1/sT (signal input) [signal: rst/y_min; param: T/y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_255.html">1/sT (signal input) [signal: rst/y_max/y_min; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_256.html">1/sT [signal: rst; param: T/y_max; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_257.html">1/sT [signal: rst; param: T/y_max; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_258.html">1/sT [signal: rst; param: T/y_max; 1 state; form C]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_259.html">1/sT [signal: rst; param: T/y_max; 1 state; form D]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_26.html">yi not equals C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_260.html">1/sT (parameter) [signal: rst; param: T/y_min; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_261.html">1/sT (parameter) [signal: rst; param: T/y_min; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_262.html">1/sT (bypass) incfreeze reset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_263.html">1/sT (feedback) reset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_264.html">1/sT (freeze) reset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_265.html">1/s (parameter input) [signal: xrst/rst; param: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_266.html">1/s (signal input) [signal: hold/xrst/rst+2; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_267.html">1/s (parameter) [signal: xrst/rst; param: y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_268.html">1/s (parameter) (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_269.html">1/s (signal) [signal: xrst/rst/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_27.html">yi1 equals yi2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_270.html">1/s (signal) (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_271.html">1/s (enable) reset sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_272.html">1/s (freeze) (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_273.html">1/s (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_274.html">1/sT (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_275.html">1/sT (parameter) (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_276.html">1/sT (parameter) (feedback) (reset signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_277.html">1/sT (parameter input) [signal: xrst/rst; param: T/y_min; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_278.html">1/sT (parameter input) [signal: xrst/rst; param: T/y_min; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_279.html">1/sT (parameter input) [signal: xrst/rst; param: T/y_max/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_28.html">yi1 greater than or equal yi2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_280.html">1/sT (parameter input) [signal: xrst/rst/y_max; param: T/y_min; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_281.html">1/sT (2 parameter inputs) [signal: xrst/rst; param: T/K/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_282.html">1/sT (signal input) [signal: xrst/rst/y_min; param: T/y_max; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_283.html">1/sT (signal input) [signal: xrst/rst/y_max+1; param: T; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_284.html">1/sT [signal: xrst/rst; param: T/y_max; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_285.html">1/sT [signal: xrst/rst; param: T/y_max; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_286.html">1/sT [signal: xrst/rst; param: T/y_max; 1 state; form C]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_287.html">1/sT [signal: xrst/rst; param: T/y_max; 1 state; form D]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_288.html">1/sT (parameter) [signal: xrst/rst; param: T/y_min; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_289.html">1/sT (parameter) [signal: xrst/rst; param: T/y_min; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_29.html">yi1 greater than yi2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_290.html">1/sT (bypass) incfreeze reset sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_291.html">1/sT (feedback) reset sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_292.html">1/sT (freeze) reset sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_293.html">(1+ATs)/(1+BTs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_294.html">(1+sTb)/(1+sTa) (parameter input) [param: Tb/Ta/y_max+1; 1 state; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_295.html">(1+sTb)/(1+sTa) (parameter input) [param: Tb/Ta/y_max+1; 1 state; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_296.html">(1+sTb)/(1+sTa) (2 parameter inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_297.html">(1+sTb)/(1+sTa) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_298.html">(1+sTb)/(1+sTa)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_299.html">(1+sTld)/(1+sTlg) and sx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_3.html">ax^2 + bx + c</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_30.html">yi1 less or equal than yi2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_300.html">(1-ATs)/(1+sAT/2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_301.html">(1-sT)/(1+sT/2) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_302.html">(K+sTb)/(1+sTa)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_303.html">(a+sbT)/(1+sT) (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_304.html">K(1+sTb)/(1+sTa)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_305.html">K(1+sTld)/(1+sTlg) (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_306.html">K(A1+sT1)/(A2+sT2) (parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_307.html">K(A1+sT1)/(A2+sT2) (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_308.html">K(A1+sT1)/(A2+sT2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_309.html">a23(1+(a11-a13a21/a23)sTw)/(1+a11sTw)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_31.html">yi1 less than yi2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_310.html">Limit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_311.html">Limit (parameter) [param: eps/y_min]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_312.html">Limit (parameter) [param: eps/y_max/y_min]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_313.html">Limit (parameter) [param: y_max/y_min]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_314.html">Limit (parameter) (complex)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_315.html">Limit (parameter) (using min/max)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_316.html">Limit (parameter) eps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_317.html">Limit (parameter) [param: y_lim]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_318.html">Limit (3 parameter inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_319.html">Limit (3 parameter inputs)] (complex with prio)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_32.html">yi1 not equals yi2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_320.html">Limit (signal) [signal: y_max/y_min; param: eps]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_321.html">Limit (signal) [signal: y_max/y_min]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_322.html">Limit (signal + parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_323.html">Limit lower (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_324.html">Limit upper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_325.html">Rate limiter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_326.html">Rate limiter base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_327.html">Rate limiter base (parameter) [param: base/grd_down]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_328.html">Rate limiter base (parameter) [param: base/grd_up/grd_down]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_329.html">Rate limiter base (parameter) [param: base/grd]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_33.html">abs(in) greater than C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_330.html">Rate limiter (parameter) [param: grd_down]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_331.html">Rate limiter (parameter) [param: grd_up/grd_down]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_332.html">Rate limiter (parameter) [param: grd]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_333.html">Rate limiter (signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_334.html">AND (2 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_335.html">AND (3 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_336.html">AND (4 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_337.html">XOR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_338.html">EQUAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_339.html">NOR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_34.html">abs(in) less than C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_340.html">NOT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_341.html">OR (2 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_342.html">OR (3 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_343.html">OR (4 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_344.html">2-out-of-3 (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_345.html">AND (2 inputs, pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_346.html">AND (3 inputs, pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_347.html">Invert Logic (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_348.html">NOT (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_349.html">OR (2 inputs, pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_35.html">yi equals C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_350.html">OR (3 inputs, pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_351.html">Bistable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_352.html">Edge detector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_353.html">Monostable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_354.html">ABS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_355.html">CEIL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_356.html">EXP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_357.html">FLOOR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_358.html">FRAC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_359.html">LN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_36.html">yi greater than C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_360.html">LOG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_361.html">MAX (2 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_362.html">MAX (3 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_363.html">MAX (4 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_364.html">MIN (2 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_365.html">MIN (3 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_366.html">MIN (4 inputs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_367.html">MODULO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_368.html">Reciprocal (feedback)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_369.html">Reciprocal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_37.html">yi greater than or equal C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_370.html">ROUND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_371.html">SIGN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_372.html">SQRT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_373.html">x^2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_374.html">x^p</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_375.html">ADD COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_376.html">CONJ COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_377.html">DIV COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_378.html">MAG COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_379.html">MUL COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_38.html">yi less than C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_380.html">SUB COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_381.html">TO POLAR COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_382.html">TO RECTANGULAR COMPLEX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_383.html">ACOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_384.html">ASIN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_385.html">ATAN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_386.html">ATAN2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_387.html">ATAN2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_388.html">ATAND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_389.html">COS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_39.html">yi less than or equal C (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_390.html">COSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_391.html">COSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_392.html">COSHD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_393.html">SIN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_394.html">SIND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_395.html">SINH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_396.html">SINHD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_397.html">TAN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_398.html">TAND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_399.html">TANH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_4.html">mx + n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_40.html">yi1 equals yi2 (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_400.html">TANHD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_401.html">1/(2Hs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_402.html">Accelerating Power (simple)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_403.html">Accelerating Power IPB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_404.html">Gear Box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_405.html">Mass J</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_406.html">P/omg -&gt; Torque</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_407.html">Pt/Pturb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_408.html">Shaft J-k and Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_41.html">yi1 greater than or equal yi2 (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_411.html">2PI [form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_412.html">C [param: C; form B]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_414.html">Shaft i-J-k and Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_417.html">2PI [form C]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_418.html">C [param: C; form C]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_42.html">yi1 greater than yi2 (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_420.html">Shaft i-J-k</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_423.html">2PI [form D]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_424.html">C [param: C; form D]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_426.html">Shaft i-J</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_429.html">2PI [form E]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_43.html">yi1 less than or equal yi2 (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_430.html">C [param: C; form E]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_432.html">Spring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_433.html">(1+sT)/KsT (parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_434.html">(1+sT)/KsT (parameter) (parameter input)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_435.html">(1+sTb)/sTa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_436.html">(1+sTp)/sTi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_437.html">1+K/sT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_438.html">Kc+1/sTi (parameter input) [1 input; param: K_p/T_p/theta_p+3; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_439.html">Kc+1/sTi (parameter input) [1 input; param: K_p/T_rise/theta_p+3; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_44.html">yi1 less than yi2 (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_440.html">Kp(1/Ti+s)/s (signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_441.html">Kp(1/Ti+s)/s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_442.html">Kp+1/sTi (parameter input) [1 input; param: Kp/Ti/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_443.html">Kp+1/sTi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_444.html">Kp+Ki/s (signal) [signal: yo_lim; param: Kp/Ki/Tt; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_445.html">Kp+Ki/s (parameter input) [1 input; param: Kp/Ki/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_446.html">Kp+Ki/s (parameter) [1 input; param: Kp/Ki/ymax+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_447.html">Kp+Ki/s (signal) [signal: ymax/ymin; param: Kp/Ki; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_448.html">Kp+Ki/s+sKd/(1+sTd) (parameter input) [1 input; param: Kp/Ki/Kd+3; 2 states]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_449.html">Kp+Ki/s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_45.html">yi greater than C eps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_450.html">Kc+1/sTi (parameter input) [signal: hold/rst; param: K_p/T_p/theta_p+3; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_451.html">Kc+1/sTi (parameter input) [signal: hold/rst; param: K_p/T_rise/theta_p+3; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_452.html">Kp(1/Ti+s)/s (signal) rst (variant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_453.html">Kp(1/Ti+s)/s (signal) (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_454.html">Kp(1/Ti+s)/s (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_455.html">Kp+1/sTi (parameter input) [signal: hold/rst; param: Kp/Ti/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_456.html">Kp+1/sTi (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_457.html">Kp+Ki/s (signal) (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_458.html">Kp+Ki/s (parameter input) [signal: hold/rst; param: Kp/Ki/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_459.html">Kp+Ki/s (parameter) [signal: hold/rst; param: Kp/Ki/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_46.html">yi less than C eps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_460.html">Kp+Ki/s (signal) [signal: hold/ymax/rst+1; param: Kp/Ki; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_461.html">Kp+Ki/s (reset hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_462.html">Kp+Ki/s+sKd/(1+sTd) (parameter input) [signal: hold/rst; param: Kp/Ki/Kd+3; 2 states]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_463.html">Kc+1/sTi (parameter input) [signal: hold/x_rst/rst; param: K_p/T_p/theta_p+3; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_464.html">Kc+1/sTi (parameter input) [signal: hold/x_rst/rst; param: K_p/T_rise/theta_p+3; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_465.html">Kp(1/Ti+s)/s (signal) (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_466.html">Kp(1/Ti+s)/s (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_467.html">Kp+1/sTi (parameter input) [signal: hold/x_rst/rst; param: Kp/Ti/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_468.html">Kp+1/sTi (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_469.html">Kp+Ki/s (signal) (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_47.html">yi1 greater than yi2 eps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_470.html">Kp+Ki/s (parameter input) [signal: hold/x_rst/rst; param: Kp/Ki/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_471.html">Kp+Ki/s (parameter) [signal: hold/x_rst/rst; param: Kp/Ki/y_max+1; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_472.html">Kp+Ki/s (signal) [signal: hold/x_rst/ymax+2; param: Kp/Ki; 1 state]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_473.html">Kp+Ki/s (reset signal hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_474.html">Kp+Ki/s+sKd/(1+sTd) (parameter input) [signal: hold/x1_rst/rst; param: Kp/Ki/Kd+3; 2 states]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_475.html">Clock (t&gt;0) (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_476.html">Clock (t&gt;0) (signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_477.html">Clock (t&gt;t0) (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_478.html">Clock (t&gt;t0) (signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_479.html">Clock (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_48.html">yi1 less than yi2 eps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_480.html">Clock (signal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_481.html">Pulse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_482.html">Sawtooth Wave Generator (pulse)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_483.html">Sawtooth Wave Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_484.html">Sine Wave Generator (t&gt;t0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_485.html">Sine Wave Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_486.html">Square Wave Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_487.html">Square Wave Generator ip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_488.html">Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_489.html">Triangle Wave Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_49.html">-C</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_490.html">Triangle Wave Generator ip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_491.html">Enable 1 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_492.html">Enable 1 sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_493.html">Enable 2 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_494.html">Enable 2 sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_495.html">Enable 3 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_496.html">Enable 3 sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_497.html">Enable 4 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_498.html">Enable 4 sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_499.html">Enable 5 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_50.html">0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_500.html">Enable 5 sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_501.html">Enable 6 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_502.html">Enable 7 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_503.html">Enable 8 sig (hold)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_504.html">Enable signal (fixed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_505.html">Enable signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_506.html">Switch par 1-&gt;1 by par (fixed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_507.html">Switch par 1-&gt;1 by par</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_508.html">Switch par 1-&gt;2 by par</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_509.html">Switch par 1-&gt;2 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_51.html">1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_510.html">Switch par 2-&gt;1 by par</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_511.html">Switch par 2-&gt;1 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_512.html">Switch sig 1-&gt;1 by sig (fixed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_513.html">Switch sig 1-&gt;1 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_514.html">Switch sig 1-&gt;2 by par (bool)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_515.html">Switch sig 1-&gt;2 by par</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_516.html">Switch sig 1-&gt;2 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_517.html">Switch sig 2-&gt;1 (NOT EQ K) by s/p</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_518.html">Switch sig 2-&gt;1 by par (bool)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_519.html">Switch sig 2-&gt;1 by par</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_52.html">1/SQRT2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_520.html">Switch sig 2-&gt;1 by sig (bool)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_521.html">Switch sig 2-&gt;1 by sig (fixed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_522.html">Switch sig 2-&gt;1 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_523.html">Switch sig 3-&gt;1 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_524.html">Switch sig 4-&gt;1 by sig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_525.html">Switch sw equal C 2s-&gt;1s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_526.html">Switch sw greater than C 2s-&gt;1s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_527.html">Switch sw greater than or equal C 2s-&gt;1s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_528.html">Switch sw not equal C 2s-&gt;1s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_529.html">Switch sw smaller than C 2s-&gt;1s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_53.html">2PI [form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_530.html">Switch sw smaller than or equal C 2s-&gt;1s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_531.html">Timer (reset)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_532.html">Timer (reset/hold reset/t0) (reset) incfw</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_533.html">Clarke transform (power invariant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_534.html">Clarke transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_535.html">Inverse Clarke transform(pow. invariant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_536.html">Inverse Clarke transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_537.html">Inverse Park transform (dq)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_538.html">Inverse Park transform (dq0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_539.html">Park transform (dq)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_54.html">Bias</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_540.html">Park transform (dq0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_541.html">RMS value p.u.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_542.html">RMS value</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_543.html">U seq/ab0 -&gt; U abc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_544.html">abc-&gt;dq0 (power invariant – align a-&gt;d)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_545.html">abc-&gt;dq0 (power invariant – align a-&gt;q)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_546.html">abc-&gt;dq0 (power variant – align a-&gt;d)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_547.html">abc-&gt;dq0 (power variant – align a-&gt;q)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_548.html">dq0-&gt;abc (power invariant – align a-&gt;d)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_549.html">dq0-&gt;abc (power invariant – align a-&gt;q)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_55.html">C [param: C; form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_550.html">dq0-&gt;abc (power variant – align a-&gt;d)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_551.html">dq0-&gt;abc (power variant – align a-&gt;q)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_552.html">Hz -&gt; p.u.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_553.html">Nm -&gt; p.u.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_554.html">abs -&gt; p.u. (par)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_555.html">abs -&gt; p.u. (sig)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_556.html">deg -&gt; rad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_557.html">p.u. -&gt; Hz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_558.html">p.u. -&gt; abs (par)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_559.html">p.u. -&gt; abs (sig)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_56.html">C1/C2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_560.html">p.u. -&gt; rpm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_561.html">rad -&gt; deg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_562.html">rad/s -&gt; rpm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_563.html">rpm -&gt; p.u.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_564.html">rpm -&gt; rad/s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_57.html">E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_58.html">PI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_59.html">PI/2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_6.html">Inverse Lookup array object (linear)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_60.html">SQRT(2/3)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_61.html">SQRT(3/2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_62.html">SQRT(C1/C2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_63.html">SQRT2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_64.html">SQRT3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_65.html">Analog flip-flop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_66.html">balanced</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_67.html">delay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_68.html">Flip-flop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_69.html">Gradient limiter (constant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_74.html">Last value [form A]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_75.html">lim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_76.html">lim const</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_77.html">Moving average</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_78.html">PI droop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_79.html">PI droop (constant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_8.html">Lookup array (linear noclipping)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_80.html">rms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_83.html">Selector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_84.html">Selector (constant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_85.html">Set if condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_86.html">Set if condition (constant)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_87.html">time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_88.html">Backlash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_89.html">Deadband (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_90.html">Deadband (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_91.html">Deadband discontinuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_92.html">Deadband offset (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_93.html">Deadband offset (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_94.html">Deadband stepped (parameter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_95.html">Deadband stepped (bypass)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_96.html">Deadband</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_97.html">Ke^-sT (bypass) incforward</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_98.html">Ke^-sT (forward increment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog/typ_99.html">Pade approximant R12 (backward increment)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../EMT/zip_load_abc.html" class="btn btn-neutral float-left" title="ZIP load" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="abs-to-pu-par.html" class="btn btn-neutral float-right" title="abs -&gt; p.u. (par)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

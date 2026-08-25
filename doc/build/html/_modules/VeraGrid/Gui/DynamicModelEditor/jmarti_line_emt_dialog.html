@@ -1,0 +1,794 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JMartiFitOptions</span>
+
+
+<div class="viewcode-block" id="JMartiLineEmtDialog">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog.JMartiLineEmtDialog">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JMartiLineEmtDialog</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modal dialog used to configure one EMT J_Marti line block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_phase_checks&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_float_inputs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_int_inputs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_bool_inputs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_source_combo&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_source_form_layout&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_sampling_group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_import_path_edit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_import_path_widget&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_import_length_spin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_source_help_label&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_status_label&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_diagnostics_text&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">parent</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the EMT J_Marti line configuration dialog.</span>
+
+<span class="sd">        :param parent: Optional Qt parent.</span>
+<span class="sd">        :param initial_config: Optional persisted modal configuration.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Configure EMT J_Marti Line&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">700</span><span class="p">,</span> <span class="mi">860</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span> <span class="o">=</span> <span class="n">JMartiFitOptions</span><span class="p">()</span>
+        <span class="n">main_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">description_label</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span>
+            <span class="s2">&quot;Configure the active phases, data source, and offline fitting options for this EMT J_Marti line. &quot;</span>
+            <span class="s2">&quot;Accepting the dialog rebuilds the fit for the attached line when compatible data are available.&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">description_label</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">description_label</span><span class="p">)</span>
+
+        <span class="n">scroll_area</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QScrollArea</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">scroll_container</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">scroll_area</span><span class="p">)</span>
+        <span class="n">scroll_layout</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="n">scroll_container</span><span class="p">)</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_phase_group</span><span class="p">())</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_data_source_group</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_sampling_group</span><span class="p">()</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_group</span><span class="p">)</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_window_group</span><span class="p">(</span><span class="n">options</span><span class="p">))</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_fit_group</span><span class="p">(</span><span class="n">options</span><span class="p">))</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_passivity_group</span><span class="p">(</span><span class="n">options</span><span class="p">))</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_diagnostics_group</span><span class="p">())</span>
+        <span class="n">scroll_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        <span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">scroll_container</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_area</span><span class="p">)</span>
+
+        <span class="n">buttons</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Ok</span> <span class="o">|</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">StandardButton</span><span class="o">.</span><span class="n">Cancel</span><span class="p">,</span>
+            <span class="bp">self</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">buttons</span><span class="o">.</span><span class="n">accepted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accept_dialog</span><span class="p">)</span>
+        <span class="n">buttons</span><span class="o">.</span><span class="n">rejected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">)</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_default_values</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">initial_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">apply_initial_configuration</span><span class="p">(</span><span class="n">initial_config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_source_mode_widgets</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_phase_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the phase-selection group.</span>
+
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Active Phases&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_n&quot;</span><span class="p">])</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_a&quot;</span><span class="p">])</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_b&quot;</span><span class="p">])</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_c&quot;</span><span class="p">])</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_data_source_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the data-source group.</span>
+
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Data Source&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;Auto from attached template&quot;</span><span class="p">,</span> <span class="s2">&quot;auto_template&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;Import NPZ frequency samples&quot;</span><span class="p">,</span> <span class="s2">&quot;import_frequency_samples&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Source mode&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;nominal_frequency_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Nominal frequency [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;nominal_frequency_hz&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span>
+            <span class="s2">&quot;Select one NPZ file with frequency_hz, z_per_length, and y_per_length arrays in pu/m&quot;</span>
+        <span class="p">)</span>
+        <span class="n">browse_button</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Browse...&quot;</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="n">browse_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">browse_import_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_widget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="n">path_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_import_path_widget</span><span class="p">)</span>
+        <span class="n">path_layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">path_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="p">)</span>
+        <span class="n">path_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">browse_button</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;NPZ file&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_widget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_length_spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e12</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Imported line length [m]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_import_length_spin</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_help_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_help_label</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Source notes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_help_label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_source_mode_widgets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_sampling_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the sweep-frequency group.</span>
+
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Automatic Sweep&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">form_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_low_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_high_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_sample_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">8192</span><span class="p">)</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Sweep low [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_low_hz&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Sweep high [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_high_hz&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Sweep samples&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_sample_count&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_window_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the frequency-window group.</span>
+
+<span class="sd">        :param options: Default fit options.</span>
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_unused</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Frequency Windows&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">form_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;reference_frequency_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_frequency_exploration_window&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;exploration_low_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;exploration_high_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_delay_fit_window&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;delay_fit_low_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;delay_fit_high_hz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Reference frequency [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;reference_frequency_hz&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Use exploration window&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_frequency_exploration_window&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Exploration low [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;exploration_low_hz&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Exploration high [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;exploration_high_hz&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Use delay-fit window&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_delay_fit_window&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Delay-fit low [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;delay_fit_low_hz&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Delay-fit high [Hz]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;delay_fit_high_hz&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_fit_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the main fitting-parameter group.</span>
+
+<span class="sd">        :param options: Default fit options.</span>
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_unused</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Rational Fit&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">form_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;decoupling_warning_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0e-4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;loewner_relative_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;maximum_model_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">2048</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;forced_model_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">2048</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;minimum_frequency_samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">8192</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;vf_max_iterations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;vf_pole_shift_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_enforce_stable_poles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;vf_stability_real_part_floor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0e6</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_include_constant_term&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_include_proportional_term&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Decoupling warning tol.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;decoupling_warning_tolerance&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Loewner relative tol.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;loewner_relative_tolerance&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Maximum model order&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;maximum_model_order&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Forced model order&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;forced_model_order&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Minimum frequency samples&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;minimum_frequency_samples&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;VF max iterations&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;vf_max_iterations&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;VF pole-shift tol.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;vf_pole_shift_tolerance&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Enforce stable poles&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_enforce_stable_poles&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Stability real-part floor&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;vf_stability_real_part_floor&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Include constant term&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_include_constant_term&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Include proportional term&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_include_proportional_term&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_passivity_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the passivity-check group.</span>
+
+<span class="sd">        :param options: Default fit options.</span>
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_unused</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Passivity Checks&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">form_layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_frequency_sample_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">65536</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_minimum_real_yc_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_maximum_hres_gain_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Check sample count&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_frequency_sample_count&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Minimum Re(Yc) tol.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_minimum_real_yc_tolerance&quot;</span><span class="p">])</span>
+        <span class="n">form_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s2">&quot;Maximum |Hres|-1 tol.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_maximum_hres_gain_tolerance&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_diagnostics_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the last-fit diagnostics group.</span>
+
+<span class="sd">        :return: Group box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Last Fit Diagnostics&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status_label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span>
+            <span class="s2">&quot;Fit not computed yet. Accept the dialog to build or refresh the JMARTI fit for the attached line.&quot;</span><span class="p">,</span>
+            <span class="n">group</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status_label</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_status_label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPlainTextEdit</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Detailed fit diagnostics will be stored here after one successful fit.&quot;</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">group</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_float_spin</span><span class="p">(</span><span class="n">minimum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">maximum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">step</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one configured floating-point spin box.</span>
+
+<span class="sd">        :param minimum: Minimum allowed value.</span>
+<span class="sd">        :param maximum: Maximum allowed value.</span>
+<span class="sd">        :param decimals: Decimal precision.</span>
+<span class="sd">        :param step: Single-step size.</span>
+<span class="sd">        :return: Configured spin box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">minimum</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">maximum</span><span class="p">))</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setDecimals</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">decimals</span><span class="p">))</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">widget</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_int_spin</span><span class="p">(</span><span class="n">minimum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">maximum</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one configured integer spin box.</span>
+
+<span class="sd">        :param minimum: Minimum allowed value.</span>
+<span class="sd">        :param maximum: Maximum allowed value.</span>
+<span class="sd">        :return: Configured spin box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">minimum</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">maximum</span><span class="p">))</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setAccelerated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">widget</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_default_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">JMartiFitOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate the widgets with one coherent default configuration.</span>
+
+<span class="sd">        :param options: Default fit options.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_n&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_a&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_b&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">findData</span><span class="p">(</span><span class="s2">&quot;auto_template&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;nominal_frequency_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_length_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_low_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_high_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mf">10000.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_sample_count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;reference_frequency_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">reference_frequency_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_frequency_exploration_window&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">use_frequency_exploration_window</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;exploration_low_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">exploration_low_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;exploration_high_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">exploration_high_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_delay_fit_window&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">use_delay_fit_window</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;delay_fit_low_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">delay_fit_low_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;delay_fit_high_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">delay_fit_high_hz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;decoupling_warning_tolerance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">decoupling_warning_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;loewner_relative_tolerance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">loewner_relative_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;maximum_model_order&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">maximum_model_order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;forced_model_order&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">forced_model_order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;minimum_frequency_samples&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">minimum_frequency_samples</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;vf_max_iterations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">vf_max_iterations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;vf_pole_shift_tolerance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">vf_pole_shift_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_enforce_stable_poles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">vf_enforce_stable_poles</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;vf_stability_real_part_floor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">vf_stability_real_part_floor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_include_constant_term&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">vf_include_constant_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;vf_include_proportional_term&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">vf_include_proportional_term</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_frequency_sample_count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">passivity_frequency_sample_count</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_minimum_real_yc_tolerance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">passivity_minimum_real_yc_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;passivity_maximum_hres_gain_tolerance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">passivity_maximum_hres_gain_tolerance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="s2">&quot;Fit not computed yet. Accept the dialog to build or refresh the JMARTI fit for the attached line.&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_source_row_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_widget</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show or hide one row in the source form layout.</span>
+
+<span class="sd">        :param field_widget: Row field widget.</span>
+<span class="sd">        :param visible: Whether the row should be visible.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">field_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="n">label_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_form_layout</span><span class="o">.</span><span class="n">labelForField</span><span class="p">(</span><span class="n">field_widget</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">label_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+<div class="viewcode-block" id="JMartiLineEmtDialog.update_source_mode_widgets">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog.JMartiLineEmtDialog.update_source_mode_widgets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_source_mode_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refresh the dialog widgets for the selected data source.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">import_mode_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">currentData</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;import_frequency_samples&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_source_row_visible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_import_path_widget</span><span class="p">,</span> <span class="n">import_mode_enabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_source_row_visible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_import_length_spin</span><span class="p">,</span> <span class="n">import_mode_enabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;nominal_frequency_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">import_mode_enabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_group</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">import_mode_enabled</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">import_mode_enabled</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source_help_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+                <span class="s2">&quot;Import one NPZ archive with arrays &#39;frequency_hz&#39;, &#39;z_per_length&#39;, and &#39;y_per_length&#39;. &quot;</span>
+                <span class="s2">&quot;Optional arrays are &#39;phase_labels&#39; and &#39;line_length_m&#39;. The file may also provide real/imag pairs &quot;</span>
+                <span class="s2">&quot;under &#39;z_per_length_real&#39;/&#39;z_per_length_imag&#39; and &#39;y_per_length_real&#39;/&#39;y_per_length_imag&#39;. &quot;</span>
+                <span class="s2">&quot;The imported Z/Y arrays are expected in per-unit per meter.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source_help_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+                <span class="s2">&quot;Automatic mode builds the frequency sweep from the attached line template. Overhead templates use &quot;</span>
+                <span class="s2">&quot;their conductor geometry when available. Sequence and underground templates use one nominal RLGC reconstruction.&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="JMartiLineEmtDialog.browse_import_file">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog.JMartiLineEmtDialog.browse_import_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">browse_import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open one file dialog to select the imported JMARTI NPZ file.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_path</span><span class="p">,</span> <span class="n">_selected_filter</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="s2">&quot;Open JMARTI Frequency Samples&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;NumPy archive (*.npz)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">file_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="JMartiLineEmtDialog.accept_dialog">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog.JMartiLineEmtDialog.accept_dialog">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the dialog state before accepting.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sweep_low_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_low_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">sweep_high_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_high_hz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">minimum_frequency_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;minimum_frequency_samples&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">sweep_sample_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;sweep_sample_count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">forced_model_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;forced_model_order&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">maximum_model_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="p">[</span><span class="s2">&quot;maximum_model_order&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">import_mode_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">currentData</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;import_frequency_samples&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_a&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_b&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="p">[</span><span class="s2">&quot;phase_n&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span> <span class="s2">&quot;Enable at least one phase.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">import_mode_enabled</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span> <span class="s2">&quot;Select one NPZ file to import frequency samples.&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sweep_high_hz</span> <span class="o">&gt;</span> <span class="n">sweep_low_hz</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span> <span class="s2">&quot;The sweep upper frequency must be greater than the lower frequency.&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="n">sweep_sample_count</span> <span class="o">&gt;=</span> <span class="n">minimum_frequency_samples</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;The sweep sample count must be greater than or equal to the minimum frequency sample requirement.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">forced_model_order</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">forced_model_order</span> <span class="o">&lt;=</span> <span class="n">maximum_model_order</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;The forced model order must be zero or less than or equal to the maximum model order.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_frequency_exploration_window&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">import_mode_enabled</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_window_bounds_only</span><span class="p">(</span><span class="s2">&quot;exploration_low_hz&quot;</span><span class="p">,</span> <span class="s2">&quot;exploration_high_hz&quot;</span><span class="p">,</span> <span class="s2">&quot;exploration&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_window</span><span class="p">(</span><span class="s2">&quot;exploration_low_hz&quot;</span><span class="p">,</span> <span class="s2">&quot;exploration_high_hz&quot;</span><span class="p">,</span> <span class="n">sweep_low_hz</span><span class="p">,</span> <span class="n">sweep_high_hz</span><span class="p">,</span> <span class="s2">&quot;exploration&quot;</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="p">[</span><span class="s2">&quot;use_delay_fit_window&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">import_mode_enabled</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_window_bounds_only</span><span class="p">(</span><span class="s2">&quot;delay_fit_low_hz&quot;</span><span class="p">,</span> <span class="s2">&quot;delay_fit_high_hz&quot;</span><span class="p">,</span> <span class="s2">&quot;delay-fit&quot;</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_window</span><span class="p">(</span><span class="s2">&quot;delay_fit_low_hz&quot;</span><span class="p">,</span> <span class="s2">&quot;delay_fit_high_hz&quot;</span><span class="p">,</span> <span class="n">sweep_low_hz</span><span class="p">,</span> <span class="n">sweep_high_hz</span><span class="p">,</span> <span class="s2">&quot;delay-fit&quot;</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">low_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">high_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">sweep_low_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">sweep_high_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">window_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate one optional frequency window against the full sweep.</span>
+
+<span class="sd">        :param low_key: Lower-bound widget key.</span>
+<span class="sd">        :param high_key: Upper-bound widget key.</span>
+<span class="sd">        :param sweep_low_hz: Sweep lower bound.</span>
+<span class="sd">        :param sweep_high_hz: Sweep upper bound.</span>
+<span class="sd">        :param window_name: User-facing window label.</span>
+<span class="sd">        :return: ``True`` when the window is valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="n">low_key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="n">high_key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">high_hz</span> <span class="o">&gt;</span> <span class="n">low_hz</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">window_name</span><span class="si">}</span><span class="s2"> upper frequency must be greater than the lower frequency.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">low_hz</span> <span class="o">&gt;=</span> <span class="n">sweep_low_hz</span> <span class="ow">and</span> <span class="n">high_hz</span> <span class="o">&lt;=</span> <span class="n">sweep_high_hz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">window_name</span><span class="si">}</span><span class="s2"> window must stay inside the configured sweep band.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_window_bounds_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">low_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                     <span class="n">high_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                     <span class="n">window_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate only the monotonicity of one imported-data frequency window.</span>
+
+<span class="sd">        :param low_key: Lower-bound widget key.</span>
+<span class="sd">        :param high_key: Upper-bound widget key.</span>
+<span class="sd">        :param window_name: User-facing window label.</span>
+<span class="sd">        :return: ``True`` when the window is valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">low_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="n">low_key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">high_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="p">[</span><span class="n">high_key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">high_hz</span> <span class="o">&gt;</span> <span class="n">low_hz</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;EMT J_Marti line&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">window_name</span><span class="si">}</span><span class="s2"> upper frequency must be greater than the lower frequency.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="JMartiLineEmtDialog.get_configuration">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog.JMartiLineEmtDialog.get_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the current dialog configuration.</span>
+
+<span class="sd">        :return: Serializable configuration dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">key_name</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span>
+
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;data_source_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">currentData</span><span class="p">())</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;import_file_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;import_line_length_m&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_import_length_spin</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;fit_status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_status_label</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;fit_diagnostics_text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="JMartiLineEmtDialog.apply_initial_configuration">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.DynamicModelEditor.html#VeraGrid.Gui.DynamicModelEditor.jmarti_line_emt_dialog.JMartiLineEmtDialog.apply_initial_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_initial_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load one persisted configuration into the dialog widgets.</span>
+
+<span class="sd">        :param config: Persisted modal configuration.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key_name</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_checks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_float_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bool_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key_name</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="s2">&quot;data_source_mode&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="n">source_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">findData</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;data_source_mode&quot;</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">source_index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_source_combo</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="s2">&quot;import_file_path&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_import_path_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;import_file_path&quot;</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="s2">&quot;import_line_length_m&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_import_length_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;import_line_length_m&quot;</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="s2">&quot;fit_status&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_status_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;fit_status&quot;</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="s2">&quot;fit_diagnostics_text&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_text</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;fit_diagnostics_text&quot;</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_source_mode_widgets</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

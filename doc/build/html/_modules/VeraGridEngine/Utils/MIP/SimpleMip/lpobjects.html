@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Utils.MIP.SimpleMip.lpobjects &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Utils.MIP.SimpleMip.lpobjects</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Utils.MIP.SimpleMip.lpobjects</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+
+<div class="viewcode-block" id="LpVar">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LpVar</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;lower_bound&quot;</span><span class="p">,</span> <span class="s2">&quot;upper_bound&quot;</span><span class="p">,</span> <span class="s2">&quot;is_integer&quot;</span><span class="p">,</span> <span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="s2">&quot;_hash_id&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">lower_bound</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">upper_bound</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e20</span><span class="p">,</span>
+                 <span class="n">is_integer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">internal_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">hash_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param name: Variable name</span>
+<span class="sd">        :param lower_bound: Lower bound (optional)</span>
+<span class="sd">        :param upper_bound: Upper bound (optional)</span>
+<span class="sd">        :param is_integer: is this an integer variable?  (optional)</span>
+<span class="sd">        :param internal_idx: Internal solver index (not required)</span>
+<span class="sd">        :param hash_id: internal unique Hash id so that this var can be used in a dictionary as key  (not required)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower_bound</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">lower_bound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">upper_bound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_integer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_integer</span>  <span class="c1"># Indicates if the variable is an integer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">internal_idx</span>  <span class="c1"># internal index to the solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">int</span> <span class="k">if</span> <span class="n">hash_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hash_id</span>
+
+<div class="viewcode-block" id="LpVar.set_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.set_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the internal indexing</span>
+<span class="sd">        :param index: var index in the solver</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">index</span></div>
+
+
+<div class="viewcode-block" id="LpVar.get_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.get_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the internal indexing</span>
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span></div>
+
+
+<div class="viewcode-block" id="LpVar.copy">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpVar.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpVar&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a deep copy of this variable</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LpVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                     <span class="n">lower_bound</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lower_bound</span><span class="p">,</span>
+                     <span class="n">upper_bound</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span><span class="p">,</span>
+                     <span class="n">is_integer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span>
+                     <span class="n">internal_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span>
+                     <span class="n">hash_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># Makes Variable instances hashable so they can be used as dictionary keys</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_comparison</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sense</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">combined_expression</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">combined_expression</span><span class="o">.</span><span class="n">offset</span> <span class="o">-=</span> <span class="n">other</span>
+            <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">combined_expression</span><span class="p">,</span> <span class="n">sense</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="n">combined_expression</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="n">LpExp</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">combined_expression</span><span class="p">,</span> <span class="n">sense</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="n">combined_expression</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="n">other</span>
+            <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">linear_expression</span><span class="o">=</span><span class="n">combined_expression</span><span class="p">,</span>
+                         <span class="n">sense</span><span class="o">=</span><span class="n">sense</span><span class="p">,</span>
+                         <span class="n">coefficient</span><span class="o">=-</span><span class="n">combined_expression</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Right-hand side of </span><span class="si">{</span><span class="n">sense</span><span class="si">}</span><span class="s2"> must be an int or float&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparison</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparison</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpCst</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_hash_id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparison</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="s2">&quot;==&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="n">other</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="n">other</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multiply this variable with a int or float</span>
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="k">if</span> <span class="n">other</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can only multiply a Variable by a scalar&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;LpVar&quot;</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="n">LpExp</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="n">other</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">offset</span> <span class="o">-=</span> <span class="n">other</span>
+            <span class="k">return</span> <span class="n">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported operand type(s) for -: &#39;Variable&#39; and &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">LpExp</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-</span> <span class="n">LpExp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported operand type(s) for -: &#39;</span><span class="si">{}</span><span class="s2">&#39; and &#39;Variable&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="LpCst">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LpCst</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constraint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;linear_expression&quot;</span><span class="p">,</span> <span class="s2">&quot;sense&quot;</span><span class="p">,</span> <span class="s2">&quot;coefficient&quot;</span><span class="p">,</span> <span class="s2">&quot;_index&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linear_expression</span><span class="p">:</span> <span class="n">LpExp</span><span class="p">,</span> <span class="n">sense</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">internal_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        constraint (&lt;=, ==, &gt;=) rhs</span>
+
+<span class="sd">        :param linear_expression:</span>
+<span class="sd">        :param sense: &lt;=, ==, &gt;=</span>
+<span class="sd">        :param coefficient:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param internal_index:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">sense</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="s2">&quot;==&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_expression</span> <span class="o">=</span> <span class="n">linear_expression</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">sense</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coefficient</span> <span class="o">=</span> <span class="n">coefficient</span>  <span class="c1"># Right-hand side value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">internal_index</span>  <span class="c1"># internal index to the solver</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">terms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Terms property of the linear expression</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_expression</span><span class="o">.</span><span class="n">terms</span>
+
+<div class="viewcode-block" id="LpCst.copy">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpCst&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a deep copy of this constraint</span>
+<span class="sd">        :return: Constraint</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">linear_expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">linear_expression</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                     <span class="n">sense</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sense</span><span class="p">,</span>
+                     <span class="n">coefficient</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficient</span><span class="p">,</span>
+                     <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                     <span class="n">internal_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpCst.get_rhs">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.get_rhs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the final right-hand side</span>
+<span class="sd">        :return: coefficient minus the expression offset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficient</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_expression</span><span class="o">.</span><span class="n">offset</span></div>
+
+
+<div class="viewcode-block" id="LpCst.get_bounds">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.get_bounds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the constraint bounds</span>
+<span class="sd">        :return: lhs &lt;= constraint &lt;= rhs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MIP_INF</span> <span class="o">=</span> <span class="mf">1e20</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rhs</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;==&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">MIP_INF</span><span class="p">,</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">MIP_INF</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sense: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sense</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LpCst.set_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.set_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the internal indexing</span>
+<span class="sd">        :param index: constraint index in the solver</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">index</span></div>
+
+
+<div class="viewcode-block" id="LpCst.get_index">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.get_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get internal index</span>
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span></div>
+
+
+<div class="viewcode-block" id="LpCst.add_term">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.add_term">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">LpVar</span><span class="p">,</span> <span class="n">coeff</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a term to the constraint</span>
+<span class="sd">        :param var: Variable</span>
+<span class="sd">        :param coeff: coefficient</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_expression</span> <span class="o">+=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">var</span></div>
+
+
+<div class="viewcode-block" id="LpCst.add_var">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpCst.add_var">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">LpVar</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a term to the constraint</span>
+<span class="sd">        :param var: Variable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_expression</span> <span class="o">+=</span> <span class="n">var</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LpExp">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpExp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LpExp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;terms&quot;</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">coefficient</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param variable:</span>
+<span class="sd">        :param coefficient:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+
+        <span class="k">if</span> <span class="n">variable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">coefficient</span>
+
+<div class="viewcode-block" id="LpExp.copy">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.SimpleMip.html#VeraGridEngine.Utils.MIP.SimpleMip.lpobjects.LpExp.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a deep copy of this expression</span>
+<span class="sd">        :return: LpExp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">()</span>
+
+        <span class="n">e</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span>
+
+        <span class="k">return</span> <span class="n">e</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_comparison</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sense</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">linear_expression</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">sense</span><span class="o">=</span><span class="n">sense</span><span class="p">,</span>
+                         <span class="n">coefficient</span><span class="o">=</span><span class="n">other</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+            <span class="n">combined_expression</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">-</span> <span class="n">other</span>
+            <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">combined_expression</span><span class="p">,</span> <span class="n">sense</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="n">combined_expression</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">-</span> <span class="n">other</span>
+            <span class="k">return</span> <span class="n">LpCst</span><span class="p">(</span><span class="n">linear_expression</span><span class="o">=</span><span class="n">combined_expression</span><span class="p">,</span>
+                         <span class="n">sense</span><span class="o">=</span><span class="n">sense</span><span class="p">,</span>
+                         <span class="n">coefficient</span><span class="o">=-</span><span class="n">combined_expression</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Right-hand side of </span><span class="si">{</span><span class="n">sense</span><span class="si">}</span><span class="s2"> must be an int or float&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparison</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparison</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LpCst</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparison</span><span class="p">(</span><span class="n">sense</span><span class="o">=</span><span class="s2">&quot;==&quot;</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="n">new_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_expr</span><span class="o">.</span><span class="n">offset</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">offset</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">:</span>
+                    <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coeff</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>  <span class="c1"># Handling constants in expressions</span>
+            <span class="n">new_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_expr</span><span class="o">.</span><span class="n">offset</span> <span class="o">+=</span> <span class="n">other</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Operands must be of type Variable, Expression, int, or float&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_expr</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">new_expr</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">other</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_expr</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">*</span> <span class="n">other</span>
+                <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">other</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># if we multiply by zero, the expression should remain empty</span>
+                <span class="k">pass</span>
+
+            <span class="k">return</span> <span class="n">new_expr</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can only multiply by a scalar&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
+            <span class="n">new_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_expr</span><span class="o">.</span><span class="n">offset</span> <span class="o">-=</span> <span class="n">other</span><span class="o">.</span><span class="n">offset</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">:</span>
+                    <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">-=</span> <span class="n">coeff</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_expr</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">coeff</span>
+            <span class="k">return</span> <span class="n">new_expr</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">new_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_expr</span><span class="o">.</span><span class="n">offset</span> <span class="o">-=</span> <span class="n">other</span>
+            <span class="k">return</span> <span class="n">new_expr</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported operand type(s) for -: &#39;Expression&#39; and &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LpVar</span><span class="p">,</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LpExp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Negate</span>
+<span class="sd">        :return: LpExp with negative terms</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">LpExp</span><span class="p">()</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">coeff</span>
+        <span class="k">return</span> <span class="n">e</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

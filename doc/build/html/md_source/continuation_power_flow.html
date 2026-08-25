@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>➿ Continuation power flow &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🌘 Sigma analysis" href="sigma_analysis.html" />
+    <link rel="prev" title="🎲 Stochastic power flow" href="stochastic_power_flow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">➿ Continuation power flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#continuationpowerflowresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">ContinuationPowerFlowResults</span></code> registered properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sigmaanalysisresults-registered-properties"><code class="docutils literal notranslate"><span class="pre">SigmaAnalysisResults</span></code> registered properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#snapshot-continuation-power-flow">Snapshot continuation power flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#predictor-step">Predictor step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#corrector-step">Corrector step</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">➿ Continuation power flow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/continuation_power_flow.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="continuation-power-flow">
+<h1>➿ Continuation power flow<a class="headerlink" href="#continuation-power-flow" title="Link to this heading"></a></h1>
+<p>VeraGrid can run continuation power flows (voltage collapse studies)</p>
+<p><img alt="" src="../_images/settings-cpf.png" /></p>
+<p>Max. Iterations
+Number of iteration to perform at each voltage stability (predictor-corrector) stage.</p>
+<p>Stop at
+Point of the curve to top at</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- Nose: Stop at the voltage collapse point
+- Full: Trace the full curve.
+</pre></div>
+</div>
+<p>Use alpha target from the base situation
+The voltage collapse (stability) simulation is a “travel” from a base situation towards a “final” one.
+When this mode is selected the final situation is a linear combination of the base situation. All the
+power values are multiplied by the same number.</p>
+<p>Use departure and target points from time series
+When this option is selected the base and the target points are given by time series points.
+This allows that the base and the final situations to have non even relationships while evolving
+from the base situation to the target situation.</p>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="continuationpowerflowresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">ContinuationPowerFlowResults</span></code> registered properties<a class="headerlink" href="#continuationpowerflowresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The continuation power flow result stores the solved continuation path and branch quantities at each continuation step.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">branch_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with branch-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bus_types</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Bus type code used by the solved numerical model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">voltages</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus voltage solutions along the continuation path.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lambdas</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Continuation loading parameter values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Solver error or residual value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Convergence flag for the solved case or time step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the from side.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch power flow at the to side.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Branch loading result.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sigmaanalysisresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">SigmaAnalysisResults</span></code> registered properties<a class="headerlink" href="#sigmaanalysisresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The sigma analysis result stores the sigma-plane values and distances used by the voltage-stability assessment.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lambda_value</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Loading parameter used by the sigma analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bus_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Names aligned with bus-indexed result arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">distances</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Distance of each bus point to the sigma stability boundary.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_re</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Real component of the sigma-plane value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_im</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Imaginary component of the sigma-plane value.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<section id="snapshot-continuation-power-flow">
+<h3>Snapshot continuation power flow<a class="headerlink" href="#snapshot-continuation-power-flow" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;fivethirtyeight&#39;</span><span class="p">)</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;South Island of New Zealand.veragrid&#39;</span><span class="p">)</span>
+
+<span class="c1"># open the grid file</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="c1"># Run the continuation power flow with the default options</span>
+<span class="c1"># Since we do not provide any power flow results, it will run one for us</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">continuation_power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span>
+                                      <span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                                      <span class="n">stop_at</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Full</span><span class="p">)</span>
+
+<span class="c1"># plot the results</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusActivePower</span><span class="p">)</span>
+<span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusVoltageModule</span><span class="p">)</span>
+<span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A more elaborated way to run the simulation, controlling all the steps:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;fivethirtyeight&#39;</span><span class="p">)</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;Grids_and_profiles&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">)</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;South Island of New Zealand.veragrid&#39;</span><span class="p">)</span>
+
+<span class="c1"># open the grid file</span>
+<span class="n">main_circuit</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">FileOpen</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="c1"># we need to initialize with a power flow solution</span>
+<span class="n">pf_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">()</span>
+<span class="n">power_flow</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+<span class="n">power_flow</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># declare the CPF options</span>
+<span class="n">vc_options</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContinuationPowerFlowOptions</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+                                              <span class="n">approximation_order</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CpfParametrization</span><span class="o">.</span><span class="n">ArcLength</span><span class="p">,</span>
+                                              <span class="n">adapt_step</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                              <span class="n">step_min</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>
+                                              <span class="n">step_max</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                                              <span class="n">error_tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+                                              <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                                              <span class="n">max_it</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                                              <span class="n">stop_at</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Full</span><span class="p">,</span>
+                                              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># We compose the target direction</span>
+<span class="n">factor</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">base_power</span> <span class="o">=</span> <span class="n">power_flow</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sbus</span> <span class="o">/</span> <span class="n">main_circuit</span><span class="o">.</span><span class="n">Sbase</span>
+<span class="n">vc_inputs</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContinuationPowerFlowInput</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">base_power</span><span class="p">,</span>
+                                           <span class="n">Vbase</span><span class="o">=</span><span class="n">power_flow</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                                           <span class="n">Starget</span><span class="o">=</span><span class="n">base_power</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span>
+
+<span class="c1"># declare the CPF driver and run</span>
+<span class="n">vc</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">ContinuationPowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">main_circuit</span><span class="p">,</span>
+                                     <span class="n">options</span><span class="o">=</span><span class="n">vc_options</span><span class="p">,</span>
+                                     <span class="n">inputs</span><span class="o">=</span><span class="n">vc_inputs</span><span class="p">,</span>
+                                     <span class="n">pf_options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+<span class="n">vc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># plot the results</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">vc</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusActivePower</span><span class="p">)</span>
+<span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">vc</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">gce</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusVoltageModule</span><span class="p">)</span>
+<span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="cpf_south_island_new_zealand.png" src="../_images/cpf_south_island_new_zealand.png" /></p>
+</section>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<p>The continuation power flow is a technique that traces a trajectory from a
+base situation given to a combination of power <span class="math">S_0</span> and voltage <span class="math">V_0</span>,
+to another situation determined by another combination of power <span class="math">S'</span>.
+When the final power situation is undefined, then the algorithm continues
+until the Jacobian is singular, tracing the voltage collapse curve.</p>
+<p>The method uses a predictor-corrector technique to trace this trajectory.</p>
+<section id="predictor-step">
+<h3>Predictor step<a class="headerlink" href="#predictor-step" title="Link to this heading"></a></h3>
+<div class="math">
+<p><span class="math">\begin{bmatrix}
+        \theta \\
+        V \\
+        \lambda \\
+    \end{bmatrix}^{predicted}
+    =
+    \begin{bmatrix}
+            \theta \\
+            V \\
+            \lambda \\
+        \end{bmatrix}^{i}
+    +
+    \sigma \cdot
+    \begin{bmatrix}
+        J11  &amp;  J12  &amp; P_{base} \\
+        J21  &amp;  J22  &amp; Q_{base} \\
+        0    &amp; 0    &amp; 1 \\
+    \end{bmatrix}^{-1}
+    \times
+    \begin{bmatrix}
+        \hat{0} \\
+        \hat{0} \\
+        1\\
+    \end{bmatrix}</span></p>
+</div></section>
+<section id="corrector-step">
+<h3>Corrector step<a class="headerlink" href="#corrector-step" title="Link to this heading"></a></h3>
+<div class="math">
+<p><span class="math">\begin{bmatrix}
+        d\theta \\
+        dV \\
+        d\lambda \\
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+            d\theta_0\\
+            dV_0 \\
+            d\lambda_0 \\
+        \end{bmatrix}
+    +
+    \sigma \cdot
+    \begin{bmatrix}
+        J11  &amp;  J12  &amp; P_{base} \\
+        J21  &amp;  J22  &amp; Q_{base} \\
+        0    &amp; -1    &amp; 0 \\
+    \end{bmatrix}^{-1}
+    \times
+    \begin{bmatrix}
+        \hat{0} \\
+        \hat{0} \\
+        1\\
+    \end{bmatrix}</span></p>
+</div></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stochastic_power_flow.html" class="btn btn-neutral float-left" title="🎲 Stochastic power flow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sigma_analysis.html" class="btn btn-neutral float-right" title="🌘 Sigma analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

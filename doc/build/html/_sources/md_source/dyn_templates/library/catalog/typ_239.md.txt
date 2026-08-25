@@ -1,0 +1,50 @@
+# 1/s (parameter) [signal: rst; param: y_max/y_min; 1 state]
+
+This is Basic Block Catalog type `239` (`1/s [p`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**1/s (parameter) [signal: rst; param: y_max/y_min; 1 state]** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Integrators and Derivatives`.
+- Inputs: 2.
+- Outputs: 1.
+- Declared states: 1.
+- Configurable parameters: 2.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+\frac{d x}{dt} = yi
+$$
+
+$$
+0 = (yo - (y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right)))
+$$
+
+$$
+1/s [p_{xinc}(t_0) = x
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Input | `rst` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| State | `1/s [p__x` | Internal dynamic state | model-dependent |
+| Parameter | `y_max` | Configurable model parameter | model-dependent |
+| Parameter | `y_min` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

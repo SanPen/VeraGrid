@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.ThirdParty package &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGrid.ThirdParty.adjustText package" href="VeraGrid.ThirdParty.adjustText.html" />
+    <link rel="prev" title="VeraGrid.Session package" href="VeraGrid.Session.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGrid.html">VeraGrid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGrid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Gui.html">VeraGrid.Gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.Session.html">VeraGrid.Session package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">VeraGrid.ThirdParty package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.data.html">VeraGrid.data package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.ExecuteVeraGrid">VeraGrid.ExecuteVeraGrid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.plugins">VeraGrid.plugins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#veragrid-setup-module">VeraGrid.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.templates">VeraGrid.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid.update">VeraGrid.update module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.html#module-VeraGrid">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGrid.html">VeraGrid package</a></li>
+      <li class="breadcrumb-item active">VeraGrid.ThirdParty package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/rst_source/api/auto/VeraGrid.ThirdParty.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="veragrid-thirdparty-package">
+<h1>VeraGrid.ThirdParty package<a class="headerlink" href="#veragrid-thirdparty-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html">VeraGrid.ThirdParty.adjustText package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#module-VeraGrid.ThirdParty.adjustText.arrops">VeraGrid.ThirdParty.adjustText.arrops module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.arrops.arange_multi"><code class="docutils literal notranslate"><span class="pre">arange_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.arrops.overlap_intervals"><code class="docutils literal notranslate"><span class="pre">overlap_intervals()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#module-VeraGrid.ThirdParty.adjustText">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.adjust_text"><code class="docutils literal notranslate"><span class="pre">adjust_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.apply_shifts"><code class="docutils literal notranslate"><span class="pre">apply_shifts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.expand_axes_to_fit"><code class="docutils literal notranslate"><span class="pre">expand_axes_to_fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.expand_coords"><code class="docutils literal notranslate"><span class="pre">expand_coords()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.explode"><code class="docutils literal notranslate"><span class="pre">explode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.force_draw"><code class="docutils literal notranslate"><span class="pre">force_draw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.force_into_bbox"><code class="docutils literal notranslate"><span class="pre">force_into_bbox()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.get_2d_coordinates"><code class="docutils literal notranslate"><span class="pre">get_2d_coordinates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.get_bboxes"><code class="docutils literal notranslate"><span class="pre">get_bboxes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.get_bboxes_pathcollection"><code class="docutils literal notranslate"><span class="pre">get_bboxes_pathcollection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.get_renderer"><code class="docutils literal notranslate"><span class="pre">get_renderer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.get_shifts_extra"><code class="docutils literal notranslate"><span class="pre">get_shifts_extra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.get_shifts_texts"><code class="docutils literal notranslate"><span class="pre">get_shifts_texts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.intersect"><code class="docutils literal notranslate"><span class="pre">intersect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.iterate"><code class="docutils literal notranslate"><span class="pre">iterate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.pull_back"><code class="docutils literal notranslate"><span class="pre">pull_back()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.random_shifts"><code class="docutils literal notranslate"><span class="pre">random_shifts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.remove_crossings"><code class="docutils literal notranslate"><span class="pre">remove_crossings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.adjustText.html#VeraGrid.ThirdParty.adjustText.warn_once"><code class="docutils literal notranslate"><span class="pre">warn_once()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="VeraGrid.ThirdParty.darkdetect.html">VeraGrid.ThirdParty.darkdetect package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.ThirdParty.darkdetect.html#module-VeraGrid.ThirdParty.darkdetect">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.darkdetect.html#VeraGrid.ThirdParty.darkdetect.macos_supported_version"><code class="docutils literal notranslate"><span class="pre">macos_supported_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.html">VeraGrid.ThirdParty.qdarktheme package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.qtpy.html">VeraGrid.ThirdParty.qdarktheme.qtpy package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.qtpy.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.qtpy.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.qtpy.html#module-VeraGrid.ThirdParty.qdarktheme.qtpy.qt_compat">VeraGrid.ThirdParty.qdarktheme.qtpy.qt_compat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.qtpy.html#module-VeraGrid.ThirdParty.qdarktheme.qtpy.qt_version">VeraGrid.ThirdParty.qdarktheme.qtpy.qt_version module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.qtpy.html#module-VeraGrid.ThirdParty.qdarktheme.qtpy">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.widget_gallery.html">VeraGrid.ThirdParty.qdarktheme.widget_gallery package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.widget_gallery.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.widget_gallery.html#module-VeraGrid.ThirdParty.qdarktheme.widget_gallery.main_window">VeraGrid.ThirdParty.qdarktheme.widget_gallery.main_window module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.widget_gallery.html#module-VeraGrid.ThirdParty.qdarktheme.widget_gallery">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.html#module-VeraGrid.ThirdParty.qdarktheme">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.html#license-information">License Information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.html#material-design-icons">Material design icons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGrid.ThirdParty.qdarktheme.html#qdarkstylesheet-source-code">QDarkStyleSheet(Source code)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-VeraGrid.ThirdParty">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-VeraGrid.ThirdParty" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGrid.Session.html" class="btn btn-neutral float-left" title="VeraGrid.Session package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGrid.ThirdParty.adjustText.html" class="btn btn-neutral float-right" title="VeraGrid.ThirdParty.adjustText package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

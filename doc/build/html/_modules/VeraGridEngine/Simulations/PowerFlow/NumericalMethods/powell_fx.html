@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.sparse_solve</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_linear_solver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericPowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">PfFormulationTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc2</span><span class="w"> </span><span class="kn">import</span> <span class="n">mat_to_scipy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">Vec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+
+<span class="n">linear_solver</span> <span class="o">=</span> <span class="n">get_linear_solver</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="compute_beta">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx.compute_beta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_beta</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the beta parameter</span>
+<span class="sd">    :param a: alpha + hsd</span>
+<span class="sd">    :param b: hgn</span>
+<span class="sd">    :param delta: trust region</span>
+<span class="sd">    :return: beta value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ba</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">@</span> <span class="n">ba</span>
+    <span class="n">norm2_a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">@</span> <span class="n">a</span>
+    <span class="n">norm2_ba</span> <span class="o">=</span> <span class="n">ba</span> <span class="o">@</span> <span class="n">ba</span>
+    <span class="n">delta2_norm2a</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">-</span> <span class="n">norm2_a</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">c</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">norm2_ba</span> <span class="o">*</span> <span class="n">delta2_norm2a</span><span class="p">))</span> <span class="o">/</span> <span class="n">norm2_ba</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">delta2_norm2a</span> <span class="o">/</span> <span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">norm2_ba</span> <span class="o">*</span> <span class="n">delta2_norm2a</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="compute_hdl">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx.compute_hdl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_hdl</span><span class="p">(</span><span class="n">hgn</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">hsd</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f_error</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Hdl vector</span>
+<span class="sd">    :param hgn: Hgn vector</span>
+<span class="sd">    :param hsd: Hsd vector</span>
+<span class="sd">    :param g: g vector</span>
+<span class="sd">    :param alpha: alpha parameter</span>
+<span class="sd">    :param delta: delta parameter (trust region size)</span>
+<span class="sd">    :param f_error: error of the function top optimize</span>
+<span class="sd">    :return: Hdl Vector, L(0) - L(hdl)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">norm</span><span class="p">(</span><span class="n">hgn</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hgn</span><span class="p">,</span> <span class="n">f_error</span>
+    <span class="k">elif</span> <span class="n">norm</span><span class="p">(</span><span class="n">hsd</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="n">hdl</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">hsd</span><span class="p">))</span> <span class="o">*</span> <span class="n">hsd</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">-</span> <span class="n">delta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hdl</span><span class="p">,</span> <span class="n">val</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">compute_beta</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">hsd</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">hgn</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">hdl</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">hsd</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">hgn</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">hsd</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">g</span> <span class="o">@</span> <span class="n">g</span><span class="p">)</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_error</span>
+        <span class="k">return</span> <span class="n">hdl</span><span class="p">,</span> <span class="n">val</span></div>
+
+
+
+<div class="viewcode-block" id="powell_fx">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx.powell_fx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">powell_fx</span><span class="p">(</span><span class="n">problem</span><span class="p">:</span> <span class="n">PfFormulationTemplate</span><span class="p">,</span>
+              <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+              <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+              <span class="n">trust</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+              <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+              <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">NumericPowerFlowResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Powell&#39;s Dog leg algorithm to solve:</span>
+
+<span class="sd">        min: error(f(x))</span>
+<span class="sd">        s.t.</span>
+<span class="sd">            f(x) = 0</span>
+
+<span class="sd">    From METHODS FOR NON-LINEAR LEAST SQUARES PROBLEMS by K. Madsen, H.B. Nielsen, O. Tingleff</span>
+
+<span class="sd">    :param problem: PfFormulationTemplate</span>
+<span class="sd">    :param tol: Error tolerance</span>
+<span class="sd">    :param max_iter: Maximum number of iterations</span>
+<span class="sd">    :param trust: trust amount in the derivative length correctness</span>
+<span class="sd">    :param verbose:  Display console information</span>
+<span class="sd">    :param logger: Logger instance</span>
+<span class="sd">    :return: ConvexMethodResult</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># get the initial point</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">var2x</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># if the length of x is zero, means that there&#39;s nothing to solve</span>
+        <span class="c1"># for instance there might be a single node that is a slack node</span>
+        <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">trust</span>
+    <span class="n">f_error</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">update_controls</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="n">mat_to_scipy</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Jacobian not square, check the controls!&quot;</span><span class="p">,</span> <span class="s2">&quot;Powell&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Jacobian and residuals have different sizes!&quot;</span><span class="p">,</span> <span class="s2">&quot;Powell&quot;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">expected_value</span><span class="o">=</span><span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">g</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">f</span>
+
+        <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">error_evolution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_iter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># save the error evolution</span>
+        <span class="n">error_evolution</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_error</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;It </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s1">, error </span><span class="si">{</span><span class="n">f_error</span><span class="si">}</span><span class="s1">, converged </span><span class="si">{</span><span class="n">converged</span><span class="si">}</span><span class="s1">, x </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">, dx not computed yet&#39;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iter</span><span class="p">:</span>
+
+            <span class="c1"># update iteration counter</span>
+            <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># compute alpha (3.19)</span>
+            <span class="n">g_proy</span> <span class="o">=</span> <span class="n">J</span> <span class="o">@</span> <span class="n">g</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span> <span class="o">@</span> <span class="n">g</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">g_proy</span> <span class="o">@</span> <span class="n">g_proy</span><span class="p">)</span>
+            <span class="n">hsd</span> <span class="o">=</span> <span class="o">-</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">g</span>
+
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">200</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Iter: </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">200</span><span class="p">)</span>
+
+            <span class="c1"># compute update step</span>
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="c1"># compute update step: J x Δx = Δg</span>
+                <span class="n">hgn</span> <span class="o">=</span> <span class="n">linear_solver</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Powell&#39;s system matrix is singular @iter </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+
+            <span class="c1"># compute hdl (3.20)</span>
+            <span class="n">hdl</span><span class="p">,</span> <span class="n">L0_Lhdl</span> <span class="o">=</span> <span class="n">compute_hdl</span><span class="p">(</span><span class="n">hgn</span><span class="o">=</span><span class="n">hgn</span><span class="p">,</span> <span class="n">hsd</span><span class="o">=</span><span class="n">hsd</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span> <span class="n">f_error</span><span class="o">=</span><span class="n">f_error</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;J:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_jacobian_df</span><span class="p">(</span><span class="n">J</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_f_df</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dx:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_x_df</span><span class="p">(</span><span class="n">hgn</span><span class="p">))</span>
+
+            <span class="c1"># tol2 = tol * (norm(x) + tol)</span>
+            <span class="n">update_controls</span> <span class="o">=</span> <span class="n">f_error</span> <span class="o">&lt;</span> <span class="n">problem</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">controls_start_tolerance</span>
+            <span class="n">f_error_new</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">hdl</span><span class="p">,</span> <span class="n">update_controls</span><span class="o">=</span><span class="n">update_controls</span><span class="p">)</span>
+
+            <span class="n">rho</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_error</span> <span class="o">-</span> <span class="n">f_error_new</span><span class="p">)</span> <span class="o">/</span> <span class="n">L0_Lhdl</span> <span class="k">if</span> <span class="n">L0_Lhdl</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mf">1.0</span>
+
+            <span class="k">if</span> <span class="n">rho</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">!=</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">J</span> <span class="o">=</span> <span class="n">mat_to_scipy</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">())</span>  <span class="c1"># compute the Jacobian too</span>
+
+                <span class="k">if</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Jacobian not square, check the controls!&quot;</span><span class="p">,</span> <span class="s2">&quot;Powell&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Jacobian and residuals have different sizes!&quot;</span><span class="p">,</span> <span class="s2">&quot;Powell&quot;</span><span class="p">,</span>
+                                     <span class="n">value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">expected_value</span><span class="o">=</span><span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+
+                <span class="n">g</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">f</span>
+                <span class="n">f_error</span> <span class="o">=</span> <span class="n">f_error_new</span>
+
+            <span class="k">elif</span> <span class="n">rho</span> <span class="o">&gt;</span> <span class="mf">0.75</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">hdl</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="mf">0.25</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">*=</span> <span class="mf">0.5</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unhandled rho </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="c1"># save the error evolution</span>
+            <span class="n">error_evolution</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_error</span>
+
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;It </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s1">, error </span><span class="si">{</span><span class="n">f_error</span><span class="si">}</span><span class="s1">, converged </span><span class="si">{</span><span class="n">converged</span><span class="si">}</span><span class="s1">, x </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">, dx </span><span class="si">{</span><span class="n">hdl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;error </span><span class="si">{</span><span class="n">f_error</span><span class="si">}</span><span class="s1">, converged </span><span class="si">{</span><span class="n">converged</span><span class="si">}</span><span class="s1">, x </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">, dx </span><span class="si">{</span><span class="n">hdl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">elapsed</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

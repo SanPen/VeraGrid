@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>👾 Grid Reduction &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🕸️ Procedural Grid Expansion" href="procedural_grid.html" />
+    <link rel="prev" title="🎳 Clustering" href="clustering.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">👾 Grid Reduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory">Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ward-reduction">Ward reduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#di-shi-grid-equivalent">Di-Shi grid equivalent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ptdf-reduction">PTDF reduction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">👾 Grid Reduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/grid_reduction.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="grid-reduction">
+<h1>👾 Grid Reduction<a class="headerlink" href="#grid-reduction" title="Link to this heading"></a></h1>
+<p>VeraGrid has the ability to perform planning-style grid reductions.</p>
+<p>A) From the schematic:</p>
+<ol class="arabic simple">
+<li><p>First, Select the buses that you want to reduce in the schematic.</p></li>
+<li><p>The launch the grid reduction window by selecting the menu option <code class="docutils literal notranslate"><span class="pre">Model</span> <span class="pre">&gt;</span> <span class="pre">Grid</span> <span class="pre">Reduction</span></code></p></li>
+</ol>
+<p>B) From the database:</p>
+<ol class="arabic simple">
+<li><p>Select the buses according to some rule in the database view.</p></li>
+<li><p>Right click and call the <strong>grid reduction</strong> action in the context menu.</p></li>
+</ol>
+<p><img alt="" src="../_images/grid_reduction_1.png" /></p>
+<p>A small window  will pop up indicating the list of buses that you are going to remove.
+By accepting, the grid will be reduced according to the theory developed by [1].
+You can expect that the reduced grid flows behave roughly like the original grid.</p>
+<p>Changing the injections, or further topological changes will alter the equivalent behavior.</p>
+<p>This action cannot be undone.</p>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>Grid reduction examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s1">&#39;case118.m&#39;</span><span class="p">)</span>
+
+<span class="n">pf_res</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+<span class="c1"># define the buses to remove</span>
+<span class="n">reduction_bus_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span>
+    <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">117</span>
+<span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># minus 1 for zero based indexing</span>
+
+<span class="c1"># Ward reduction</span>
+<span class="n">grid_ward</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ward_standard_reduction</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">,</span>
+    <span class="n">V0</span><span class="o">=</span><span class="n">pf_res</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+    <span class="n">logger</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="c1"># PTDF reduction</span>
+<span class="n">nc</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">lin</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">LinearAnalysis</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
+    <span class="n">lin_ts</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">LinearAnalysisTs</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">lin_ts</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">grid_ptdf</span><span class="p">,</span> <span class="n">logger_ptdf</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ptdf_reduction</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">,</span>
+    <span class="n">PTDF</span><span class="o">=</span><span class="n">lin</span><span class="o">.</span><span class="n">PTDF</span><span class="p">,</span>
+    <span class="n">lin_ts</span><span class="o">=</span><span class="n">lin_ts</span>
+<span class="p">)</span>
+
+<span class="c1"># Di-Shi reduction</span>
+<span class="n">grid_di_shi</span><span class="p">,</span> <span class="n">logger_ds</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">di_shi_reduction</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">,</span>
+    <span class="n">V0</span><span class="o">=</span><span class="n">pf_res</span><span class="o">.</span><span class="n">voltage</span>
+<span class="p">)</span>
+
+</pre></div>
+</div>
+<p>Observe how we feed a copy of the original grid to the
+reduction functions. This is because those functions alter
+the input grid.</p>
+</section>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
+<section id="ward-reduction">
+<h3>Ward reduction<a class="headerlink" href="#ward-reduction" title="Link to this heading"></a></h3>
+<p>Performs the standard ward reduction.</p>
+<p>Define the bus sets <span class="math">E</span> (external buses to remove),
+<span class="math">I</span> (internal buses that are not boundary) and
+<span class="math">B</span> (boundary buses)</p>
+<ul class="simple">
+<li><p>Run a power flow of the base grid and slice <span class="math">V_b = V[B]</span> and <span class="math">V_e = V[E]</span></p></li>
+<li><p>Slice <span class="math">Y_{BE} = Y[B, E]</span>, <span class="math">Y_{EB} = Y[E, B]</span> and <span class="math">Y_{EE} = Y[E, E]</span></p></li>
+<li><p>Compute the equivalent boundary admittances as:
+<span class="math">Y_{eq} = Y_{BE} \times Y_{EE}^{-1} \times Y_{EB}</span></p></li>
+<li><p>Compute the equivalent boundary injection currents as:
+<span class="math">I_{eq} = - Y_{BE} \times Y_{EE}^{-1} \times (Y_{EB} \times V_b + Y_{EE} \times V_e)</span></p></li>
+<li><p>Compute the boundary power injections as:
+<span class="math">S_{eq} = V_b \cdot (I_{eq})^*</span></p></li>
+<li><p>Create a new load with the value of <span class="math">S_{eq}[b]</span> for every bus <span class="math">b</span> of <span class="math">B</span>.</p></li>
+<li><p>For every entry in the lower triangle of <span class="math">Y_{eq}</span>, create a shunt or series reactance
+at the boundary or between the boundary buses.</p></li>
+<li><p>Finally, remove all buses in <span class="math">E</span> from the grid.</p></li>
+</ul>
+</section>
+<section id="di-shi-grid-equivalent">
+<h3>Di-Shi grid equivalent<a class="headerlink" href="#di-shi-grid-equivalent" title="Link to this heading"></a></h3>
+<p>The PhD dissertation of Di-Shi presented in [1] [2], expands on the traditional ward equivalent reduction method.
+The proposed method allows the generators to be <em>just moved</em> to the boundary buses. Later,
+the injections are calibrated to compensate for that. It is a very friendly method for
+planning engineers that want to reduce the grid, and still need to keep the generators as previously
+defined for dispatching.</p>
+<p><strong>Step 0 – Define bus sets</strong></p>
+<ul class="simple">
+<li><p>I: set of internal buses.</p></li>
+<li><p>E: set of external buses: those that we want to remove.</p></li>
+<li><p>B: set of boundary buses between E and I.</p></li>
+</ul>
+<p><strong>Step 1 – First Ward reduction</strong></p>
+<p>This first reduction is to obtain the equivalent admittance matrix <span class="math">Y_eq^{(1}</span> that serves
+to create the inter-boundary branches that represent the grid that we are going to remove.
+For this the buses to keep are the internal (I) + boundary (B).</p>
+<p><strong>Step 2 – Second Ward reduction: Extending to the external generation buses</strong></p>
+<p>The second reduction is to generate another equivalent admittance matrix <span class="math">Y_eq^{(2}</span>
+that we use as adjacency matrix to search the closest bus to move each generator that is external.
+For this the buses to keep are the internal (I) + boundary (B) + the generation buses of E.</p>
+<p><strong>Step 3 – Relocate generators</strong></p>
+<p>Using the matrix <span class="math">Y_eq^{(2}</span>, we calculate the shortest paths from every
+external generation bus, to all the other buses in I + B. The end of each
+path will be the relocation bus of every external generator.</p>
+<p><strong>Step 4 – Relocate loads with inverse power flow</strong></p>
+<p>Let’s not forget about the loads! in order to move the external loads such that
+the reduced flows resemble the original flows (even after brutally moving the generators!),
+we need to perform an <em>inverse power flow</em>.</p>
+<p>First, we need to run a linear power flow in the original system.
+That will get us the original voltage angles.</p>
+<p>Second, we need to form the admittance matrix of the reduced grid
+(including the inter-boundary branches), and multiply this admittance
+matrix by the original voltage angles for the reduced set of buses.
+This gets us the “final” power injections in the reduced system.</p>
+<p>From those, we need to subtract the reduced grid injections.
+This will provide us with a vector of new loads that we need to add at
+the corresponding reduced grid buses in order to have a final equivalent.</p>
+<p>[1]: <a class="reference external" href="https://core.ac.uk/download/pdf/79564835.pdf">Power System Network Reduction for Engineering and Economic
+Analysis by Di Shi,
+2012 Arizona State University</a>.</p>
+<p>[2]: <a class="reference external" href="https://ieeexplore.ieee.org/document/6336375">Optimal Generation Investment Planning: Pt 1: Network Equivalents</a></p>
+</section>
+<section id="ptdf-reduction">
+<h3>PTDF reduction<a class="headerlink" href="#ptdf-reduction" title="Link to this heading"></a></h3>
+<p>Performs a analogous method as the Di-Shi reduction but using the PTDF</p>
+<p>Along with the bus sets <span class="math">E</span> (external buses to remove),
+<span class="math">I</span> (internal buses that are not boundary) and
+<span class="math">B</span> (boundary buses), we add a set of branches that
+join an external bus to a boundary bus and call if <span class="math">BE</span>.</p>
+<p>The theory behind is as follows:</p>
+<ol class="arabic simple">
+<li><p>Compute the PTDF (<span class="math">PTDF_0</span>)</p></li>
+<li><p>Compute the Flows <span class="math">P_{f_0} = PTDF_0 \times Pbus_0</span></p></li>
+<li><p>Move the injections to the boundary (all of them, load and generation)</p></li>
+<li><p>Delete the buses from the External set.</p></li>
+<li><p>Compute the PTDF again (<span class="math">PTDF_2</span>)</p></li>
+<li><p>Compute the current injections vector (<span class="math">Pbus_2</span>)</p></li>
+<li><p>Compute the ideal injections that fullfill the base flows using least-squares: <span class="math">Pbus_3 = LSQ(PTDF_2, P_{f_0}[I])</span></p></li>
+<li><p>Compute the difference between the ideal and the actual injections <span class="math">dPbus = Pbus_2 - Pbus_3</span></p></li>
+<li><p>For every entry in <span class="math">dPbus</span> greater than a threshold, add a load compensating the difference</p></li>
+</ol>
+<p>The PTDF flows pre and post reduction are guaranteed to be the same,
+as much as the least-squares problem is able to find a solution.</p>
+</section>
+</section>
+<section id="benchmarks">
+<h2>Benchmarks<a class="headerlink" href="#benchmarks" title="Link to this heading"></a></h2>
+<p>On the IEEE 118, we obtain the following reduction results:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Comparison</p></th>
+<th class="head"><p>Di-Shi</p></th>
+<th class="head"><p>PTDF</p></th>
+<th class="head"><p>Ward</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>With non-linear power flows</p></td>
+<td><p>0.24 +/- 0.45 MW</p></td>
+<td><p>3.23 +/- 5.23</p></td>
+<td><p>5.06 +/- 8.99</p></td>
+</tr>
+<tr class="row-odd"><td><p>With linear power flows</p></td>
+<td><p>6.79 +/- 6.61 MW</p></td>
+<td><p>4.10 +/- 7.21</p></td>
+<td><p>5.45 +/- 9.34</p></td>
+</tr>
+</tbody>
+</table>
+<p>These are the mean +/- standard deviation statistics of the
+active flow diference at the bus “from” between a power flow
+before and after the reduction. These measure the “error” of the reduction.</p>
+<p>Observe that the PTDF-reduction flows are not exact even for the linear power flow.
+This is because the  PTDF is a simplification with regard the linear power flow
+and does not account for transformer taps, shunts and other modifications.</p>
+<p>Code to reproduce the benchmarks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">vg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction</span><span class="w"> </span><span class="kn">import</span> <span class="n">di_shi_reduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction</span><span class="w"> </span><span class="kn">import</span> <span class="n">ptdf_reduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.GridReduction.ward_equivalents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ward_standard_reduction</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;tests&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;grids&#39;</span><span class="p">,</span> <span class="s1">&#39;Matpower&#39;</span><span class="p">,</span> <span class="s1">&#39;case118.m&#39;</span><span class="p">)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+<span class="n">reduction_bus_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span>
+    <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">117</span>
+<span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># minus 1 for zero based indexing</span>
+
+<span class="k">for</span> <span class="n">pf_method</span> <span class="ow">in</span> <span class="p">[</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span> <span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">Linear</span><span class="p">]:</span>
+    <span class="n">pf_opt</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">solver_type</span><span class="o">=</span><span class="n">pf_method</span><span class="p">)</span>
+    <span class="n">pf_res</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_opt</span><span class="p">)</span>
+
+    <span class="c1"># build a dictionary with the from flows</span>
+    <span class="n">flow_d</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">br</span><span class="o">.</span><span class="n">idtag</span><span class="p">:</span> <span class="n">pf_res</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">br</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branches_iter</span><span class="p">())</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="n">vg</span><span class="o">.</span><span class="n">GridReductionMethod</span><span class="o">.</span><span class="n">DiShi</span><span class="p">,</span>
+                   <span class="n">vg</span><span class="o">.</span><span class="n">GridReductionMethod</span><span class="o">.</span><span class="n">PTDF</span><span class="p">,</span>
+                   <span class="n">vg</span><span class="o">.</span><span class="n">GridReductionMethod</span><span class="o">.</span><span class="n">Ward</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">vg</span><span class="o">.</span><span class="n">GridReductionMethod</span><span class="o">.</span><span class="n">DiShi</span><span class="p">:</span>
+
+            <span class="n">grid2</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">di_shi_reduction</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">,</span>
+                <span class="n">V0</span><span class="o">=</span><span class="n">pf_res</span><span class="o">.</span><span class="n">voltage</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">vg</span><span class="o">.</span><span class="n">GridReductionMethod</span><span class="o">.</span><span class="n">PTDF</span><span class="p">:</span>
+
+            <span class="n">grid2</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">ptdf_reduction</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">vg</span><span class="o">.</span><span class="n">GridReductionMethod</span><span class="o">.</span><span class="n">Ward</span><span class="p">:</span>
+
+            <span class="n">grid2</span> <span class="o">=</span> <span class="n">ward_standard_reduction</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">,</span>
+                <span class="n">V0</span><span class="o">=</span><span class="n">pf_res</span><span class="o">.</span><span class="n">voltage</span><span class="p">,</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Method not found :(&quot;</span><span class="p">)</span>
+
+        <span class="c1"># run a power flow after</span>
+        <span class="n">pf_res2</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid2</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_opt</span><span class="p">)</span>
+
+        <span class="c1"># build the flows comparison dictionary</span>
+        <span class="n">flow_d2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">br</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grid2</span><span class="o">.</span><span class="n">get_branches_iter</span><span class="p">()):</span>
+            <span class="n">Sf_pre</span> <span class="o">=</span> <span class="n">flow_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">br</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">Sf_pre</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">flow_d2</span><span class="p">[</span><span class="n">br</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">br</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;Pf pre&quot;</span><span class="p">:</span> <span class="n">Sf_pre</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                    <span class="s2">&quot;Pf post&quot;</span><span class="p">:</span> <span class="n">pf_res2</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                    <span class="s2">&quot;Pf err&quot;</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Sf_pre</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">pf_res2</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">),</span>
+                    <span class="s2">&quot;Pf err %&quot;</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Sf_pre</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">pf_res2</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">/</span> <span class="n">Sf_pre</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+                    <span class="s2">&quot;Qf pre&quot;</span><span class="p">:</span> <span class="n">Sf_pre</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                    <span class="s2">&quot;Qf post&quot;</span><span class="p">:</span> <span class="n">pf_res2</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+                    <span class="s2">&quot;Qf err&quot;</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Sf_pre</span><span class="o">.</span><span class="n">imag</span> <span class="o">-</span> <span class="n">pf_res2</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">),</span>
+                <span class="p">}</span>
+
+        <span class="n">df_flow_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">flow_d2</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">pf_method</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">method</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean error:&quot;</span><span class="p">,</span> <span class="n">df_flow_comp</span><span class="p">[</span><span class="s2">&quot;Pf err&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="s1">&#39;+-&#39;</span><span class="p">,</span> <span class="n">df_flow_comp</span><span class="p">[</span><span class="s2">&quot;Pf err&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean error %:&quot;</span><span class="p">,</span> <span class="n">df_flow_comp</span><span class="p">[</span><span class="s2">&quot;Pf err %&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="s1">&#39;+-&#39;</span><span class="p">,</span> <span class="n">df_flow_comp</span><span class="p">[</span><span class="s2">&quot;Pf err %&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clustering.html" class="btn btn-neutral float-left" title="🎳 Clustering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="procedural_grid.html" class="btn btn-neutral float-right" title="🕸️ Procedural Grid Expansion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

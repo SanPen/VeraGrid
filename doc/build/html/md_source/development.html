@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💻 Development &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🧩 Plugins" href="plugins.html" />
+    <link rel="prev" title="Three-phase carrier sampled modulation" href="dyn_templates/procedural_logic/three_phase_carrier_sampled_modulation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">💻 Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setup-your-git-repository">Setup your git repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contribute">Contribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-suite">Test Suite</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-with-pytest">Testing with pytest</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">💻 Development</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/development.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="development">
+<h1>💻 Development<a class="headerlink" href="#development" title="Link to this heading"></a></h1>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
+<p>Have you found a bug in <strong>VeraGrid</strong> or have a suggestion for a new functionality? Then
+get in touch with us by opening up an issue on the
+<a class="reference external" href="https://github.com/SanPen/VeraGrid/issues">issue board</a>
+or <a class="reference external" href="https://matrix.to/#/#veragrid:matrix.org">join the community chat</a>
+to discuss possible new
+developments with the community and the maintainers.</p>
+<section id="setup-your-git-repository">
+<h3>Setup your git repository<a class="headerlink" href="#setup-your-git-repository" title="Link to this heading"></a></h3>
+<p><strong>Note</strong>: <em>The following setup is just a suggestion of how to setup your repository</em>
+<em>and is supposed to make contributing easier, especially for newcomers. If you have a</em>
+<em>different setup that you are more comfortable with, you do not have to adopt this</em>
+<em>setup.</em></p>
+<p>If you want to contribute for the first time, you can set up your environment like
+this:</p>
+<ul class="simple">
+<li><p>If you have not done it yet: install git and create a GitHub account;</p></li>
+<li><p>Create a fork of the official <strong>VeraGrid</strong> repository by clicking on “Fork” in the official repository;</p></li>
+<li><p>Clone the forked repository to your local machine: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/YOUR-USERNAME/VeraGrid.git</span></code></p></li>
+<li><p>Copy the following configuration at the bottom of to the <code class="docutils literal notranslate"><span class="pre">veragrid/.git/config</span></code> file (the .git folder is hidden,
+so you might have to enable showing hidden folders) and insert your github username:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">remote</span> <span class="s2">&quot;origin&quot;</span><span class="p">]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">YOUR</span><span class="o">-</span><span class="n">USERNAME</span><span class="o">/</span><span class="n">VeraGrid</span><span class="o">.</span><span class="n">git</span>
+    <span class="n">fetch</span> <span class="o">=</span> <span class="o">+</span><span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/*</span><span class="p">:</span><span class="n">refs</span><span class="o">/</span><span class="n">remotes</span><span class="o">/</span><span class="n">origin</span><span class="o">/*</span>
+    <span class="n">pushurl</span> <span class="o">=</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">YOUR</span><span class="o">-</span><span class="n">USERNAME</span><span class="o">/</span><span class="n">VeraGrid</span><span class="o">.</span><span class="n">git</span>
+<span class="p">[</span><span class="n">remote</span> <span class="s2">&quot;upstream&quot;</span><span class="p">]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">SanPen</span><span class="o">/</span><span class="n">VeraGrid</span><span class="o">.</span><span class="n">git</span>
+    <span class="n">fetch</span> <span class="o">=</span> <span class="o">+</span><span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/*</span><span class="p">:</span><span class="n">refs</span><span class="o">/</span><span class="n">remotes</span><span class="o">/</span><span class="n">upstream</span><span class="o">/*</span>
+<span class="p">[</span><span class="n">branch</span> <span class="s2">&quot;master&quot;</span><span class="p">]</span>
+    <span class="n">remote</span> <span class="o">=</span> <span class="n">origin</span>
+    <span class="n">merge</span> <span class="o">=</span> <span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/</span><span class="n">master</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">master</span></code> branch is now configured to automatically track the official <strong>VeraGrid</strong>
+master branch. So if you are on the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch and use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+git<span class="w"> </span>merge<span class="w"> </span>upstream/master
+</pre></div>
+</div>
+<p>…your local repository will be updated with the newest changes in the official
+<strong>VeraGrid</strong> repository.</p>
+<p>Since you cannot push directly to the official <strong>VeraGrid</strong> repository, if you are on
+<code class="docutils literal notranslate"><span class="pre">master</span></code> and do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>push
+</pre></div>
+</div>
+<p>…your push is by default routed to your own fork instead of the official <strong>VeraGrid</strong>
+repository with the setting as defined above.</p>
+</section>
+<section id="contribute">
+<h3>Contribute<a class="headerlink" href="#contribute" title="Link to this heading"></a></h3>
+<p>All contributions to the <strong>VeraGrid</strong> repository are made through pull requests to the
+<code class="docutils literal notranslate"><span class="pre">devel</span></code> branch. You can either submit a pull request from the develop branch of your
+fork or create a special feature branch that you keep the changes on. A feature branch
+is the way to go if you have multiple issues that you are working on in parallel and
+want to submit with separate pull requests. If you only have small, one-time changes
+to submit, you can also use the <code class="docutils literal notranslate"><span class="pre">devel</span></code> branch to submit your pull request.</p>
+<p>If you wish to discuss a contribution before the pull request is ready to be officially
+submitted, create an issue in the official repository and link to your own fork. <strong>Do</strong>
+<strong>not create pull requests that are not ready to be merged!</strong></p>
+<p><strong>Note</strong>: <em>The following guide assumes the remotes are set up as described above. If</em>
+<em>you have a different setup, you will have to adapt the commands accordingly.</em></p>
+</section>
+<section id="test-suite">
+<h3>Test Suite<a class="headerlink" href="#test-suite" title="Link to this heading"></a></h3>
+<p><strong>VeraGrid</strong> uses pytest for automatic software testing.</p>
+<p>If you make changes to <strong>VeraGrid</strong> that you plan to submit, first make sure that all
+tests are still passing. You can do this locally with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest
+</pre></div>
+</div>
+<p>If you have added new functionality, you should also add a new function that tests this
+functionality. pytest automatically detects all functions in the <code class="docutils literal notranslate"><span class="pre">src/tests</span></code> folder
+that start with <code class="docutils literal notranslate"><span class="pre">test_</span></code> and are located in a file that also starts with <code class="docutils literal notranslate"><span class="pre">test_</span></code> as
+relevant test cases.</p>
+</section>
+</section>
+<section id="testing-with-pytest">
+<h2>Testing with pytest<a class="headerlink" href="#testing-with-pytest" title="Link to this heading"></a></h2>
+<p>Unit test (for pytest) are included in <code class="docutils literal notranslate"><span class="pre">src/tests</span></code>. As defined in <code class="docutils literal notranslate"><span class="pre">pytest.ini</span></code>, all
+files matching <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> are executed by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest
+</pre></div>
+</div>
+<p>Files matching <code class="docutils literal notranslate"><span class="pre">*_test.py</span></code> are not executed; they were not formatted specifically for
+<code class="docutils literal notranslate"><span class="pre">pytest</span></code> but were mostly done for manual testing and documentation purposes.</p>
+<p>Additional tests should be developed for each new and existing feature. <code class="docutils literal notranslate"><span class="pre">pytest</span></code>
+should be run before each commit to prevent easily detectable bugs.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dyn_templates/procedural_logic/three_phase_carrier_sampled_modulation.html" class="btn btn-neutral float-left" title="Three-phase carrier sampled modulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plugins.html" class="btn btn-neutral float-right" title="🧩 Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SolverType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">ConvergenceReport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowResults3Ph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericPowerFlowResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">PfBasicFormulation3Ph</span><span class="p">,</span>
+                                                                                        <span class="n">expand3ph</span><span class="p">,</span>
+                                                                                        <span class="n">expandVoltage3ph</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">floating_star_currents</span><span class="p">,</span>
+                                                                                    <span class="n">floating_star_powers</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx</span><span class="w"> </span><span class="kn">import</span> <span class="n">newton_raphson_fx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx</span><span class="w"> </span><span class="kn">import</span> <span class="n">powell_fx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.levenberg_marquadt_fx</span><span class="w"> </span><span class="kn">import</span> <span class="n">levenberg_marquardt_fx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.simulation_indices</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationIndices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">Area</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Vec</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">VALID_OPF_RESULTS</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__solve_island_limited_support_3ph</span><span class="p">(</span><span class="n">island</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                                       <span class="n">indices</span><span class="p">:</span> <span class="n">SimulationIndices</span><span class="p">,</span>
+                                       <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span>
+                                       <span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                                       <span class="n">S_base</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
+                                       <span class="n">Shvdc</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                       <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NumericPowerFlowResults</span><span class="p">,</span> <span class="n">ConvergenceReport</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a power flow simulation using the selected method (no outer loop controls).</span>
+<span class="sd">    This routine supports delete voltage controls,and Hvdc links through external injections (Shvdc)</span>
+<span class="sd">    Also requires grids to be split by HvdcLines</span>
+<span class="sd">    :param island: SnapshotData circuit, this ensures on-demand admittances computation</span>
+<span class="sd">    :param indices: SimulationIndices</span>
+<span class="sd">    :param options: PowerFlow options</span>
+<span class="sd">    :param V0: Array of initial voltages</span>
+<span class="sd">    :param S_base: Array of power Injections</span>
+<span class="sd">    :param Shvdc: Array of power injections due t the HVDC lines (only used in some algorithms)</span>
+<span class="sd">    :param logger: Logger</span>
+<span class="sd">    :return: NumericPowerFlowResults</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Using the complete support power flow method&#39;</span><span class="p">)</span>
+
+    <span class="n">report</span> <span class="o">=</span> <span class="n">ConvergenceReport</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">retry_with_other_methods</span><span class="p">:</span>
+        <span class="n">solver_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span>
+                       <span class="n">SolverType</span><span class="o">.</span><span class="n">PowellDogLeg</span><span class="p">,</span>
+                       <span class="n">SolverType</span><span class="o">.</span><span class="n">LM</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">solver_type</span> <span class="ow">in</span> <span class="n">solver_list</span><span class="p">:</span>
+            <span class="n">solver_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">solver_type</span><span class="p">)</span>
+
+        <span class="n">solvers</span> <span class="o">=</span> <span class="p">[</span><span class="n">options</span><span class="o">.</span><span class="n">solver_type</span><span class="p">]</span> <span class="o">+</span> <span class="n">solver_list</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># No retry selected</span>
+        <span class="n">solvers</span> <span class="o">=</span> <span class="p">[</span><span class="n">options</span><span class="o">.</span><span class="n">solver_type</span><span class="p">]</span>
+
+    <span class="c1"># set worked = false to enter the loop</span>
+    <span class="n">solver_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># set the initial value</span>
+    <span class="n">Qmax</span><span class="p">,</span> <span class="n">Qmin</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_reactive_power_limits</span><span class="p">()</span>
+    <span class="n">S0</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">Shvdc</span> <span class="o">+</span> <span class="n">S_base</span>  <span class="c1"># already for 3-phase</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">solution</span> <span class="o">=</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">S0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">Scalc</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                           <span class="n">m</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">),</span>
+                                           <span class="n">tau</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">),</span>
+                                           <span class="n">Sf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">St</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">If</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">It</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">loading</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                           <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                           <span class="n">converged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                           <span class="n">norm_f</span><span class="o">=</span><span class="mf">1e200</span><span class="p">,</span>
+                                           <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                           <span class="n">elapsed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># method, converged: bool, error: float, elapsed: float, iterations: int</span>
+        <span class="n">report</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NoSolver</span><span class="p">,</span> <span class="n">converged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">elapsed</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;Not solving power flow because there is no slack bus&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">solution</span><span class="p">,</span> <span class="n">report</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">final_solution</span> <span class="o">=</span> <span class="n">NumericPowerFlowResults</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
+                                                 <span class="n">converged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                 <span class="n">norm_f</span><span class="o">=</span><span class="mf">1e200</span><span class="p">,</span>
+                                                 <span class="n">Scalc</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                                 <span class="n">m</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">),</span>
+                                                 <span class="n">tau</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">),</span>
+                                                 <span class="n">Sf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">St</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">If</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">It</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">loading</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">losses</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">Pfp_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                                 <span class="n">Pfn_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                                 <span class="n">St_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">If_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                                 <span class="n">It_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">losses_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                                 <span class="n">loading_vsc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                                                 <span class="n">Sf_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">St_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">losses_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">loading_hvdc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">island</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                                 <span class="n">iterations</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                 <span class="n">elapsed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">solver_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">solvers</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">final_solution</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+            <span class="c1"># get the solver</span>
+            <span class="n">solver_type</span> <span class="o">=</span> <span class="n">solvers</span><span class="p">[</span><span class="n">solver_idx</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="n">SolverType</span><span class="o">.</span><span class="n">LM</span><span class="p">:</span>
+
+                <span class="n">problem</span> <span class="o">=</span> <span class="n">PfBasicFormulation3Ph</span><span class="p">(</span><span class="n">V0</span><span class="o">=</span><span class="n">final_solution</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+                                                <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                                <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+                                                <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+                                                <span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                                                <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="n">solution</span> <span class="o">=</span> <span class="n">levenberg_marquardt_fx</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                                  <span class="n">tol</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                                                  <span class="n">max_iter</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+                                                  <span class="n">verbose</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                                  <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">:</span>
+
+                <span class="n">problem</span> <span class="o">=</span> <span class="n">PfBasicFormulation3Ph</span><span class="p">(</span><span class="n">V0</span><span class="o">=</span><span class="n">final_solution</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+                                                <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                                <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+                                                <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+                                                <span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                                                <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="n">solution</span> <span class="o">=</span> <span class="n">newton_raphson_fx</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                             <span class="n">tol</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                                             <span class="n">max_iter</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+                                             <span class="n">trust</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">trust_radius</span><span class="p">,</span>
+                                             <span class="n">verbose</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="n">SolverType</span><span class="o">.</span><span class="n">PowellDogLeg</span><span class="p">:</span>
+
+                <span class="n">problem</span> <span class="o">=</span> <span class="n">PfBasicFormulation3Ph</span><span class="p">(</span><span class="n">V0</span><span class="o">=</span><span class="n">final_solution</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+                                                <span class="n">S0</span><span class="o">=</span><span class="n">S0</span><span class="p">,</span>
+                                                <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+                                                <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+                                                <span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                                                <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="n">solution</span> <span class="o">=</span> <span class="n">powell_fx</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+                                     <span class="n">tol</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                                     <span class="n">max_iter</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+                                     <span class="n">trust</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">trust_radius</span><span class="p">,</span>
+                                     <span class="n">verbose</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                     <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># for any other method, raise exception</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">solver_type</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39; Not supported in power flow mode&#39;</span><span class="p">)</span>
+
+            <span class="c1"># record the solution type</span>
+            <span class="n">solution</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">solver_type</span>
+
+            <span class="c1"># record the method used, if it improved the solution</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">final_solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">):</span>
+                <span class="n">report</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">solver_type</span><span class="p">,</span>
+                           <span class="n">converged</span><span class="o">=</span><span class="n">solution</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span>
+                           <span class="n">error</span><span class="o">=</span><span class="n">solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">,</span>
+                           <span class="n">elapsed</span><span class="o">=</span><span class="n">solution</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span>
+                           <span class="n">iterations</span><span class="o">=</span><span class="n">solution</span><span class="o">.</span><span class="n">iterations</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">solution</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SolverType</span><span class="o">.</span><span class="n">Linear</span><span class="p">,</span> <span class="n">SolverType</span><span class="o">.</span><span class="n">LACPF</span><span class="p">]:</span>
+                    <span class="c1"># if the method is linear, we do not check the solution quality</span>
+                    <span class="n">final_solution</span> <span class="o">=</span> <span class="n">solution</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># if the method is supposed to be exact, we check the solution quality</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                        <span class="n">final_solution</span> <span class="o">=</span> <span class="n">solution</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Tried solution is garbage&#39;</span><span class="p">,</span>
+                                        <span class="n">solver_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:.4e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">),</span>
+                                        <span class="n">expected_value</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Tried solver but it did not improve the solution&#39;</span><span class="p">,</span>
+                                <span class="n">solver_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:.4e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">),</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="n">final_solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">)</span>
+
+            <span class="c1"># next solver</span>
+            <span class="n">solver_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">final_solution</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;Did not converge, even after retry!&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:.4e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_solution</span><span class="o">.</span><span class="n">norm_f</span><span class="p">),</span>
+                             <span class="n">expected_value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">final_solution</span><span class="o">.</span><span class="n">tap_module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">final_solution</span><span class="o">.</span><span class="n">tap_module</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module</span>
+
+        <span class="k">if</span> <span class="n">final_solution</span><span class="o">.</span><span class="n">tap_angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">final_solution</span><span class="o">.</span><span class="n">tap_angle</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_angle</span>
+
+        <span class="k">return</span> <span class="n">final_solution</span><span class="p">,</span> <span class="n">report</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__multi_island_pf_nc_limited_support_3ph</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                                             <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span>
+                                             <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                             <span class="n">V_guess</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                             <span class="n">Sbus_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults3Ph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiple islands power flow (this is the most generic power flow function)</span>
+
+<span class="sd">    multi_island_pf</span>
+<span class="sd">      |-&gt; multi_island_pf_nc</span>
+<span class="sd">                |-&gt; split_into_islands  (Deals with HvdcLine injections)</span>
+<span class="sd">                        |-&gt; for each island:</span>
+<span class="sd">                                |-&gt; single_island_pf</span>
+<span class="sd">                                        |-&gt; solve</span>
+
+<span class="sd">    :param nc: SnapshotData instance</span>
+<span class="sd">    :param options: PowerFlowOptions instance</span>
+<span class="sd">    :param logger: logger</span>
+<span class="sd">    :param V_guess: voltage guess</span>
+<span class="sd">    :param Sbus_input: Use this power injections if provided</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="c1"># declare results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">PowerFlowResults3Ph</span><span class="p">(</span>
+        <span class="n">n</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">m</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nbr</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">n_hvdc</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nhvdc</span><span class="p">,</span>
+        <span class="n">n_vsc</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nvsc</span><span class="p">,</span>
+        <span class="n">n_gen</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">ngen</span><span class="p">,</span>
+        <span class="n">n_batt</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nbatt</span><span class="p">,</span>
+        <span class="n">n_sh</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nshunt</span><span class="p">,</span>
+        <span class="n">n_load</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">nload</span><span class="p">,</span>
+        <span class="n">bus_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">get_3ph_names</span><span class="p">(),</span>
+        <span class="n">branch_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">get_3ph_names</span><span class="p">(),</span>
+        <span class="n">hvdc_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">vsc_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">gen_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">batt_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">battery_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">sh_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">load_names</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+        <span class="n">bus_types</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># compose the HVDC power Injections</span>
+    <span class="c1"># since the power flow methods don&#39;t support HVDC directly, we need this step</span>
+    <span class="n">Shvdc</span><span class="p">,</span> <span class="n">Losses_hvdc</span><span class="p">,</span> <span class="n">Pf_hvdc</span><span class="p">,</span> <span class="n">Pt_hvdc</span><span class="p">,</span> <span class="n">loading_hvdc</span><span class="p">,</span> <span class="n">n_free</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">get_power</span><span class="p">(</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span>
+        <span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">nbus</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># compute islands</span>
+    <span class="n">islands</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">split_into_islands</span><span class="p">(</span><span class="n">ignore_single_node_islands</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">ignore_single_node_islands</span><span class="p">,</span>
+                                    <span class="n">consider_hvdc_as_island_links</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">island</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">islands</span><span class="p">):</span>
+
+        <span class="n">Sbus_base</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_power_injections_pu</span><span class="p">()</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_simulation_indices</span><span class="p">(</span><span class="n">Sbus</span><span class="o">=</span><span class="n">Sbus_base</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">V0</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span> <span class="k">if</span> <span class="n">V_guess</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">V_guess</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]</span>
+            <span class="n">S_base</span> <span class="o">=</span> <span class="n">Sbus_base</span> <span class="k">if</span> <span class="n">Sbus_input</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Sbus_input</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]</span>
+
+            <span class="c1"># call the numerical methods</span>
+            <span class="n">solution</span><span class="p">,</span> <span class="n">report</span> <span class="o">=</span> <span class="n">__solve_island_limited_support_3ph</span><span class="p">(</span>
+                <span class="n">island</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                <span class="n">V0</span><span class="o">=</span><span class="n">expandVoltage3ph</span><span class="p">(</span><span class="n">V0</span><span class="p">),</span>
+                <span class="n">S_base</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="n">S_base</span><span class="p">),</span>
+                <span class="n">Shvdc</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="n">Shvdc</span><span class="p">[</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">]),</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+            <span class="p">)</span>
+
+            <span class="c1"># merge the results from this island</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">apply_from_island</span><span class="p">(</span>
+                <span class="n">results</span><span class="o">=</span><span class="n">solution</span><span class="p">,</span>
+                <span class="n">b_idx</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">,</span>
+                <span class="n">br_idx</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">,</span>
+                <span class="n">hvdc_idx</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">original_idx</span><span class="p">,</span>
+                <span class="n">vsc_idx</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">original_idx</span>
+            <span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">convergence_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;No slack nodes in the island&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="c1"># Compile HVDC results (available for the complete grid since HVDC line as</span>
+    <span class="c1"># formulated are split objects</span>
+    <span class="c1"># Pt is the &quot;generation&quot; at the sending point</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Pf_hvdc</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Pf_hvdc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>  <span class="c1"># we change the sign to keep the sign convention with AC lines</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">Pt_hvdc</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Pt_hvdc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>  <span class="c1"># we change the sign to keep the sign convention with AC lines</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">loading_hvdc</span> <span class="o">=</span> <span class="n">loading_hvdc</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">losses_hvdc</span> <span class="o">=</span> <span class="n">Losses_hvdc</span> <span class="o">*</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span>
+
+    <span class="n">load_bus_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">bus_idx</span>
+    <span class="n">load_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">original_idx</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">load_idx</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">A_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">load_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">A_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
+                              <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">B_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
+                              <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">C_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+        <span class="k">elif</span> <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="o">+</span><span class="mf">0.0</span><span class="n">j</span><span class="p">:</span>
+
+            <span class="n">Vn_prev</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span>
+                <span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="o">/</span> <span class="mi">3</span>
+
+            <span class="n">Ia</span><span class="p">,</span> <span class="n">Ib</span><span class="p">,</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">load_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">floating_star_currents</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                                                 <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                                                 <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                                                 <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_floatingstar</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                                                 <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_floatingstar</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span>
+                                                                 <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_floatingstar</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">],</span>
+                                                                 <span class="n">Vn_prev</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="o">+</span><span class="mf">0.0</span><span class="n">j</span><span class="p">:</span>
+
+            <span class="n">Ia</span><span class="p">,</span> <span class="n">Ib</span><span class="p">,</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">load_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">floating_star_powers</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                                                  <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                                                  <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                                                  <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_floatingstar</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                                                  <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_floatingstar</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span>
+                                                                  <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_floatingstar</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">load_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_N</span><span class="p">[</span><span class="n">load_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+    <span class="n">shunt_bus_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">bus_idx</span>
+    <span class="n">shunt_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">original_idx</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shunt_idx</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">A_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">shunt_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">A_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
+                                  <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">B_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
+                                  <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">C_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">shunt_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_N</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">results</span>
+
+
+<div class="viewcode-block" id="multi_island_pf_nc_3ph">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph.multi_island_pf_nc_3ph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">multi_island_pf_nc_3ph</span><span class="p">(</span><span class="n">nc</span><span class="p">:</span> <span class="n">NumericalCircuit</span><span class="p">,</span>
+                           <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span>
+                           <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">V_guess</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">Sbus_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults3Ph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiple islands power flow (this is the most generic power flow function)</span>
+<span class="sd">    :param nc: SnapshotData instance</span>
+<span class="sd">    :param options: PowerFlowOptions instance</span>
+<span class="sd">    :param logger: logger</span>
+<span class="sd">    :param V_guess: voltage guess</span>
+<span class="sd">    :param Sbus_input: Use this power injections if provided (in p.u.)</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">__multi_island_pf_nc_limited_support_3ph</span><span class="p">(</span>
+        <span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">V_guess</span><span class="o">=</span><span class="n">V_guess</span><span class="p">,</span>
+        <span class="n">Sbus_input</span><span class="o">=</span><span class="n">Sbus_input</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># expand voltages if there was a bus topology reduction</span>
+    <span class="c1"># if nc.topology_performed:</span>
+    <span class="c1">#     results.voltage = nc.propagate_bus_result(results.voltage)</span>
+
+    <span class="c1"># do the reactive power partition and store the values</span>
+    <span class="c1"># __split_reactive_power_into_devices(nc=nc, Qbus=results.Sbus.imag, results=results)</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">three_phase</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="multi_island_pf_3ph">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.html#VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph.multi_island_pf_3ph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">multi_island_pf_3ph</span><span class="p">(</span><span class="n">multi_circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                        <span class="n">options</span><span class="p">:</span> <span class="n">PowerFlowOptions</span><span class="p">,</span>
+                        <span class="n">opf_results</span><span class="p">:</span> <span class="n">VALID_OPF_RESULTS</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(),</span>
+                        <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">areas_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Area</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PowerFlowResults3Ph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiple islands power flow (this is the most generic power flow function)</span>
+<span class="sd">    :param multi_circuit: MultiCircuit instance</span>
+<span class="sd">    :param options: PowerFlowOptions instance</span>
+<span class="sd">    :param opf_results: OPF results, to be used if not None</span>
+<span class="sd">    :param t: time step, if None, the snapshot is compiled</span>
+<span class="sd">    :param logger: list of events to add to</span>
+<span class="sd">    :param bus_dict: Dus object to index dictionary</span>
+<span class="sd">    :param areas_dict: Area to area index dictionary</span>
+<span class="sd">    :return: PowerFlowResults instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">nc</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span>
+        <span class="n">circuit</span><span class="o">=</span><span class="n">multi_circuit</span><span class="p">,</span>
+        <span class="n">t_idx</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+        <span class="n">apply_temperature</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">apply_temperature_correction</span><span class="p">,</span>
+        <span class="n">branch_tolerance_mode</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">branch_impedance_tolerance_mode</span><span class="p">,</span>
+        <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_results</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">use_stored_guess</span><span class="p">,</span>
+        <span class="n">bus_dict</span><span class="o">=</span><span class="n">bus_dict</span><span class="p">,</span>
+        <span class="n">areas_dict</span><span class="o">=</span><span class="n">areas_dict</span><span class="p">,</span>
+        <span class="n">control_taps_modules</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_taps_modules</span><span class="p">,</span>
+        <span class="n">control_taps_phase</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_taps_phase</span><span class="p">,</span>
+        <span class="n">control_remote_voltage</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_remote_voltage</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">fill_three_phase</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">multi_island_pf_nc_3ph</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

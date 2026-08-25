@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeraGrid.Gui.ProceduralGrid.procedural_grid &mdash; VeraGrid 6.0.19 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">VeraGrid.Gui.ProceduralGrid.procedural_grid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for VeraGrid.Gui.ProceduralGrid.procedural_grid</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
+<span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
+<span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.ThirdParty.adjustText</span><span class="w"> </span><span class="kn">import</span> <span class="n">adjust_text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubstationGraphicItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">haversine_distance</span><span class="p">,</span> <span class="n">GridMapWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Diagrams.map_location</span><span class="w"> </span><span class="kn">import</span> <span class="n">MapLocation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.ProceduralGrid.procedural_grid_ui</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_Dialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.gui_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_list_model</span><span class="p">,</span> <span class="n">enums_to_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProceduralGridMethods</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.Procedural.procedural_grid_engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProceduralGridComputationEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_diagram_from_buses</span><span class="p">,</span> <span class="n">SchematicWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.ProceduralGrid.voltage_warning</span><span class="w"> </span><span class="kn">import</span> <span class="n">VoltageWarningDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.general_dialogues</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogsDialogue</span><span class="p">,</span> <span class="n">CheckListDialogue</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGrid.Gui.Main.SubClasses.simulations</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationsMain</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+
+
+<div class="viewcode-block" id="ProceduralGridWindow">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.ProceduralGrid.html#VeraGrid.Gui.ProceduralGrid.procedural_grid.ProceduralGridWindow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProceduralGridWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SystemScaler GUI</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">SimulationsMain</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param parent:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_Dialog</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Procedural grid expansion&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+
+        <span class="c1"># Setup combobox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methods_dict</span><span class="p">,</span> <span class="n">methods_mdl</span> <span class="o">=</span> <span class="n">enums_to_model</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">SteinerAlone</span><span class="p">,</span>
+             <span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">SteinerAndOptimization</span><span class="p">,</span>
+             <span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">CatalogueOptimizationOnly</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">methodComboBox</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">methods_mdl</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">methodComboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># setup candidates</span>
+
+        <span class="c1"># setup connection substations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SubstationGraphicItem</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">candidate_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SubstationGraphicItem</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_substations_graphics_in_diagram_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SubstationGraphicItem</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">se_idx</span><span class="p">,</span> <span class="n">se_api_object</span><span class="p">,</span> <span class="n">se_graphic</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">get_current_diagram_substations</span><span class="p">():</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_substations_graphics_in_diagram_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">se_graphic</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">se_graphic</span><span class="o">.</span><span class="n">isSelected</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">se_graphic</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">targetSubstationListView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">get_list_model</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">se_graphic</span><span class="o">.</span><span class="n">api_object</span> <span class="k">for</span> <span class="n">se_graphic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="p">]</span>
+        <span class="p">))</span>
+
+        <span class="c1"># State of the last successful preview. Accept can only run once these are populated.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProceduralGridComputationEngine</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_grid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProceduralGridMethods</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Logger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Accept stays disabled until the user has previewed a result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Button click</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">previewButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preview</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accept_result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">computeCandidatesButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_candidates</span><span class="p">)</span>
+
+        <span class="c1"># Any change to the inputs invalidates the previously previewed result so the user</span>
+        <span class="c1"># cannot accept a graph that no longer matches the parameters on screen, and also</span>
+        <span class="c1"># reconfigures which inputs / buttons are enabled to match the new method.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">methodComboBox</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_method_changed</span><span class="p">)</span>
+
+        <span class="c1"># Initialise the enable/disable state of the inputs and buttons so it matches the</span>
+        <span class="c1"># method currently shown in the combo box at construction time.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_method_changed</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_invalidate_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Discard the previously computed preview state and disable Accept until the</span>
+<span class="sd">        user previews again. Called whenever an input that feeds the engine changes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_grid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_on_method_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reconfigure the dialog when the user picks a different method in the combo.</span>
+
+<span class="sd">        Two behaviours are needed:</span>
+
+<span class="sd">        * For the Steiner methods we keep the existing Preview/Accept flow: the user</span>
+<span class="sd">          edits target/candidate inputs, clicks Preview to compute and draw a result,</span>
+<span class="sd">          then clicks Accept to apply it. Accept stays disabled until a successful</span>
+<span class="sd">          Preview has populated the engine state.</span>
+<span class="sd">        * For the catalogue-only method there is no preview to draw because the</span>
+<span class="sd">          optimization runs asynchronously through the application session, and the</span>
+<span class="sd">          target/candidate widgets do not feed into it (the branches come from the</span>
+<span class="sd">          active schematic selection). Preview is therefore disabled and Accept is</span>
+<span class="sd">          enabled directly so the user can launch the optimization in one click.</span>
+
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Always discard any previously previewed state: switching method invalidates it.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_preview</span><span class="p">()</span>
+
+        <span class="c1"># Resolve the method currently selected in the combo box</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">ProceduralGridMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">methodComboBox</span><span class="o">.</span><span class="n">currentText</span><span class="p">()]</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">CatalogueOptimizationOnly</span><span class="p">:</span>
+            <span class="c1"># The catalogue optimization does not use target/candidate substations and does not</span>
+            <span class="c1"># produce a synchronous preview, so grey out the unused inputs to make that obvious</span>
+            <span class="c1"># and let the user click Accept straight away.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">previewButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">previewButton</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Not applicable for catalogue optimization&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">targetSubstationListView</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">candidateSubstationListView</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">topClosestSpinBox</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">computeCandidatesButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Steiner methods: restore the standard Preview-then-Accept flow with all inputs</span>
+            <span class="c1"># available. Accept remains disabled until a Preview succeeds (handled above by</span>
+            <span class="c1"># _invalidate_preview).</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">previewButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">previewButton</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s2">&quot;Preview&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">targetSubstationListView</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">candidateSubstationListView</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">topClosestSpinBox</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">computeCandidatesButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ProceduralGridWindow.compute_candidates">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.ProceduralGrid.html#VeraGrid.Gui.ProceduralGrid.procedural_grid.ProceduralGridWindow.compute_candidates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="p">)</span>
+        <span class="n">mc_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_substations_graphics_in_diagram_list</span><span class="p">)</span>
+        <span class="n">top_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">topClosestSpinBox</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mc_number</span><span class="p">,</span> <span class="n">n_number</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">se_graphic_target</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">se_graphic_candidate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_substations_graphics_in_diagram_list</span><span class="p">):</span>
+                <span class="n">distances</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">haversine_distance</span><span class="p">(</span>
+                    <span class="n">lat1</span><span class="o">=</span><span class="n">se_graphic_candidate</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                    <span class="n">lon1</span><span class="o">=</span><span class="n">se_graphic_candidate</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+                    <span class="n">lat2</span><span class="o">=</span><span class="n">se_graphic_target</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                    <span class="n">lon2</span><span class="o">=</span><span class="n">se_graphic_target</span><span class="o">.</span><span class="n">lon</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">distances2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distances2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">candidate_list</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sorted_indices</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">candidate_list</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">top_n</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">candidate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_substations_graphics_in_diagram_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">candidate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">candidate_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+
+            <span class="c1"># display the candidates list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">candidateSubstationListView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">get_list_model</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">se_graphic</span><span class="o">.</span><span class="n">api_object</span> <span class="k">for</span> <span class="n">se_graphic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidate_list</span><span class="p">]</span>
+            <span class="p">))</span>
+
+        <span class="c1"># Recomputed candidates change the engine inputs, so invalidate any prior preview</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_preview</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_substation_voltages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">substations</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns offenders and valid voltages.</span>
+<span class="sd">        Offenders are (substation_name, voltage) pairs for any bus</span>
+<span class="sd">        whose Vnom does not appear on any branch in the existing grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">known_voltages</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_branches</span><span class="p">(</span><span class="n">add_vsc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_hvdc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">known_voltages</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+            <span class="n">known_voltages</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+        <span class="n">offenders</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">substations</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_substation_buses</span><span class="p">(</span><span class="n">sg</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_voltages</span><span class="p">:</span>
+                    <span class="n">offenders</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">offenders</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">known_voltages</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ProceduralGridWindow.preview">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.ProceduralGrid.html#VeraGrid.Gui.ProceduralGrid.procedural_grid.ProceduralGridWindow.preview">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preview</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate inputs, run the expansion engine and draw the resulting topology</span>
+<span class="sd">        on the embedded plot. Stores the engine result on the instance so that</span>
+<span class="sd">        :meth:`accept_result` can apply it without recomputing.</span>
+
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 1. Get the chosen method</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">ProceduralGridMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">methodComboBox</span><span class="o">.</span><span class="n">currentText</span><span class="p">()]</span>
+
+        <span class="c1"># 2. Extract the raw API objects from the graphic items</span>
+        <span class="n">target_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">se</span><span class="o">.</span><span class="n">api_object</span> <span class="k">for</span> <span class="n">se</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_substations_graphics_list</span><span class="p">]</span>
+        <span class="n">candidate_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">se</span><span class="o">.</span><span class="n">api_object</span> <span class="k">for</span> <span class="n">se</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidate_list</span><span class="p">]</span>
+
+        <span class="c1"># 3. Validate that all substation voltages exist in the grid</span>
+        <span class="n">offenders</span><span class="p">,</span> <span class="n">valid_voltages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_substation_voltages</span><span class="p">(</span><span class="n">target_objects</span> <span class="o">+</span> <span class="n">candidate_objects</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">offenders</span><span class="p">:</span>
+            <span class="n">dlg</span> <span class="o">=</span> <span class="n">VoltageWarningDialog</span><span class="p">(</span><span class="n">offenders</span><span class="o">=</span><span class="n">offenders</span><span class="p">,</span> <span class="n">valid_voltages</span><span class="o">=</span><span class="n">valid_voltages</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">dlg</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">dlg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+            <span class="c1"># Voltage mismatch: do not enable Accept; user must fix inputs first</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_preview</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># 4. Instantiate the engine and run the selected method</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">ProceduralGridComputationEngine</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">targets</span><span class="o">=</span><span class="n">target_objects</span><span class="p">,</span>
+            <span class="n">candidates</span><span class="o">=</span><span class="n">candidate_objects</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+        <span class="p">)</span>
+
+        <span class="c1"># The Steiner + NSGA-3 catalogue path can take many seconds; show a busy cursor</span>
+        <span class="c1"># while the engine runs so the user has visible feedback that the dialog is working.</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QGuiApplication</span><span class="o">.</span><span class="n">setOverrideCursor</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QCursor</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CursorShape</span><span class="o">.</span><span class="n">WaitCursor</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">SteinerAlone</span><span class="p">:</span>
+                <span class="n">expanded_grid</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">run_steiner_alone</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">SteinerAndOptimization</span><span class="p">:</span>
+                <span class="c1"># Reuse the same widgets the standalone catalogue feature uses so users get a</span>
+                <span class="c1"># single, consistent place to control pf options and the evaluation budget.</span>
+                <span class="n">pf_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">get_selected_power_flow_options</span><span class="p">()</span>
+                <span class="n">max_eval_per_var</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">max_investments_evluation_number_spinBox</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+                <span class="n">expanded_grid</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">run_steiner_tree_and_optimization</span><span class="p">(</span>
+                    <span class="n">pf_options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">,</span>
+                    <span class="n">max_eval_per_var</span><span class="o">=</span><span class="n">max_eval_per_var</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> not implemented&quot;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># Always restore the cursor, even if the engine raises.</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QGuiApplication</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+
+        <span class="c1"># 5. Persist the computed state so that Accept can apply it without recomputing,</span>
+        <span class="c1"># then draw the topology on the embedded plot and enable Accept</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_grid</span> <span class="o">=</span> <span class="n">expanded_grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_summary</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_graph</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">acceptButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ProceduralGridWindow.accept_result">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGrid.Gui.ProceduralGrid.html#VeraGrid.Gui.ProceduralGrid.procedural_grid.ProceduralGridWindow.accept_result">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accept_result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the previously previewed result to the application. Does nothing if</span>
+<span class="sd">        no successful preview is currently held on the instance (Accept should be</span>
+<span class="sd">        disabled in that case, but we guard against accidental double-clicks).</span>
+
+<span class="sd">        For the ``CatalogueOptimizationOnly`` method there is no synchronous preview:</span>
+<span class="sd">        we close the dialog and delegate straight to the existing application handler</span>
+<span class="sd">        which launches the optimization through the session and reports its own</span>
+<span class="sd">        warnings / progress.</span>
+
+<span class="sd">        :return: ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Branch on method: the catalogue-only method does not go through the engine</span>
+        <span class="c1"># preview path; it reuses the application&#39;s catalogue optimization handler.</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">ProceduralGridMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">methodComboBox</span><span class="o">.</span><span class="n">currentText</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">ProceduralGridMethods</span><span class="o">.</span><span class="n">CatalogueOptimizationOnly</span><span class="p">:</span>
+            <span class="c1"># Close first so that any warning popup raised by the handler (no selection,</span>
+            <span class="c1"># no schematic, already running, etc.) appears cleanly over the main window.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">catalogue_element_optimization</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_grid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_app</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">,</span>
+                           <span class="n">expanded_grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_grid</span><span class="p">,</span>
+                           <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">,</span>
+                           <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">ProceduralGridComputationEngine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the summary label above the plot with the count of new buses,</span>
+<span class="sd">        lines and transformers that the previewed expansion would create.</span>
+
+<span class="sd">        :param engine: The engine whose result is being summarised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_new_buses</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">get_new_buses</span><span class="p">())</span>
+        <span class="n">n_new_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">get_new_lines</span><span class="p">())</span>
+        <span class="n">n_new_transformers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">get_new_transformers</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">summaryLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_new_buses</span><span class="si">}</span><span class="s1"> new bus(es), </span><span class="si">{</span><span class="n">n_new_lines</span><span class="si">}</span><span class="s1"> new line(s) and &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_new_transformers</span><span class="si">}</span><span class="s1"> new transformer(s) will be added to the grid.&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">ProceduralGridComputationEngine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a NetworkX graph from the engine result and render it on the</span>
+<span class="sd">        embedded MatplotlibWidget. Existing buses (targets and candidates) are</span>
+<span class="sd">        drawn in light blue; newly created buses are drawn in light green.</span>
+
+<span class="sd">        :param engine: The engine whose buses and lines are used to build the graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_buses</span><span class="p">()</span>
+        <span class="n">new_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_buses</span><span class="p">()</span>
+        <span class="n">new_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">]</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_lines</span><span class="p">()</span>
+        <span class="n">new_transformers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Transformer2W</span><span class="p">]</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_transformers</span><span class="p">()</span>
+
+        <span class="c1"># Build a set of new-bus names for O(1) membership checks</span>
+        <span class="n">new_bus_names</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">new_buses</span><span class="p">:</span>
+            <span class="n">new_bus_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="n">pos</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">existing_node_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">new_node_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="c1"># Add all buses as nodes, recording which colour group they belong to</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">all_buses</span><span class="p">:</span>
+            <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">pos</span><span class="p">[</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">new_bus_names</span><span class="p">:</span>
+                <span class="n">new_node_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">existing_node_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Add new lines as edges</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">new_lines</span><span class="p">:</span>
+            <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Add new transformers as edges</span>
+        <span class="k">for</span> <span class="n">transformer</span> <span class="ow">in</span> <span class="n">new_transformers</span><span class="p">:</span>
+            <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">transformer</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Clear the matplotlib canvas before redrawing so successive Preview clicks</span>
+        <span class="c1"># do not stack graphs on top of each other</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">plotWidget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">plotWidget</span><span class="o">.</span><span class="n">get_axis</span><span class="p">()</span>
+
+        <span class="c1"># Draw existing buses in blue and new buses in green so the user can</span>
+        <span class="c1"># clearly distinguish what is being added to the grid</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">existing_node_names</span><span class="p">,</span>
+                               <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;lightblue&#39;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">new_node_names</span><span class="p">,</span>
+                               <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;lightgreen&#39;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="c1"># Place labels as Text objects first, then let adjustText reposition</span>
+        <span class="c1"># them so that overlapping labels (including co-located nodes) are</span>
+        <span class="c1"># spread apart automatically</span>
+        <span class="n">texts</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">))</span>
+
+        <span class="n">adjust_text</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">plotWidget</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_to_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">engine</span><span class="p">:</span> <span class="n">ProceduralGridComputationEngine</span><span class="p">,</span>
+                      <span class="n">expanded_grid</span><span class="p">,</span>
+                      <span class="n">method</span><span class="p">:</span> <span class="n">ProceduralGridMethods</span><span class="p">,</span>
+                      <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the confirmed expansion result to the running application: create</span>
+<span class="sd">        substations for new buses, update all open map widgets, build the schematic</span>
+<span class="sd">        diagram, display the logger, and prompt for investment group assignment.</span>
+
+<span class="sd">        :param engine: The engine whose results are being applied.</span>
+<span class="sd">        :param expanded_grid: The expanded MultiCircuit returned by the engine.</span>
+<span class="sd">        :param method: The method that was used (used for diagram naming).</span>
+<span class="sd">        :param logger: The logger accumulating messages during the run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create substations for new buses so map lines can reference them</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_buses</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">substation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">substation</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">latitude</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                    <span class="n">longitude</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">substation</span> <span class="o">=</span> <span class="n">substation</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">add_substation</span><span class="p">(</span><span class="n">substation</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Draw new elements on all open map widgets</span>
+        <span class="k">for</span> <span class="n">map_widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">diagram_widgets_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">map_widget</span><span class="p">,</span> <span class="n">GridMapWidget</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_buses</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">map_widget</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">map_widget</span><span class="o">.</span><span class="n">add_api_substation</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">substation</span><span class="p">,</span>
+                                                      <span class="n">lat</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                                                      <span class="n">lon</span><span class="o">=</span><span class="n">bus</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_lines</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">map_widget</span><span class="o">.</span><span class="n">graphics_manager</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">line</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">map_widget</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">set_point</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">line</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">MapLocation</span><span class="p">())</span>
+                        <span class="n">map_widget</span><span class="o">.</span><span class="n">add_api_line</span><span class="p">(</span><span class="n">api_object</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Map geographic coordinates to schematic canvas coordinates</span>
+        <span class="n">_SCALE</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000.0</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">expanded_grid</span><span class="o">.</span><span class="n">buses</span><span class="p">:</span>
+            <span class="n">bus</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">longitude</span> <span class="o">*</span> <span class="n">_SCALE</span>
+            <span class="n">bus</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">bus</span><span class="o">.</span><span class="n">latitude</span> <span class="o">*</span> <span class="n">_SCALE</span>
+
+        <span class="c1"># Create the schematic diagram from the expanded grid</span>
+        <span class="n">expanded_grid_schematic</span> <span class="o">=</span> <span class="n">make_diagram_from_buses</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">expanded_grid</span><span class="p">,</span>
+                                                          <span class="n">buses</span><span class="o">=</span><span class="n">engine</span><span class="o">.</span><span class="n">get_buses</span><span class="p">(),</span>
+                                                          <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Diagram </span><span class="si">{</span><span class="n">method</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Create the schematic widget and add it to the main GUI</span>
+        <span class="n">diagram_widget</span> <span class="o">=</span> <span class="n">SchematicWidget</span><span class="p">(</span>
+            <span class="n">gui</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+            <span class="n">diagram</span><span class="o">=</span><span class="n">expanded_grid_schematic</span><span class="p">,</span>
+            <span class="n">default_bus_voltage</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">defaultBusVoltageSpinBox</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">get_diagram_slider_index</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">add_diagram_widget_and_diagram</span><span class="p">(</span><span class="n">diagram_widget</span><span class="o">=</span><span class="n">diagram_widget</span><span class="p">,</span>
+                                                <span class="n">diagram</span><span class="o">=</span><span class="n">expanded_grid_schematic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">set_diagrams_list_view</span><span class="p">()</span>
+
+        <span class="c1"># Show logger if there are any entries</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">has_logs</span><span class="p">():</span>
+            <span class="n">logs_dlg</span> <span class="o">=</span> <span class="n">LogsDialogue</span><span class="p">(</span><span class="s1">&#39;Procedural grid expansion log&#39;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="n">logs_dlg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Ask whether to assign generated objects to an investment group</span>
+        <span class="n">new_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">get_new_buses</span><span class="p">()</span>
+                                                 <span class="o">+</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_lines</span><span class="p">()</span>
+                                                 <span class="o">+</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_new_transformers</span><span class="p">())</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Investment &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">investments_groups</span><span class="p">))</span>
+        <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">type_name</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_devices</span><span class="p">]</span>
+        <span class="n">inv_dlg</span><span class="p">:</span> <span class="n">CheckListDialogue</span> <span class="o">=</span> <span class="n">CheckListDialogue</span><span class="p">(</span><span class="n">objects_list</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+                                                       <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Add investment&quot;</span><span class="p">,</span>
+                                                       <span class="n">ask_for_group_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                       <span class="n">group_label</span><span class="o">=</span><span class="s2">&quot;Investment name&quot;</span><span class="p">,</span>
+                                                       <span class="n">group_text</span><span class="o">=</span><span class="n">group_name</span><span class="p">)</span>
+        <span class="n">inv_dlg</span><span class="o">.</span><span class="n">setModal</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">inv_dlg</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">inv_dlg</span><span class="o">.</span><span class="n">is_accepted</span><span class="p">:</span>
+            <span class="n">group</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">InvestmentsGroup</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">InvestmentsGroup</span><span class="p">(</span>
+                <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">inv_dlg</span><span class="o">.</span><span class="n">get_group_text</span><span class="p">(),</span>
+                <span class="n">category</span><span class="o">=</span><span class="s2">&quot;single&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_devices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;multiple&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">add_investments_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inv_dlg</span><span class="o">.</span><span class="n">selected_indices</span><span class="p">:</span>
+                <span class="n">d</span><span class="p">:</span> <span class="n">ALL_DEV_TYPES</span> <span class="o">=</span> <span class="n">new_devices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">add_investment</span><span class="p">(</span><span class="n">dev</span><span class="o">.</span><span class="n">Investment</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
+                                                               <span class="n">code</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                                               <span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">type_name</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                               <span class="n">CAPEX</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                                               <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span>
+
+        <span class="c1"># Exit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
